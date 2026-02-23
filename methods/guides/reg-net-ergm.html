@@ -9,687 +9,536 @@ bilingual: true
 mathjax: true
 ---
 
-<h2 id="ergm-motivation">
-  <span data-lang="en">From Bernoulli Graphs to ERGM</span>
-  <span data-lang="zh">从伯努利图到ERGM</span>
+<!-- ═══════════════════════════════════════════════════
+     LEVEL 1 — INTUITION (no math, pure story)
+     ═══════════════════════════════════════════════════ -->
+
+<h2 id="what-is-ergm">
+  <span data-lang="en">What Is ERGM? (No Math Version)</span>
+  <span data-lang="zh">ERGM 是什么？（零数学版）</span>
 </h2>
 
 <p data-lang="en">
-Network models must explain why real networks look the way they do. The simplest approach is the <strong>random graph</strong>: each edge exists independently with probability <em>p</em>. This Bernoulli model is intuitive but fundamentally fails to capture realistic network properties.
+Imagine you have a map of "who asks whom for advice" in an office. You want to understand <strong>why</strong> these connections exist. Is it because people ask those who are similar to them? Because advice is reciprocal? Because some people are just popular?
 </p>
 
 <p data-lang="zh">
-网络模型必须解释现实网络为什么具有特定的外观。最简单的方法是<strong>随机图</strong>：每条边独立以概率 <em>p</em> 存在。伯努利模型很直观，但根本无法捕捉现实网络的特性。
+想象你有一张办公室里"谁找谁请教"的关系图。你想理解这些连线<strong>为什么</strong>存在。是因为人们找和自己相似的人？因为请教是互相的？还是因为某些人就是受欢迎？
 </p>
-
-<div class="math-note">
-P(Y = y) = p<sup>m</sup>(1 − p)<sup>n(n−1)/2 − m</sup>
-</div>
 
 <p data-lang="en">
-where <em>y</em> is the realized network, <em>m</em> is the number of edges, and <em>n</em> is the number of nodes. This says: the probability of observing network <em>y</em> depends only on how many edges it has.
+<strong>ERGM (Exponential Random Graph Model)</strong> is a statistical tool that answers this. Think of it as <strong>logistic regression, but for networks</strong>. In regular logistic regression, you predict whether an event happens (yes/no) based on some factors. In ERGM, you predict whether a tie between two people exists (yes/no) based on network patterns and personal traits.
 </p>
 
 <p data-lang="zh">
-其中 <em>y</em> 是实现的网络，<em>m</em> 是边数，<em>n</em> 是节点数。这表示：观察网络 <em>y</em> 的概率仅取决于它有多少条边。
+<strong>ERGM（指数随机图模型）</strong>就是回答这个问题的统计工具。你可以把它理解为<strong>给网络做的逻辑回归</strong>。普通逻辑回归根据一些因素预测某件事是否发生（是/否）。ERGM 根据网络模式和个人特征预测两个人之间的关系是否存在（是/否）。
 </p>
 
-<h3 id="bernoulli-problems">
-  <span data-lang="en">Why Bernoulli Graphs Fail</span>
-  <span data-lang="zh">伯努利图为什么失败</span>
+<p data-lang="en">
+<strong>Key difference from regular regression:</strong> In regular regression, each observation is independent. In a network, ties are <em>not</em> independent — whether A asks B for advice depends on whether A also asks C, whether B asks A back, etc. ERGM handles this interdependence.
+</p>
+
+<p data-lang="zh">
+<strong>和普通回归的关键区别：</strong>普通回归里每个观测是独立的。但在网络里，关系<em>不是</em>独立的——A 是否请教 B，取决于 A 是否也请教了 C、B 是否反过来也请教 A，等等。ERGM 就是专门处理这种相互依赖的。
+</p>
+
+<h3 id="analogy">
+  <span data-lang="en">An Analogy</span>
+  <span data-lang="zh">一个类比</span>
 </h3>
 
 <p data-lang="en">
-Real networks exhibit structure that Bernoulli graphs cannot produce:
+Think of a network like a jigsaw puzzle. Regular regression looks at each piece individually. ERGM looks at how pieces fit <em>together</em> — it asks: "Given the overall pattern of the puzzle, what makes this particular piece more likely to connect to that one?"
 </p>
 
 <p data-lang="zh">
-现实网络表现出伯努利图无法产生的结构：
-</p>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Clustering (transitivity):</strong> In social networks, if A is friends with B and B is friends with C, then A and C are likely to be friends. Bernoulli graphs produce no clustering: triangles occur by pure chance. In contrast, real networks have clustering coefficients 0.3−0.5 compared to 0.001 for random graphs.</li>
-  <li data-lang="zh"><strong>聚类（传递性）：</strong>在社交网络中，如果A是B的朋友，B是C的朋友，那么A和C也很可能是朋友。伯努利图不产生聚类：三角形纯粹是巧合。相比之下，现实网络的聚类系数为0.3−0.5，而随机图仅为0.001。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Reciprocity in directed networks:</strong> If A sends a message to B, B is likely to respond. Bernoulli graphs have no reciprocity: mutual edges occur with probability p². Real networks exhibit reciprocity rates 0.3−0.9.</li>
-  <li data-lang="zh"><strong>有向网络中的互惠性：</strong>如果A向B发送消息，B很可能会回应。伯努利图没有互惠性：相互边以概率 p² 出现。现实网络的互惠率为0.3−0.9。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Degree heterogeneity:</strong> Real networks have hubs: a few nodes with very high degree and many nodes with low degree. Bernoulli graphs produce approximately Poisson degree distributions. Observed networks have power-law or heavy-tailed degree distributions.</li>
-  <li data-lang="zh"><strong>度数异质性：</strong>现实网络有中心：少数节点度数很高，许多节点度数很低。伯努利图产生近似泊松度分布。观察到的网络具有幂律或重尾度分布。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Homophily (assortative mixing):</strong> People tend to connect with others like themselves (same race, age, education). Bernoulli graphs assign edges at random: no correlation between nodal attributes and tie formation.</li>
-  <li data-lang="zh"><strong>同群偏好（同质混合）：</strong>人们倾向于与相似的人联系（相同种族、年龄、教育）。伯努利图随机分配边：节点属性与关系形成之间没有相关性。</li>
-</ul>
-
-<p data-lang="en">
-<strong>The key insight:</strong> We need a probabilistic model where the probability of an edge depends not just on a global parameter but on <em>local network statistics</em>—counts of triangles, mutual pairs, degree distributions, and attribute matches. This is exactly what ERGM (Exponential Random Graph Model) provides.
-</p>
-
-<p data-lang="zh">
-<strong>关键洞察：</strong>我们需要一个概率模型，其中边的概率不仅取决于全局参数，还取决于<em>局部网络统计量</em>——三角形、相互对、度分布和属性匹配的计数。这正是ERGM（指数随机图模型）提供的。
+把网络想象成一幅拼图。普通回归一块一块地看每个拼图碎片。ERGM 看的是碎片怎么<em>组合在一起</em>——它问的是："考虑到拼图的整体模式，是什么让这块碎片更可能和那块连在一起？"
 </p>
 
 <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
 
-<h2 id="ergm-probability-model">
-  <span data-lang="en">The ERGM Probability Model</span>
-  <span data-lang="zh">ERGM概率模型</span>
+<!-- ═══════════════════════════════════════════════════
+     LEVEL 2 — CONCEPTS (light math, building blocks)
+     ═══════════════════════════════════════════════════ -->
+
+<h2 id="why-not-simple-regression">
+  <span data-lang="en">Why Can't We Just Use Regular Regression?</span>
+  <span data-lang="zh">为什么不能直接用普通回归？</span>
 </h2>
 
 <p data-lang="en">
-An Exponential Random Graph Model (ERGM) specifies the probability of observing a network <em>y</em> as:
+The simplest network model is the <strong>random graph</strong> (Bernoulli model): every pair of people has the same probability <em>p</em> of being connected, and each connection is independent. This is basically logistic regression with no predictors — just a coin flip for each pair.
 </p>
 
 <p data-lang="zh">
-指数随机图模型（ERGM）将观察网络 <em>y</em> 的概率指定为：
-</p>
-
-<div class="math-note">
-P(Y = y | θ) = exp(θ<sup>T</sup> g(y)) / κ(θ)
-</div>
-
-<p data-lang="en">
-where:
-</p>
-
-<p data-lang="zh">
-其中：
-</p>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>g(y)</strong> is a <em>p</em>-dimensional vector of <strong>network statistics</strong> (sufficient statistics) computed from network <em>y</em>. Examples: number of edges, number of triangles, number of mutual dyads, homophily on each attribute.</li>
-  <li data-lang="zh"><strong>g(y)</strong> 是从网络 <em>y</em> 计算得出的 <em>p</em> 维<strong>网络统计量</strong>（充分统计量）向量。示例：边数、三角形数、相互二元组数、每个属性上的同群偏好。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>θ</strong> is the parameter vector of length <em>p</em>. Each θ<sub>k</sub> represents the "weight" of statistic g<sub>k</sub>(y): positive values make networks with more of that statistic more likely; negative values make them less likely.</li>
-  <li data-lang="zh"><strong>θ</strong> 是长度为 <em>p</em> 的参数向量。每个θ<sub>k</sub> 代表统计量 g<sub>k</sub>(y) 的"权重"：正值使具有更多该统计量的网络更可能；负值使其不太可能。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>κ(θ)</strong> is the <strong>normalizing constant</strong>: κ(θ) = Σ<sub>y*</sub> exp(θ<sup>T</sup> g(y*)) where the sum is over all possible networks on <em>n</em> nodes. This ensures the probabilities sum to 1.</li>
-  <li data-lang="zh"><strong>κ(θ)</strong> 是<strong>正规化常数</strong>：κ(θ) = Σ<sub>y*</sub> exp(θ<sup>T</sup> g(y*))，其中求和遍历 <em>n</em> 个节点上的所有可能网络。这确保概率之和为 1。</li>
-</ul>
-
-<h3 id="sufficient-statistics">
-  <span data-lang="en">Network Statistics (Sufficient Statistics)</span>
-  <span data-lang="zh">网络统计量（充分统计量）</span>
-</h3>
-
-<p data-lang="en">
-The vector g(y) contains network features that capture structural properties. Common choices:
-</p>
-
-<p data-lang="zh">
-向量 g(y) 包含捕捉结构特性的网络特征。常见选择：
-</p>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Edges:</strong> g<sub>edges</sub>(y) = number of edges in y. Negative θ<sub>edges</sub> makes networks sparse; positive makes them dense.</li>
-  <li data-lang="zh"><strong>边：</strong>g<sub>edges</sub>(y) = y 中的边数。负θ<sub>edges</sub> 使网络稀疏；正θ使其密集。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Mutual dyads (directed networks):</strong> g<sub>mutual</sub>(y) = count of pairs (i,j) where Y<sub>ij</sub> = 1 AND Y<sub>ji</sub> = 1. Positive θ<sub>mutual</sub> encourages reciprocated relationships.</li>
-  <li data-lang="zh"><strong>相互二元组（有向网络）：</strong>g<sub>mutual</sub>(y) = 对 (i,j) 的计数，其中 Y<sub>ij</sub> = 1 且 Y<sub>ji</sub> = 1。正θ<sub>mutual</sub> 鼓励相互关系。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Triangles:</strong> g<sub>triangle</sub>(y) = count of triangles (three nodes all connected). Positive θ<sub>triangle</sub> encourages clustering.</li>
-  <li data-lang="zh"><strong>三角形：</strong>g<sub>triangle</sub>(y) = 三角形的计数（三个节点都连接）。正θ<sub>triangle</sub> 鼓励聚类。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Degree distribution:</strong> g<sub>degree-k</sub>(y) = count of nodes with exactly degree k. Allows flexible degree heterogeneity.</li>
-  <li data-lang="zh"><strong>度分布：</strong>g<sub>degree-k</sub>(y) = 度数恰好为 k 的节点计数。允许灵活的度异质性。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Homophily (attribute matching):</strong> g<sub>homophily-X</sub>(y) = count of edges between nodes with the same value of attribute X. Positive θ encourages ties within demographic groups.</li>
-  <li data-lang="zh"><strong>同群偏好（属性匹配）：</strong>g<sub>homophily-X</sub>(y) = 具有属性X相同值的节点之间的边数。正θ鼓励群体内的关系。</li>
-</ul>
-
-<h3 id="log-odds-derivation">
-  <span data-lang="en">The Log-Odds (Change Statistic) Interpretation</span>
-  <span data-lang="zh">对数几率（变化统计量）解释</span>
-</h3>
-
-<p data-lang="en">
-A key feature of ERGMs is the <strong>change statistic</strong>: the probability that edge (i, j) exists, conditional on all other edges, depends only on how that edge changes the network statistics. This yields a logistic form.
-</p>
-
-<p data-lang="zh">
-ERGM的一个关键特性是<strong>变化统计量</strong>：边 (i, j) 存在的概率，在所有其他边给定的条件下，仅取决于该边如何改变网络统计量。这产生了逻辑形式。
+最简单的网络模型是<strong>随机图</strong>（伯努利模型）：每对人之间有相同的概率 <em>p</em> 产生连线，每条连线互相独立。这基本上就是没有预测变量的逻辑回归——对每对人掷一次硬币。
 </p>
 
 <p data-lang="en">
-Starting from the ERGM definition:
+But real networks have patterns that random graphs cannot produce:
 </p>
 
 <p data-lang="zh">
-从ERGM定义开始：
+但真实网络有随机图产生不了的规律：
 </p>
 
-<div class="math-note">
-P(Y<sub>ij</sub> = 1 | Y<sub>−ij</sub> = y<sub>−ij</sub>) / P(Y<sub>ij</sub> = 0 | Y<sub>−ij</sub> = y<sub>−ij</sub>) = exp(θ<sup>T</sup> [g(y<sub>+ij</sub>) − g(y<sub>−ij</sub>)])
-</div>
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Reciprocity:</strong> If I ask you for advice, you're likely to ask me too. In a random graph, this would just be coincidence.</li>
+  <li data-lang="zh"><strong>互惠性：</strong>我找你请教，你很可能也来找我。在随机图里这只是巧合。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Clustering:</strong> If A knows B and B knows C, then A and C are likely to know each other ("friends of friends"). Random graphs don't produce this.</li>
+  <li data-lang="zh"><strong>聚类：</strong>如果 A 认识 B，B 认识 C，那 A 和 C 也很可能认识（"朋友的朋友"）。随机图不会产生这种结构。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Popularity:</strong> Some people get asked by many others (hubs). Random graphs give everyone roughly the same number of connections.</li>
+  <li data-lang="zh"><strong>人气差异：</strong>有些人被很多人请教（中心节点）。随机图让每个人的连接数差不多。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Homophily:</strong> People connect with those similar to them (same age, same skill level). Random graphs ignore personal traits entirely.</li>
+  <li data-lang="zh"><strong>同质性：</strong>人们和相似的人交往（同年龄、同技能水平）。随机图完全忽略个人特征。</li>
+</ul>
 
 <p data-lang="en">
-Here, y<sub>+ij</sub> denotes the network with edge (i, j) added, and y<sub>−ij</sub> denotes the network with it removed. The difference δg<sub>ij</sub> = g(y<sub>+ij</sub>) − g(y<sub>−ij</sub>) is the <strong>change statistic</strong>: how much each network statistic changes if we flip edge (i, j).
+<strong>ERGM solves this</strong> by letting the probability of each tie depend on these network patterns — not just individual traits, but the <em>structure</em> of the network itself.
 </p>
 
 <p data-lang="zh">
-此处，y<sub>+ij</sub> 表示添加了边 (i, j) 的网络，y<sub>−ij</sub> 表示删除了该边的网络。差异δg<sub>ij</sub> = g(y<sub>+ij</sub>) − g(y<sub>−ij</sub>) 是<strong>变化统计量</strong>：如果我们翻转边 (i, j)，每个网络统计量改变多少。
-</p>
-
-<p data-lang="en">
-This simplifies to a logistic regression form:
-</p>
-
-<p data-lang="zh">
-这简化为逻辑回归形式：
-</p>
-
-<div class="math-note">
-log(odds) = θ<sup>T</sup> δg<sub>ij</sub>
-</div>
-
-<div class="math-note">
-P(Y<sub>ij</sub> = 1 | rest) = exp(θ<sup>T</sup> δg<sub>ij</sub>) / (1 + exp(θ<sup>T</sup> δg<sub>ij</sub>)) = 1 / (1 + exp(−θ<sup>T</sup> δg<sub>ij</sub>))
-</div>
-
-<p data-lang="en">
-<strong>Interpretation:</strong> The log-odds of edge (i, j) existing is a linear combination of change statistics. If adding that edge increases triangles and homophily, the log-odds term from those statistics is positive, making the edge more likely. If it increases isolated dyads (frowned upon in many models), the log-odds term is negative, making the edge less likely.
-</p>
-
-<p data-lang="zh">
-<strong>解释：</strong>边 (i, j) 存在的对数几率是变化统计量的线性组合。如果添加该边增加了三角形和同群偏好，这些统计量的对数几率项为正，使边更可能。如果它增加了孤立二元组（许多模型中不受欢迎），对数几率项为负，使边不太可能。
-</p>
-
-<p data-lang="en">
-This is <em>why ERGM is like logistic regression but with dependence</em>: in standard logistic regression, edge probabilities are independent. In ERGM, each edge probability depends on all others through the network statistics.
-</p>
-
-<p data-lang="zh">
-这就是<em>为什么ERGM类似于逻辑回归但具有依赖性</em>的原因：在标准逻辑回归中，边概率是独立的。在ERGM中，每条边的概率通过网络统计量取决于所有其他边。
+<strong>ERGM 的解决方法</strong>是让每条关系的概率取决于这些网络模式——不仅是个人特征，还有网络<em>本身的结构</em>。
 </p>
 
 <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
 
-<h2 id="normalizing-constant">
-  <span data-lang="en">The Intractable Normalizing Constant</span>
-  <span data-lang="zh">难以处理的正规化常数</span>
+<!-- ═══════════════════════════════════════════════════
+     LEVEL 3 — THE CORE FORMULA (accessible math)
+     ═══════════════════════════════════════════════════ -->
+
+<h2 id="ergm-formula">
+  <span data-lang="en">The Core Formula</span>
+  <span data-lang="zh">核心公式</span>
 </h2>
 
 <p data-lang="en">
-The ERGM probability is:
+ERGM says: the probability of observing a particular network depends on how many "interesting patterns" it contains. Written as a formula:
 </p>
 
 <p data-lang="zh">
-ERGM概率是：
+ERGM 说：观察到某个特定网络的概率，取决于它包含多少"有趣的模式"。写成公式：
 </p>
 
 <div class="math-note">
-P(Y = y | θ) = exp(θ<sup>T</sup> g(y)) / κ(θ)
+P(Y = y) = exp(θ₁ × g₁(y) + θ₂ × g₂(y) + ... ) / κ
 </div>
 
 <p data-lang="en">
-where the normalizing constant is:
+Don't panic — let's unpack each piece:
 </p>
 
 <p data-lang="zh">
-其中正规化常数是：
+别慌——我们一个一个拆解：
+</p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>g₁(y), g₂(y), ...</strong> = <strong>network statistics</strong>. These are things you count in the network: how many ties? how many reciprocal pairs? how many triangles? how many ties between people of the same job level? Each g is just a count.</li>
+  <li data-lang="zh"><strong>g₁(y), g₂(y), ...</strong> = <strong>网络统计量</strong>。就是你在网络里能数的东西：多少条关系？多少对互惠？多少个三角形？多少条关系发生在同职级的人之间？每个 g 就是一个计数。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>θ₁, θ₂, ...</strong> = <strong>parameters (weights)</strong>. These are what ERGM estimates. A positive θ means "more of this pattern makes the network more likely." A negative θ means "more of this pattern makes it less likely." Just like coefficients in logistic regression.</li>
+  <li data-lang="zh"><strong>θ₁, θ₂, ...</strong> = <strong>参数（权重）</strong>。这是 ERGM 要估计的。正的 θ 意味着"这个模式越多，网络越可能"。负的 θ 意味着"越多越不可能"。和逻辑回归的系数一样。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>exp(...)</strong> = just makes all values positive (probabilities must be positive).</li>
+  <li data-lang="zh"><strong>exp(...)</strong> = 只是让所有值变成正数（概率必须为正）。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>κ</strong> = a <strong>normalizing constant</strong> that makes all probabilities sum to 1. You never compute it directly (more on this later).</li>
+  <li data-lang="zh"><strong>κ</strong> = 一个<strong>归一化常数</strong>，让所有概率加起来等于 1。你永远不用直接算它（后面会解释为什么）。</li>
+</ul>
+
+<h3 id="reading-like-regression">
+  <span data-lang="en">Reading ERGM Like Logistic Regression</span>
+  <span data-lang="zh">像读逻辑回归一样读 ERGM</span>
+</h3>
+
+<p data-lang="en">
+The really useful version of the formula is the <strong>tie-level</strong> version. For any specific pair (i, j), the probability that they are connected is:
+</p>
+
+<p data-lang="zh">
+真正实用的版本是<strong>关系层面</strong>的公式。对于任意一对 (i, j)，他们之间有关系的概率是：
 </p>
 
 <div class="math-note">
-κ(θ) = Σ<sub>y*</sub> exp(θ<sup>T</sup> g(y*))
+log(odds of tie i→j) = θ₁ × Δg₁ + θ₂ × Δg₂ + ...
 </div>
 
 <p data-lang="en">
-This is a sum over <strong>all possible networks</strong>. For an undirected network with <em>n</em> nodes, there are 2<sup>n(n−1)/2</sup> possible networks. For a small network with n=10, this is 2<sup>45</sup> ≈ 3.5 × 10<sup>13</sup> networks. For n=100, the number is astronomically large.
+where <strong>Δg</strong> ("change statistic") = how much each network statistic changes if we add this one tie. This is exactly logistic regression form! The only difference: in regular logistic regression, predictors are fixed numbers (age, income). In ERGM, predictors <em>change</em> depending on the rest of the network.
 </p>
 
 <p data-lang="zh">
-这是对<strong>所有可能网络</strong>的求和。对于有 <em>n</em> 个节点的无向网络，有 2<sup>n(n−1)/2</sup> 个可能的网络。对于 n=10 的小网络，这是 2<sup>45</sup> ≈ 3.5 × 10<sup>13</sup> 个网络。对于 n=100，数字是天文数字。
+其中 <strong>Δg</strong>（"变化统计量"）= 如果我们加上这一条关系，每个网络统计量变化多少。这和逻辑回归的形式完全一样！唯一区别：普通逻辑回归的预测变量是固定数字（年龄、收入）。ERGM 的预测变量会随网络其他部分<em>变化</em>。
 </p>
 
 <p data-lang="en">
-<strong>We cannot enumerate all networks.</strong> Therefore, we cannot compute κ(θ) exactly. This is the central computational challenge of ERGM inference. We cannot use standard maximum likelihood estimation (which requires evaluating the likelihood P(Y = y<sub>obs</sub> | θ)).
+<strong>Example:</strong> Suppose your model has reciprocity and homophily on tenure. For the pair (Alice → Bob):
 </p>
 
 <p data-lang="zh">
-<strong>我们无法列举所有网络。</strong>因此，我们无法精确计算κ(θ)。这是ERGM推断的中心计算挑战。我们不能使用标准最大似然估计（这需要评估似然函数 P(Y = y<sub>obs</sub> | θ)）。
+<strong>举例：</strong>假设模型包含互惠性和工龄同质性。对于 (Alice → Bob) 这对：
 </p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en">Δg<sub>reciprocity</sub> = 1 if Bob already asks Alice (adding Alice→Bob creates a mutual pair), 0 otherwise</li>
+  <li data-lang="zh">Δg<sub>互惠</sub> = 1（如果 Bob 已经找 Alice 请教，加上 Alice→Bob 就形成互惠对），否则为 0</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en">Δg<sub>tenure homophily</sub> = 1 if Alice and Bob have similar tenure, 0 otherwise</li>
+  <li data-lang="zh">Δg<sub>工龄同质性</sub> = 1（如果 Alice 和 Bob 工龄相近），否则为 0</li>
+</ul>
 
 <p data-lang="en">
-<strong>Solution:</strong> Use Markov Chain Monte Carlo (MCMC). Instead of computing κ(θ) directly, we simulate networks from the ERGM distribution and learn from the simulations. If we can sample networks from P(Y | θ), we can estimate the model parameters by comparing observed network statistics to simulated statistics.
+If θ<sub>reciprocity</sub> = 2.0 and θ<sub>tenure</sub> = 0.5, and Bob already asks Alice and they have similar tenure, then: log(odds) = 2.0 × 1 + 0.5 × 1 = 2.5, meaning Alice is quite likely to ask Bob.
 </p>
 
 <p data-lang="zh">
-<strong>解决方案：</strong>使用马尔可夫链蒙特卡罗（MCMC）。与其直接计算κ(θ)，我们从ERGM分布模拟网络并从模拟中学习。如果我们能从 P(Y | θ) 采样网络，我们可以通过将观察到的网络统计量与模拟统计量进行比较来估计模型参数。
+如果 θ<sub>互惠</sub> = 2.0，θ<sub>工龄</sub> = 0.5，而且 Bob 已经找 Alice 请教、两人工龄相近，那么：log(odds) = 2.0 × 1 + 0.5 × 1 = 2.5，说明 Alice 很可能会找 Bob 请教。
 </p>
 
 <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
 
-<h2 id="mcmc-estimation">
-  <span data-lang="en">MCMC Estimation</span>
-  <span data-lang="zh">MCMC估计</span>
+<!-- ═══════════════════════════════════════════════════
+     LEVEL 4 — HOW IT'S ESTIMATED (MCMC intuition)
+     ═══════════════════════════════════════════════════ -->
+
+<h2 id="estimation">
+  <span data-lang="en">How ERGM Finds the Parameters</span>
+  <span data-lang="zh">ERGM 怎么找到参数</span>
 </h2>
 
 <p data-lang="en">
-MCMC-MLE (Maximum Likelihood Estimation via MCMC) works as follows:
+Here's the computational challenge: that normalizing constant κ requires summing over <strong>every possible network</strong>. For 10 people, there are 2<sup>45</sup> ≈ 35 trillion possible networks. For 100 people, the number is unimaginable. You simply cannot enumerate them all.
 </p>
 
 <p data-lang="zh">
-MCMC-MLE（通过MCMC的最大似然估计）工作如下：
+计算上的挑战是：归一化常数 κ 需要对<strong>所有可能的网络</strong>求和。10 个人就有 2<sup>45</sup> ≈ 35 万亿种可能的网络。100 个人的话，数字大到无法想象。你根本没法一个一个列举。
 </p>
-
-<h3 id="mcmc-steps">
-  <span data-lang="en">The MCMC Algorithm for ERGM</span>
-  <span data-lang="zh">ERGM的MCMC算法</span>
-</h3>
-
-<ol style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Initialize:</strong> Start with the observed network y<sub>obs</sub> (or a random network). Set initial parameter guess θ<sup>(0)</sup>.</li>
-  <li data-lang="zh"><strong>初始化：</strong>从观察到的网络 y<sub>obs</sub> 开始（或随机网络）。设置初始参数猜测θ<sup>(0)</sup>。</li>
-</ol>
-
-<ol style="margin-left: 2rem;">
-  <li data-lang="en"><strong>At iteration t:</strong>
-    <ul style="margin-left: 2rem;">
-      <li>Take current state y<sup>(t)</sup> and current parameters θ<sup>(t)</sup>.</li>
-      <li>Propose a new network y' by randomly toggling one edge in y<sup>(t)</sup> (Metropolis-Hastings step).</li>
-      <li>Compute acceptance probability: α = min(1, P(y' | θ<sup>(t)</sup>) / P(y<sup>(t)</sup> | θ<sup>(t)</sup>)) = min(1, exp(θ<sup>(t)T</sup> [g(y') − g(y<sup>(t)</sup>)]))</li>
-      <li>With probability α, accept y' and set y<sup>(t+1)</sup> = y'. Otherwise, keep y<sup>(t+1)</sup> = y<sup>(t)</sup>.</li>
-    </ul>
-  </li>
-  <li data-lang="zh"><strong>在第t次迭代：</strong>
-    <ul style="margin-left: 2rem;">
-      <li>取当前状态 y<sup>(t)</sup> 和当前参数θ<sup>(t)</sup>。</li>
-      <li>通过随机切换 y<sup>(t)</sup> 中的一条边来提议新网络 y'（Metropolis-Hastings步骤）。</li>
-      <li>计算接受概率：α = min(1, P(y' | θ<sup>(t)</sup>) / P(y<sup>(t)</sup> | θ<sup>(t)</sup>)) = min(1, exp(θ<sup>(t)T</sup> [g(y') − g(y<sup>(t)</sup>)]))</li>
-      <li>以概率α接受 y'，设置 y<sup>(t+1)</sup> = y'。否则，保持 y<sup>(t+1)</sup> = y<sup>(t)</sup>。</li>
-    </ul>
-  </li>
-</ol>
-
-<ol style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Burn-in:</strong> Run the chain for B iterations without updating θ (e.g., B = 10,000). This allows the chain to "forget" its initialization and converge to the true distribution under θ<sup>(0)</sup>.</li>
-  <li data-lang="zh"><strong>灼烧期：</strong>运行链B次迭代而不更新θ（例如 B = 10,000）。这允许链"遗忘"其初始化并收敛到θ<sup>(0)</sup>下的真实分布。</li>
-</ol>
-
-<ol style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Sample:</strong> After burn-in, collect S samples y<sup>(B)</sup>, y<sup>(B+lag)</sup>, y<sup>(B+2×lag)</sup>, ..., y<sup>(B+S×lag)</sup> (thinning by lag to reduce autocorrelation; e.g., lag = 100). Compute statistics: ḡ<sub>sim</sub> = (1/S) Σ g(y<sup>(t)</sup>).</li>
-  <li data-lang="zh"><strong>采样：</strong>灼烧后，收集S个样本 y<sup>(B)</sup>, y<sup>(B+lag)</sup>, y<sup>(B+2×lag)</sup>, ..., y<sup>(B+S×lag)</sup>（按滞后进行稀疏化以减少自相关；例如 lag = 100）。计算统计量：ḡ<sub>sim</sub> = (1/S) Σ g(y<sup>(t)</sup>)。</li>
-</ol>
-
-<ol style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Update θ:</strong> Compare observed statistics g(y<sub>obs</sub>) to simulated statistics ḡ<sub>sim</sub>. If they match, θ is good. If they differ, adjust θ to make simulated networks more like the observed network.
-    <div class="math-note">
-    θ<sup>(t+1)</sup> = θ<sup>(t)</sup> + step_size × [g(y<sub>obs</sub>) − ḡ<sub>sim</sub>]
-    </div>
-    This is a stochastic gradient step: increase parameters whose statistics are too low in simulations, decrease those whose statistics are too high.
-  </li>
-  <li data-lang="zh"><strong>更新θ：</strong>比较观察到的统计量 g(y<sub>obs</sub>) 和模拟统计量ḡ<sub>sim</sub>。如果匹配，θ是好的。如果不同，调整θ使模拟网络更像观察到的网络。
-    <div class="math-note">
-    θ<sup>(t+1)</sup> = θ<sup>(t)</sup> + step_size × [g(y<sub>obs</sub>) − ḡ<sub>sim</sub>]
-    </div>
-    这是一个随机梯度步骤：增加在模拟中统计量太低的参数，减少统计量太高的参数。
-  </li>
-</ol>
-
-<ol style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Repeat:</strong> Return to step 2 with updated θ<sup>(t+1)</sup>. Iterate until convergence: when g(y<sub>obs</sub>) ≈ ḡ<sub>sim</sub>.</li>
-  <li data-lang="zh"><strong>重复：</strong>用更新的θ<sup>(t+1)</sup>回到步骤2。迭代直到收敛：当 g(y<sub>obs</sub>) ≈ ḡ<sub>sim</sub>。</li>
-</ol>
-
-<h3 id="convergence-diagnostics">
-  <span data-lang="en">Convergence Diagnostics</span>
-  <span data-lang="zh">收敛诊断</span>
-</h3>
 
 <p data-lang="en">
-MCMC-MLE can fail silently if the chain doesn't converge. Key diagnostics:
+<strong>Solution: MCMC (Markov Chain Monte Carlo).</strong> Instead of checking every possible network, the computer does this:
 </p>
 
 <p data-lang="zh">
-如果链不收敛，MCMC-MLE可能无声地失败。关键诊断：
+<strong>解决办法：MCMC（马尔可夫链蒙特卡罗）。</strong>不逐一检查每个网络，计算机这样做：
 </p>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Parameter trace plots:</strong> Plot θ<sup>(t)</sup> over iterations. Should look like white noise around a mean (stable). If it trends or drifts, the chain hasn't converged.</li>
-  <li data-lang="zh"><strong>参数轨迹图：</strong>绘制各迭代的θ<sup>(t)</sup>。应该看起来像围绕平均值的白噪声（稳定）。如果趋势或漂移，链未收敛。</li>
-</ul>
+<ol style="margin-left: 2rem;">
+  <li data-lang="en">Start with the observed network and an initial guess for θ.</li>
+  <li data-lang="zh">从观察到的网络和初始猜测的 θ 开始。</li>
+</ol>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Simulated vs observed statistics:</strong> After fitting, plot g(y<sub>obs</sub>) alongside ḡ<sub>sim</sub>. For each statistic, the observed value should fall within the range of simulated values. Large discrepancies indicate model misfit.</li>
-  <li data-lang="zh"><strong>模拟 vs 观察统计量：</strong>拟合后，将 g(y<sub>obs</sub>) 与ḡ<sub>sim</sub> 并排绘制。对于每个统计量，观察值应该在模拟值的范围内。大的差异表示模型不拟合。</li>
-</ul>
+<ol style="margin-left: 2rem;">
+  <li data-lang="en">Randomly add or remove one tie at a time, creating simulated networks.</li>
+  <li data-lang="zh">每次随机加上或去掉一条关系，生成模拟网络。</li>
+</ol>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Effective sample size:</strong> The MCMC samples are autocorrelated. Report ESS (effective sample size) = S / (1 + 2 Σ ρ<sub>k</sub>) where ρ<sub>k</sub> is the autocorrelation at lag k. ESS should be ≥ 100 per parameter.</li>
-  <li data-lang="zh"><strong>有效样本量：</strong>MCMC样本是自相关的。报告ESS（有效样本量）= S / (1 + 2 Σ ρ<sub>k</sub>)，其中ρ<sub>k</sub> 是滞后 k 处的自相关。每个参数的ESS应该 ≥ 100。</li>
-</ul>
+<ol style="margin-left: 2rem;">
+  <li data-lang="en">Compare: do the simulated networks' statistics match the real network? If the simulations have too few triangles compared to reality, increase θ<sub>triangle</sub>. If too many, decrease it.</li>
+  <li data-lang="zh">比较：模拟网络的统计量和真实网络一致吗？如果模拟的三角形太少，就增大 θ<sub>三角形</sub>。太多就减小。</li>
+</ol>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Gelman-Rubin potential scale reduction (PSRF):</strong> Run multiple chains with different initializations. If chains converge to the same posterior, PSRF ≈ 1. Values > 1.05 suggest non-convergence.</li>
-  <li data-lang="zh"><strong>Gelman-Rubin潜在尺度缩减（PSRF）：</strong>运行多条具有不同初始化的链。如果链收敛到相同的后验，PSRF ≈ 1。值 > 1.05 表示不收敛。</li>
-</ul>
+<ol style="margin-left: 2rem;">
+  <li data-lang="en">Repeat until the simulated networks look like the real one. Then θ is your answer.</li>
+  <li data-lang="zh">重复，直到模拟网络看起来像真实网络。这时候的 θ 就是你的答案。</li>
+</ol>
+
+<p data-lang="en">
+<strong>In plain language:</strong> ERGM finds parameters by repeatedly asking "if these were the true rules of the network, would we see something like the real network?" It tweaks the rules until the answer is yes.
+</p>
+
+<p data-lang="zh">
+<strong>通俗说：</strong>ERGM 反复问"如果这些是网络的真实规则，我们能看到类似真实网络的东西吗？"然后不断调整规则直到答案是"能"。
+</p>
 
 <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
 
-<h2 id="degeneracy-problem">
+<!-- ═══════════════════════════════════════════════════
+     LEVEL 5 — COMMON PITFALLS
+     ═══════════════════════════════════════════════════ -->
+
+<h2 id="pitfalls">
+  <span data-lang="en">Common Pitfalls</span>
+  <span data-lang="zh">常见陷阱</span>
+</h2>
+
+<h3 id="degeneracy">
   <span data-lang="en">The Degeneracy Problem</span>
   <span data-lang="zh">退化问题</span>
-</h2>
-
-<p data-lang="en">
-Some ERGM specifications lead to <strong>degenerate distributions</strong>: the model assigns nearly all probability mass to a few extreme networks (almost empty or almost complete) rather than a realistic distribution around the observed network. This makes MCMC exploration impossible and parameter estimation unreliable.
-</p>
-
-<p data-lang="zh">
-某些ERGM规范导致<strong>退化分布</strong>：模型将几乎所有概率质量分配给几个极端网络（几乎为空或几乎完整），而不是观察网络周围的现实分布。这使得MCMC探索不可能且参数估计不可靠。
-</p>
-
-<h3 id="degeneracy-example">
-  <span data-lang="en">Example: The Triangle Term Problem</span>
-  <span data-lang="zh">示例：三角形项问题</span>
 </h3>
 
 <p data-lang="en">
-Consider a simple model with edges and triangles:
+Some model specifications break ERGM. The classic example: if you use a raw "triangle count" term, the model can become unstable — it only considers networks that are almost empty or almost completely connected, ignoring everything in between. This is called <strong>degeneracy</strong>.
 </p>
 
 <p data-lang="zh">
-考虑一个包含边和三角形的简单模型：
+有些模型设定会让 ERGM 崩溃。经典例子：如果你用原始的"三角形计数"项，模型会变得不稳定——它只考虑几乎没有连线或几乎全部连满的网络，忽略中间状态。这叫<strong>退化</strong>。
 </p>
 
+<p data-lang="en">
+<strong>Why?</strong> Each new triangle makes more triangles easier to form (positive feedback loop). The model either collapses to empty or explodes to full.
+</p>
+
+<p data-lang="zh">
+<strong>为什么？</strong>每多一个三角形都让形成更多三角形变得更容易（正反馈循环）。模型要么坍缩到空网络，要么爆炸到全连接。
+</p>
+
+<p data-lang="en">
+<strong>Solution:</strong> Use <strong>geometrically weighted terms</strong> (GWESP, GWDegree). These add diminishing returns — the first shared friend matters a lot, the second less, the third even less. This prevents the runaway feedback.
+</p>
+
+<p data-lang="zh">
+<strong>解决办法：</strong>使用<strong>几何加权项</strong>（GWESP、GWDegree）。它们引入递减效应——第一个共同朋友很重要，第二个没那么重要，第三个更不重要。这能防止失控的正反馈。
+</p>
+
+<h3 id="convergence">
+  <span data-lang="en">Convergence Issues</span>
+  <span data-lang="zh">收敛问题</span>
+</h3>
+
+<p data-lang="en">
+Since ERGM uses MCMC (a simulation-based method), it can fail to converge — meaning the computer hasn't found stable parameter values. Signs of trouble: parameter estimates keep changing, or simulated networks look nothing like the real one.
+</p>
+
+<p data-lang="zh">
+因为 ERGM 用的是 MCMC（基于模拟的方法），它可能不收敛——意思是计算机没找到稳定的参数值。出问题的迹象：参数估计一直在变，或者模拟出来的网络和真实网络完全不像。
+</p>
+
+<p data-lang="en">
+<strong>Fixes:</strong> Increase the number of simulations (burn-in, sample size). Use geometrically weighted terms. Simplify the model — start small, then add terms one at a time.
+</p>
+
+<p data-lang="zh">
+<strong>修复方法：</strong>增加模拟次数（burn-in、样本量）。使用几何加权项。简化模型——从小模型开始，逐个添加项。
+</p>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<!-- ═══════════════════════════════════════════════════
+     LEVEL 6 — READING OUTPUT
+     ═══════════════════════════════════════════════════ -->
+
+<h2 id="reading-output">
+  <span data-lang="en">How to Read ERGM Output</span>
+  <span data-lang="zh">怎么读 ERGM 输出</span>
+</h2>
+
+<p data-lang="en">
+ERGM output looks like logistic regression output. For each term you get an estimate, standard error, and p-value:
+</p>
+
+<p data-lang="zh">
+ERGM 输出看起来像逻辑回归输出。每个项都有估计值、标准误和 p 值：
+</p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Positive estimate:</strong> This pattern increases the probability of a tie. Example: θ<sub>reciprocity</sub> = +2.1 → ties tend to be reciprocal.</li>
+  <li data-lang="zh"><strong>正的估计值：</strong>这个模式增加关系形成的概率。例：θ<sub>互惠</sub> = +2.1 → 关系倾向于互惠。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Negative estimate:</strong> This pattern decreases the probability. Example: θ<sub>edges</sub> = −3.5 → the network is sparse (most pairs are NOT connected).</li>
+  <li data-lang="zh"><strong>负的估计值：</strong>这个模式降低概率。例：θ<sub>边</sub> = −3.5 → 网络是稀疏的（大多数人之间没有连线）。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>p &lt; 0.05:</strong> The effect is statistically significant.</li>
+  <li data-lang="zh"><strong>p &lt; 0.05：</strong>效应在统计上显著。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Larger |estimate|:</strong> Stronger effect.</li>
+  <li data-lang="zh"><strong>|估计值| 越大：</strong>效应越强。</li>
+</ul>
+
+<p data-lang="en">
+<strong>Goodness-of-fit check:</strong> After fitting, simulate 100+ networks from the model and compare their statistics to the real network. If the real network's statistics fall within the range of simulated ones, the model fits well.
+</p>
+
+<p data-lang="zh">
+<strong>拟合优度检查：</strong>拟合之后，从模型模拟 100+ 个网络，把它们的统计量和真实网络比较。如果真实网络的统计量在模拟范围之内，说明模型拟合得不错。
+</p>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<!-- ═══════════════════════════════════════════════════
+     LEVEL 7 — R CODE
+     ═══════════════════════════════════════════════════ -->
+
+<h2 id="r-code">
+  <span data-lang="en">R Code Example</span>
+  <span data-lang="zh">R 代码示例</span>
+</h2>
+
+<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
+# Load package
+library(ergm)
+
+# Use built-in dataset
+data(florentine)
+
+# Fit a simple model:
+#   edges       → controls overall density (like an intercept)
+#   mutual      → do ties tend to be reciprocal?
+#   gwesp(0.5)  → do friends-of-friends connect? (geometrically weighted)
+model &lt;- ergm(flo_net ~ edges + mutual + gwesp(0.5, fixed = TRUE),
+              control = control.ergm(seed = 123))
+
+# View results — read just like logistic regression
+summary(model)
+
+# Check model fit: simulate networks and compare to real one
+gof_result &lt;- gof(model)
+plot(gof_result)
+# Good fit = observed statistics (red line) within simulated range (boxplots)
+</pre>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<!-- ═══════════════════════════════════════════════════
+     LEVEL 8 — DEEP DIVE (full math for advanced readers)
+     ═══════════════════════════════════════════════════ -->
+
+<h2 id="deep-dive">
+  <span data-lang="en">Deep Dive: Full Mathematical Details</span>
+  <span data-lang="zh">深入：完整数学细节</span>
+</h2>
+
+<p data-lang="en">
+<em>This section is for readers comfortable with probability theory and statistical modeling. If you understood the sections above, you already have enough to read ERGM papers. The math below explains the "why" behind each step.</em>
+</p>
+
+<p data-lang="zh">
+<em>本节面向熟悉概率论和统计建模的读者。如果你看懂了上面的内容，已经足够读 ERGM 论文了。下面的数学解释每一步背后的"为什么"。</em>
+</p>
+
+<h3 id="formal-model">
+  <span data-lang="en">Formal Probability Model</span>
+  <span data-lang="zh">形式概率模型</span>
+</h3>
+
 <div class="math-note">
-P(Y = y | θ<sub>E</sub>, θ<sub>T</sub>) = exp(θ<sub>E</sub> × |E| + θ<sub>T</sub> × |T|) / κ
+P(Y = y | θ) = exp(θ<sup>T</sup> g(y)) / κ(θ)
 </div>
 
 <p data-lang="en">
-where |E| is edge count and |T| is triangle count. If θ<sub>T</sub> > 0 (encouraging triangles), the model can reach a "tipping point": as the network adds edges, creating triangles becomes easier. Soon the model concentrates probability on either near-empty networks (where no triangles can form) or near-complete networks (where most possible triangles exist). The distribution becomes U-shaped: near-empty and near-complete networks are vastly more likely than observed sparse-but-clustered networks.
+where <strong>g(y)</strong> is a vector of sufficient statistics, <strong>θ</strong> is the parameter vector, and <strong>κ(θ) = Σ<sub>y*</sub> exp(θ<sup>T</sup> g(y*))</strong> sums over all 2<sup>n(n−1)/2</sup> possible networks (undirected) or 2<sup>n(n−1)</sup> (directed). This is an exponential family distribution.
 </p>
 
 <p data-lang="zh">
-其中 |E| 是边计数，|T| 是三角形计数。如果θ<sub>T</sub> > 0（鼓励三角形），模型可能达到"临界点"：当网络添加边时，创建三角形变得更容易。很快模型将概率集中在接近空网络（其中无法形成三角形）或接近完整网络（其中存在大多数可能的三角形）上。分布变成U形：近空和接近完整的网络比观察到的稀疏但聚集的网络更可能得多。
+其中 <strong>g(y)</strong> 是充分统计量向量，<strong>θ</strong> 是参数向量，<strong>κ(θ) = Σ<sub>y*</sub> exp(θ<sup>T</sup> g(y*))</strong> 对所有 2<sup>n(n−1)/2</sup>（无向）或 2<sup>n(n−1)</sup>（有向）个可能网络求和。这是指数族分布。
 </p>
 
-<p data-lang="en">
-<strong>Why this happens mathematically:</strong> The change statistic for an edge (i, j) when you add it is: δg<sub>ij</sub> ≈ 1 (for edge) + 2L<sub>ij</sub> (triangles, where L<sub>ij</sub> is the count of common neighbors of i and j). In a dense network, L<sub>ij</sub> is large, making the log-odds huge and the edge almost certain. In a sparse network, L<sub>ij</sub> is small, making the log-odds negative and edges unlikely. This non-linear feedback destabilizes the model.
-</p>
-
-<p data-lang="zh">
-<strong>数学上为什么会发生这种情况：</strong>当添加边 (i, j) 时的变化统计量大约为：δg<sub>ij</sub> ≈ 1（对于边）+ 2L<sub>ij</sub>（三角形，其中 L<sub>ij</sub> 是 i 和 j 的公共邻居计数）。在密集网络中，L<sub>ij</sub> 很大，使对数几率巨大，边几乎是确定的。在稀疏网络中，L<sub>ij</sub> 很小，使对数几率为负，边不太可能。这种非线性反馈使模型不稳定。
-</p>
-
-<h3 id="gwterms">
-  <span data-lang="en">Solution: Geometrically Weighted Terms</span>
-  <span data-lang="zh">解决方案：几何加权项</span>
+<h3 id="change-statistic">
+  <span data-lang="en">Change Statistic and Conditional Log-Odds</span>
+  <span data-lang="zh">变化统计量与条件对数几率</span>
 </h3>
 
 <p data-lang="en">
-Instead of raw triangle counts, use <strong>geometrically weighted</strong> terms that grow sublinearly with local clustering. Common choices:
+Conditioning on all other ties (Y<sub>−ij</sub>), the probability of tie (i, j) existing is:
 </p>
 
 <p data-lang="zh">
-与其使用原始三角形计数，使用<strong>几何加权</strong>项，该项随本地聚类而亚线性增长。常见选择：
+在给定所有其他关系（Y<sub>−ij</sub>）的条件下，关系 (i, j) 存在的概率为：
 </p>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>GWESP (Geometrically Weighted Edgewise Shared Partner):</strong> Instead of counting all triangles, count "edgewise shared partners"—for each edge, how many common neighbors? Then weight them geometrically: the first shared partner contributes θ<sub>GWESP</sub>, the second contributes θ<sub>GWESP</sub> × λ, the third θ<sub>GWESP</sub> × λ², etc., where 0 < λ < 1. This attenuates the impact of many shared partners, preventing the tipping point.</li>
-  <li data-lang="zh"><strong>GWESP（几何加权边尖端共享伙伴）：</strong>与其计算所有三角形，计算"边尖端共享伙伴"——对于每条边，有多少个公共邻居？然后进行几何加权：第一个共享伙伴贡献θ<sub>GWESP</sub>，第二个贡献θ<sub>GWESP</sub> × λ，第三个θ<sub>GWESP</sub> × λ²，等等，其中 0 < λ < 1。这减弱了许多共享伙伴的影响，防止临界点。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>GWDegree (Geometrically Weighted Degree):</strong> Instead of raw degree distribution terms g<sub>degree=k</sub>, use geometrically weighted degree: Σ deg(v) × λ^deg(v). This allows the model to control degree heterogeneity without promoting extreme hub-and-spoke structures.</li>
-  <li data-lang="zh"><strong>GWDegree（几何加权度）：</strong>与其使用原始度分布项 g<sub>degree=k</sub>，使用几何加权度：Σ deg(v) × λ^deg(v)。这允许模型控制度异质性，而不会促进极端的轮辐结构。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Other GW terms:</strong> GWDSP (geometrically weighted dyadic shared partner), GWNDSP (non-directed version), etc. The key principle: weight higher-order effects with exponential decay (tuning parameter λ ∈ [0.3, 0.9]).</li>
-  <li data-lang="zh"><strong>其他GW项：</strong>GWDSP（几何加权二元共享伙伴）、GWNDSP（无向版本）等。关键原则：用指数衰减对高阶效应进行加权（调整参数λ ∈ [0.3, 0.9]）。</li>
-</ul>
+<div class="math-note">
+logit P(Y<sub>ij</sub> = 1 | Y<sub>−ij</sub>) = θ<sup>T</sup> δg<sub>ij</sub>
+</div>
 
 <p data-lang="en">
-<strong>Modern practice:</strong> Avoid raw triangle counts, degree distributions, and similar terms in ERGM specifications. Use geometrically weighted versions instead. This dramatically improves MCMC convergence and model stability.
+where δg<sub>ij</sub> = g(y<sub>+ij</sub>) − g(y<sub>−ij</sub>) is the change in network statistics when edge (i, j) is toggled. The normalizing constant κ cancels out, making this computationally tractable.
 </p>
 
 <p data-lang="zh">
-<strong>现代实践：</strong>在ERGM规范中避免原始三角形计数、度分布和类似的项。使用几何加权版本。这大大改善了MCMC收敛和模型稳定性。
+其中 δg<sub>ij</sub> = g(y<sub>+ij</sub>) − g(y<sub>−ij</sub>) 是翻转边 (i, j) 时网络统计量的变化。归一化常数 κ 被约掉了，使计算变得可行。
 </p>
 
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+<h3 id="mcmc-mle">
+  <span data-lang="en">MCMC-MLE Algorithm</span>
+  <span data-lang="zh">MCMC-MLE 算法</span>
+</h3>
 
-<h2 id="r-implementation">
-  <span data-lang="en">R Implementation with statnet</span>
-  <span data-lang="zh">使用statnet的R实现</span>
-</h2>
+<ol style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Initialize</strong> with observed network y<sub>obs</sub> and initial θ<sup>(0)</sup>.</li>
+  <li data-lang="zh"><strong>初始化：</strong>观察网络 y<sub>obs</sub> 和初始 θ<sup>(0)</sup>。</li>
+</ol>
 
-<p data-lang="en">
-The <code>ergm</code> package (part of the <code>statnet</code> suite) is the standard for fitting ERGMs in R. Here's a complete working example.
-</p>
+<ol style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Simulate</strong> via Metropolis-Hastings: propose y' by toggling one edge; accept with probability α = min(1, exp(θ<sup>T</sup>[g(y') − g(y<sup>(t)</sup>)])).</li>
+  <li data-lang="zh"><strong>模拟：</strong>Metropolis-Hastings 方法——翻转一条边提议 y'，以概率 α = min(1, exp(θ<sup>T</sup>[g(y') − g(y<sup>(t)</sup>)])) 接受。</li>
+</ol>
 
-<p data-lang="zh">
-<code>ergm</code> 包（<code>statnet</code> 套件的一部分）是在 R 中拟合 ERGM 的标准。以下是一个完整的工作示例。
-</p>
+<ol style="margin-left: 2rem;">
+  <li data-lang="en"><strong>After burn-in</strong>, collect S thinned samples. Compute ḡ<sub>sim</sub> = (1/S) Σ g(y<sup>(t)</sup>).</li>
+  <li data-lang="zh"><strong>灼烧期后</strong>，收集 S 个稀疏样本。计算 ḡ<sub>sim</sub> = (1/S) Σ g(y<sup>(t)</sup>)。</li>
+</ol>
 
-<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
-# Install if needed: install.packages("ergm")
-library(ergm)
-library(tidyverse)
+<ol style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Update:</strong> θ<sup>(t+1)</sup> = θ<sup>(t)</sup> + step × [g(y<sub>obs</sub>) − ḡ<sub>sim</sub>]. This is stochastic gradient ascent on the log-likelihood.</li>
+  <li data-lang="zh"><strong>更新：</strong>θ<sup>(t+1)</sup> = θ<sup>(t)</sup> + step × [g(y<sub>obs</sub>) − ḡ<sub>sim</sub>]。这是对数似然的随机梯度上升。</li>
+</ol>
 
-# Example: Florentine families business network
-data(florentine)
-flo_net &lt;- florentine
+<ol style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Converge</strong> when g(y<sub>obs</sub>) ≈ ḡ<sub>sim</sub>.</li>
+  <li data-lang="zh"><strong>收敛：</strong>当 g(y<sub>obs</sub>) ≈ ḡ<sub>sim</sub> 时停止。</li>
+</ol>
 
-# Quick look at network
-summary(flo_net)  # Number of nodes, edges, etc.
-
-# Specify ERGM model
-# edges: controls sparsity
-# mutual: encourages reciprocity (directed networks)
-# gwesp: geometrically weighted edgewise shared partners (clustering)
-# nodecov: effect of node attribute (e.g., wealth)
-# absdiff: homophily on continuous attributes
-
-# Simple model with edges, reciprocity, and clustering
-model_1 &lt;- ergm(flo_net ~ edges + mutual + gwesp(0.5, fixed = TRUE),
-                 control = control.ergm(seed = 123,
-                                        MCMC.samplesize = 5000,
-                                        MCMC.interval = 50,
-                                        MCMC.burnin = 5000))
-
-# View results
-summary(model_1)
-# Output shows:
-#   - Estimate: fitted parameter θ
-#   - Std. Error: standard error from MCMC
-#   - t-ratio: θ / SE
-#   - p-value: two-sided test that θ = 0
-# Interpretation: positive estimate means that statistic increases the network probability
-
-# Check convergence diagnostics
-# From summary output, look for:
-#   - All p-values shown (good)
-#   - t-ratios not extreme (|t| &lt; 5 is good)
-#   - If summary shows "Warning: MCMC did not converge", try:
-#       - Increase MCMC.samplesize (to 10000)
-#       - Increase MCMC.burnin (to 10000)
-#       - Increase MCMC.interval (to 100)
-
-# Manual convergence check: trace plots
-# (Note: mcmc.diagnostics is deprecated; use gof + graphical assessment instead)
-print(model_1)
-
-# Goodness-of-fit: Compare simulated and observed statistics
-gof_model_1 &lt;- gof(model_1)
-plot(gof_model_1)
-# Should show observed statistics (red) within the range of simulated distributions (boxplots)
-
-# Coefficient interpretation
-coef(model_1)
-# edges: negative means network is sparse (decreases probability of each edge)
-# mutual: positive means directed ties tend to be reciprocated
-# gwesp: positive means clustering is present (common neighbors increase tie probability)
-
-# Simulate networks from fitted model
-sim_nets &lt;- simulate(model_1, nsim = 100, seed = 456)
-# Each simulated network should resemble observed network in key statistics
-
-# Extract simulated network statistics
-sim_stats &lt;- data.frame(
-  edges = sapply(sim_nets, function(net) summary(net ~ edges)),
-  mutual = sapply(sim_nets, function(net) summary(net ~ mutual)),
-  gwesp = sapply(sim_nets, function(net) summary(net ~ gwesp(0.5, fixed = TRUE)))
-)
-
-# Compare to observed
-obs_stats &lt;- c(
-  edges = summary(flo_net ~ edges),
-  mutual = summary(flo_net ~ mutual),
-  gwesp = summary(flo_net ~ gwesp(0.5, fixed = TRUE))
-)
-
-print(obs_stats)
-print(colMeans(sim_stats))
-# Should be similar
-
-# Model comparison with likelihood ratio test
-# Fit a more complex model
-model_2 &lt;- ergm(flo_net ~ edges + mutual + gwesp(0.5, fixed = TRUE)
-                 + nodefactor("Faction"),
-                 control = control.ergm(seed = 123))
-
-# Likelihood ratio test (if both models fit successfully)
-anova(model_1, model_2, test = "Chisq")
-# Small p-value suggests model_2 is significantly better
-
-# Extract and visualize
-coef_df &lt;- data.frame(
-  model = c("Model 1", "Model 1", "Model 1",
-            "Model 2", "Model 2", "Model 2", "Model 2"),
-  term = c("edges", "mutual", "gwesp",
-           "edges", "mutual", "gwesp", "nodefactor"),
-  estimate = c(coef(model_1), coef(model_2))
-)
-
-ggplot(coef_df, aes(x = term, y = estimate, fill = model)) +
-  geom_col(position = "dodge") +
-  geom_hline(yintercept = 0, color = "black", linetype = "dashed") +
-  labs(title = "ERGM Coefficient Comparison",
-       x = "Term", y = "Estimate",
-       fill = "Model") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-</pre>
-
-<h3 id="interpretation-guide">
-  <span data-lang="en">Interpretation Guide</span>
-  <span data-lang="zh">解释指南</span>
+<h3 id="degeneracy-math">
+  <span data-lang="en">Degeneracy: Mathematical Explanation</span>
+  <span data-lang="zh">退化：数学解释</span>
 </h3>
 
 <p data-lang="en">
-<strong>Reading ERGM output:</strong>
+For a model with edges and triangles: P(Y = y) ∝ exp(θ<sub>E</sub>|E| + θ<sub>T</sub>|T|). When θ<sub>T</sub> &gt; 0, the change statistic for edge (i,j) includes +2L<sub>ij</sub> (twice the number of common neighbors). In dense regions, L<sub>ij</sub> is large → adding edges becomes self-reinforcing → the distribution becomes bimodal (near-empty or near-complete). <strong>Geometrically weighted terms</strong> (GWESP) fix this by applying exponential decay: each additional shared partner contributes λ times less (0 &lt; λ &lt; 1), capping the positive feedback.
 </p>
 
 <p data-lang="zh">
-<strong>阅读ERGM输出：</strong>
+对于包含边和三角形的模型：P(Y = y) ∝ exp(θ<sub>E</sub>|E| + θ<sub>T</sub>|T|)。当 θ<sub>T</sub> &gt; 0 时，边 (i,j) 的变化统计量包含 +2L<sub>ij</sub>（公共邻居数的两倍）。在密集区域，L<sub>ij</sub> 很大 → 加边自我强化 → 分布变成双峰的（几乎空或几乎满）。<strong>几何加权项</strong>（GWESP）通过指数衰减来修复：每增加一个共享伙伴的贡献乘以 λ（0 &lt; λ &lt; 1），限制了正反馈。
 </p>
 
+<h3 id="convergence-diagnostics">
+  <span data-lang="en">Convergence Diagnostics Checklist</span>
+  <span data-lang="zh">收敛诊断清单</span>
+</h3>
+
 <ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Positive coefficient:</strong> That network statistic increases the log-probability of the network. Example: θ<sub>mutual</sub> = 0.5 means adding a mutual (reciprocated) tie increases the network's probability—the network is more likely to have reciprocal relationships.</li>
-  <li data-lang="zh"><strong>正系数：</strong>该网络统计量增加网络的对数概率。示例：θ<sub>mutual</sub> = 0.5 表示添加相互（互惠）关系增加网络的概率——网络更可能具有相互关系。</li>
+  <li data-lang="en"><strong>Trace plots:</strong> θ<sup>(t)</sup> should look like white noise around a mean. Drift = not converged.</li>
+  <li data-lang="zh"><strong>轨迹图：</strong>θ<sup>(t)</sup> 应像围绕均值的白噪声。漂移 = 未收敛。</li>
 </ul>
 
 <ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Negative coefficient:</strong> That statistic decreases the log-probability. Example: θ<sub>edges</sub> = −2 means more edges make the network less probable—the network is sparse.</li>
-  <li data-lang="zh"><strong>负系数：</strong>该统计量降低对数概率。示例：θ<sub>edges</sub> = −2 表示更多边使网络不太可能——网络是稀疏的。</li>
+  <li data-lang="en"><strong>GOF plots:</strong> Observed statistics should fall within simulated range.</li>
+  <li data-lang="zh"><strong>GOF 图：</strong>观察统计量应在模拟范围之内。</li>
 </ul>
 
 <ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Magnitude matters:</strong> Larger absolute values mean stronger effects. θ = −10 is an extremely strong sparse preference; θ = −0.1 is weak.</li>
-  <li data-lang="zh"><strong>大小很重要：</strong>较大的绝对值意味着更强的效果。θ = −10 是一个极强的稀疏偏好；θ = −0.1 是弱的。</li>
+  <li data-lang="en"><strong>Effective sample size (ESS):</strong> Should be ≥ 100 per parameter. ESS = S / (1 + 2Σρ<sub>k</sub>).</li>
+  <li data-lang="zh"><strong>有效样本量（ESS）：</strong>每个参数应 ≥ 100。ESS = S / (1 + 2Σρ<sub>k</sub>)。</li>
 </ul>
 
 <ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Significance (p-value):</strong> If p < 0.05, the parameter is significantly different from 0. If p > 0.05, the effect is not statistically significant (could be noise).</li>
-  <li data-lang="zh"><strong>显著性（p值）：</strong>如果 p < 0.05，参数与 0 显著不同。如果 p > 0.05，效果在统计上不显著（可能是噪声）。</li>
-</ul>
-
-<p data-lang="en">
-<strong>Common pitfalls:</strong>
-</p>
-
-<p data-lang="zh">
-<strong>常见陷阱：</strong>
-</p>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>MCMC did not converge:</strong> Check trace plots (parameter estimates over iterations should be stable white noise). If they drift, try: increase burn-in, increase sample size, use geometrically weighted terms instead of raw terms, simplify the model (remove high-order terms).</li>
-  <li data-lang="zh"><strong>MCMC未收敛：</strong>检查轨迹图（参数估计在迭代中应该是稳定的白噪声）。如果漂移，尝试：增加灼烧期、增加样本量、使用几何加权项而不是原始项、简化模型（删除高阶项）。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>MCMC explodes:</strong> The chain explores pathological networks with infinite statistics. This is the degeneracy problem (see above). Remove problematic terms (e.g., raw triangle counts) and use geometrically weighted alternatives.</li>
-  <li data-lang="zh"><strong>MCMC爆炸：</strong>链探索具有无限统计量的病理网络。这是退化问题（见上文）。删除有问题的项（例如原始三角形计数）并使用几何加权替代品。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Model doesn't fit observed network:</strong> After fitting, simulate networks and compare statistics. If observed statistics lie outside the range of simulated statistics (in GOF plot), the model misses key features. Add terms capturing those features (e.g., if observed clustering is higher, add GWESP or other clustering terms).</li>
-  <li data-lang="zh"><strong>模型不拟合观察网络：</strong>拟合后，模拟网络并比较统计量。如果观察统计量在模拟统计量范围之外（在GOF图中），模型缺少关键特征。添加捕捉这些特征的项（例如，如果观察到的聚类更高，添加GWESP或其他聚类项）。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Too many parameters:</strong> With many predictors, standard errors inflate and MCMC becomes inefficient. Start with a minimal model (edges + one or two structural terms + attributes). Incrementally add terms based on goodness-of-fit diagnostics.</li>
-  <li data-lang="zh"><strong>参数过多：</strong>有许多预测因子，标准误差增加，MCMC变得低效。从最小模型开始（边 + 一个或两个结构项 + 属性）。基于拟合优度诊断增量添加项。</li>
-</ul>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
-
-<h2 id="summary-key-points">
-  <span data-lang="en">Summary: Key Takeaways</span>
-  <span data-lang="zh">总结：关键要点</span>
-</h2>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>ERGM is a probability model</strong> for networks: P(Y = y) ∝ exp(θ<sup>T</sup> g(y)). It assigns probability to each possible network based on its network statistics.</li>
-  <li data-lang="zh"><strong>ERGM是网络的概率模型</strong>：P(Y = y) ∝ exp(θ<sup>T</sup> g(y))。它根据其网络统计量为每个可能的网络分配概率。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Network statistics</strong> (edges, clustering, reciprocity, homophily, etc.) are the predictors. Parameters θ quantify their effects on tie probability.</li>
-  <li data-lang="zh"><strong>网络统计量</strong>（边、聚类、互惠、同群偏好等）是预测因子。参数θ量化它们对关系概率的影响。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>The normalizing constant κ(θ) is intractable</strong> (requires summing over all 2^(n choose 2) possible networks), so we use MCMC-MLE to estimate θ by comparing observed statistics to simulated statistics.</li>
-  <li data-lang="zh"><strong>正规化常数κ(θ)难以处理</strong>（需要对所有 2^(n choose 2) 个可能网络求和），所以我们使用MCMC-MLE通过比较观察统计量和模拟统计量来估计θ。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Degeneracy is a major challenge:</strong> Some model specifications (e.g., raw triangle terms) produce U-shaped distributions concentrated on empty or complete networks. Use geometrically weighted terms (GWESP, GWDegree) instead.</li>
-  <li data-lang="zh"><strong>退化是一个主要挑战：</strong>某些模型规范（例如原始三角形项）产生集中在空网络或完整网络上的U形分布。使用几何加权项（GWESP、GWDegree）。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Always check convergence:</strong> Examine parameter trace plots, compare observed to simulated statistics (GOF), and verify that the model can generate networks resembling the observed data.</li>
-  <li data-lang="zh"><strong>始终检查收敛：</strong>检查参数轨迹图、比较观察到的和模拟统计量（GOF），并验证模型可以生成类似观察数据的网络。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>ERGM is powerful but challenging:</strong> Unlike standard regression, network inference has fundamental computational barriers. Patience with MCMC diagnostics and iterative model refinement is essential.</li>
-  <li data-lang="zh"><strong>ERGM很强大但很有挑战性：</strong>与标准回归不同，网络推断有基本的计算障碍。对MCMC诊断的耐心和迭代模型改进是必不可少的。</li>
+  <li data-lang="en"><strong>Gelman-Rubin PSRF:</strong> Run multiple chains; PSRF ≈ 1.0 indicates convergence. &gt; 1.05 = problem.</li>
+  <li data-lang="zh"><strong>Gelman-Rubin PSRF：</strong>运行多条链；PSRF ≈ 1.0 表示收敛。&gt; 1.05 = 有问题。</li>
 </ul>
 
 <div class="insight-box" style="background: var(--warm); color: white; padding: 1rem; border-radius: 0.3rem; margin-top: 1rem;">
-  <p data-lang="en"><strong>Insight:</strong> ERGMs connect network science to statistical modeling. By specifying which network statistics matter (clustering, degree distribution, homophily), you embed your theoretical assumptions into a likelihood. The fitted parameters then quantify the strength of each mechanism. This makes ERGM invaluable for testing network theories and understanding why real networks take the shapes they do.</p>
-  <p data-lang="zh"><strong>洞察：</strong>ERGM将网络科学与统计建模联系起来。通过指定哪些网络统计量很重要（聚类、度分布、同群偏好），你将理论假设嵌入似然函数中。然后拟合参数量化每个机制的强度。这使ERGM对于测试网络理论和理解为什么现实网络具有特定形状至关重要。</p>
+  <p data-lang="en"><strong>Summary:</strong> ERGM is logistic regression for networks. It predicts ties based on network patterns (reciprocity, clustering, homophily) and personal traits. The key challenge is estimation (MCMC) and model stability (degeneracy). Start simple, check convergence, and use geometrically weighted terms.</p>
+  <p data-lang="zh"><strong>总结：</strong>ERGM 是给网络做的逻辑回归。它根据网络模式（互惠、聚类、同质性）和个人特征预测关系。关键挑战是估计（MCMC）和模型稳定性（退化）。从简单模型开始，检查收敛，使用几何加权项。</p>
 </div>
