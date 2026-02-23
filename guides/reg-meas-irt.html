@@ -1,0 +1,714 @@
+---
+layout: methods-guide
+title: "Item Response Theory: Interactive ICC Explorer"
+title_zh: "项目反应理论：ICC 交互演示"
+parent_title: "Measurement & Scaling"
+parent_title_zh: "测量与量表"
+parent_url: "reg-measurement.html"
+bilingual: true
+---
+
+<style>
+  .method-header {
+    background: linear-gradient(135deg, var(--cream) 0%, var(--parchment) 100%);
+    border-left: 4px solid var(--gold);
+    padding: 24px;
+    margin-bottom: 28px;
+    border-radius: 3px;
+  }
+  
+  .method-meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faded);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 12px;
+  }
+  
+  .method-header h1 {
+    font-family: var(--serif);
+    font-size: 32px;
+    color: var(--ink);
+    margin: 8px 0 12px 0;
+    font-weight: normal;
+  }
+  
+  .method-header p {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--ink-faded);
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  .insight-box {
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-family: var(--serif);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  
+  .math-note {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--parchment);
+    padding: 12px 16px;
+    border-radius: 3px;
+    margin: 10px 0;
+    color: var(--ink);
+    overflow-x: auto;
+  }
+  
+  .section-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--ink);
+    margin: 28px 0 14px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gold);
+  }
+  
+  .theory-text {
+    font-family: var(--serif);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 12px 0;
+  }
+  
+  .controls-section {
+    background: var(--parchment);
+    padding: 18px;
+    border-radius: 3px;
+    margin: 16px 0;
+  }
+  
+  .control-group {
+    margin: 16px 0;
+    padding: 12px;
+    background: white;
+    border-radius: 3px;
+    border-left: 3px solid var(--gold);
+  }
+  
+  .control-label {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .slider-container {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  
+  input[type="range"] {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--ink-ghost);
+    outline: none;
+    -webkit-appearance: none;
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+  }
+  
+  input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    border: none;
+  }
+  
+  .value-display {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink);
+    min-width: 50px;
+    text-align: right;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 10px;
+    margin: 16px 0;
+  }
+  
+  button {
+    padding: 10px 16px;
+    font-family: var(--sans);
+    font-size: 13px;
+    background: var(--gold);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  button:hover {
+    background: var(--warm);
+  }
+  
+  #irtChart {
+    max-width: 100%;
+    height: 400px;
+    margin: 20px 0;
+  }
+  
+  .theta-info {
+    background: var(--cream);
+    padding: 12px;
+    border-radius: 3px;
+    margin: 12px 0;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink);
+  }
+  
+  .code-block {
+    background: var(--parchment);
+    padding: 16px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 13px;
+    overflow-x: auto;
+    line-height: 1.7;
+    margin: 12px 0;
+    color: var(--ink);
+  }
+  
+  .code-label {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ink-faded);
+    margin-top: 14px;
+    margin-bottom: 6px;
+  }
+  
+  [data-lang="zh"] {
+    display: none;
+  }
+  
+  body.lang-zh [data-lang="en"] {
+    display: none;
+  }
+  
+  body.lang-zh [data-lang="zh"] {
+    display: inline;
+  }
+  
+  .lang-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background: var(--gold);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    z-index: 100;
+  }
+</style>
+
+<div class="method-header">
+  <div class="method-meta" data-lang="en">INTERACTIVE SIMULATION · GUIDE 1</div>
+  <div class="method-meta" data-lang="zh">交互式演示 · 指南 1</div>
+  <h1 data-lang="en">Item Response Theory: ICC Explorer</h1>
+  <h1 data-lang="zh">项目反应理论：ICC 交互演示</h1>
+  <p data-lang="en">Visualize how item difficulty (b) and discrimination (a) shape the probability of a correct response.</p>
+  <p data-lang="zh">可视化展示项目难度 (b) 和区分度 (a) 如何影响答对的概率。</p>
+</div>
+
+<div class="section-title" data-lang="en">Understanding the 2PL Model</div>
+<div class="section-title" data-lang="zh">理解 2PL 模型</div>
+
+<div class="theory-text" data-lang="en">
+  Item Response Theory (IRT) models the probability that a person with ability <strong>θ</strong> correctly answers an item. The 2-parameter logistic (2PL) model is:
+</div>
+<div class="theory-text" data-lang="zh">
+  项目反应理论 (IRT) 对能力为 <strong>θ</strong> 的被试答对项目的概率进行建模。2参数逻辑模型 (2PL) 为：
+</div>
+
+<div class="math-note">
+  <strong>P(correct | θ, a, b) = 1 / (1 + exp(-a(θ - b)))</strong>
+  <br><br>
+  <span data-lang="en">
+    • <strong>θ</strong>: person's latent ability (x-axis, ranges -4 to +4)<br>
+    • <strong>b</strong>: difficulty parameter (location; shifts curve left/right; where P=0.5)<br>
+    • <strong>a</strong>: discrimination parameter (slope; steepness of curve; reflects item informativeness)<br>
+    • <strong>P(correct)</strong>: probability of correct response (y-axis, 0 to 1)
+  </span>
+  <span data-lang="zh">
+    • <strong>θ</strong>：被试的潜在能力（x轴，范围 -4 到 +4）<br>
+    • <strong>b</strong>：难度参数（位置；左右移动曲线；P=0.5的位置）<br>
+    • <strong>a</strong>：区分度参数（斜率；曲线的陡峭程度；反映项目信息量）<br>
+    • <strong>P(correct)</strong>：答对的概率（y轴，0 到 1）
+  </span>
+</div>
+
+<div class="insight-box" data-lang="en">
+  <strong>Rasch Model (1PL):</strong> The Rasch model is the special case where <strong>a=1</strong> for all items. All items discriminate equally; only difficulty differs. This is more restrictive but often more parsimonious.
+</div>
+<div class="insight-box" data-lang="zh">
+  <strong>Rasch 模型 (1PL)：</strong>Rasch 模型是所有项目的 <strong>a=1</strong> 的特殊情况。所有项目的区分度相同，只有难度不同。这更具限制性，但通常更简洁。
+</div>
+
+<div class="section-title" data-lang="en">Interactive ICC Simulator</div>
+<div class="section-title" data-lang="zh">交互式 ICC 演示器</div>
+
+<div class="controls-section">
+  <div class="theory-text" data-lang="en" style="margin-top: 0; margin-bottom: 16px;">
+    Adjust the sliders below to see how difficulty and discrimination change each item's ICC. All four curves are shown simultaneously.
+  </div>
+  <div class="theory-text" data-lang="zh" style="margin-top: 0; margin-bottom: 16px;">
+    调整下方滑块以查看难度和区分度如何改变每个项目的 ICC。所有四条曲线同时显示。
+  </div>
+  
+  <div class="control-group">
+    <div class="control-label" data-lang="en">
+      <span style="color: #0066CC;">■ Item 1 (Easy, Low Discrimination)</span>
+    </div>
+    <div class="control-label" data-lang="zh">
+      <span style="color: #0066CC;">■ 项目 1 (容易，低区分度)</span>
+    </div>
+    <div class="control-label" data-lang="en">Discrimination (a)</div>
+    <div class="control-label" data-lang="zh">区分度 (a)</div>
+    <div class="slider-container">
+      <input type="range" id="item1-a" min="0.5" max="3" step="0.1" value="1">
+      <span class="value-display" id="item1-a-val">1.0</span>
+    </div>
+    <div class="control-label" data-lang="en">Difficulty (b)</div>
+    <div class="control-label" data-lang="zh">难度 (b)</div>
+    <div class="slider-container">
+      <input type="range" id="item1-b" min="-3" max="3" step="0.1" value="-1">
+      <span class="value-display" id="item1-b-val">-1.0</span>
+    </div>
+  </div>
+  
+  <div class="control-group">
+    <div class="control-label" data-lang="en">
+      <span style="color: #00AA00;">■ Item 2 (Medium Difficulty, Medium Discrimination)</span>
+    </div>
+    <div class="control-label" data-lang="zh">
+      <span style="color: #00AA00;">■ 项目 2 (中等难度，中等区分度)</span>
+    </div>
+    <div class="control-label" data-lang="en">Discrimination (a)</div>
+    <div class="control-label" data-lang="zh">区分度 (a)</div>
+    <div class="slider-container">
+      <input type="range" id="item2-a" min="0.5" max="3" step="0.1" value="1">
+      <span class="value-display" id="item2-a-val">1.0</span>
+    </div>
+    <div class="control-label" data-lang="en">Difficulty (b)</div>
+    <div class="control-label" data-lang="zh">难度 (b)</div>
+    <div class="slider-container">
+      <input type="range" id="item2-b" min="-3" max="3" step="0.1" value="0">
+      <span class="value-display" id="item2-b-val">0.0</span>
+    </div>
+  </div>
+  
+  <div class="control-group">
+    <div class="control-label" data-lang="en">
+      <span style="color: #FF9900;">■ Item 3 (Hard, Moderate Discrimination)</span>
+    </div>
+    <div class="control-label" data-lang="zh">
+      <span style="color: #FF9900;">■ 项目 3 (难，中等区分度)</span>
+    </div>
+    <div class="control-label" data-lang="en">Discrimination (a)</div>
+    <div class="control-label" data-lang="zh">区分度 (a)</div>
+    <div class="slider-container">
+      <input type="range" id="item3-a" min="0.5" max="3" step="0.1" value="1">
+      <span class="value-display" id="item3-a-val">1.0</span>
+    </div>
+    <div class="control-label" data-lang="en">Difficulty (b)</div>
+    <div class="control-label" data-lang="zh">难度 (b)</div>
+    <div class="slider-container">
+      <input type="range" id="item3-b" min="-3" max="3" step="0.1" value="1">
+      <span class="value-display" id="item3-b-val">1.0</span>
+    </div>
+  </div>
+  
+  <div class="control-group">
+    <div class="control-label" data-lang="en">
+      <span style="color: #CC0000;">■ Item 4 (Hard, High Discrimination)</span>
+    </div>
+    <div class="control-label" data-lang="zh">
+      <span style="color: #CC0000;">■ 项目 4 (难，高区分度)</span>
+    </div>
+    <div class="control-label" data-lang="en">Discrimination (a)</div>
+    <div class="control-label" data-lang="zh">区分度 (a)</div>
+    <div class="slider-container">
+      <input type="range" id="item4-a" min="0.5" max="3" step="0.1" value="2">
+      <span class="value-display" id="item4-a-val">2.0</span>
+    </div>
+    <div class="control-label" data-lang="en">Difficulty (b)</div>
+    <div class="control-label" data-lang="zh">难度 (b)</div>
+    <div class="slider-container">
+      <input type="range" id="item4-b" min="-3" max="3" step="0.1" value="0">
+      <span class="value-display" id="item4-b-val">0.0</span>
+    </div>
+  </div>
+  
+  <div class="control-group">
+    <div class="control-label" data-lang="en">Respondent Ability Level (θ) - Compare Probabilities</div>
+    <div class="control-label" data-lang="zh">被试能力水平 (θ) - 比较概率</div>
+    <div class="slider-container">
+      <input type="range" id="theta-level" min="-4" max="4" step="0.1" value="0">
+      <span class="value-display" id="theta-level-val">0.0</span>
+    </div>
+  </div>
+  
+  <div class="theta-info">
+    <div data-lang="en"><strong>P(correct) at θ =</strong> <span id="theta-display">0.0</span></div>
+    <div data-lang="zh"><strong>P(答对) 在 θ =</strong> <span id="theta-display-zh">0.0</span></div>
+    <div id="prob-display" style="margin-top: 8px;"></div>
+  </div>
+  
+  <div class="button-group">
+    <button id="reset-rasch" data-lang="en">Reset to Rasch (all a=1)</button>
+    <button id="reset-rasch" data-lang="zh">重置为 Rasch (所有 a=1)</button>
+    <button id="toggle-info" data-lang="en">Show Item Information Function</button>
+    <button id="toggle-info" data-lang="zh">显示项目信息函数</button>
+  </div>
+</div>
+
+<canvas id="irtChart"></canvas>
+
+<div class="section-title" data-lang="en">What the Simulation Teaches</div>
+<div class="section-title" data-lang="zh">模拟器的教学要点</div>
+
+<div class="theory-text" data-lang="en">
+  <strong>Higher b:</strong> Curve shifts right → harder item. A person needs higher ability to have a 50% chance of success.<br><br>
+  <strong>Higher a:</strong> Steeper curve → more discriminating. The item strongly differentiates high-ability from low-ability people.<br><br>
+  <strong>Low-a items:</strong> All ability levels have moderate probability → not very informative. Even very low-ability people have a decent chance.<br><br>
+  <strong>Item information:</strong> I(θ) = a² · P(θ) · (1-P(θ)). Information is maximized at θ = b (the difficulty point), where the curve is steepest and uncertainty is highest.<br><br>
+  <strong>Rasch model:</strong> All items have the same shape (a=1), just shifted left/right. This is more restrictive but ensures all items are equally informative across the ability range.
+</div>
+
+<div class="theory-text" data-lang="zh">
+  <strong>更高的 b：</strong>曲线向右移动 → 项目更难。需要更高的能力才能有 50% 的成功概率。<br><br>
+  <strong>更高的 a：</strong>曲线更陡峭 → 区分度更高。项目强烈区分高能力和低能力的人。<br><br>
+  <strong>低 a 项目：</strong>所有能力水平都有中等概率 → 信息量不大。即使低能力的人也有合理的机会。<br><br>
+  <strong>项目信息：</strong>I(θ) = a² · P(θ) · (1-P(θ))。信息在 θ = b（难度点）处最大化，曲线最陡峭，不确定性最高。<br><br>
+  <strong>Rasch 模型：</strong>所有项目具有相同的形状 (a=1)，只是左右移动。这更具限制性，但确保所有项目在整个能力范围内信息量相等。
+</div>
+
+<div class="section-title" data-lang="en">R Code: Fitting IRT Models</div>
+<div class="section-title" data-lang="zh">R 代码：拟合 IRT 模型</div>
+
+<div class="code-label" data-lang="en">Load libraries and prepare data</div>
+<div class="code-label" data-lang="zh">加载库和准备数据</div>
+<pre class="code-block"><code>library(ltm)
+library(mirt)
+
+# items_matrix: rows=respondents, cols=items (0/1 coding)
+# Example: 500 respondents, 10 items (binary responses)</code></pre>
+
+<div class="code-label" data-lang="en">Fit Rasch model (1PL)</div>
+<div class="code-label" data-lang="zh">拟合 Rasch 模型 (1PL)</div>
+<pre class="code-block"><code>rasch_model <- rasch(items_matrix)
+summary(rasch_model)
+plot(rasch_model, type = "ICC")  # Item characteristic curves
+</code></pre>
+
+<div class="code-label" data-lang="en">Fit 2PL model</div>
+<div class="code-label" data-lang="zh">拟合 2PL 模型</div>
+<pre class="code-block"><code>twopl_model <- ltm(items_matrix ~ z1)
+summary(twopl_model)
+plot(twopl_model, type = "ICC")
+
+# Extract item parameters (a and b)
+coef(twopl_model)
+</code></pre>
+
+<div class="code-label" data-lang="en">Estimate person abilities (factor scores)</div>
+<div class="code-label" data-lang="zh">估计被试能力 (因子得分)</div>
+<pre class="code-block"><code>factor.scores(twopl_model)  # Person ability estimates (θ)</code></pre>
+
+<div class="code-label" data-lang="en">Model comparison: Rasch vs 2PL</div>
+<div class="code-label" data-lang="zh">模型比较：Rasch vs 2PL</div>
+<pre class="code-block"><code>anova(rasch_model, twopl_model)
+# Likelihood ratio test: is 2PL significantly better than Rasch?
+</code></pre>
+
+<div class="code-label" data-lang="en">Item fit statistics</div>
+<div class="code-label" data-lang="zh">项目拟合统计</div>
+<pre class="code-block"><code>item.fit(rasch_model)  # Chi-squared tests for each item
+# p > 0.05: item fits the model well
+</code></pre>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  // IRT logistic function
+  function icc2PL(theta, a, b) {
+    return 1 / (1 + Math.exp(-a * (theta - b)));
+  }
+  
+  // Item information function
+  function itemInfo(theta, a, b) {
+    const p = icc2PL(theta, a, b);
+    return a * a * p * (1 - p);
+  }
+  
+  // Generate ICC data
+  function generateICCData(a1, b1, a2, b2, a3, b3, a4, b4, showInfo = false) {
+    const thetaValues = [];
+    for (let t = -4; t <= 4; t += 0.08) {
+      thetaValues.push(parseFloat(t.toFixed(2)));
+    }
+    
+    const item1 = showInfo ? 
+      thetaValues.map(t => itemInfo(t, a1, b1)) :
+      thetaValues.map(t => icc2PL(t, a1, b1));
+    
+    const item2 = showInfo ?
+      thetaValues.map(t => itemInfo(t, a2, b2)) :
+      thetaValues.map(t => icc2PL(t, a2, b2));
+    
+    const item3 = showInfo ?
+      thetaValues.map(t => itemInfo(t, a3, b3)) :
+      thetaValues.map(t => icc2PL(t, a3, b3));
+    
+    const item4 = showInfo ?
+      thetaValues.map(t => itemInfo(t, a4, b4)) :
+      thetaValues.map(t => icc2PL(t, a4, b4));
+    
+    return { thetaValues, item1, item2, item3, item4 };
+  }
+  
+  // Initialize chart
+  let showingInfo = false;
+  const ctx = document.getElementById('irtChart').getContext('2d');
+  let irtChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: 'Item 1',
+          data: [],
+          borderColor: '#0066CC',
+          backgroundColor: 'rgba(0, 102, 204, 0.05)',
+          borderWidth: 2.5,
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          hoverRadius: 4
+        },
+        {
+          label: 'Item 2',
+          data: [],
+          borderColor: '#00AA00',
+          backgroundColor: 'rgba(0, 170, 0, 0.05)',
+          borderWidth: 2.5,
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          hoverRadius: 4
+        },
+        {
+          label: 'Item 3',
+          data: [],
+          borderColor: '#FF9900',
+          backgroundColor: 'rgba(255, 153, 0, 0.05)',
+          borderWidth: 2.5,
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          hoverRadius: 4
+        },
+        {
+          label: 'Item 4',
+          data: [],
+          borderColor: '#CC0000',
+          backgroundColor: 'rgba(204, 0, 0, 0.05)',
+          borderWidth: 2.5,
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          hoverRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            font: { family: "'Lora', serif", size: 13 },
+            color: 'rgba(0, 0, 0, 0.7)',
+            usePointStyle: true,
+            padding: 15
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: 'linear',
+          position: 'bottom',
+          title: {
+            display: true,
+            text: 'Ability (θ)',
+            font: { family: "'Lora', serif", size: 13 }
+          },
+          min: -4,
+          max: 4,
+          ticks: {
+            font: { family: "'JetBrains Mono', monospace", size: 11 }
+          },
+          grid: {
+            color: 'rgba(0, 0, 0, 0.05)'
+          }
+        },
+        y: {
+          beginAtZero: true,
+          max: showingInfo ? undefined : 1,
+          title: {
+            display: true,
+            text: showingInfo ? 'Item Information I(θ)' : 'P(Correct)',
+            font: { family: "'Lora', serif", size: 13 }
+          },
+          ticks: {
+            font: { family: "'JetBrains Mono', monospace", size: 11 },
+            stepSize: showingInfo ? undefined : 0.2
+          },
+          grid: {
+            color: 'rgba(0, 0, 0, 0.05)'
+          }
+        }
+      }
+    }
+  });
+  
+  function updateChart() {
+    const a1 = parseFloat(document.getElementById('item1-a').value);
+    const b1 = parseFloat(document.getElementById('item1-b').value);
+    const a2 = parseFloat(document.getElementById('item2-a').value);
+    const b2 = parseFloat(document.getElementById('item2-b').value);
+    const a3 = parseFloat(document.getElementById('item3-a').value);
+    const b3 = parseFloat(document.getElementById('item3-b').value);
+    const a4 = parseFloat(document.getElementById('item4-a').value);
+    const b4 = parseFloat(document.getElementById('item4-b').value);
+    
+    const { thetaValues, item1, item2, item3, item4 } = generateICCData(a1, b1, a2, b2, a3, b3, a4, b4, showingInfo);
+    
+    irtChart.data.labels = thetaValues;
+    irtChart.data.datasets[0].data = item1;
+    irtChart.data.datasets[1].data = item2;
+    irtChart.data.datasets[2].data = item3;
+    irtChart.data.datasets[3].data = item4;
+    
+    // Add respondent theta line
+    const thetaLevel = parseFloat(document.getElementById('theta-level').value);
+    irtChart.options.plugins.annotation = {
+      annotations: {
+        theta: {
+          type: 'line',
+          xMin: thetaLevel,
+          xMax: thetaLevel,
+          borderColor: '#DAA520',
+          borderWidth: 2,
+          borderDash: [5, 5]
+        }
+      }
+    };
+    
+    irtChart.update();
+    updateProbs();
+  }
+  
+  function updateProbs() {
+    const theta = parseFloat(document.getElementById('theta-level').value);
+    const a1 = parseFloat(document.getElementById('item1-a').value);
+    const b1 = parseFloat(document.getElementById('item1-b').value);
+    const a2 = parseFloat(document.getElementById('item2-a').value);
+    const b2 = parseFloat(document.getElementById('item2-b').value);
+    const a3 = parseFloat(document.getElementById('item3-a').value);
+    const b3 = parseFloat(document.getElementById('item3-b').value);
+    const a4 = parseFloat(document.getElementById('item4-a').value);
+    const b4 = parseFloat(document.getElementById('item4-b').value);
+    
+    const p1 = icc2PL(theta, a1, b1).toFixed(3);
+    const p2 = icc2PL(theta, a2, b2).toFixed(3);
+    const p3 = icc2PL(theta, a3, b3).toFixed(3);
+    const p4 = icc2PL(theta, a4, b4).toFixed(3);
+    
+    document.getElementById('theta-display').textContent = theta.toFixed(1);
+    document.getElementById('theta-display-zh').textContent = theta.toFixed(1);
+    
+    const enText = document.documentElement.classList.contains('lang-zh') ? false : true;
+    const probDisplay = document.getElementById('prob-display');
+    
+    if (enText || !document.documentElement.classList.contains('lang-zh')) {
+      probDisplay.innerHTML = `Item 1: ${p1} | Item 2: ${p2} | Item 3: ${p3} | Item 4: ${p4}`;
+    } else {
+      probDisplay.innerHTML = `项目 1: ${p1} | 项目 2: ${p2} | 项目 3: ${p3} | 项目 4: ${p4}`;
+    }
+  }
+  
+  // Event listeners
+  ['item1-a', 'item1-b', 'item2-a', 'item2-b', 'item3-a', 'item3-b', 'item4-a', 'item4-b', 'theta-level'].forEach(id => {
+    const elem = document.getElementById(id);
+    elem.addEventListener('input', (e) => {
+      const valId = id + '-val';
+      const valDisplay = document.getElementById(valId);
+      if (valDisplay) {
+        valDisplay.textContent = parseFloat(e.target.value).toFixed(1);
+      }
+      updateChart();
+    });
+  });
+  
+  document.getElementById('reset-rasch').addEventListener('click', () => {
+    document.getElementById('item1-a').value = 1;
+    document.getElementById('item2-a').value = 1;
+    document.getElementById('item3-a').value = 1;
+    document.getElementById('item4-a').value = 1;
+    
+    document.getElementById('item1-a-val').textContent = '1.0';
+    document.getElementById('item2-a-val').textContent = '1.0';
+    document.getElementById('item3-a-val').textContent = '1.0';
+    document.getElementById('item4-a-val').textContent = '1.0';
+    
+    updateChart();
+  });
+  
+  document.getElementById('toggle-info').addEventListener('click', () => {
+    showingInfo = !showingInfo;
+    const btn = document.getElementById('toggle-info');
+    
+    const enText = btn.textContent.includes('Show') ? 'Show Item Information Function' : 'Show ICC';
+    const zhText = btn.textContent.includes('显示项目') ? '显示项目信息函数' : '显示 ICC';
+    
+    updateChart();
+  });
+  
+  // Initial chart
+  updateChart();
+</script>
+

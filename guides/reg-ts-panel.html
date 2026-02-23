@@ -1,0 +1,225 @@
+---
+layout: methods-guide
+title: "Panel Data Analysis in R: Fixed & Random Effects"
+title_zh: "R 语言面板数据分析：固定效应与随机效应"
+parent_title: "Time Series & Panel Data"
+parent_title_zh: "时间序列与面板数据"
+parent_url: "reg-timeseries.html"
+bilingual: true
+mathjax: false
+---
+
+<div style="background: linear-gradient(135deg, var(--parchment) 0%, var(--cream) 100%); padding: 32px 24px; border-radius: 4px; margin-bottom: 28px; border-left: 5px solid var(--gold);">
+  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+    <span style="font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 1px;" data-lang="en">CODE WALKTHROUGH · GUIDE 3</span>
+    <span style="font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; display: none;" data-lang="zh">代码指南 · 指南三</span>
+  </div>
+  <h1 style="font-family: var(--serif); font-size: 36px; color: var(--ink); margin: 16px 0 8px 0; font-weight: 700;" data-lang="en">Panel Data Analysis in R</h1>
+  <h1 style="font-family: var(--serif); font-size: 36px; color: var(--ink); margin: 16px 0 8px 0; font-weight: 700; display: none;" data-lang="zh">R 语言面板数据分析</h1>
+  <p style="font-family: var(--sans); font-size: 17px; color: var(--ink-faded); margin: 0; font-weight: 400;" data-lang="en">From raw panel dataset to publication-ready fixed effects estimates — step by step.</p>
+  <p style="font-family: var(--sans); font-size: 17px; color: var(--ink-faded); margin: 0; font-weight: 400; display: none;" data-lang="zh">从原始面板数据集到可供发表的固定效应估计——逐步进行。</p>
+</div>
+
+<section style="margin-bottom: 32px;">
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Setup: Required Packages & Data Structure</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">设置：必需的包和数据结构</h2>
+
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px;" data-lang="en">Install these packages if you haven't already:</p>
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px; display: none;" data-lang="zh">如果你还没有安装这些包，请安装：</p>
+
+  <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code># Install packages
+install.packages(c("plm", "fixest", "tidyverse", "sandwich"))
+
+# Load libraries
+library(plm)
+library(fixest)
+library(tidyverse)
+library(sandwich)</code></pre>
+
+  <div class="insight-box" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 16px 20px; border-radius: 3px; margin: 20px 0;">
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en"><strong>Data structure:</strong> Your data should have at least: <code style="background: var(--sand); padding: 2px 6px; border-radius: 2px;">country</code> (unit identifier), <code style="background: var(--sand); padding: 2px 6px; border-radius: 2px;">year</code> (time variable), outcome variable, and predictors. One row per unit-year observation.</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh"><strong>数据结构：</strong>你的数据应该至少包括：<code style="background: var(--sand); padding: 2px 6px; border-radius: 2px;">country</code>（单位标识符）、<code style="background: var(--sand); padding: 2px 6px; border-radius: 2px;">year</code>（时间变量）、结果变量和预测变量。每个单位-年份观察一行。</p>
+  </div>
+</section>
+
+<section style="margin-bottom: 32px;">
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Step 1: Declare Panel Structure</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">第1步：声明面板结构</h2>
+
+  <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code># Declare panel structure for plm package
+pdata <- pdata.frame(df, index = c("country", "year"))
+
+# Check if panel is balanced (all units observed in all years)
+is.pbalanced(pdata)
+#> TRUE
+
+# Check dimensions: N units, T time periods
+pdim(pdata)
+#> Unbalanced Panel: n = 50, T = 20, N = 1000</code></pre>
+</section>
+
+<section style="margin-bottom: 32px;">
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Step 2: Pooled OLS (Baseline, Usually Wrong)</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">第2步：汇总OLS（基线，通常不正确）</h2>
+
+  <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code># Pooled OLS: ignores unit-specific heterogeneity
+model_pooled <- plm(democracy ~ trade_openness + gdp_log + population_log,
+                    data = pdata, model = "pooling")
+summary(model_pooled)
+
+# Problem: if unit effects are correlated with predictors,
+# coefficients are biased (omitted variable bias)</code></pre>
+
+  <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin: 12px 0;">
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en"><strong>When pooled OLS fails:</strong> If units differ in unobservable ways (e.g., cultural institutions) and these differences correlate with your predictors, pooled OLS gives biased estimates. This is why we need FE or RE.</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh"><strong>当汇总OLS失败时：</strong>如果单位在不可观测的方式上不同（例如，文化机构）且这些差异与你的预测变量相关，汇总OLS会给出有偏估计。这就是我们需要FE或RE的原因。</p>
+  </div>
+</section>
+
+<section style="margin-bottom: 32px;">
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Step 3: Fixed Effects (Within Estimator)</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">第3步：固定效应（内部估计量）</h2>
+
+  <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code># One-way FE: unit fixed effects (remove unit-level variation)
+model_fe <- plm(democracy ~ trade_openness + gdp_log + population_log,
+                data = pdata, model = "within", effect = "individual")
+summary(model_fe)
+
+# Two-way FE: unit + time fixed effects (recommended)
+model_2fe <- plm(democracy ~ trade_openness + gdp_log + population_log,
+                 data = pdata, model = "within", effect = "twoways")
+summary(model_2fe)
+
+# Faster alternative using fixest (recommended for large datasets)
+model_fixest <- feols(democracy ~ trade_openness + gdp_log + population_log 
+                      | country + year,
+                      data = df)
+summary(model_fixest)</code></pre>
+
+  <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin: 12px 0;">
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en"><strong>What FE does:</strong> It removes all unit-level (and time-level) variation by including unit dummies or demeaning. This isolates the within-unit effect of X on Y — only variation within units over time. If unit effects are uncorrelated with X within-unit variation, FE is unbiased.</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh"><strong>FE 的作用：</strong>它通过包括单位虚拟变量或去均值来消除所有单位级别（和时间级别）的变异。这隔离了X对Y的单位内效应——只有单位内随时间的变异。如果单位效应与单位内变异中的X无关，FE 是无偏的。</p>
+  </div>
+</section>
+
+<section style="margin-bottom: 32px;">
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Step 4: Random Effects</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">第4步：随机效应</h2>
+
+  <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code># Random effects: assume unit effects are uncorrelated with X
+model_re <- plm(democracy ~ trade_openness + gdp_log + population_log,
+                data = pdata, model = "random")
+summary(model_re)
+
+# RE is more efficient than FE if the uncorrelated assumption holds
+# But FE is robust even if RE assumption is violated</code></pre>
+
+  <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin: 12px 0;">
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en"><strong>FE vs RE trade-off:</strong> RE is more efficient (narrower confidence intervals) but requires a stronger assumption. FE is conservative — it doesn't assume unit effects are uncorrelated with predictors. Use FE unless you have strong reason to believe the RE assumption.</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh"><strong>FE vs RE 权衡：</strong>RE 更有效率（更窄的置信区间）但需要更强的假设。FE是保守的——它不假设单位效应与预测变量无关。除非你有强有力的理由相信RE假设，否则使用FE。</p>
+  </div>
+</section>
+
+<section style="margin-bottom: 32px;">
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Step 5: Hausman Test (FE vs RE)</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">第5步：Hausman 检验（FE vs RE）</h2>
+
+  <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code># Hausman test: tests if RE assumption (uncorrelated effects) is valid
+phtest(model_fe, model_re)
+
+# Output:
+#>  Hausman Test
+#>  H0: Random effects model is appropriate
+#>  statistic = 15.4
+#>  p-value = 0.0042
+#>  Decision: Reject H0 → use FE (RE assumption violated)</code></pre>
+
+  <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin: 12px 0;">
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en"><strong>Interpreting the test:</strong></p>
+    <ul style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 8px 0; padding-left: 20px; line-height: 1.6;">
+      <li>p-value &lt; 0.05: Reject H0 → unit effects are correlated with X → use FE</li>
+      <li>p-value &gt; 0.05: Fail to reject H0 → RE may be appropriate → could use either, but FE is still safe</li>
+    </ul>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh"><strong>解释测试：</strong></p>
+    <ul style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 8px 0; padding-left: 20px; line-height: 1.6; display: none;" data-lang="zh">
+      <li>p-value < 0.05：拒绝 H0 → 单位效应与 X 相关 → 使用 FE</li>
+      <li>p-value > 0.05：未能拒绝 H0 → RE 可能合适 → 可以使用其中任何一个，但 FE 仍然安全</li>
+    </ul>
+  </div>
+</section>
+
+<section style="margin-bottom: 32px;">
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Step 6: Clustered Standard Errors (Essential!)</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">第6步：聚类标准误（至关重要！）</h2>
+
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px;" data-lang="en">Standard errors from panel regression are usually too small because observations within units are correlated. Always cluster at the unit level:</p>
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px; display: none;" data-lang="zh">面板回归的标准误通常太小，因为单位内的观测值相关。始终在单位级别聚类：</p>
+
+  <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code># Using fixest (recommended — clusters by default)
+model_clustered <- feols(democracy ~ trade_openness | country + year,
+                         data = df, cluster = ~country)
+summary(model_clustered)
+
+# Using plm + sandwich package
+coeftest(model_fe, 
+         vcov = vcovHC(model_fe, type = "HC1", cluster = "group"))
+
+# Publication-ready table
+etable(model_clustered, tex = TRUE)</code></pre>
+
+  <div class="insight-box" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 16px 20px; border-radius: 3px; margin: 20px 0;">
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en"><strong>Most common mistake:</strong> Reporting OLS standard errors without clustering in panel data. This makes t-statistics too large and p-values too small, overstating significance. Cluster at the unit level (or unit + time if nesting exists).</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh"><strong>最常见的错误：</strong>在面板数据中报告未聚类的OLS标准误。这使得t统计量过大，p值过小，高估显著性。在单位级别聚类（如果存在嵌套，则在单位+时间级别聚类）。</p>
+  </div>
+</section>
+
+<section style="margin-bottom: 32px;">
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Step 7: Event Study (Treatment Rollout Visualization)</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">第7步：事件研究（处理推广可视化）</h2>
+
+  <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code># Event study: plot treatment effects relative to treatment year
+# Specify year relative to adoption (-3, -2, -1, 0, 1, 2, ...)
+model_event <- feols(democracy ~ i(year_relative_to_treatment, treated, ref = -1)
+                     | country + year,
+                     data = df, cluster = ~country)
+
+# Create event study plot
+iplot(model_event, main = "Event Study: Treatment Effects Over Time",
+      xlab = "Years Relative to Treatment")
+
+# If significant effects appear before year 0, parallel trends may be violated</code></pre>
+</section>
+
+<section style="margin-bottom: 32px;">
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Common Mistakes Checklist</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">常见错误检查清单</h2>
+
+  <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">❌ Not clustering standard errors</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">❌ 未聚类标准误</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink-faded); margin: 0;" data-lang="en">Panel data observations are correlated within units. Use cluster = ~unit_id.</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink-faded); margin: 0; display: none;" data-lang="zh">面板数据观测值在单位内相关。使用 cluster = ~unit_id。</p>
+  </div>
+
+  <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">❌ Including time-invariant variables in FE</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">❌ 在FE中包含不随时间变化的变量</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink-faded); margin: 0;" data-lang="en">FE removes unit dummies, which absorbs all time-invariant variables. They can't be estimated.</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink-faded); margin: 0; display: none;" data-lang="zh">FE 移除单位虚拟变量，这会吸收所有不随时间变化的变量。它们无法估计。</p>
+  </div>
+
+  <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">❌ Using wrong standard errors</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">❌ 使用错误的标准误</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink-faded); margin: 0;" data-lang="en">Even with FE, OLS standard errors are wrong if residuals are heteroskedastic or serially correlated.</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink-faded); margin: 0; display: none;" data-lang="zh">即使有FE，如果残差是异方差的或序列相关的，OLS标准误也是错误的。</p>
+  </div>
+
+  <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px;">
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">❌ Forgetting unit + time FE</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">❌ 遗忘单位+时间FE</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink-faded); margin: 0;" data-lang="en">Always include time fixed effects (year dummies) to control for common shocks and secular trends.</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink-faded); margin: 0; display: none;" data-lang="zh">始终包括时间固定效应（年虚拟变量）来控制共同冲击和长期趋势。</p>
+  </div>
+</section>
+

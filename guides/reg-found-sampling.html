@@ -1,0 +1,553 @@
+---
+layout: methods-guide
+title: "Sampling Distributions & the Central Limit Theorem"
+title_zh: "抽样分布与中心极限定理"
+parent_title: "Statistical Foundations"
+parent_title_zh: "统计基础"
+parent_url: "reg-foundations.html"
+bilingual: true
+---
+
+<div class="method-header">
+  <span data-lang="en">INTERACTIVE SIMULATION · GUIDE 1</span>
+  <span data-lang="zh">互动模拟 · 指南一</span>
+</div>
+
+<h1 data-lang="en">Sampling Distributions & the Central Limit Theorem</h1>
+<h1 data-lang="zh" style="display:none;">抽样分布与中心极限定理</h1>
+
+<p class="method-subtitle">
+  <span data-lang="en">The most important theorem in statistics — watch it happen in real time.</span>
+  <span data-lang="zh">统计学中最重要的定理——实时观看它的发生。</span>
+</p>
+
+<section class="content-section">
+  <h2>
+    <span data-lang="en">What is a Sampling Distribution?</span>
+    <span data-lang="zh">什么是抽样分布？</span>
+  </h2>
+  
+  <p data-lang="en">
+    Imagine you have a population (e.g., heights of all adults in a country). You don't sample once—you sample many times, computing the sample mean each time. The distribution of these sample means is the <strong>sampling distribution of the mean</strong>. It tells us how sample means vary due to random sampling variability.
+  </p>
+  <p data-lang="zh" style="display:none;">
+    想象你有一个总体（例如，一个国家所有成年人的身高）。你不仅仅采样一次——你采样许多次，每次计算样本均值。这些样本均值的分布就是<strong>均值的抽样分布</strong>。它告诉我们由于随机采样变异，样本均值如何变化。
+  </p>
+
+  <h2>
+    <span data-lang="en">The Central Limit Theorem</span>
+    <span data-lang="zh">中心极限定理</span>
+  </h2>
+  
+  <p data-lang="en">
+    The Central Limit Theorem (CLT) states that, regardless of the shape of the original population, the sampling distribution of the mean becomes <strong>normal (bell-shaped)</strong> as the sample size increases. This is why t-tests, z-tests, and regression inference work: they assume the sample mean is approximately normal, not the raw data.
+  </p>
+  <p data-lang="zh" style="display:none;">
+    中心极限定理（CLT）指出，无论原始总体的形状如何，随着样本大小的增加，均值的抽样分布会变成<strong>正态分布（钟形）</strong>。这就是为什么 t 检验、z 检验和回归推断有效：它们假设样本均值大约正态分布，而不是原始数据。
+  </p>
+
+  <div class="math-note">
+    <strong data-lang="en">The CLT Formula:</strong>
+    <strong data-lang="zh" style="display:none;">中心极限定理公式：</strong>
+    <br>X̄ ~ N(μ, σ²/n) as n → ∞
+    <br><span data-lang="en">The sample mean X̄ is approximately normal with mean μ (population mean) and variance σ²/n (Standard Error squared).</span>
+    <span data-lang="zh" style="display:none;">样本均值 X̄ 近似正态分布，均值为 μ（总体均值），方差为 σ²/n（标准误的平方）。</span>
+  </div>
+
+  <div class="insight-box">
+    <strong data-lang="en">Why This Matters:</strong>
+    <strong data-lang="zh" style="display:none;">为什么这很重要：</strong>
+    <p data-lang="en">The CLT is why we can perform z-tests and t-tests on regression coefficients. These tests assume normality of the sample mean, <em>not</em> normality of the raw errors. Even if your data is wildly non-normal, the sample mean is approximately normal in large samples. This is why regression is so powerful.</p>
+    <p data-lang="zh" style="display:none;">中心极限定理是我们能够在回归系数上进行 z 检验和 t 检验的原因。这些检验假设样本均值是正态分布的，<em>不是</em>原始误差的正态性。即使你的数据严重偏离正态分布，在大样本中样本均值也近似正态分布。这就是回归如此强大的原因。</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <h2>
+    <span data-lang="en">Interactive CLT Simulator</span>
+    <span data-lang="zh">互动中心极限定理模拟器</span>
+  </h2>
+
+  <p data-lang="en">
+    Below, you can choose a population shape, set a sample size, and draw repeated samples. Watch the distribution of sample means become normal as n increases, even when the population is highly skewed or bimodal.
+  </p>
+  <p data-lang="zh" style="display:none;">
+    下面，你可以选择一个总体形状，设置样本大小，并多次抽样。观察当样本数量增加时，即使总体严重偏斜或双峰，样本均值的分布也会变成正态分布。
+  </p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0; align-items: start;">
+    <div class="ctrl-group" style="grid-column: 1 / 3;">
+      <label class="ctrl-label">
+        <span data-lang="en">Population Shape:</span>
+        <span data-lang="zh" style="display:none;">总体形状：</span>
+      </label>
+      <select id="popShape" style="width: 100%; padding: 0.5rem; font-size: 1rem; border: 2px solid var(--ink-faded); background: var(--paper);">
+        <option value="uniform">Uniform / 均匀</option>
+        <option value="exponential" selected>Right-skewed (Exponential) / 右偏（指数）</option>
+        <option value="bimodal">Bimodal / 双峰</option>
+        <option value="normal">Normal / 正态</option>
+      </select>
+    </div>
+
+    <div class="ctrl-group">
+      <label class="ctrl-label">
+        <span data-lang="en">Sample Size (n):</span>
+        <span data-lang="zh" style="display:none;">样本大小（n）：</span>
+      </label>
+      <input type="range" id="sampleSizeSlider" min="2" max="200" value="30" style="width: 100%;">
+      <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--ink-faded);">
+        <span>2</span>
+        <span class="ctrl-val" id="sampleSizeVal">30</span>
+        <span>200</span>
+      </div>
+    </div>
+
+    <div class="ctrl-group">
+      <label class="ctrl-label">
+        <span data-lang="en">Number of Samples:</span>
+        <span data-lang="zh" style="display:none;">样本数量：</span>
+      </label>
+      <input type="range" id="numSamplesSlider" min="10" max="2000" value="500" style="width: 100%;">
+      <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--ink-faded);">
+        <span>10</span>
+        <span class="ctrl-val" id="numSamplesVal">500</span>
+        <span>2000</span>
+      </div>
+    </div>
+
+    <div class="ctrl-group" style="grid-column: 1 / 3; display: flex; gap: 1rem;">
+      <button class="sim-btn" id="drawBtn" style="flex: 1; background: var(--red); color: var(--paper); border: none; padding: 0.75rem; border-radius: 4px; font-weight: bold; cursor: pointer;">
+        <span data-lang="en">Draw Samples</span>
+        <span data-lang="zh" style="display:none;">抽取样本</span>
+      </button>
+      <button class="sim-btn" id="resetBtn" style="flex: 1; background: var(--ink-faded); color: var(--paper); border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer;">
+        <span data-lang="en">Reset</span>
+        <span data-lang="zh" style="display:none;">重置</span>
+      </button>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
+    <div>
+      <h3 data-lang="en" style="text-align: center; margin-bottom: 1rem;">Population Distribution</h3>
+      <h3 data-lang="zh" style="display:none; text-align: center; margin-bottom: 1rem;">总体分布</h3>
+      <canvas id="popChart" width="400" height="300"></canvas>
+    </div>
+    <div>
+      <h3 data-lang="en" style="text-align: center; margin-bottom: 1rem;">Distribution of Sample Means</h3>
+      <h3 data-lang="zh" style="display:none; text-align: center; margin-bottom: 1rem;">样本均值的分布</h3>
+      <canvas id="sampChart" width="400" height="300"></canvas>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 2rem 0;">
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">Population μ</span><span data-lang="zh" style="display:none;">总体 μ</span></div>
+      <div class="sval" id="popMean">—</div>
+    </div>
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">Population σ</span><span data-lang="zh" style="display:none;">总体 σ</span></div>
+      <div class="sval" id="popStd">—</div>
+    </div>
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">Expected SE</span><span data-lang="zh" style="display:none;">预期SE</span></div>
+      <div class="sval" id="expectedSE">—</div>
+    </div>
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">Observed SE</span><span data-lang="zh" style="display:none;">观察SE</span></div>
+      <div class="sval" id="observedSE">—</div>
+    </div>
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">Normal?</span><span data-lang="zh" style="display:none;">正态？</span></div>
+      <div class="sval" id="normalBadge">—</div>
+    </div>
+  </div>
+</section>
+
+<section class="content-section">
+  <h2>
+    <span data-lang="en">How Sample Size Affects the Sampling Distribution</span>
+    <span data-lang="zh">样本大小如何影响抽样分布</span>
+  </h2>
+
+  <p data-lang="en">
+    Try sliding the sample size control to see the effect:
+  </p>
+  <p data-lang="zh" style="display:none;">
+    尝试滑动样本大小控制来查看效果：
+  </p>
+
+  <ul>
+    <li data-lang="en"><strong>n = 2:</strong> The sampling distribution is very wide and non-normal. Random samples of size 2 produce wildly different means.</li>
+    <li data-lang="zh" style="display:none;"><strong>n = 2：</strong>抽样分布非常宽且不是正态的。大小为 2 的随机样本产生的均值差异很大。</li>
+    
+    <li data-lang="en"><strong>n = 30:</strong> The sampling distribution is nearly normal. This is the classic "rule of thumb" — n ≥ 30 is often sufficient for approximate normality.</li>
+    <li data-lang="zh" style="display:none;"><strong>n = 30：</strong>抽样分布几乎是正态的。这是经典的"经验法则"——n ≥ 30 通常足以实现近似正态性。</li>
+    
+    <li data-lang="en"><strong>n = 100+:</strong> The sampling distribution is very normal, with a tight concentration around the true mean. This is where statistical inference becomes very reliable.</li>
+    <li data-lang="zh" style="display:none;"><strong>n = 100+：</strong>抽样分布是非常正态的，紧密集中在真实均值周围。这是统计推断变得非常可靠的地方。</li>
+  </ul>
+
+  <div class="insight-box">
+    <strong data-lang="en">Important Caveat:</strong>
+    <strong data-lang="zh" style="display:none;">重要警告：</strong>
+    <p data-lang="en">The "n ≥ 30 rule" is a rough guideline. For heavily skewed or multimodal populations, you may need n ≥ 50 or even n ≥ 100 for reliable normality of the sample mean. The more extreme the population shape, the larger the sample size needed.</p>
+    <p data-lang="zh" style="display:none;">"n ≥ 30 规则"是一个粗略的指导方针。对于高度偏斜或多模态的总体，你可能需要 n ≥ 50 甚至 n ≥ 100 才能确保样本均值的可靠正态性。总体形状越极端，所需的样本大小就越大。</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <h2>
+    <span data-lang="en">Why This Matters for Regression</span>
+    <span data-lang="zh">为什么这对回归很重要</span>
+  </h2>
+
+  <p data-lang="en">
+    In ordinary least squares (OLS) regression, the estimated coefficients β̂ are linear combinations of sample means. By the CLT, β̂ is approximately normally distributed in large samples. This allows us to:
+  </p>
+  <p data-lang="zh" style="display:none;">
+    在普通最小二乘法（OLS）回归中，估计系数 β̂ 是样本均值的线性组合。根据中心极限定理，β̂ 在大样本中近似正态分布。这允许我们：
+  </p>
+
+  <ul>
+    <li data-lang="en">Compute standard errors for regression coefficients</li>
+    <li data-lang="zh" style="display:none;">计算回归系数的标准误</li>
+    
+    <li data-lang="en">Perform t-tests to assess whether a coefficient is significantly different from zero</li>
+    <li data-lang="zh" style="display:none;">进行 t 检验以评估系数是否显著不同于零</li>
+    
+    <li data-lang="en">Build confidence intervals around estimates</li>
+    <li data-lang="zh" style="display:none;">围绕估计建立置信区间</li>
+    
+    <li data-lang="en">Test hypotheses about linear combinations of coefficients</li>
+    <li data-lang="zh" style="display:none;">测试有关系数线性组合的假设</li>
+  </ul>
+
+  <p data-lang="en">
+    <strong>Practical takeaway:</strong> As long as your sample size is reasonably large (n ≥ 50 for most populations), you can trust the p-values and confidence intervals from regression output, even if your data is not normally distributed. The CLT has your back.
+  </p>
+  <p data-lang="zh" style="display:none;">
+    <strong>实用要点：</strong>只要你的样本大小足够大（对于大多数总体，n ≥ 50），即使你的数据不是正态分布，你也可以信任回归输出中的 p 值和置信区间。中心极限定理会保护你。
+  </p>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Utility: Beta function for density calculations (using log-gamma approximation)
+function logGamma(x) {
+  const c = [57.1562356658629235, -59.5979603554754912, 14.1368655185113962,
+             -0.491913816097620199, 0.339946499848118887e-4, 0.465236289270485756e-4,
+             -0.983744753048795646e-4, 0.158088703224912494e-3, -0.210264441724104883e-3,
+             0.217439618115212643e-3, -0.164318106536763890e-3, 0.844182239838527433e-4,
+             -0.261908384015814087e-4, 0.368991826595316234e-5];
+  if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - logGamma(1 - x);
+  x -= 1;
+  let a = c[0];
+  for (let i = 1; i < c.length; i++) a += c[i] / (x + i);
+  return (x + 0.5) * Math.log(x + 5.5) - (x + 5.5) + 0.5 * Math.log(2 * Math.PI) + Math.log(a);
+}
+
+function betaPDF(x, alpha, beta) {
+  if (x <= 0 || x >= 1) return 0;
+  return Math.exp((alpha - 1) * Math.log(x) + (beta - 1) * Math.log(1 - x) - 
+                  logGamma(alpha) - logGamma(beta) + logGamma(alpha + beta));
+}
+
+// Distribution generators
+function generateUniform(n) {
+  let arr = [];
+  for (let i = 0; i < n; i++) arr.push(Math.random() * 100);
+  return arr;
+}
+
+function generateExponential(n, lambda = 0.05) {
+  let arr = [];
+  for (let i = 0; i < n; i++) arr.push(-Math.log(Math.random()) / lambda);
+  return arr;
+}
+
+function generateBimodal(n) {
+  let arr = [];
+  for (let i = 0; i < n; i++) {
+    if (Math.random() < 0.5) {
+      arr.push(20 + Math.random() * 15);
+    } else {
+      arr.push(65 + Math.random() * 15);
+    }
+  }
+  return arr;
+}
+
+function generateNormal(n, mean = 50, sd = 15) {
+  let arr = [];
+  for (let i = 0; i < n; i++) {
+    let u1 = Math.random();
+    let u2 = Math.random();
+    let z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    arr.push(mean + z * sd);
+  }
+  return arr;
+}
+
+function generatePopulation(shape, size = 10000) {
+  if (shape === 'uniform') return generateUniform(size);
+  if (shape === 'exponential') return generateExponential(size);
+  if (shape === 'bimodal') return generateBimodal(size);
+  return generateNormal(size);
+}
+
+function computeStats(arr) {
+  let mean = arr.reduce((a, b) => a + b) / arr.length;
+  let variance = arr.reduce((a, b) => a + (b - mean) ** 2) / arr.length;
+  let std = Math.sqrt(variance);
+  return { mean, std };
+}
+
+function createHistogram(data, bins = 30) {
+  let min = Math.min(...data);
+  let max = Math.max(...data);
+  let binSize = (max - min) / bins;
+  let histogram = new Array(bins).fill(0);
+  
+  for (let val of data) {
+    let idx = Math.floor((val - min) / binSize);
+    if (idx === bins) idx = bins - 1;
+    histogram[idx]++;
+  }
+  
+  let binEdges = [];
+  for (let i = 0; i <= bins; i++) {
+    binEdges.push(min + i * binSize);
+  }
+  
+  return { histogram, binEdges, binSize };
+}
+
+// Shapiro-Wilk-like normality test (simplified)
+function isApproximatelyNormal(data) {
+  let n = data.length;
+  let sorted = [...data].sort((a, b) => a - b);
+  let mean = sorted.reduce((a, b) => a + b) / n;
+  let variance = sorted.reduce((a, b) => a + (b - mean) ** 2) / n;
+  let std = Math.sqrt(variance);
+  
+  // Compute skewness
+  let skewness = sorted.reduce((sum, x) => sum + Math.pow((x - mean) / std, 3), 0) / n;
+  
+  // Compute kurtosis
+  let kurtosis = sorted.reduce((sum, x) => sum + Math.pow((x - mean) / std, 4), 0) / n - 3;
+  
+  // Simple threshold: if |skewness| < 0.5 and |kurtosis| < 1, call it normal
+  return Math.abs(skewness) < 0.8 && Math.abs(kurtosis) < 1.5;
+}
+
+let popChart, sampChart;
+
+function runSimulation() {
+  let shape = document.getElementById('popShape').value;
+  let n = parseInt(document.getElementById('sampleSizeSlider').value);
+  let numSamples = parseInt(document.getElementById('numSamplesSlider').value);
+  
+  // Generate population
+  let population = generatePopulation(shape, 5000);
+  let { mean: popMean, std: popStd } = computeStats(population);
+  
+  // Create population histogram
+  let { histogram: popHist, binEdges: popEdges } = createHistogram(population, 40);
+  let popLabels = popEdges.slice(0, -1).map(e => e.toFixed(1));
+  
+  // Draw samples and compute means
+  let sampleMeans = [];
+  for (let i = 0; i < numSamples; i++) {
+    let sample = [];
+    for (let j = 0; j < n; j++) {
+      sample.push(population[Math.floor(Math.random() * population.length)]);
+    }
+    let { mean: sampleMean } = computeStats(sample);
+    sampleMeans.push(sampleMean);
+  }
+  
+  let { mean: meanOfMeans, std: stdOfMeans } = computeStats(sampleMeans);
+  let expectedSE = popStd / Math.sqrt(n);
+  let { histogram: sampHist, binEdges: sampEdges } = createHistogram(sampleMeans, 30);
+  let sampLabels = sampEdges.slice(0, -1).map(e => e.toFixed(1));
+  
+  let isNormal = isApproximatelyNormal(sampleMeans);
+  
+  // Update stats
+  document.getElementById('popMean').textContent = popMean.toFixed(2);
+  document.getElementById('popStd').textContent = popStd.toFixed(2);
+  document.getElementById('expectedSE').textContent = expectedSE.toFixed(2);
+  document.getElementById('observedSE').textContent = stdOfMeans.toFixed(2);
+  document.getElementById('normalBadge').textContent = isNormal ? 'Yes ✓ / 是 ✓' : 'No / 否';
+  
+  // Update population chart
+  if (popChart) popChart.destroy();
+  let popCtx = document.getElementById('popChart').getContext('2d');
+  popChart = new Chart(popCtx, {
+    type: 'bar',
+    data: {
+      labels: popLabels,
+      datasets: [{
+        label: 'Count',
+        data: popHist,
+        backgroundColor: 'rgba(139, 69, 19, 0.6)',
+        borderColor: 'var(--leather)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { stacked: true, display: true, max: 40 },
+        y: { stacked: true }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+  
+  // Update sampling distribution chart
+  if (sampChart) sampChart.destroy();
+  let sampCtx = document.getElementById('sampChart').getContext('2d');
+  sampChart = new Chart(sampCtx, {
+    type: 'bar',
+    data: {
+      labels: sampLabels,
+      datasets: [{
+        label: 'Count',
+        data: sampHist,
+        backgroundColor: 'rgba(220, 20, 60, 0.6)',
+        borderColor: 'var(--red)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { stacked: true, display: true },
+        y: { stacked: true }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function resetSimulation() {
+  document.getElementById('sampleSizeSlider').value = 30;
+  document.getElementById('numSamplesSlider').value = 500;
+  document.getElementById('popShape').value = 'exponential';
+  document.getElementById('sampleSizeVal').textContent = '30';
+  document.getElementById('numSamplesVal').textContent = '500';
+  
+  if (popChart) popChart.destroy();
+  if (sampChart) sampChart.destroy();
+  
+  document.getElementById('popMean').textContent = '—';
+  document.getElementById('popStd').textContent = '—';
+  document.getElementById('expectedSE').textContent = '—';
+  document.getElementById('observedSE').textContent = '—';
+  document.getElementById('normalBadge').textContent = '—';
+}
+
+document.getElementById('drawBtn').addEventListener('click', runSimulation);
+document.getElementById('resetBtn').addEventListener('click', resetSimulation);
+
+document.getElementById('sampleSizeSlider').addEventListener('input', (e) => {
+  document.getElementById('sampleSizeVal').textContent = e.target.value;
+});
+
+document.getElementById('numSamplesSlider').addEventListener('input', (e) => {
+  document.getElementById('numSamplesVal').textContent = e.target.value;
+});
+</script>
+
+<style>
+.ctrl-group {
+  margin-bottom: 1rem;
+}
+
+.ctrl-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.ctrl-val {
+  font-weight: bold;
+  color: var(--red);
+}
+
+.stat-chip {
+  background: var(--parchment);
+  border: 2px solid var(--gold);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.slabel {
+  font-size: 0.85rem;
+  color: var(--ink-faded);
+  margin-bottom: 0.5rem;
+}
+
+.sval {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--ink);
+  font-family: var(--mono);
+}
+
+.insight-box {
+  background: var(--cream);
+  border-left: 4px solid var(--gold);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+}
+
+.insight-box strong {
+  color: var(--red);
+}
+
+.math-note {
+  background: var(--parchment);
+  border: 1px solid var(--sand);
+  border-radius: 4px;
+  padding: 1.5rem;
+  font-family: var(--mono);
+  margin: 1.5rem 0;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.method-header {
+  text-align: center;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  color: var(--red);
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.method-subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--ink-faded);
+  margin: 1rem 0 2rem;
+  font-style: italic;
+}
+
+.content-section {
+  margin: 3rem 0;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--sand);
+}
+
+.content-section:last-child {
+  border-bottom: none;
+}
+</style>

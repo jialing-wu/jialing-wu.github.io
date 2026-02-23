@@ -1,0 +1,350 @@
+---
+layout: methods-guide
+title: "Cross-Validation in Practice"
+title_zh: "交叉验证实战"
+parent_title: "Machine Learning for Social Science"
+parent_title_zh: "社会科学中的机器学习"
+parent_url: "reg-ml.html"
+bilingual: true
+mathjax: true
+---
+
+<h2 id="cv-why"><span data-lang="en">Why Cross-Validation?</span><span data-lang="zh">为什么需要交叉验证?</span></h2>
+
+<p data-lang="en">A fundamental problem in machine learning is that training error always decreases as we add complexity to our model. This creates a dangerous illusion: the model appears to be improving, but it's actually overfitting to noise in the training data. The true measure of model quality is how well it generalizes to new, unseen data—and training error tells us nothing about this.</p>
+
+<p data-lang="zh">机器学习中一个根本性问题是：训练误差总是随着模型复杂度增加而下降。这造成了一个危险的错觉：模型似乎在改进，但实际上是在过度拟合训练数据中的噪声。模型质量的真实衡量标准是它在新的、未见过的数据上的表现——训练误差对此毫无启示。</p>
+
+<div class="insight-box">
+  <p data-lang="en"><strong>The Central Problem:</strong> Test error follows a U-shaped curve with model complexity. Simple models underfit; complex models overfit. We need held-out data to find the sweet spot.</p>
+  <p data-lang="zh"><strong>核心问题：</strong>测试误差与模型复杂度形成U形曲线。简单模型欠拟合；复杂模型过拟合。我们需要留出数据来找到最优点。</p>
+</div>
+
+<p data-lang="en">The naive solution—keep a separate test set—wastes data. With limited samples (common in social science), this is expensive. Moreover, if we evaluate multiple models on the same test set and pick the best one, we're "peeking" at the test set and inflating our estimates of generalization performance.</p>
+
+<p data-lang="zh">天真的解决方案——保留一个独立的测试集——会浪费数据。在样本量有限的情况下（社会科学中很常见），这代价很大。而且，如果我们在同一个测试集上评估多个模型并选择最好的，我们就是在"窥视"测试集，夸大了泛化性能的估计。</p>
+
+<p data-lang="en"><strong>Cross-validation solves both problems:</strong> it estimates out-of-sample performance without wasting data, and it provides an honest estimate even when selecting among multiple models.</p>
+
+<p data-lang="zh"><strong>交叉验证解决了两个问题：</strong>它在不浪费数据的情况下估计样本外性能，即使在选择多个模型时也能提供诚实的估计。</p>
+
+<h2 id="cv-kfold"><span data-lang="en">K-Fold Cross-Validation Visualizer</span><span data-lang="zh">K折交叉验证可视化</span></h2>
+
+<p data-lang="en">The core idea of K-fold CV is elegant: divide your data into K equal parts (folds). For each fold k, train on the other K−1 folds and evaluate on fold k. Average the K performance metrics to get your final estimate.</p>
+
+<p data-lang="zh">K折交叉验证的核心思想很优雅：将数据分成K个相等的部分（折）。对于每一折k，在其他K−1折上训练，在第k折上评估。对K个性能指标求平均得到最终估计。</p>
+
+<div class="sim-panel" style="background-color: var(--cream); padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid var(--gold);">
+  <p data-lang="en"><strong>Adjust K:</strong></p>
+  <p data-lang="zh"><strong>调整K值：</strong></p>
+
+  <div class="ctrl-group" style="margin: 15px 0;">
+    <label class="ctrl-label" data-lang="en">K = </label>
+    <label class="ctrl-label" data-lang="zh">K = </label>
+    <input type="range" id="kSlider" min="2" max="100" value="5" style="width: 200px; margin: 0 10px;">
+    <span class="sval" id="kValue">5</span>
+  </div>
+
+  <p data-lang="en">Dataset contains <span id="nTotal">100</span> rows</p>
+  <p data-lang="zh">数据集包含 <span id="nTotal">100</span> 行</p>
+
+  <canvas id="foldViz" width="500" height="80" style="border: 1px solid var(--ink-ghost); margin: 15px 0;"></canvas>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+    <div>
+      <p data-lang="en" class="slabel">Test set size per fold:</p>
+      <p data-lang="zh" class="slabel">每折测试集大小：</p>
+      <p class="sval"><span id="nTest">20</span> rows</p>
+    </div>
+    <div>
+      <p data-lang="en" class="slabel">Training set size per fold:</p>
+      <p data-lang="zh" class="slabel">每折训练集大小：</p>
+      <p class="sval"><span id="nTrain">80</span> rows</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 15px; padding: 12px; background-color: var(--parchment); border-radius: 4px;">
+    <p data-lang="en"><strong>Formula:</strong> CV Error = (1/K) × Σ<sub>k=1</sub><sup>K</sup> MSE<sub>k</sub></p>
+    <p data-lang="zh"><strong>公式：</strong>CV误差 = (1/K) × Σ<sub>k=1</sub><sup>K</sup> MSE<sub>k</sub></p>
+  </div>
+
+  <button class="sim-btn" id="nextFoldBtn" style="margin-top: 15px; cursor: pointer;">
+    <span data-lang="en">Next Fold →</span>
+    <span data-lang="zh">下一折 →</span>
+  </button>
+  <span id="foldCounter" style="margin-left: 10px; color: var(--ink-faded);">
+    <span data-lang="en">Fold 1 of 5</span>
+    <span data-lang="zh">第1折，共5折</span>
+  </span>
+</div>
+
+<div class="insight-box">
+  <p data-lang="en"><strong>Standard Choices:</strong> K=5 or K=10 are industry standards for most applications. K=10 gives lower bias but higher variance of the CV estimate itself. K=5 is more conservative and computationally cheaper. Leave-One-Out CV (K=n) is unbiased but has high variance and is expensive for large n.</p>
+  <p data-lang="zh"><strong>标准选择：</strong>K=5或K=10是大多数应用的行业标准。K=10降低偏差但增加CV估计本身的方差。K=5更保守、计算成本更低。留一法交叉验证（K=n）无偏但方差高，对大n来说计算成本高。</p>
+</div>
+
+<h2 id="cv-r-caret"><span data-lang="en">Cross-Validation in R (caret)</span><span data-lang="zh">R中的交叉验证（caret包）</span></h2>
+
+<p data-lang="en">The <code>caret</code> package (Classification and Regression Training) provides a unified interface for training hundreds of models with cross-validation built in. Here's a practical workflow:</p>
+
+<p data-lang="zh"><code>caret</code>包（分类和回归训练）为使用内置交叉验证训练数百个模型提供了统一接口。以下是实际工作流程：</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en">library(caret)
+
+# Define the cross-validation strategy
+# 10-fold CV, save predictions for later inspection
+ctrl <- trainControl(method = "cv",
+                     number = 10,
+                     savePredictions = TRUE)
+
+# Fit linear model with CV
+fit_lm <- train(y ~ .,
+                data = mydata,
+                method = "lm",
+                trControl = ctrl)
+
+print(fit_lm)  # Shows CV RMSE, not training RMSE!
+
+# Fit random forest with same CV setup
+fit_rf <- train(y ~ .,
+                data = mydata,
+                method = "rf",
+                trControl = ctrl)
+
+# Compare models fairly using CV results
+compare <- resamples(list(OLS = fit_lm,
+                          RandomForest = fit_rf))
+summary(compare)
+dotplot(compare)  # Visualize CV RMSE for both models</code>
+</pre>
+
+<p data-lang="en"><strong>Key insight:</strong> When you print <code>fit_lm</code>, the reported RMSE is the cross-validated estimate, not the training error. This is an honest estimate of what your model will achieve on new data.</p>
+
+<p data-lang="zh"><strong>关键要点：</strong>当你打印<code>fit_lm</code>时，报告的RMSE是交叉验证估计，不是训练误差。这是模型在新数据上将达到什么的诚实估计。</p>
+
+<div class="math-note">
+  <p data-lang="en"><strong>Advanced:</strong> You can also use stratified K-fold (preserve class balance), repeated CV, or time-series CV by changing the <code>method</code> argument in <code>trainControl()</code>.</p>
+  <p data-lang="zh"><strong>高级用法：</strong>您也可以通过更改<code>trainControl()</code>中的<code>method</code>参数来使用分层K折、重复CV或时间序列CV。</p>
+</div>
+
+<h2 id="cv-tidymodels"><span data-lang="en">Cross-Validation in tidymodels</span><span data-lang="zh">tidymodels中的交叉验证</span></h2>
+
+<p data-lang="en">The <code>tidymodels</code> ecosystem (modern alternative to caret) uses a modular workflow: recipe (preprocessing), model specification, and workflow composition. CV is seamlessly integrated:</p>
+
+<p data-lang="zh"><code>tidymodels</code>生态（caret的现代替代品）使用模块化工作流：recipe（预处理）、模型规范和工作流组合。CV无缝集成：</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en">library(tidymodels)
+
+# 1. Create CV folds (10-fold)
+set.seed(42)
+folds <- vfold_cv(mydata, v = 10)
+
+# 2. Define preprocessing recipe
+rec <- recipe(y ~ ., data = mydata) |>
+  step_normalize(all_predictors()) |>
+  step_dummy(all_nominal_predictors())
+
+# 3. Define model spec
+spec <- linear_reg() |>
+  set_engine("lm")
+
+# Alternative: random forest spec
+spec_rf <- rand_forest(mtry = tune(),
+                       trees = 1000) |>
+  set_engine("ranger") |>
+  set_mode("regression")
+
+# 4. Combine into workflow
+wf <- workflow() |>
+  add_recipe(rec) |>
+  add_model(spec)
+
+# 5. Fit model to each fold and collect metrics
+cv_results <- fit_resamples(wf, folds)
+collect_metrics(cv_results)
+
+# 6. Extract predictions if needed
+preds <- collect_predictions(cv_results)
+head(preds)  # See actual vs predicted for each fold</code>
+</pre>
+
+<p data-lang="en">The tidymodels approach shines when doing hyperparameter tuning: use <code>tune()</code> placeholders in your model spec, then <code>tune_grid()</code> to search over values.</p>
+
+<p data-lang="zh">tidymodels方法在进行超参数调优时特别有用：在模型规范中使用<code>tune()</code>占位符，然后使用<code>tune_grid()</code>搜索值。</p>
+
+<h2 id="cv-social"><span data-lang="en">Special Considerations for Social Science Data</span><span data-lang="zh">社会科学数据的特殊考虑</span></h2>
+
+<p data-lang="en">Social science datasets often have structure that violates the standard i.i.d. assumption underlying basic K-fold CV. Here are common scenarios and solutions:</p>
+
+<p data-lang="zh">社会科学数据集经常具有违反基本K折CV基础的i.i.d.假设的结构。以下是常见场景和解决方案：</p>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Temporal Data (Time-Series)</span><span data-lang="zh">时间数据（时间序列）</span></h3>
+
+<p data-lang="en"><strong>Problem:</strong> If you split randomly, your "test" fold may contain earlier time periods than your training fold. Your model travels back in time to predict the past—not realistic.</p>
+
+<p data-lang="zh"><strong>问题：</strong>如果随机分割，"测试"折可能包含比训练折更早的时间段。您的模型会在时间中倒退以预测过去——不现实。</p>
+
+<p data-lang="en"><strong>Solution:</strong> Use time-series CV: for each fold k, train on all time points before t<sub>k</sub>, test on period [t<sub>k</sub>, t<sub>k+1</sub>]. No future leakage.</p>
+
+<p data-lang="zh"><strong>解决方案：</strong>使用时间序列CV：对于每一折k，在t<sub>k</sub>之前的所有时间点训练，在[t<sub>k</sub>, t<sub>k+1</sub>]期间测试。没有未来泄漏。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en"># Time-series CV in caret
+ctrl <- trainControl(method = "timeslice",
+                     initialWindow = 60,  # first 60 obs for training
+                     horizon = 12,        # predict next 12 obs
+                     fixedWindow = FALSE)
+
+fit <- train(y ~ ., data = ts_data,
+             method = "lm", trControl = ctrl)</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Grouped/Clustered Data</span><span data-lang="zh">分组/聚类数据</span></h3>
+
+<p data-lang="en"><strong>Problem:</strong> Your data has nested structure: students within schools, individuals within families, observations within countries. Random splitting violates the hierarchy.</p>
+
+<p data-lang="zh"><strong>问题：</strong>您的数据有嵌套结构：学校内的学生、家庭内的个人、国家内的观察。随机分割违反了层级结构。</p>
+
+<p data-lang="en"><strong>Solution:</strong> Group-stratified K-fold: keep all members of a group in the same fold.</p>
+
+<p data-lang="zh"><strong>解决方案：</strong>分组分层K折：将一个组的所有成员放在同一折中。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en"># Group K-fold in tidymodels
+library(tidymodels)
+
+# Create folds that don't split schools
+folds <- group_vfold_cv(data = mydata,
+                        group = school_id,
+                        v = 5)
+
+# Then proceed with fit_resamples() as usual
+cv_results <- fit_resamples(wf, folds)</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Class Imbalance</span><span data-lang="zh">类别不平衡</span></h3>
+
+<p data-lang="en"><strong>Problem:</strong> Binary outcome where rare class is ~1% of data. Random fold assignment may create folds with very different class proportions, inflating variance of CV estimates.</p>
+
+<p data-lang="zh"><strong>问题：</strong>二元结果，其中稀有类约占数据的1%。随机折分配可能会创建具有非常不同类比例的折，增加CV估计的方差。</p>
+
+<p data-lang="en"><strong>Solution:</strong> Stratified K-fold: maintain class proportions within each fold.</p>
+
+<p data-lang="zh"><strong>解决方案：</strong>分层K折：在每折内保持类比例。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en"># Stratified K-fold in caret
+ctrl <- trainControl(method = "cv",
+                     number = 10,
+                     classProbs = TRUE,
+                     summaryFunction = twoClassSummary,
+                     sampling = "down")  # optional: downsample rare class
+
+# Or use stratified folds in tidymodels
+folds <- vfold_cv(mydata, v = 10,
+                  strata = outcome)  # stratify by outcome</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Choosing the Right Evaluation Metric</span><span data-lang="zh">选择正确的评估指标</span></h3>
+
+<table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+  <tr style="background-color: var(--cream);">
+    <th style="border: 1px solid var(--ink-ghost); padding: 10px;" data-lang="en">Task Type</th>
+    <th style="border: 1px solid var(--ink-ghost); padding: 10px;" data-lang="zh">任务类型</th>
+    <th style="border: 1px solid var(--ink-ghost); padding: 10px;" data-lang="en">Recommended Metric</th>
+    <th style="border: 1px solid var(--ink-ghost); padding: 10px;" data-lang="zh">推荐指标</th>
+  </tr>
+  <tr>
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;" data-lang="en">Regression (continuous y)</td>
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;" data-lang="zh">回归（连续y）</td>
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;">RMSE or MAE</td>
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;">RMSE或MAE</td>
+  </tr>
+  <tr style="background-color: var(--parchment);">
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;" data-lang="en">Binary classification</td>
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;" data-lang="zh">二元分类</td>
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;">AUC-ROC or logloss</td>
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;">AUC-ROC或对数损失</td>
+  </tr>
+  <tr>
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;" data-lang="en">Imbalanced classification</td>
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;" data-lang="zh">不平衡分类</td>
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;">F1-score or precision-recall AUC</td>
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;">F1得分或精确-召回AUC</td>
+  </tr>
+  <tr style="background-color: var(--parchment);">
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;" data-lang="en">Multi-class</td>
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;" data-lang="zh">多类</td>
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;">Accuracy or macro-averaged F1</td>
+    <td style="border: 1px solid var(--ink-ghost); padding: 10px;">准确度或宏平均F1</td>
+  </tr>
+</table>
+
+<div class="insight-box">
+  <p data-lang="en"><strong>Why metric choice matters:</strong> Accuracy is misleading for imbalanced data. ROC-AUC focuses on ranking, not calibration. F1 balances precision and recall. Choose based on your scientific question: "What's the cost of false positives vs false negatives in my domain?"</p>
+  <p data-lang="zh"><strong>为什么指标选择很重要：</strong>准确度对不平衡数据具有误导性。ROC-AUC侧重于排名，不是校准。F1平衡精确度和召回。根据您的科学问题进行选择："在我的领域中，假阳性与假阴性的成本是什么？"</p>
+</div>
+
+<script>
+// K-fold visualizer
+const kSlider = document.getElementById('kSlider');
+const kValue = document.getElementById('kValue');
+const nTest = document.getElementById('nTest');
+const nTrain = document.getElementById('nTrain');
+const foldCounter = document.getElementById('foldCounter');
+const nextFoldBtn = document.getElementById('nextFoldBtn');
+const foldViz = document.getElementById('foldViz');
+const ctx = foldViz.getContext('2d');
+
+let nTotal = 100;
+let currentFold = 0;
+
+function updateViz() {
+  const k = parseInt(kSlider.value);
+  const testSize = Math.floor(nTotal / k);
+  const trainSize = nTotal - testSize;
+
+  kValue.textContent = k;
+  nTest.textContent = testSize;
+  nTrain.textContent = trainSize;
+
+  currentFold = Math.min(currentFold, k - 1);
+
+  // Update fold counter
+  const langEn = foldCounter.querySelector('[data-lang="en"]');
+  const langZh = foldCounter.querySelector('[data-lang="zh"]');
+  if (langEn) langEn.textContent = `Fold ${currentFold + 1} of ${k}`;
+  if (langZh) langZh.textContent = `第${currentFold + 1}折，共${k}折`;
+
+  // Draw visualization
+  ctx.clearRect(0, 0, foldViz.width, foldViz.height);
+  const barHeight = 40;
+  const y = 20;
+  const totalWidth = 400;
+  const foldWidth = totalWidth / k;
+
+  for (let i = 0; i < k; i++) {
+    const x = 40 + i * foldWidth;
+    if (i === currentFold) {
+      ctx.fillStyle = '#d9534f';  // red for test
+      ctx.fillRect(x, y, foldWidth - 2, barHeight);
+    } else {
+      ctx.fillStyle = '#5b8fc4';  // blue for train
+      ctx.fillRect(x, y, foldWidth - 2, barHeight);
+    }
+    ctx.strokeStyle = '#333';
+    ctx.strokeRect(x, y, foldWidth - 2, barHeight);
+  }
+}
+
+kSlider.addEventListener('input', updateViz);
+nextFoldBtn.addEventListener('click', () => {
+  const k = parseInt(kSlider.value);
+  currentFold = (currentFold + 1) % k;
+  updateViz();
+});
+
+updateViz();
+</script>

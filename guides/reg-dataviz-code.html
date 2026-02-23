@@ -1,0 +1,622 @@
+---
+layout: methods-guide
+title: "Data Visualization in R"
+title_zh: "R 数据可视化实战"
+parent_title: "Data Visualization"
+parent_title_zh: "数据可视化"
+parent_url: "reg-dataviz.html"
+bilingual: true
+mathjax: true
+---
+
+<h2 id="viz-grammar"><span data-lang="en">The Grammar of Graphics</span><span data-lang="zh">图形的语法</span></h2>
+
+<p data-lang="en">Hadley Wickham's "Grammar of Graphics" (ggplot2) revolutionized data visualization by providing a unified, composable language for building plots. Instead of memorizing dozens of specialized functions (barplot, boxplot, scatterplot), you learn a single grammar that combines layers.</p>
+
+<p data-lang="zh">Hadley Wickham的"图形语法"（ggplot2）通过提供统一的、可组合的语言来构建图表，革新了数据可视化。与其记住几十个专用函数（柱状图、箱形图、散点图），您学习一个结合层的单一语法。</p>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">The Seven Layers of ggplot2</span><span data-lang="zh">ggplot2的七层</span></h3>
+
+<p data-lang="en">Every ggplot2 visualization combines these layers:</p>
+
+<p data-lang="zh">每个ggplot2可视化都结合了这些层：</p>
+
+<ol style="margin: 15px 0; padding-left: 20px;">
+  <li data-lang="en"><strong>Data:</strong> Your dataframe. Format: one row per observation, one column per variable.</li>
+  <li data-lang="zh"><strong>数据：</strong>您的数据框。格式：每个观察一行，每个变量一列。</li>
+
+  <li data-lang="en"><strong>Aesthetics (aes):</strong> Map variables to visual properties. aes(x = income, y = votes, color = region, size = population).</li>
+  <li data-lang="zh"><strong>美学（aes）：</strong>将变量映射到视觉属性。aes(x = income, y = votes, color = region, size = population)。</li>
+
+  <li data-lang="en"><strong>Geometries (geom):</strong> Visual marks. geom_point() for scatterplot, geom_line() for line, geom_bar() for bar, etc.</li>
+  <li data-lang="zh"><strong>几何（geom）：</strong>视觉标记。geom_point()用于散点图，geom_line()用于线条，geom_bar()用于柱子等。</li>
+
+  <li data-lang="en"><strong>Scales:</strong> Control appearance of aesthetic mappings. scale_color_brewer() for colors, scale_x_log10() for log axis, etc.</li>
+  <li data-lang="zh"><strong>刻度：</strong>控制美学映射的外观。scale_color_brewer()用于颜色，scale_x_log10()用于对数轴等。</li>
+
+  <li data-lang="en"><strong>Coordinates:</strong> The coordinate system. coord_cartesian() for zooming, coord_flip() to flip axes, coord_polar() for radial plots.</li>
+  <li data-lang="zh"><strong>坐标：</strong>坐标系。coord_cartesian()用于缩放，coord_flip()用于翻转轴，coord_polar()用于径向图。</li>
+
+  <li data-lang="en"><strong>Facets:</strong> Small multiples. facet_wrap(~region) to create subplots for each region.</li>
+  <li data-lang="zh"><strong>面：</strong>小倍数。facet_wrap(~region)为每个地区创建子图。</li>
+
+  <li data-lang="en"><strong>Theme:</strong> Fine-grained visual styling. theme_minimal() removes gridlines, theme_bw() uses black and white, or customize with theme().</li>
+  <li data-lang="zh"><strong>主题：</strong>细粒度视觉样式。theme_minimal()删除网格线，theme_bw()使用黑白，或使用theme()自定义。</li>
+</ol>
+
+<p data-lang="en"><strong>The Magic:</strong> All layers are composable. You start with ggplot(data, aes(...)), add a geom, tweak scales and theme, and you're done. Changes at any layer propagate through the whole plot.</p>
+
+<p data-lang="zh"><strong>神奇之处：</strong>所有层都是可组合的。您从ggplot(data, aes(...))开始，添加一个geom，调整刻度和主题，完成。任何层的更改都会传播到整个图表。</p>
+
+<h2 id="viz-chooser"><span data-lang="en">Interactive Chart Type Selector</span><span data-lang="zh">交互式图表类型选择器</span></h2>
+
+<p data-lang="en">Click a chart type below to see when to use it and sample code.</p>
+
+<p data-lang="zh">点击下面的图表类型查看何时使用它和示例代码。</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
+  <div class="chart-card" data-chart="scatter" style="padding: 20px; border-radius: 8px; background-color: var(--cream); border: 2px solid transparent; cursor: pointer; text-align: center; transition: all 0.2s;">
+    <div style="font-size: 2em; margin-bottom: 10px;">📊</div>
+    <p data-lang="en" style="margin: 0; font-weight: bold;">Scatter</p>
+    <p data-lang="zh" style="margin: 0; font-weight: bold;">散点图</p>
+    <p data-lang="en" style="font-size: 0.8em; color: var(--ink-faded);">2 continuous</p>
+    <p data-lang="zh" style="font-size: 0.8em; color: var(--ink-faded);">2个连续</p>
+  </div>
+
+  <div class="chart-card" data-chart="line" style="padding: 20px; border-radius: 8px; background-color: var(--cream); border: 2px solid transparent; cursor: pointer; text-align: center; transition: all 0.2s;">
+    <div style="font-size: 2em; margin-bottom: 10px;">📈</div>
+    <p data-lang="en" style="margin: 0; font-weight: bold;">Line</p>
+    <p data-lang="zh" style="margin: 0; font-weight: bold;">线图</p>
+    <p data-lang="en" style="font-size: 0.8em; color: var(--ink-faded);">Trends over time</p>
+    <p data-lang="zh" style="font-size: 0.8em; color: var(--ink-faded);">随时间的趋势</p>
+  </div>
+
+  <div class="chart-card" data-chart="bar" style="padding: 20px; border-radius: 8px; background-color: var(--cream); border: 2px solid transparent; cursor: pointer; text-align: center; transition: all 0.2s;">
+    <div style="font-size: 2em; margin-bottom: 10px;">📋</div>
+    <p data-lang="en" style="margin: 0; font-weight: bold;">Bar</p>
+    <p data-lang="zh" style="margin: 0; font-weight: bold;">柱状图</p>
+    <p data-lang="en" style="font-size: 0.8em; color: var(--ink-faded);">Categorical values</p>
+    <p data-lang="zh" style="font-size: 0.8em; color: var(--ink-faded);">分类值</p>
+  </div>
+
+  <div class="chart-card" data-chart="histogram" style="padding: 20px; border-radius: 8px; background-color: var(--cream); border: 2px solid transparent; cursor: pointer; text-align: center; transition: all 0.2s;">
+    <div style="font-size: 2em; margin-bottom: 10px;">🔔</div>
+    <p data-lang="en" style="margin: 0; font-weight: bold;">Histogram</p>
+    <p data-lang="zh" style="margin: 0; font-weight: bold;">直方图</p>
+    <p data-lang="en" style="font-size: 0.8em; color: var(--ink-faded);">1 continuous</p>
+    <p data-lang="zh" style="font-size: 0.8em; color: var(--ink-faded);">1个连续</p>
+  </div>
+
+  <div class="chart-card" data-chart="box" style="padding: 20px; border-radius: 8px; background-color: var(--cream); border: 2px solid transparent; cursor: pointer; text-align: center; transition: all 0.2s;">
+    <div style="font-size: 2em; margin-bottom: 10px;">📦</div>
+    <p data-lang="en" style="margin: 0; font-weight: bold;">Boxplot</p>
+    <p data-lang="zh" style="margin: 0; font-weight: bold;">箱线图</p>
+    <p data-lang="en" style="font-size: 0.8em; color: var(--ink-faded);">Compare dists</p>
+    <p data-lang="zh" style="font-size: 0.8em; color: var(--ink-faded);">比较分布</p>
+  </div>
+
+  <div class="chart-card" data-chart="violin" style="padding: 20px; border-radius: 8px; background-color: var(--cream); border: 2px solid transparent; cursor: pointer; text-align: center; transition: all 0.2s;">
+    <div style="font-size: 2em; margin-bottom: 10px;">🎻</div>
+    <p data-lang="en" style="margin: 0; font-weight: bold;">Violin</p>
+    <p data-lang="zh" style="margin: 0; font-weight: bold;">小提琴图</p>
+    <p data-lang="en" style="font-size: 0.8em; color: var(--ink-faded);">Density per group</p>
+    <p data-lang="zh" style="font-size: 0.8em; color: var(--ink-faded);">每组密度</p>
+  </div>
+
+  <div class="chart-card" data-chart="heatmap" style="padding: 20px; border-radius: 8px; background-color: var(--cream); border: 2px solid transparent; cursor: pointer; text-align: center; transition: all 0.2s;">
+    <div style="font-size: 2em; margin-bottom: 10px;">🔥</div>
+    <p data-lang="en" style="margin: 0; font-weight: bold;">Heatmap</p>
+    <p data-lang="zh" style="margin: 0; font-weight: bold;">热力图</p>
+    <p data-lang="en" style="font-size: 0.8em; color: var(--ink-faded);">2D intensity</p>
+    <p data-lang="zh" style="font-size: 0.8em; color: var(--ink-faded);">2D强度</p>
+  </div>
+
+  <div class="chart-card" data-chart="map" style="padding: 20px; border-radius: 8px; background-color: var(--cream); border: 2px solid transparent; cursor: pointer; text-align: center; transition: all 0.2s;">
+    <div style="font-size: 2em; margin-bottom: 10px;">🗺️</div>
+    <p data-lang="en" style="margin: 0; font-weight: bold;">Map</p>
+    <p data-lang="zh" style="margin: 0; font-weight: bold;">地图</p>
+    <p data-lang="en" style="font-size: 0.8em; color: var(--ink-faded);">Geographic</p>
+    <p data-lang="zh" style="font-size: 0.8em; color: var(--ink-faded);">地理位置</p>
+  </div>
+</div>
+
+<div id="chart-details" style="margin-top: 30px; padding: 20px; background-color: var(--paper); border-radius: 8px; border-left: 4px solid var(--gold);">
+  <p data-lang="en" style="color: var(--ink-faded);">Click a chart type above to see details.</p>
+  <p data-lang="zh" style="color: var(--ink-faded);">点击上面的图表类型查看详情。</p>
+</div>
+
+<h2 id="viz-ggplot"><span data-lang="en">Key ggplot2 Patterns</span><span data-lang="zh">关键ggplot2模式</span></h2>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Scatter Plot with Trend Line</span><span data-lang="zh">带趋势线的散点图</span></h3>
+
+<p data-lang="en">Show the relationship between two continuous variables, with group differences highlighted by color. Add a regression line to reveal the trend.</p>
+
+<p data-lang="zh">显示两个连续变量之间的关系，用颜色突出显示组差异。添加回归线以显示趋势。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en">library(ggplot2)
+library(ggthemes)
+
+# Scatter with regression line and CI bands
+ggplot(data, aes(x = income, y = vote_share, color = region)) +
+  geom_point(alpha = 0.6, size = 2) +
+  geom_smooth(method = "lm", se = TRUE, color = "black", alpha = 0.2) +
+  scale_color_brewer(palette = "Set2") +
+  labs(title = "Income and Vote Share by Region",
+       subtitle = "With 95% confidence band",
+       x = "Median Income ($K)",
+       y = "Vote Share (%)",
+       color = "Region",
+       caption = "Source: Electoral data") +
+  theme_minimal() +
+  theme(legend.position = "right",
+        plot.title = element_text(size = 14, face = "bold"))</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Histograms & Density Plots</span><span data-lang="zh">直方图和密度图</span></h3>
+
+<p data-lang="en">Show the distribution of a single continuous variable. Use density curves for smoothness, histograms for counts.</p>
+
+<p data-lang="zh">显示单个连续变量的分布。使用密度曲线以获得平滑性，使用直方图以获得计数。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en"># Overlaid density curves for groups
+ggplot(data, aes(x = income, fill = region)) +
+  geom_density(alpha = 0.4) +
+  facet_wrap(~region) +
+  scale_fill_brewer(palette = "Pastel1") +
+  labs(x = "Income ($K)", y = "Density") +
+  theme_minimal()
+
+# Histogram with counts
+ggplot(data, aes(x = age)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  labs(title = "Age Distribution",
+       x = "Age (years)", y = "Count") +
+  theme_classic()</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Boxplots for Group Comparison</span><span data-lang="zh">用于组比较的箱线图</span></h3>
+
+<p data-lang="en">Compare distributions across groups. Boxplot shows median (bold line), quartiles (box), and outliers. Violin plot adds density curves.</p>
+
+<p data-lang="zh">比较各组的分布。箱线图显示中位数（粗线）、四分位数（箱）和异常值。小提琴图添加密度曲线。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en"># Boxplot
+ggplot(data, aes(x = region, y = income, fill = region)) +
+  geom_boxplot(alpha = 0.7) +
+  geom_jitter(width = 0.2, alpha = 0.3, size = 1) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(y = "Income ($K)", x = "Region") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Violin plot (like boxplot but shows density)
+ggplot(data, aes(x = region, y = income, fill = region)) +
+  geom_violin(alpha = 0.7) +
+  geom_boxplot(width = 0.1, fill = "white") +
+  scale_fill_brewer(palette = "Set2") +
+  labs(y = "Income ($K)", x = "Region") +
+  theme_minimal() +
+  theme(legend.position = "none")</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Bar Plots for Categorical Data</span><span data-lang="zh">分类数据的柱状图</span></h3>
+
+<p data-lang="en">Show counts or summarized values across categories. Use geom_bar() for counts, geom_col() for pre-summarized values.</p>
+
+<p data-lang="zh">显示各类别的计数或汇总值。对计数使用geom_bar()，对预汇总值使用geom_col()。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en"># Stacked bar plot
+ggplot(data, aes(x = region, fill = party)) +
+  geom_bar(position = "fill") +
+  labs(title = "Party Composition by Region",
+       x = "Region", y = "Proportion",
+       fill = "Party") +
+  scale_fill_brewer(palette = "Dark2") +
+  theme_minimal()
+
+# Grouped bar plot
+ggplot(data, aes(x = region, y = vote_share, fill = party)) +
+  geom_col(position = "dodge") +
+  labs(y = "Vote Share", x = "Region", fill = "Party") +
+  theme_minimal()</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Time Series & Line Plots</span><span data-lang="zh">时间序列和线图</span></h3>
+
+<p data-lang="en">Show trends over time. Use color or facets to compare groups.</p>
+
+<p data-lang="zh">显示随时间的趋势。使用颜色或面来比较组。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en">ggplot(data, aes(x = year, y = gdp, color = country)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  scale_color_brewer(palette = "Set1") +
+  labs(title = "GDP Growth Over Time",
+       x = "Year", y = "GDP ($ Billions)",
+       color = "Country") +
+  theme_minimal()
+
+# Small multiples (facets)
+ggplot(data, aes(x = year, y = gdp)) +
+  geom_line(color = "steelblue", size = 1) +
+  facet_wrap(~country, scales = "free_y") +
+  labs(x = "Year", y = "GDP ($B)") +
+  theme_minimal()</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Heatmaps for 2D Intensity</span><span data-lang="zh">用于2D强度的热力图</span></h3>
+
+<p data-lang="en">Show intensity (color) across two dimensions. Perfect for correlation matrices or cross-tabulations.</p>
+
+<p data-lang="zh">显示两个维度的强度（颜色）。非常适合相关矩阵或交叉制表。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en"># Heatmap of correlations
+library(reshape2)
+
+# Compute correlation matrix
+corr_matrix <- cor(data[, c("income", "education", "age", "turnout")])
+corr_melted <- melt(corr_matrix)
+
+ggplot(corr_melted, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red",
+                       midpoint = 0, limits = c(-1, 1)) +
+  labs(title = "Correlation Matrix", x = "", y = "", fill = "Correlation") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code>
+</pre>
+
+<h2 id="viz-publish"><span data-lang="en">Publication-Quality Figures</span><span data-lang="zh">出版质量图表</span></h2>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Fonts & Themes</span><span data-lang="zh">字体和主题</span></h3>
+
+<p data-lang="en">For academic papers, use clean themes and custom fonts. The ggthemes package provides publication-ready templates.</p>
+
+<p data-lang="zh">对于学术论文，使用干净的主题和自定义字体。ggthemes包提供出版就绪的模板。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en">library(ggplot2)
+library(ggthemes)
+
+# Classic themes
+p <- ggplot(data, aes(x = income, y = votes)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+# Economist theme (Economist magazine style)
+p + theme_economist() + scale_color_economist()
+
+# Tufte theme (minimalist, Edward Tufte inspired)
+p + theme_tufte()
+
+# The Economist with custom fonts (requires extrafont or showtext)
+library(extrafont)
+p + theme_economist(base_family = "Helvetica") +
+  labs(title = "Main Finding",
+       subtitle = "Subtitle here",
+       caption = "Source: Data source")</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Color-Blind Safe Palettes</span><span data-lang="zh">色盲友好的调色板</span></h3>
+
+<p data-lang="en">Always use color-blind safe palettes for publication. Viridis and ColorBrewer are excellent choices.</p>
+
+<p data-lang="zh">出版时始终使用色盲友好的调色板。Viridis和ColorBrewer是不错的选择。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en"># Viridis (perceptually uniform, color-blind safe)
+ggplot(data, aes(x = x, y = y, color = group)) +
+  geom_point() +
+  scale_color_viridis_d(option = "plasma")
+
+# ColorBrewer
+ggplot(data, aes(x = region, fill = outcome)) +
+  geom_bar() +
+  scale_fill_brewer(palette = "Set2")  # Safe for colorblind
+
+# Check palette with simulator
+library(colorBlindness)
+cvdPlot(p)  # Simulate colorblind vision</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Saving Publication-Ready Figures</span><span data-lang="zh">保存出版就绪的图表</span></h3>
+
+<p data-lang="en">Use ggsave() for high-quality output. Always save as PDF for papers (vector format, scalable).</p>
+
+<p data-lang="zh">使用ggsave()获得高质量输出。始终保存为PDF格式（矢量格式、可扩展）。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en"># Create plot
+p <- ggplot(data, aes(x = income, y = votes)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(title = "Income and Voting",
+       x = "Income ($K)", y = "Vote Share (%)") +
+  theme_minimal()
+
+# Save as PDF (vector) for papers
+ggsave("figure1.pdf", plot = p, width = 8, height = 5, dpi = 300)
+
+# Save as PNG (raster) for presentations
+ggsave("figure1.png", plot = p, width = 8, height = 5, dpi = 300)
+
+# Batch save multiple plots
+plots <- list(p1, p2, p3)
+for (i in seq_along(plots)) {
+  ggsave(paste0("figure", i, ".pdf"), plots[[i]], width = 8, height = 5)
+}</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Annotations & Labels</span><span data-lang="zh">注释和标签</span></h3>
+
+<p data-lang="en">Highlight key findings with text annotations, arrows, and highlights.</p>
+
+<p data-lang="zh">用文本注释、箭头和高亮突出显示关键发现。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en">ggplot(data, aes(x = income, y = votes)) +
+  geom_point(alpha = 0.6) +
+  # Highlight a specific region
+  geom_rect(aes(xmin = 50, xmax = 70, ymin = -Inf, ymax = Inf),
+            alpha = 0.1, fill = "yellow", inherit.aes = FALSE) +
+  # Add annotation text
+  annotate("text", x = 60, y = 80,
+           label = "High income\nstates vote conservative",
+           size = 4, color = "darkred", fontface = "bold") +
+  # Add arrow pointing to annotation
+  annotate("segment", x = 65, xend = 68, y = 75, yend = 85,
+           arrow = arrow(length = unit(0.2, "cm")), color = "darkred") +
+  labs(x = "Income ($K)", y = "Vote Share (%)") +
+  theme_minimal()</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Combining Plots: patchwork</span><span data-lang="zh">组合图表：patchwork</span></h3>
+
+<p data-lang="en">Use patchwork to arrange multiple plots together with a shared title and caption.</p>
+
+<p data-lang="zh">使用patchwork将多个图表与共享标题和标注一起排列。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en">library(patchwork)
+
+# Create multiple plots
+p1 <- ggplot(data, aes(x = income, y = votes)) +
+  geom_point() + geom_smooth(method = "lm") +
+  labs(title = "Income vs Vote Share", x = "Income", y = "Votes")
+
+p2 <- ggplot(data, aes(x = education, y = votes)) +
+  geom_point() + geom_smooth(method = "lm") +
+  labs(title = "Education vs Vote Share", x = "Education", y = "Votes")
+
+p3 <- ggplot(data, aes(x = age, y = votes)) +
+  geom_point() + geom_smooth(method = "lm") +
+  labs(title = "Age vs Vote Share", x = "Age", y = "Votes")
+
+# Arrange with patchwork
+combined <- (p1 + p2) / p3 +
+  plot_annotation(title = "Predictors of Voting Behavior",
+                  subtitle = "Linear relationships with vote share",
+                  caption = "Source: Electoral survey",
+                  theme = theme(plot.title = element_text(size = 16, face = "bold")))
+
+# Save combined figure
+ggsave("figure_combined.pdf", combined, width = 12, height = 10)</code>
+</pre>
+
+<h2 id="viz-interactive"><span data-lang="en">Interactive Visualization</span><span data-lang="zh">交互式可视化</span></h2>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">ggplotly: Adding Interactivity to ggplot</span><span data-lang="zh">ggplotly：为ggplot添加交互性</span></h3>
+
+<p data-lang="en">Convert any ggplot to an interactive plot with hover tooltips, zooming, and panning. Perfect for exploratory analysis and reports.</p>
+
+<p data-lang="zh">将任何ggplot转换为具有悬停工具提示、缩放和平移的交互式图表。非常适合探索性分析和报告。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en">library(plotly)
+
+# Create ggplot
+p <- ggplot(data, aes(x = income, y = votes, color = region, size = population)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_color_brewer(palette = "Set1") +
+  labs(title = "Income and Votes",
+       x = "Income ($K)", y = "Vote Share (%)")
+
+# Convert to interactive
+ggplotly(p, tooltip = c("x", "y", "color", "size"))</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Shiny: Interactive Web Applications</span><span data-lang="zh">Shiny：交互式Web应用</span></h3>
+
+<p data-lang="en">Build interactive dashboards where users can filter, select variables, and explore data. Here's a minimal example:</p>
+
+<p data-lang="zh">构建交互式仪表板，用户可以在其中过滤、选择变量和浏览数据。这是一个最小示例：</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en">library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Electoral Data Explorer"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("xvar", "X Variable:",
+                  choices = c("income", "education", "age")),
+      selectInput("yvar", "Y Variable:",
+                  choices = c("votes", "turnout", "campaign_spending"))
+    ),
+    mainPanel(
+      plotOutput("scatter")
+    )
+  )
+)
+
+server <- function(input, output) {
+  output$scatter <- renderPlot({
+    ggplot(data, aes_string(x = input$xvar, y = input$yvar)) +
+      geom_point(alpha = 0.6) +
+      geom_smooth(method = "lm") +
+      theme_minimal()
+  })
+}
+
+shinyApp(ui, server)</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">When to Use Interactive Visualization</span><span data-lang="zh">何时使用交互式可视化</span></h3>
+
+<p data-lang="en"><strong>Good for exploration:</strong> Shiny dashboards and interactive plots let users explore hypotheses and discover patterns.</p>
+
+<p data-lang="zh"><strong>适合探索：</strong>Shiny仪表板和交互式图表让用户探索假设和发现模式。</p>
+
+<p data-lang="en"><strong>Avoid in publications:</strong> Print papers can't interact. Use static, high-quality figures with annotations to communicate key findings.</p>
+
+<p data-lang="zh"><strong>在出版物中避免：</strong>打印论文无法交互。使用带注释的静态、高质量图表来传达关键发现。</p>
+
+<p data-lang="en"><strong>Good for reports:</strong> HTML reports (R Markdown, Quarto) can embed interactive plots. Use with caution—too much interactivity can distract from the main message.</p>
+
+<p data-lang="zh"><strong>适合报告：</strong>HTML报告（R Markdown、Quarto）可以嵌入交互式图表。谨慎使用——过多交互可能会分散主要信息。</p>
+
+<div class="insight-box">
+  <p data-lang="en"><strong>Key Takeaway:</strong> Master the grammar of graphics (ggplot2) as your core skill. It's composable, flexible, and makes publication-quality figures easy. Learn themes and color palettes for aesthetics, facets for small multiples, and geoms for different data types. Use interactive visualization for exploration, but static plots for communication. Always save figures at high resolution (DPI) and in vector formats (PDF) for papers.</p>
+  <p data-lang="zh"><strong>关键要点：</strong>掌握图形语法（ggplot2）作为您的核心技能。它是可组合的、灵活的，使出版质量的图表变得容易。学习主题和调色板以获得美学、面以获得小倍数、geoms以获得不同的数据类型。使用交互式可视化进行探索，但使用静态图表进行沟通。始终以高分辨率（DPI）和矢量格式（PDF）保存论文图表。</p>
+</div>
+
+<script>
+// Chart type selector
+const chartCards = document.querySelectorAll('.chart-card');
+const chartDetails = document.getElementById('chart-details');
+
+const chartInfo = {
+  scatter: {
+    enTitle: 'Scatter Plot',
+    zhTitle: '散点图',
+    enUse: 'Use to visualize the relationship between two continuous variables. Add color for groups, size for a third variable, and a trend line (geom_smooth) to reveal patterns.',
+    zhUse: '用于可视化两个连续变量之间的关系。添加颜色以表示组，大小以表示第三个变量，并添加趋势线（geom_smooth）以显示模式。',
+    code: `ggplot(data, aes(x = income, y = votes, color = region)) +
+  geom_point(alpha = 0.6, size = 2) +
+  geom_smooth(method = "lm", se = TRUE) +
+  scale_color_brewer(palette = "Set2") +
+  labs(x = "Income", y = "Vote Share") +
+  theme_minimal()`
+  },
+  line: {
+    enTitle: 'Line Plot',
+    zhTitle: '线图',
+    enUse: 'Perfect for time series data. Show trends over time with one line per group. Use color or facets to distinguish between groups.',
+    zhUse: '非常适合时间序列数据。用一条线显示每组的趋势。使用颜色或面来区分组。',
+    code: `ggplot(data, aes(x = year, y = gdp, color = country)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  scale_color_brewer(palette = "Set1") +
+  labs(x = "Year", y = "GDP") +
+  theme_minimal()`
+  },
+  bar: {
+    enTitle: 'Bar Plot',
+    zhTitle: '柱状图',
+    enUse: 'Compare values across categories. Use geom_col() for pre-computed values, geom_bar() for counts. Stack or group bars to show composition.',
+    zhUse: '比较各类别的值。对预计算值使用geom_col()，对计数使用geom_bar()。堆叠或分组柱子以显示构成。',
+    code: `ggplot(data, aes(x = region, y = vote_share, fill = party)) +
+  geom_col(position = "dodge") +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(x = "Region", y = "Vote Share", fill = "Party") +
+  theme_minimal()`
+  },
+  histogram: {
+    enTitle: 'Histogram',
+    zhTitle: '直方图',
+    enUse: 'Show the distribution of a single continuous variable. Use geom_histogram() for counts or geom_density() for smooth density curves.',
+    zhUse: '显示单个连续变量的分布。使用geom_histogram()获得计数或geom_density()获得平滑密度曲线。',
+    code: `ggplot(data, aes(x = income, fill = region)) +
+  geom_density(alpha = 0.4) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(x = "Income", y = "Density") +
+  theme_minimal()`
+  },
+  box: {
+    enTitle: 'Boxplot',
+    zhTitle: '箱线图',
+    enUse: 'Compare distributions across groups. Shows median, quartiles, and outliers. Add geom_jitter() to overlay raw points.',
+    zhUse: '比较各组的分布。显示中位数、四分位数和异常值。添加geom_jitter()以覆盖原始点。',
+    code: `ggplot(data, aes(x = region, y = income, fill = region)) +
+  geom_boxplot(alpha = 0.7) +
+  geom_jitter(width = 0.2, alpha = 0.3) +
+  scale_fill_brewer(palette = "Set2") +
+  theme_minimal() +
+  theme(legend.position = "none")`
+  },
+  violin: {
+    enTitle: 'Violin Plot',
+    zhTitle: '小提琴图',
+    enUse: 'Like a boxplot but shows the full density distribution. Better for non-normal or multimodal distributions.',
+    zhUse: '像箱线图一样，但显示完整的密度分布。对于非正态或多模态分布更好。',
+    code: `ggplot(data, aes(x = region, y = income, fill = region)) +
+  geom_violin(alpha = 0.7) +
+  geom_boxplot(width = 0.1) +
+  scale_fill_brewer(palette = "Set2") +
+  theme_minimal() +
+  theme(legend.position = "none")`
+  },
+  heatmap: {
+    enTitle: 'Heatmap',
+    zhTitle: '热力图',
+    enUse: 'Show intensity or magnitude across two dimensions. Perfect for correlation matrices, cross-tabulations, or geographic data.',
+    zhUse: '显示两个维度的强度或大小。非常适合相关矩阵、交叉制表或地理数据。',
+    code: `ggplot(corr_data, aes(x = var1, y = var2, fill = correlation)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
+  labs(x = "", y = "", fill = "Correlation") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))`
+  },
+  map: {
+    enTitle: 'Geographic Map',
+    zhTitle: '地理地图',
+    enUse: 'Visualize data spatially. Use sf (simple features) for shapefiles and geom_sf() to plot boundaries and color by values.',
+    zhUse: '在空间上可视化数据。使用sf（简单特征）处理shape文件，使用geom_sf()绘制边界并按值着色。',
+    code: `library(sf)
+ggplot(states_sf) +
+  geom_sf(aes(fill = vote_share)) +
+  scale_fill_gradient(low = "red", high = "blue") +
+  labs(fill = "Vote Share", title = "Electoral Map") +
+  theme_minimal()`
+  }
+};
+
+chartCards.forEach(card => {
+  card.addEventListener('click', () => {
+    // Remove previous selection
+    chartCards.forEach(c => c.style.borderColor = 'transparent');
+
+    // Highlight selected card
+    card.style.borderColor = 'var(--gold)';
+    card.style.backgroundColor = 'var(--parchment)';
+
+    const chartType = card.dataset.chart;
+    const info = chartInfo[chartType];
+
+    const enTitle = card.querySelector('[data-lang="en"]').textContent;
+    const zhTitle = card.querySelector('[data-lang="zh"]').textContent;
+
+    chartDetails.innerHTML = `
+      <h3 style="margin-top: 0;">
+        <span data-lang="en">${info.enTitle}</span>
+        <span data-lang="zh">${info.zhTitle}</span>
+      </h3>
+      <p data-lang="en"><strong>When to use:</strong> ${info.enUse}</p>
+      <p data-lang="zh"><strong>何时使用：</strong>${info.zhUse}</p>
+      <p data-lang="en"><strong>Example code:</strong></p>
+      <p data-lang="zh"><strong>示例代码：</strong></p>
+      <pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.85em;">
+<code>${info.code}</code>
+      </pre>
+    `;
+  });
+});
+</script>

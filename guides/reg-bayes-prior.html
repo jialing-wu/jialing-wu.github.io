@@ -1,0 +1,627 @@
+---
+layout: methods-guide
+title: "Bayesian Updating: Prior to Posterior"
+title_zh: "贝叶斯更新：从先验到后验"
+parent_title: "Bayesian Modeling"
+parent_title_zh: "贝叶斯建模"
+parent_url: "reg-bayes.html"
+bilingual: true
+---
+
+<div class="method-header">
+  <span data-lang="en">INTERACTIVE SIMULATION · GUIDE 3</span>
+  <span data-lang="zh">互动模拟 · 指南三</span>
+</div>
+
+<h1 data-lang="en">Bayesian Updating: Prior to Posterior</h1>
+<h1 data-lang="zh" style="display:none;">贝叶斯更新：从先验到后验</h1>
+
+<p class="method-subtitle">
+  <span data-lang="en">Watch beliefs update flip-by-flip. The Beta distribution is the prior for proportions.</span>
+  <span data-lang="zh">观看信念逐次更新。Beta 分布是比例的先验。</span>
+</p>
+
+<section class="content-section">
+  <h2>
+    <span data-lang="en">The Logic of Bayesian Inference</span>
+    <span data-lang="zh">贝叶斯推断的逻辑</span>
+  </h2>
+
+  <p data-lang="en">
+    Bayesian inference formalizes how we update beliefs in the face of new data. You start with a <strong>prior</strong> (your belief before seeing data), observe some <strong>data</strong>, and update to a <strong>posterior</strong> (your belief after seeing data). The process follows Bayes' theorem:
+  </p>
+  <p data-lang="zh" style="display:none;">
+    贝叶斯推断将我们在面对新数据时如何更新信念进行了形式化。你从一个<strong>先验</strong>（在看到数据之前的信念）开始，观察一些<strong>数据</strong>，然后更新为<strong>后验</strong>（在看到数据后的信念）。这个过程遵循贝叶斯定理：
+  </p>
+
+  <div class="math-note">
+    <strong data-lang="en">Bayes' Theorem:</strong>
+    <strong data-lang="zh" style="display:none;">贝叶斯定理：</strong>
+    <br>Posterior ∝ Prior × Likelihood
+    <br>P(θ|data) ∝ P(data|θ) × P(θ)
+    <br><br><span data-lang="en">For the Beta-Binomial model:</span>
+    <span data-lang="zh" style="display:none;">对于 Beta-Binomial 模型：</span>
+    <br>Beta(α + H, β + T)
+    <br><span data-lang="en">where H = heads, T = tails (observed data)</span>
+    <span data-lang="zh" style="display:none;">其中 H = 正面，T = 反面（观察数据）</span>
+  </div>
+
+  <h2>
+    <span data-lang="en">The Beta Distribution as a Prior</span>
+    <span data-lang="zh">Beta 分布作为先验</span>
+  </h2>
+
+  <p data-lang="en">
+    The Beta distribution is ideal for modeling proportions (like the probability of heads in a coin flip). It has two parameters: α (alpha) and β (beta).
+  </p>
+  <p data-lang="zh" style="display:none;">
+    Beta 分布非常适合于建模比例（例如硬币翻转中正面的概率）。它有两个参数：α (alpha) 和 β (beta)。
+  </p>
+
+  <ul>
+    <li data-lang="en"><strong>Beta(1, 1):</strong> Uniform prior. No prior information—any probability between 0 and 1 is equally likely.</li>
+    <li data-lang="zh" style="display:none;"><strong>Beta(1, 1)：</strong>均匀先验。没有先验信息——0 到 1 之间的任何概率都同样可能。</li>
+    
+    <li data-lang="en"><strong>Beta(2, 2):</strong> Weakly concentrated. Slight belief that the coin is fair (p = 0.5).</li>
+    <li data-lang="zh" style="display:none;"><strong>Beta(2, 2)：</strong>弱集中。略微相信硬币是公平的（p = 0.5）。</li>
+    
+    <li data-lang="en"><strong>Beta(10, 10):</strong> Strongly concentrated around p = 0.5. You have strong prior belief the coin is fair.</li>
+    <li data-lang="zh" style="display:none;"><strong>Beta(10, 10)：</strong>紧密集中在 p = 0.5 周围。你有强烈的先验信念硬币是公平的。</li>
+    
+    <li data-lang="en"><strong>Beta(5, 1):</strong> Skewed toward higher probabilities. Prior belief that the coin favors heads.</li>
+    <li data-lang="zh" style="display:none;"><strong>Beta(5, 1)：</strong>偏向较高的概率。先验信念硬币倾向于正面。</li>
+  </ul>
+
+  <div class="insight-box">
+    <strong data-lang="en">Key Insight:</strong>
+    <strong data-lang="zh" style="display:none;">关键见解：</strong>
+    <p data-lang="en">
+      The prior Beta(α, β) can be interpreted as having "seen" α-1 heads and β-1 tails in imaginary previous experiments. So Beta(1, 1) is like saying "I've seen nothing." Beta(5, 5) is like saying "I've seen 4 heads and 4 tails," which makes you skeptical of extreme probabilities.
+    </p>
+    <p data-lang="zh" style="display:none;">
+      先验 Beta(α, β) 可以理解为在虚拟的先前实验中"看到"了 α-1 个正面和 β-1 个反面。所以 Beta(1, 1) 就像说"我什么都没看到"。Beta(5, 5) 就像说"我看到了 4 个正面和 4 个反面"，这使你对极端概率持怀疑态度。
+    </p>
+  </div>
+</section>
+
+<section class="content-section">
+  <h2>
+    <span data-lang="en">Interactive Bayesian Updating Simulator</span>
+    <span data-lang="zh">互动贝叶斯更新模拟器</span>
+  </h2>
+
+  <p data-lang="en">
+    Below, set your prior beliefs (α and β), choose the true probability of heads, and flip the coin. Watch the posterior distribution (red line) update with each flip, converging toward the true probability (gold dashed line).
+  </p>
+  <p data-lang="zh" style="display:none;">
+    下面，设置你的先验信念（α 和 β），选择正面的真实概率，然后翻转硬币。观看后验分布（红线）随每次翻转而更新，收敛到真实概率（金色虚线）。
+  </p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0; align-items: start;">
+    <div class="ctrl-group">
+      <label class="ctrl-label">
+        <span data-lang="en">Prior α (belief in heads):</span>
+        <span data-lang="zh" style="display:none;">先验 α（对正面的信念）：</span>
+      </label>
+      <input type="range" id="alphaSlider" min="1" max="20" value="2" style="width: 100%;">
+      <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--ink-faded);">
+        <span>1</span>
+        <span class="ctrl-val" id="alphaVal">2</span>
+        <span>20</span>
+      </div>
+    </div>
+
+    <div class="ctrl-group">
+      <label class="ctrl-label">
+        <span data-lang="en">Prior β (belief in tails):</span>
+        <span data-lang="zh" style="display:none;">先验 β（对反面的信念）：</span>
+      </label>
+      <input type="range" id="betaSlider" min="1" max="20" value="2" style="width: 100%;">
+      <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--ink-faded);">
+        <span>1</span>
+        <span class="ctrl-val" id="betaVal">2</span>
+        <span>20</span>
+      </div>
+    </div>
+
+    <div class="ctrl-group">
+      <label class="ctrl-label">
+        <span data-lang="en">True coin fairness (p):</span>
+        <span data-lang="zh" style="display:none;">真实硬币公平性 (p)：</span>
+      </label>
+      <input type="range" id="trueP" min="0.1" max="0.9" step="0.05" value="0.5" style="width: 100%;">
+      <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--ink-faded);">
+        <span>0.1</span>
+        <span class="ctrl-val" id="truePVal">0.5</span>
+        <span>0.9</span>
+      </div>
+    </div>
+
+    <div class="ctrl-group" style="grid-column: 1 / 3; display: flex; gap: 1rem;">
+      <button class="sim-btn" id="flip1Btn" style="flex: 1; background: var(--gold); color: var(--ink); border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        <span data-lang="en">Flip 1</span>
+        <span data-lang="zh" style="display:none;">翻转 1 次</span>
+      </button>
+      <button class="sim-btn" id="flip10Btn" style="flex: 1; background: var(--gold); color: var(--ink); border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        <span data-lang="en">Flip 10</span>
+        <span data-lang="zh" style="display:none;">翻转 10 次</span>
+      </button>
+      <button class="sim-btn" id="flip100Btn" style="flex: 1; background: var(--gold); color: var(--ink); border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        <span data-lang="en">Flip 100</span>
+        <span data-lang="zh" style="display:none;">翻转 100 次</span>
+      </button>
+      <button class="sim-btn" id="resetBtn" style="flex: 1; background: var(--ink-faded); color: var(--paper); border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        <span data-lang="en">Reset</span>
+        <span data-lang="zh" style="display:none;">重置</span>
+      </button>
+    </div>
+  </div>
+
+  <div style="background: var(--parchment); border: 2px solid var(--leather); border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0;">
+    <h3 data-lang="en" style="text-align: center; margin-bottom: 1rem;">Beta Posterior Distribution</h3>
+    <h3 data-lang="zh" style="display:none; text-align: center; margin-bottom: 1rem;">Beta 后验分布</h3>
+    <canvas id="betaChart" width="600" height="350"></canvas>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">Current α</span><span data-lang="zh" style="display:none;">当前 α</span></div>
+      <div class="sval" id="currentAlpha">2</div>
+    </div>
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">Current β</span><span data-lang="zh" style="display:none;">当前 β</span></div>
+      <div class="sval" id="currentBeta">2</div>
+    </div>
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">Flips (n)</span><span data-lang="zh" style="display:none;">翻转(n)</span></div>
+      <div class="sval" id="nFlips">0</div>
+    </div>
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">Heads</span><span data-lang="zh" style="display:none;">正面</span></div>
+      <div class="sval" id="headsCount">0</div>
+    </div>
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">Tails</span><span data-lang="zh" style="display:none;">反面</span></div>
+      <div class="sval" id="tailsCount">0</div>
+    </div>
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">Post. Mean</span><span data-lang="zh" style="display:none;">后验均值</span></div>
+      <div class="sval" id="postMean">—</div>
+    </div>
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">95% Credible</span><span data-lang="zh" style="display:none;">95% 可信</span></div>
+      <div class="sval" id="credible" style="font-size: 0.95rem;">—</div>
+    </div>
+  </div>
+</section>
+
+<section class="content-section">
+  <h2>
+    <span data-lang="en">What the Simulation Teaches</span>
+    <span data-lang="zh">模拟教会了什么</span>
+  </h2>
+
+  <p data-lang="en">
+    Try these experiments:
+  </p>
+  <p data-lang="zh" style="display:none;">
+    尝试这些实验：
+  </p>
+
+  <ol>
+    <li data-lang="en">
+      <strong>Weak Prior (α=1, β=1):</strong> Start with Beta(1, 1) and flip the coin multiple times. With few flips, the posterior bounces around. But with enough flips (say, 100), it will concentrate around the true probability.
+    </li>
+    <li data-lang="zh" style="display:none;">
+      <strong>弱先验（α=1, β=1）：</strong>从 Beta(1, 1) 开始并多次翻转硬币。翻转较少时，后验会四处波动。但随着足够多的翻转（比如 100 次），它会集中在真实概率周围。
+    </li>
+    
+    <li data-lang="en">
+      <strong>Strong Prior (α=10, β=10):</strong> Set a strong prior belief that the coin is fair (p = 0.5). Now flip from a biased coin (e.g., p = 0.7). Notice how the posterior moves slowly toward 0.7. A strong prior requires more data to overturn.
+    </li>
+    <li data-lang="zh" style="display:none;">
+      <strong>强先验（α=10, β=10）：</strong>设置强烈的先验信念硬币是公平的（p = 0.5）。现在从有偏硬币翻转（例如，p = 0.7）。注意后验如何缓慢向 0.7 移动。强先验需要更多数据来推翻。
+    </li>
+    
+    <li data-lang="en">
+      <strong>Skewed Prior (α=5, β=1):</strong> Believe the coin favors heads. If you flip from p = 0.3 (actually favors tails), the posterior will resist moving far toward 0.3—your strong prior pulls it back.
+    </li>
+    <li data-lang="zh" style="display:none;">
+      <strong>偏斜先验（α=5, β=1）：</strong>相信硬币倾向于正面。如果你从 p = 0.3 翻转（实际上倾向于反面），后验将抵抗远离 0.3 的移动——你的强先验会把它拉回。
+    </li>
+  </ol>
+
+  <div class="insight-box">
+    <strong data-lang="en">The Power of Bayesian Inference:</strong>
+    <strong data-lang="zh" style="display:none;">贝叶斯推断的力量：</strong>
+    <p data-lang="en">
+      Bayesian inference formalizes the intuition that <strong>strong prior beliefs require more evidence to overturn</strong>. But with infinite data, the data always wins—the posterior converges to the truth regardless of the prior. This is why Bayesian methods are so powerful: they combine scientific knowledge (the prior) with empirical evidence (the likelihood) in a coherent framework.
+    </p>
+    <p data-lang="zh" style="display:none;">
+      贝叶斯推断形式化了<strong>强烈的先验信念需要更多证据来推翻</strong>的直觉。但随着无限数据，数据总是赢家——后验收敛到真实，无论先验如何。这就是贝叶斯方法如此强大的原因：它们在一个连贯的框架中结合了科学知识（先验）和经验证据（似然）。
+    </p>
+  </div>
+</section>
+
+<section class="content-section">
+  <h2>
+    <span data-lang="en">From Beta-Binomial to Bayesian Regression</span>
+    <span data-lang="zh">从 Beta-Binomial 到贝叶斯回归</span>
+  </h2>
+
+  <p data-lang="en">
+    The Beta-Binomial model is a simple example of Bayesian inference. In Bayesian regression, we use the same logic: specify a prior on regression coefficients, compute the posterior given the data, and use the posterior to make inferences and predictions.
+  </p>
+  <p data-lang="zh" style="display:none;">
+    Beta-Binomial 模型是贝叶斯推断的一个简单例子。在贝叶斯回归中，我们使用相同的逻辑：为回归系数指定先验，根据数据计算后验，并使用后验进行推断和预测。
+  </p>
+
+  <p data-lang="en">
+    A common approach in R is the <strong>brms</strong> package (Bayesian Regression Models using Stan):
+  </p>
+  <p data-lang="zh" style="display:none;">
+    R 中的一个常见方法是<strong>brms</strong>包（使用 Stan 的贝叶斯回归模型）：
+  </p>
+
+  <pre style="background: var(--parchment); border: 1px solid var(--sand); padding: 1.5rem; border-radius: 4px; font-family: var(--mono); font-size: 0.85rem; overflow-x: auto; color: var(--ink);">
+library(brms)
+
+# Fit a Bayesian linear regression
+# Prior: coefficients are Normal(0, 1)
+model <- brm(
+  y ~ x1 + x2,
+  data = mydata,
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(exponential(1), class = "sigma")
+  ),
+  chains = 4, iter = 2000
+)
+
+# Examine the posterior
+summary(model)
+
+# Get posterior samples (for computing credible intervals, etc.)
+posterior_samples <- as_draws_df(model)
+  </pre>
+
+  <p data-lang="en">
+    In this brms model, we specify:
+  </p>
+  <p data-lang="zh" style="display:none;">
+    在这个 brms 模型中，我们指定：
+  </p>
+
+  <ul>
+    <li data-lang="en">The <strong>formula</strong> (y ~ x1 + x2) describing the model structure</li>
+    <li data-lang="zh" style="display:none;">描述模型结构的<strong>公式</strong>（y ~ x1 + x2）</li>
+    
+    <li data-lang="en">The <strong>priors</strong> on coefficients and error variance</li>
+    <li data-lang="zh" style="display:none;">关于系数和误差方差的<strong>先验</strong></li>
+    
+    <li data-lang="en">The <strong>data</strong> and MCMC settings (chains, iterations)</li>
+    <li data-lang="zh" style="display:none;"><strong>数据</strong>和 MCMC 设置（链、迭代）</li>
+  </ul>
+
+  <p data-lang="en">
+    The output includes posterior means, credible intervals, and Rhat (convergence diagnostics). Unlike frequentist OLS, the Bayesian posterior tells you the probability distribution of each coefficient <em>given your data and prior</em>—no more p-values, but instead probability intervals for your estimates.
+  </p>
+  <p data-lang="zh" style="display:none;">
+    输出包括后验均值、可信区间和 Rhat（收敛诊断）。与频率主义 OLS 不同，贝叶斯后验告诉你<em>给定你的数据和先验</em>每个系数的概率分布——不再有 p 值，而是你的估计的概率区间。
+  </p>
+
+  <div class="insight-box">
+    <strong data-lang="en">Bayesian vs. Frequentist:</strong>
+    <strong data-lang="zh" style="display:none;">贝叶斯 vs. 频率主义：</strong>
+    <p data-lang="en">
+      Frequentist OLS: "Given the true coefficient is β, the probability of observing this data is..." (p-values)
+      <br><br>
+      Bayesian: "Given the observed data and my prior, the probability that the coefficient is in this range is..." (credible intervals)
+      <br><br>
+      Both are useful, but they answer different questions. Bayesian inference is more intuitive for incorporating prior knowledge and expressing uncertainty about coefficients.
+    </p>
+    <p data-lang="zh" style="display:none;">
+      频率主义 OLS："给定真实系数是 β，观察到这些数据的概率是..." (p 值)
+      <br><br>
+      贝叶斯："给定观察到的数据和我的先验，系数在这个范围内的概率是..." (可信区间)
+      <br><br>
+      两者都有用，但它们回答不同的问题。贝叶斯推断对于纳入先验知识和表达关于系数的不确定性更直观。
+    </p>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Beta PDF computation with numerical stability
+function logGamma(x) {
+  const c = [57.1562356658629235, -59.5979603554754912, 14.1368655185113962,
+             -0.491913816097620199, 0.339946499848118887e-4, 0.465236289270485756e-4,
+             -0.983744753048795646e-4, 0.158088703224912494e-3, -0.210264441724104883e-3,
+             0.217439618115212643e-3, -0.164318106536763890e-3, 0.844182239838527433e-4,
+             -0.261908384015814087e-4, 0.368991826595316234e-5];
+  if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - logGamma(1 - x);
+  x -= 1;
+  let a = c[0];
+  for (let i = 1; i < c.length; i++) a += c[i] / (x + i);
+  return (x + 0.5) * Math.log(x + 5.5) - (x + 5.5) + 0.5 * Math.log(2 * Math.PI) + Math.log(a);
+}
+
+function betaPDF(x, alpha, beta) {
+  if (x <= 0 || x >= 1) return 0;
+  return Math.exp((alpha - 1) * Math.log(x) + (beta - 1) * Math.log(1 - x) - 
+                  logGamma(alpha) - logGamma(beta) + logGamma(alpha + beta));
+}
+
+// Inverse CDF for Beta (quantile function, approximation)
+function betaQuantile(p, alpha, beta) {
+  let x = 0.5;
+  for (let i = 0; i < 50; i++) {
+    let cdf = 0;
+    let step = 0.001;
+    for (let j = 0; j < x; j += step) cdf += betaPDF(j, alpha, beta) * step;
+    if (cdf < p) x += 0.01; else x -= 0.01;
+  }
+  return x;
+}
+
+let state = {
+  alpha: 2,
+  beta: 2,
+  heads: 0,
+  tails: 0,
+  trueP: 0.5
+};
+
+let betaChart;
+
+function updateChart() {
+  let alpha = state.alpha;
+  let beta = state.beta;
+  
+  let xVals = [];
+  let yVals = [];
+  for (let x = 0.01; x < 1; x += 0.01) {
+    xVals.push(x.toFixed(2));
+    yVals.push(betaPDF(x, alpha, beta));
+  }
+  
+  // Posterior mean
+  let postMean = alpha / (alpha + beta);
+  
+  // 95% credible interval (approximation)
+  let q025 = betaQuantile(0.025, alpha, beta);
+  let q975 = betaQuantile(0.975, alpha, beta);
+  
+  document.getElementById('currentAlpha').textContent = alpha;
+  document.getElementById('currentBeta').textContent = beta;
+  document.getElementById('nFlips').textContent = state.heads + state.tails;
+  document.getElementById('headsCount').textContent = state.heads;
+  document.getElementById('tailsCount').textContent = state.tails;
+  document.getElementById('postMean').textContent = postMean.toFixed(3);
+  document.getElementById('credible').textContent = `[${q025.toFixed(2)}, ${q975.toFixed(2)}]`;
+  
+  if (betaChart) betaChart.destroy();
+  
+  let ctx = document.getElementById('betaChart').getContext('2d');
+  betaChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: xVals,
+      datasets: [
+        {
+          label: 'Prior',
+          data: xVals.map(x => betaPDF(parseFloat(x), 
+            parseInt(document.getElementById('alphaSlider').value), 
+            parseInt(document.getElementById('betaSlider').value))),
+          borderColor: 'rgba(128, 128, 128, 0.5)',
+          borderWidth: 2,
+          fill: false,
+          tension: 0.4
+        },
+        {
+          label: 'Posterior',
+          data: yVals,
+          borderColor: 'var(--red)',
+          borderWidth: 3,
+          fill: false,
+          tension: 0.4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { font: { size: 11 } } },
+        annotation: {
+          drawTime: 'beforeDatasetsDraw'
+        }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Probability of Heads (p)' } },
+        y: { title: { display: true, text: 'Density' } }
+      }
+    },
+    plugins: [{
+      afterDatasetsDraw(chart) {
+        const ctx = chart.ctx;
+        const xScale = chart.scales.x;
+        const yScale = chart.scales.y;
+        
+        // Draw true p line
+        const trueP = state.trueP;
+        const xPixel = xScale.getPixelForValue(trueP.toFixed(2));
+        const yMin = yScale.getPixelForValue(0);
+        const yMax = yScale.getPixelForValue(yScale.max);
+        
+        ctx.strokeStyle = 'var(--gold)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(xPixel, yMax);
+        ctx.lineTo(xPixel, yMin);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }]
+  });
+}
+
+function flipCoin(times) {
+  for (let i = 0; i < times; i++) {
+    if (Math.random() < state.trueP) {
+      state.heads++;
+      state.alpha++;
+    } else {
+      state.tails++;
+      state.beta++;
+    }
+  }
+  updateChart();
+}
+
+function reset() {
+  state.alpha = parseInt(document.getElementById('alphaSlider').value);
+  state.beta = parseInt(document.getElementById('betaSlider').value);
+  state.heads = 0;
+  state.tails = 0;
+  updateChart();
+}
+
+document.getElementById('alphaSlider').addEventListener('input', (e) => {
+  document.getElementById('alphaVal').textContent = e.target.value;
+  if (state.heads === 0 && state.tails === 0) {
+    state.alpha = parseInt(e.target.value);
+    updateChart();
+  }
+});
+
+document.getElementById('betaSlider').addEventListener('input', (e) => {
+  document.getElementById('betaVal').textContent = e.target.value;
+  if (state.heads === 0 && state.tails === 0) {
+    state.beta = parseInt(e.target.value);
+    updateChart();
+  }
+});
+
+document.getElementById('trueP').addEventListener('input', (e) => {
+  state.trueP = parseFloat(e.target.value);
+  document.getElementById('truePVal').textContent = state.trueP.toFixed(2);
+  updateChart();
+});
+
+document.getElementById('flip1Btn').addEventListener('click', () => flipCoin(1));
+document.getElementById('flip10Btn').addEventListener('click', () => flipCoin(10));
+document.getElementById('flip100Btn').addEventListener('click', () => flipCoin(100));
+document.getElementById('resetBtn').addEventListener('click', reset);
+
+updateChart();
+</script>
+
+<style>
+.ctrl-group {
+  margin-bottom: 1rem;
+}
+
+.ctrl-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.ctrl-val {
+  font-weight: bold;
+  color: var(--gold);
+}
+
+.sim-btn {
+  font-family: var(--sans);
+  font-size: 1rem;
+}
+
+.stat-chip {
+  background: var(--parchment);
+  border: 2px solid var(--gold);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.slabel {
+  font-size: 0.85rem;
+  color: var(--ink-faded);
+  margin-bottom: 0.5rem;
+}
+
+.sval {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--ink);
+  font-family: var(--mono);
+}
+
+.insight-box {
+  background: var(--cream);
+  border-left: 4px solid var(--gold);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+}
+
+.insight-box strong {
+  color: var(--red);
+}
+
+.math-note {
+  background: var(--parchment);
+  border: 1px solid var(--sand);
+  border-radius: 4px;
+  padding: 1.5rem;
+  font-family: var(--mono);
+  margin: 1.5rem 0;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.method-header {
+  text-align: center;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  color: var(--red);
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.method-subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--ink-faded);
+  margin: 1rem 0 2rem;
+  font-style: italic;
+}
+
+.content-section {
+  margin: 3rem 0;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--sand);
+}
+
+.content-section:last-child {
+  border-bottom: none;
+}
+
+code {
+  background: var(--parchment);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: var(--mono);
+  color: var(--ink);
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+</style>

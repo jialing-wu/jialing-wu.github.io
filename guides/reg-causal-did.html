@@ -1,0 +1,320 @@
+---
+layout: methods-guide
+title: "Difference-in-Differences: Step-by-Step Walkthrough"
+title_zh: "双重差分法：逐步讲解"
+parent_title: "Causal Inference"
+parent_title_zh: "因果推断"
+parent_url: "reg-causal.html"
+bilingual: true
+mathjax: false
+---
+
+<div style="background: linear-gradient(135deg, var(--parchment) 0%, var(--cream) 100%); padding: 32px 24px; border-radius: 4px; margin-bottom: 28px; border-left: 5px solid var(--gold);">
+  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+    <span style="font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 1px;" data-lang="en">CODE WALKTHROUGH · GUIDE 2</span>
+    <span style="font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; display: none;" data-lang="zh">代码指南 · 指南二</span>
+  </div>
+  <h1 style="font-family: var(--serif); font-size: 36px; color: var(--ink); margin: 16px 0 8px 0; font-weight: 700;" data-lang="en">Difference-in-Differences</h1>
+  <h1 style="font-family: var(--serif); font-size: 36px; color: var(--ink); margin: 16px 0 8px 0; font-weight: 700; display: none;" data-lang="zh">双重差分法</h1>
+  <p style="font-family: var(--sans); font-size: 17px; color: var(--ink-faded); margin: 0; font-weight: 400;" data-lang="en">From 2×2 tables to staggered adoption — complete walkthrough with R code and interactive visualization.</p>
+  <p style="font-family: var(--sans); font-size: 17px; color: var(--ink-faded); margin: 0; font-weight: 400; display: none;" data-lang="zh">从2×2表到阶段性采用——完整的演示，包括R代码和交互式可视化。</p>
+</div>
+
+<section style="margin-bottom: 32px;">
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">The 2×2 DiD Table</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">2×2 双重差分表</h2>
+
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px;" data-lang="en">Difference-in-Differences (DiD) compares how treated and control units change over time. The key assumption is <strong>parallel trends</strong>: absent the policy, both groups would have followed the same trajectory.</p>
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px; display: none;" data-lang="zh">双重差分法比较处理组和对照组随时间的变化。关键假设是平行趋势：如果没有政策，两组会遵循相同的轨迹。</p>
+
+  <div style="overflow-x: auto; margin: 20px 0;">
+    <table style="width: 100%; border-collapse: collapse; font-family: var(--sans); font-size: 13px;">
+      <thead>
+        <tr style="background: var(--sand);">
+          <th style="padding: 12px; text-align: left; color: var(--ink); font-weight: 600; border: 1px solid var(--gold);" data-lang="en"></th>
+          <th style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--gold);" data-lang="en">Before (2019)</th>
+          <th style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--gold);" data-lang="en">After (2022)</th>
+          <th style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--gold);" data-lang="en">Change</th>
+          
+          <th style="padding: 12px; text-align: left; color: var(--ink); font-weight: 600; border: 1px solid var(--gold); display: none;" data-lang="zh"></th>
+          <th style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--gold); display: none;" data-lang="zh">前期 (2019)</th>
+          <th style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--gold); display: none;" data-lang="zh">后期 (2022)</th>
+          <th style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--gold); display: none;" data-lang="zh">变化</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background: var(--cream);">
+          <td style="padding: 12px; color: var(--ink); font-weight: 600; border: 1px solid var(--sand);" data-lang="en">Treated (w/ policy)</td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand);">45%</td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand);">55%</td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--sand);">+10%</td>
+          
+          <td style="padding: 12px; color: var(--ink); font-weight: 600; border: 1px solid var(--sand); display: none;" data-lang="zh">处理组（有政策）</td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;">45%</td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;">55%</td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--sand); display: none;">+10%</td>
+        </tr>
+        <tr style="background: var(--parchment);">
+          <td style="padding: 12px; color: var(--ink); font-weight: 600; border: 1px solid var(--sand);" data-lang="en">Control (w/o policy)</td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand);">40%</td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand);">45%</td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--sand);">+5%</td>
+          
+          <td style="padding: 12px; color: var(--ink); font-weight: 600; border: 1px solid var(--sand); display: none;" data-lang="zh">对照组（无政策）</td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;">40%</td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;">45%</td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--sand); display: none;">+5%</td>
+        </tr>
+        <tr style="background: var(--sand);">
+          <td style="padding: 12px; color: var(--ink); font-weight: 700; border: 1px solid var(--gold);" data-lang="en"><strong>DiD Estimate</strong></td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--gold);"></td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--gold);"></td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); font-weight: 700; border: 1px solid var(--gold);">10% - 5% = <span style="color: var(--red);">5 pp</span></td>
+          
+          <td style="padding: 12px; color: var(--ink); font-weight: 700; border: 1px solid var(--gold); display: none;" data-lang="zh"><strong>双重差分估计</strong></td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--gold); display: none;"></td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--gold); display: none;"></td>
+          <td style="padding: 12px; text-align: center; color: var(--ink); font-weight: 700; border: 1px solid var(--gold); display: none;">10% - 5% = <span style="color: var(--red);">5 个百分点</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px;" data-lang="en">The treated group gained 10 percentage points. But the control group gained 5 percentage points too (possibly due to secular trends). DiD subtracts out this common trend: <strong>5% - 5% = 5 percentage points</strong> is the treatment effect.</p>
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px; display: none;" data-lang="zh">处理组增加了10个百分点。但对照组也增加了5个百分点（可能由于普遍趋势）。双重差分减去这个共同趋势：5% - 5% = 5个百分点是处理效应。</p>
+
+  <div class="insight-box" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 16px 20px; border-radius: 3px; margin: 20px 0;">
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en"><strong>Parallel Trends Assumption:</strong> The DiD estimate is valid only if treated and control groups would have followed parallel trends absent the policy. If treatment is correlated with differential underlying trends (e.g., policy adopted in faster-growing regions), the estimate is biased.</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh"><strong>平行趋势假设：</strong>双重差分估计只有在处理组和对照组在没有政策的情况下会遵循平行趋势时才有效。如果处理与不同的基础趋势相关（例如，政策在增长更快的地区采用），估计会有偏差。</p>
+  </div>
+</section>
+
+<section style="margin-bottom: 32px;">
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Interactive DiD Visualization</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">交互式双重差分可视化</h2>
+
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 20px;" data-lang="en">Move the sliders to see how treatment effects and trend violations affect the DiD estimate.</p>
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 20px; display: none;" data-lang="zh">移动滑块，查看处理效应和趋势违规如何影响双重差分估计。</p>
+
+  <div class="sim-panel" style="background: var(--cream); border: 1px solid var(--sand); padding: 20px; border-radius: 3px; margin-bottom: 24px;">
+    <div style="margin-bottom: 20px;">
+      <label style="font-family: var(--sans); font-size: 14px; color: var(--ink); display: block; margin-bottom: 8px;" data-lang="en">Treatment Effect: <strong id="te-val">5</strong></label>
+      <label style="font-family: var(--sans); font-size: 14px; color: var(--ink); display: block; margin-bottom: 8px; display: none;" data-lang="zh">处理效应：<strong id="te-val-zh">5</strong></label>
+      <input type="range" id="treatment-effect" min="0" max="20" value="5" step="0.5" style="width: 100%; cursor: pointer;">
+    </div>
+
+    <div style="margin-bottom: 24px;">
+      <label style="font-family: var(--sans); font-size: 14px; color: var(--ink); display: block; margin-bottom: 8px;" data-lang="en">Pre-Trend Difference: <strong id="pt-val">0</strong> (parallel = 0, violated > 0)</label>
+      <label style="font-family: var(--sans); font-size: 14px; color: var(--ink); display: block; margin-bottom: 8px; display: none;" data-lang="zh">前期趋势差异：<strong id="pt-val-zh">0</strong>（平行 = 0，违规 > 0）</label>
+      <input type="range" id="pretrend" min="0" max="5" value="0" step="0.25" style="width: 100%; cursor: pointer;">
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <canvas id="didChart" style="max-width: 100%; height: 300px;"></canvas>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div style="background: var(--parchment); padding: 12px; border-radius: 3px; text-align: center;">
+        <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-faded); text-transform: uppercase;" data-lang="en">Estimated DiD</div>
+        <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-faded); text-transform: uppercase; display: none;" data-lang="zh">估计的双重差分</div>
+        <div id="did-estimate" style="font-family: var(--mono); font-size: 18px; color: var(--ink); font-weight: 700; margin-top: 4px;">5.0</div>
+      </div>
+      <div style="background: var(--parchment); padding: 12px; border-radius: 3px; text-align: center;">
+        <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-faded); text-transform: uppercase;" data-lang="en">Trend Bias</div>
+        <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-faded); text-transform: uppercase; display: none;" data-lang="zh">趋势偏差</div>
+        <div id="trend-bias" style="font-family: var(--mono); font-size: 18px; color: var(--ink); font-weight: 700; margin-top: 4px;">0.0</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="margin-bottom: 32px;">
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">R Code Walkthrough</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">R 代码演示</h2>
+
+  <h3 style="font-family: var(--serif); font-size: 18px; color: var(--ink); margin: 20px 0 12px 0; font-weight: 600;" data-lang="en">Step 1: Set Up Your Data</h3>
+  <h3 style="font-family: var(--serif); font-size: 18px; color: var(--ink); margin: 20px 0 12px 0; font-weight: 600; display: none;" data-lang="zh">第1步：设置数据</h3>
+
+  <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code>library(tidyverse)
+
+# Your data must have: unit_id, year, treated, outcome
+# treated = 1 if unit is in treatment group, 0 otherwise
+# outcome = your dependent variable
+
+head(df)
+#> unit_id  year  treated  outcome
+#> 1        2019  0        45
+#> 1        2022  0        48
+#> 2        2019  1        42
+#> 2        2022  1        52</code></pre>
+
+  <h3 style="font-family: var(--serif); font-size: 18px; color: var(--ink); margin: 20px 0 12px 0; font-weight: 600;" data-lang="en">Step 2: Simple 2×2 DiD</h3>
+  <h3 style="font-family: var(--serif); font-size: 18px; color: var(--ink); margin: 20px 0 12px 0; font-weight: 600; display: none;" data-lang="zh">第2步：简单 2×2 双重差分</h3>
+
+  <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code># Create post-treatment indicator
+df <- df %>% mutate(post = if_else(year >= 2022, 1, 0))
+
+# Simple DiD with interaction term
+model_did <- lm(outcome ~ treated + post + treated:post, data = df)
+summary(model_did)
+
+# The treated:post coefficient is your DiD estimate
+# E.g., 5.2 means treatment increased outcome by 5.2 units</code></pre>
+
+  <h3 style="font-family: var(--serif); font-size: 18px; color: var(--ink); margin: 20px 0 12px 0; font-weight: 600;" data-lang="en">Step 3: Two-Way Fixed Effects (Robust)</h3>
+  <h3 style="font-family: var(--serif); font-size: 18px; color: var(--ink); margin: 20px 0 12px 0; font-weight: 600; display: none;" data-lang="zh">第3步：双向固定效应（稳健）</h3>
+
+  <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code>library(fixest)
+
+# Two-way FE: unit + time fixed effects (recommended)
+model_fe <- feols(outcome ~ i(post, treated, ref = 0) | unit_id + year, 
+                  data = df)
+summary(model_fe)
+
+# post:1:treated coefficient = DiD estimate</code></pre>
+
+  <h3 style="font-family: var(--serif); font-size: 18px; color: var(--ink); margin: 20px 0 12px 0; font-weight: 600;" data-lang="en">Step 4: Event Study (Pre-Trend Check)</h3>
+  <h3 style="font-family: var(--serif); font-size: 18px; color: var(--ink); margin: 20px 0 12px 0; font-weight: 600; display: none;" data-lang="zh">第4步：事件研究（前期趋势检查）</h3>
+
+  <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code># Event study: plot effects by year relative to treatment
+# This tests parallel trends assumption
+model_event <- feols(outcome ~ i(year, treated, ref = 2019) | unit_id + year, 
+                     data = df)
+iplot(model_event, main = "Event Study: Pre-trends & Treatment Effects")
+
+# If coefficients for 2019 are non-zero, parallel trends may be violated</code></pre>
+
+  <h3 style="font-family: var(--serif); font-size: 18px; color: var(--ink); margin: 20px 0 12px 0; font-weight: 600;" data-lang="en">Step 5: Staggered Adoption (Callaway-Sant'Anna)</h3>
+  <h3 style="font-family: var(--serif); font-size: 18px; color: var(--ink); margin: 20px 0 12px 0; font-weight: 600; display: none;" data-lang="zh">第5步：阶段性采用（Callaway-Sant'Anna）</h3>
+
+  <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code>library(did)
+
+# For settings where different units adopt treatment at different times
+# first_treat = year unit was first treated (0 = never treated)
+cs_results <- att_gt(
+  yname = "outcome",
+  tname = "year",
+  idname = "unit_id",
+  gname = "first_treat",
+  data = df
+)
+
+# Overall average treatment effect
+aggte(cs_results, type = "simple")
+
+# Event study plot
+ggdid(aggte(cs_results, type = "dynamic"))</code></pre>
+
+  <div class="insight-box" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 16px 20px; border-radius: 3px; margin: 20px 0;">
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en"><strong>Key point:</strong> Callaway-Sant'Anna handles staggered adoption (different treatment dates) correctly, avoiding bias from "bad" control units — those that will be treated later.</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh"><strong>关键点：</strong>Callaway-Sant'Anna 正确处理阶段性采用（不同的处理日期），避免来自"坏"对照单位（稍后会被处理的单位）的偏差。</p>
+  </div>
+</section>
+
+<section style="margin-bottom: 32px;">
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Common Mistakes & Diagnostics</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">常见错误和诊断</h2>
+
+  <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
+    <h3 style="font-family: var(--serif); font-size: 16px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Parallel Trends Violation</h3>
+    <h3 style="font-family: var(--serif); font-size: 16px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">平行趋势违规</h3>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en">Run an event study plot. If pre-treatment coefficients are non-zero or trending, parallel trends may be violated. This biases the DiD estimate.</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh">运行事件研究图。如果前期处理系数非零或有趋势，平行趋势可能被违反。这会使双重差分估计产生偏差。</p>
+  </div>
+
+  <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
+    <h3 style="font-family: var(--serif); font-size: 16px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Anticipation Effects</h3>
+    <h3 style="font-family: var(--serif); font-size: 16px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">预期效应</h3>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en">If units change behavior before the policy is implemented (e.g., firms hire in anticipation), the pre-period is already affected. Check event study for "jumps" just before treatment year.</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh">如果单位在政策实施前改变行为（例如，企业预期性招聘），前期已经受到影响。检查事件研究中处理年份之前是否有"跳跃"。</p>
+  </div>
+
+  <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
+    <h3 style="font-family: var(--serif); font-size: 16px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Heterogeneous Treatment Timing</h3>
+    <h3 style="font-family: var(--serif); font-size: 16px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">异质性处理时机</h3>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en">With staggered adoption, standard DiD can be negative even when all individual effects are positive (negative weights on future-treated units). Use Callaway-Sant'Anna instead of standard DiD.</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh">在阶段性采用中，即使所有个体效应都为正，标准的双重差分也可能为负（对未来处理单位的负权重）。使用 Callaway-Sant'Anna 而不是标准双重差分。</p>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+let didChart = null;
+
+function updateDiDChart() {
+  const te = parseFloat(document.getElementById('treatment-effect').value);
+  const pt = parseFloat(document.getElementById('pretrend').value);
+  
+  document.getElementById('te-val').textContent = te;
+  document.getElementById('te-val-zh').textContent = te;
+  document.getElementById('pt-val').textContent = pt.toFixed(2);
+  document.getElementById('pt-val-zh').textContent = pt.toFixed(2);
+  
+  // Pre-period
+  const treated_pre = 45;
+  const control_pre = 40;
+  
+  // Post-period
+  const treated_post = treated_pre + 5 + pt + te;
+  const control_post = control_pre + 5 + pt;
+  
+  // DiD calculation
+  const treated_change = treated_post - treated_pre;
+  const control_change = control_post - control_pre;
+  const did_estimate = treated_change - control_change;
+  const trend_bias = pt;
+  
+  document.getElementById('did-estimate').textContent = did_estimate.toFixed(1);
+  document.getElementById('trend-bias').textContent = trend_bias.toFixed(2);
+  
+  const ctx = document.getElementById('didChart').getContext('2d');
+  
+  if (didChart) didChart.destroy();
+  didChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Pre-Period (2019)', 'Post-Period (2022)'],
+      datasets: [
+        {
+          label: 'Treated Group',
+          data: [treated_pre, treated_post],
+          borderColor: '#5B7C99',
+          backgroundColor: 'rgba(91, 124, 153, 0.1)',
+          borderWidth: 3,
+          pointRadius: 6,
+          tension: 0.1
+        },
+        {
+          label: 'Control Group',
+          data: [control_pre, control_post],
+          borderColor: '#D4A574',
+          backgroundColor: 'rgba(212, 165, 116, 0.1)',
+          borderWidth: 3,
+          pointRadius: 6,
+          tension: 0.1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          min: 30,
+          max: 70,
+          ticks: { font: { family: 'monospace', size: 12 } }
+        }
+      },
+      plugins: {
+        legend: { display: true, position: 'top' }
+      }
+    }
+  });
+}
+
+document.getElementById('treatment-effect').addEventListener('input', updateDiDChart);
+document.getElementById('pretrend').addEventListener('input', updateDiDChart);
+
+updateDiDChart();
+</script>
+

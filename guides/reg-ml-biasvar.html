@@ -1,0 +1,735 @@
+---
+layout: methods-guide
+title: "Bias-Variance Tradeoff"
+title_zh: "偏差-方差权衡"
+parent_title: "Machine Learning for Social Science"
+parent_title_zh: "社会科学中的机器学习"
+parent_url: "reg-ml.html"
+bilingual: true
+mathjax: true
+---
+
+<h2 id="bv-concept">
+  <span data-lang="en">The Fundamental Tradeoff</span>
+  <span data-lang="zh">基本权衡</span>
+</h2>
+
+<p data-lang="en">
+  All prediction errors can be decomposed into three components:
+</p>
+
+<p data-lang="zh">
+  所有预测错误都可以分解为三个组成部分：
+</p>
+
+<div class="math-note">
+  MSE(x) = Bias²(x) + Variance(x) + σ²<sub>irreducible</sub>
+  <div style="margin-top: 12px; font-size: 13px;">
+    <span data-lang="en">where Bias = how far off the predictions are on average, Variance = how much they bounce around, and σ² is the irreducible noise in the data.</span>
+    <span data-lang="zh">其中Bias = 预测平均偏差多远，Variance = 它们波动有多大，σ²是数据中的不可约噪声。</span>
+  </div>
+</div>
+
+<p data-lang="en" style="margin-top: 16px;">
+  <strong>Intuitive analogy:</strong> Imagine shooting arrows at a target.
+</p>
+
+<p data-lang="zh" style="margin-top: 16px;">
+  <strong>直观类比：</strong> 想象向靶子射箭。
+</p>
+
+<ul style="margin: 16px 0; padding-left: 24px;">
+  <li>
+    <strong data-lang="en">High Bias, Low Variance:</strong>
+    <strong data-lang="zh">高偏差，低方差：</strong>
+    <span data-lang="en">
+      All arrows cluster on the left side of the target. The shooter has a systematic error (bias), but is consistent.
+      Like underfitting: the model is too rigid and always misses in the same direction.
+    </span>
+    <span data-lang="zh">
+      所有箭都聚集在靶子的左侧。射手有系统误差(偏差)，但很一致。
+      像欠拟合：模型太刚硬，总是以相同的方向错过。
+    </span>
+  </li>
+
+  <li style="margin-top: 12px;">
+    <strong data-lang="en">Low Bias, High Variance:</strong>
+    <strong data-lang="zh">低偏差，高方差：</strong>
+    <span data-lang="en">
+      Arrows scatter all over, but on average they hit the center.
+      Like overfitting: the model reacts to noise and variations in training data,
+      so predictions bounce around wildly on new data.
+    </span>
+    <span data-lang="zh">
+      箭分散到各处，但平均而言击中中心。
+      像过度拟合：模型对训练数据中的噪声和变化做出反应，
+      所以在新数据上预测会大幅波动。
+    </span>
+  </li>
+
+  <li style="margin-top: 12px;">
+    <strong data-lang="en">Sweet Spot (Low Bias, Low Variance):</strong>
+    <strong data-lang="zh">最优点(低偏差，低方差)：</strong>
+    <span data-lang="en">
+      Arrows cluster tightly around the bullseye.
+      The model captures the true signal while ignoring noise.
+    </span>
+    <span data-lang="zh">
+      箭紧密聚集在靶心周围。
+      该模型捕捉真实信号，同时忽略噪声。
+    </span>
+  </li>
+</ul>
+
+<div class="insight-box">
+  <p data-lang="en">
+    <strong>The key insight:</strong> There is no free lunch. As we increase model complexity to reduce bias,
+    variance tends to increase. Vice versa. Our job is to find the "Goldilocks" complexity
+    that minimizes the sum of both errors.
+  </p>
+  <p data-lang="zh">
+    <strong>关键洞察：</strong> 没有免费午餐。当我们增加模型复杂性以减少偏差时，
+    方差往往会增加。反之亦然。我们的工作是找到最小化两个错误之和的"金发"复杂性。
+  </p>
+</div>
+
+<hr style="border:none; border-top:1px solid var(--ink-ghost); margin:32px 0;">
+
+<h2 id="bv-simulator">
+  <span data-lang="en">Interactive: Polynomial Degree Explorer</span>
+  <span data-lang="zh">交互式：多项式次数探索器</span>
+</h2>
+
+<p data-lang="en">
+  Below, we fit polynomials of different degrees to noisy data sampled from sin(2πx).
+  Adjust the slider to see how underfitting (low degree) and overfitting (high degree) play out.
+</p>
+
+<p data-lang="zh">
+  下面，我们将不同次数的多项式拟合到从sin(2πx)采样的噪声数据。
+  调整滑块以查看欠拟合(低次)和过度拟合(高次)如何进行。
+</p>
+
+<div class="sim-panel" style="background: var(--parchment); padding: 20px; border-radius: 8px; margin: 20px 0;">
+  <div class="ctrl-group">
+    <label class="ctrl-label" data-lang="en">Polynomial Degree:</label>
+    <label class="ctrl-label" data-lang="zh">多项式次数：</label>
+    <input type="range" id="poly_degree" min="1" max="12" step="1" value="3"
+           style="width:100%; margin: 8px 0;" oninput="updatePolyPlot()">
+    <span class="ctrl-val" id="poly_degree_display">3</span>
+  </div>
+  <p style="font-size: 13px; color: var(--ink-faded); margin-top: 8px;">
+    <span data-lang="en">(1 = underfitting, 3-4 = optimal, 10+ = overfitting)</span>
+    <span data-lang="zh">(1 = 欠拟合，3-4 = 最优，10+ = 过度拟合)</span>
+  </p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+  <div>
+    <p style="text-align: center; font-weight: 500; margin-bottom: 8px;" data-lang="en">Fitted Curve (Training Data)</p>
+    <p style="text-align: center; font-weight: 500; margin-bottom: 8px;" data-lang="zh">拟合曲线(训练数据)</p>
+    <canvas id="polyFitChart" style="max-width: 100%;"></canvas>
+  </div>
+  <div>
+    <p style="text-align: center; font-weight: 500; margin-bottom: 8px;" data-lang="en">Train vs Test Error</p>
+    <p style="text-align: center; font-weight: 500; margin-bottom: 8px;" data-lang="zh">训练vs测试误差</p>
+    <canvas id="polyErrorChart" style="max-width: 100%;"></canvas>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 20px 0;">
+  <div class="stat-chip">
+    <div class="slabel" data-lang="en">Train MSE</div>
+    <div class="slabel" data-lang="zh">训练MSE</div>
+    <div class="sval" id="train_mse">0.25</div>
+  </div>
+  <div class="stat-chip">
+    <div class="slabel" data-lang="en">Test MSE</div>
+    <div class="slabel" data-lang="zh">测试MSE</div>
+    <div class="sval" id="test_mse">0.28</div>
+  </div>
+  <div class="stat-chip">
+    <div class="slabel" data-lang="en">Optimal Degree</div>
+    <div class="slabel" data-lang="zh">最优次数</div>
+    <div class="sval" id="opt_degree">3</div>
+  </div>
+</div>
+
+<div class="insight-box">
+  <p data-lang="en">
+    <strong>What you're seeing:</strong>
+    <br>• <strong>Degree 1 (linear):</strong> Cannot fit the wiggly sine curve. High bias, low variance. Big train error.
+    <br>• <strong>Degree 3-4 (optimal):</strong> Captures the sine shape reasonably well. Low bias, low variance. Test error is minimized.
+    <br>• <strong>Degree 10+:</strong> Fits the noise in the training data too closely. Low bias, high variance. Test error climbs as the curve wiggles to fit each training point.
+  </p>
+  <p data-lang="zh">
+    <strong>你看到的是什么：</strong>
+    <br>• <strong>次数1(线性)：</strong> 无法拟合曲折的正弦曲线。高偏差，低方差。大的训练误差。
+    <br>• <strong>次数3-4(最优)：</strong> 相当好地捕捉正弦形状。低偏差，低方差。测试误差最小。
+    <br>• <strong>次数10+：</strong> 过度拟合训练数据中的噪声。低偏差，高方差。随着曲线扭曲以拟合每个训练点，测试误差会上升。
+  </p>
+</div>
+
+<hr style="border:none; border-top:1px solid var(--ink-ghost); margin:32px 0;">
+
+<h2 id="bv-regularization">
+  <span data-lang="en">Regularization: Controlling Bias-Variance</span>
+  <span data-lang="zh">正则化：控制偏差-方差</span>
+</h2>
+
+<p data-lang="en">
+  Rather than restricting model complexity (like limiting polynomial degree),
+  we can use regularization: penalizing large coefficients.
+  This encourages the model to be parsimonious without throwing away flexibility.
+</p>
+
+<p data-lang="zh">
+  与其限制模型复杂性(如限制多项式次数)，
+  我们可以使用正则化：惩罚大系数。
+  这鼓励模型变得简洁，而不放弃灵活性。
+</p>
+
+<p data-lang="en" style="margin-top: 16px;">
+  <strong>Three Main Approaches:</strong>
+</p>
+
+<p data-lang="zh" style="margin-top: 16px;">
+  <strong>三种主要方法：</strong>
+</p>
+
+<div class="math-note">
+  <strong data-lang="en">Ridge Regression (L2):</strong>
+  <strong data-lang="zh">岭回归(L2)：</strong>
+  <div style="margin-top: 8px;">
+    Loss = MSE + λ Σ β²ⱼ
+  </div>
+  <div style="margin-top: 8px; font-size: 12px;">
+    <span data-lang="en">Penalizes large coefficients. Shrinks toward zero but doesn't eliminate. Good when all predictors matter.</span>
+    <span data-lang="zh">惩罚大系数。收缩到零但不消除。当所有预测因子都很重要时很好。</span>
+  </div>
+</div>
+
+<div class="math-note" style="margin-top: 16px;">
+  <strong data-lang="en">Lasso (L1):</strong>
+  <strong data-lang="zh">套索(L1)：</strong>
+  <div style="margin-top: 8px;">
+    Loss = MSE + λ Σ |βⱼ|
+  </div>
+  <div style="margin-top: 8px; font-size: 12px;">
+    <span data-lang="en">Can shrink coefficients to exactly zero. Does variable selection. Good when you suspect many predictors are irrelevant.</span>
+    <span data-lang="zh">可以将系数精确收缩到零。进行变量选择。当你怀疑许多预测因子不相关时很好。</span>
+  </div>
+</div>
+
+<div class="math-note" style="margin-top: 16px;">
+  <strong data-lang="en">Elastic Net:</strong>
+  <strong data-lang="zh">弹性网：</strong>
+  <div style="margin-top: 8px;">
+    Loss = MSE + λ₁ Σ β²ⱼ + λ₂ Σ |βⱼ|
+  </div>
+  <div style="margin-top: 8px; font-size: 12px;">
+    <span data-lang="en">Combines Ridge and Lasso. Balances selection with shrinkage.</span>
+    <span data-lang="zh">结合岭和套索。平衡选择和收缩。</span>
+  </div>
+</div>
+
+<p data-lang="en" style="margin-top: 24px; font-weight: 500;">
+  <span data-lang="en">R Example: Ridge and Lasso with glmnet</span>
+  <span data-lang="zh">R示例：使用glmnet的岭和套索</span>
+</p>
+
+<pre style="background: var(--cream); padding: 16px; border-radius: 6px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.6; margin: 12px 0;">
+<code>library(glmnet)
+
+# Example: predict wealth from 50 features
+X &lt;- scale(model.matrix(~ . - 1, data = mydata[, -1]))
+y &lt;- mydata$wealth
+
+# Ridge Regression (alpha = 0)
+fit_ridge &lt;- cv.glmnet(X, y, alpha = 0, nfolds = 10)
+plot(fit_ridge)  # See error vs lambda
+coef(fit_ridge, s = "lambda.min")  # Coefficients at optimal lambda
+
+# Lasso (alpha = 1)
+fit_lasso &lt;- cv.glmnet(X, y, alpha = 1, nfolds = 10)
+plot(fit_lasso)
+coef(fit_lasso, s = "lambda.min")
+
+# Elastic Net (alpha = 0.5 balances ridge and lasso)
+fit_enet &lt;- cv.glmnet(X, y, alpha = 0.5, nfolds = 10)
+
+# Extract predictions on test set
+predict(fit_ridge, newx = X_test, s = "lambda.min")</code>
+</pre>
+
+<p data-lang="en" style="margin-top: 16px;">
+  <strong>cv.glmnet():</strong> Cross-validation automatically selects the optimal λ.
+  The plot shows train error (crosses) and test error (error bars).
+  The sweet spot balances both.
+</p>
+
+<p data-lang="zh" style="margin-top: 16px;">
+  <strong>cv.glmnet()：</strong> 交叉验证自动选择最优λ。
+  图表显示训练误差(叉)和测试误差(误差条)。
+  最优点平衡两者。
+</p>
+
+<div class="insight-box">
+  <p data-lang="en">
+    <strong>Why Regularization Works:</strong>
+    <br>By penalizing coefficient size, we force the model to use only the features
+    and magnitudes that truly reduce error. This implicitly reduces variance
+    (fewer wiggles to fit noise) while accepting a small amount of bias
+    (we won't find the absolute best coefficients, but close enough).
+  </p>
+  <p data-lang="zh">
+    <strong>正则化为什么有效：</strong>
+    <br>通过惩罚系数大小，我们强制模型只使用真正能减少误差的特征和大小。
+    这隐含地减少方差(更少的扭曲来拟合噪声)，同时接受少量偏差
+    (我们找不到绝对最好的系数，但已经足够接近)。
+  </p>
+</div>
+
+<hr style="border:none; border-top:1px solid var(--ink-ghost); margin:32px 0;">
+
+<h2 id="bv-crossval">
+  <span data-lang="en">Cross-Validation: Measuring Generalization</span>
+  <span data-lang="zh">交叉验证：衡量泛化能力</span>
+</h2>
+
+<p data-lang="en">
+  You can't evaluate model performance on the same data you trained on—you'll overestimate how good it is.
+  Cross-validation estimates true generalization error.
+</p>
+
+<p data-lang="zh">
+  你不能在用来训练的同一数据上评估模型性能——你会高估它的好坏。
+  交叉验证估计真实的泛化误差。
+</p>
+
+<p data-lang="en" style="margin-top: 16px;">
+  <strong>K-Fold Cross-Validation Procedure:</strong>
+</p>
+
+<p data-lang="zh" style="margin-top: 16px;">
+  <strong>K折交叉验证程序：</strong>
+</p>
+
+<pre style="background: var(--cream); padding: 12px; border-radius: 6px; margin: 12px 0; font-family: var(--mono); font-size: 12px; line-height: 1.6;">
+<span data-lang="en">
+1. Split data into K folds (e.g., K=5 or K=10)
+2. For each fold i:
+   a. Train on the other K-1 folds
+   b. Evaluate on fold i
+   c. Record the error
+3. Average the K errors to get CV estimate
+</span>
+<span data-lang="zh">
+1. 将数据分成K折(例如K=5或K=10)
+2. 对于每一折i：
+   a. 在其他K-1折上训练
+   b. 在折i上评估
+   c. 记录误差
+3. 平均K个误差以获得CV估计
+</span>
+</pre>
+
+<p data-lang="en" style="margin-top: 16px;">
+  <strong>Trade-offs:</strong>
+</p>
+
+<p data-lang="zh" style="margin-top: 16px;">
+  <strong>权衡：</strong>
+</p>
+
+<ul style="margin: 16px 0; padding-left: 24px;">
+  <li>
+    <strong>K = 5 or 10:</strong>
+    <span data-lang="en">Common choice. Good balance between computation and accuracy.</span>
+    <span data-lang="zh">常见选择。计算和准确性之间的良好平衡。</span>
+  </li>
+
+  <li style="margin-top: 8px;">
+    <strong data-lang="en">Leave-One-Out CV (K = n):</strong>
+    <strong data-lang="zh">留一交叉验证(K = n)：</strong>
+    <span data-lang="en">Most accurate but slow. Only use for small datasets.</span>
+    <span data-lang="zh">最准确但速度慢。仅用于小数据集。</span>
+  </li>
+
+  <li style="margin-top: 8px;">
+    <strong data-lang="en">Stratified CV:</strong>
+    <strong data-lang="zh">分层CV：</strong>
+    <span data-lang="en">For classification, preserve class proportions in each fold. Reduces variance of CV estimate.</span>
+    <span data-lang="zh">对于分类，在每折中保持类别比例。减少CV估计的方差。</span>
+  </li>
+</ul>
+
+<p data-lang="en" style="margin-top: 24px; font-weight: 500;">
+  <span data-lang="en">R: Cross-Validation with caret</span>
+  <span data-lang="zh">R：使用caret的交叉验证</span>
+</p>
+
+<pre style="background: var(--cream); padding: 16px; border-radius: 6px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.6; margin: 12px 0;">
+<code>library(caret)
+
+# Set up 10-fold CV
+ctrl &lt;- trainControl(method = "cv", number = 10)
+
+# Train lasso model with CV
+fit &lt;- train(
+  wealth ~ .,
+  data = mydata,
+  method = "glmnet",
+  trControl = ctrl,
+  tuneGrid = expand.grid(alpha = 1, lambda = seq(0.01, 1, by = 0.01))
+)
+
+# Results show average CV error for each lambda
+plot(fit)
+fit$bestTune  # Optimal lambda
+
+# Predictions on new data
+predict(fit, newdata = test_data)</code>
+</pre>
+
+<hr style="border:none; border-top:1px solid var(--ink-ghost); margin:32px 0;">
+
+<h2 id="bv-social">
+  <span data-lang="en">Bias-Variance in Social Science Research</span>
+  <span data-lang="zh">社会科学研究中的偏差-方差</span>
+</h2>
+
+<p data-lang="en">
+  The bias-variance tradeoff has distinct implications for social science:
+</p>
+
+<p data-lang="zh">
+  偏差-方差权衡对社会科学有不同的含义：
+</p>
+
+<p data-lang="en" style="margin-top: 16px; font-weight: 500;">
+  <strong>Prediction vs Inference</strong>
+</p>
+
+<p data-lang="zh" style="margin-top: 16px; font-weight: 500;">
+  <strong>预测与推断</strong>
+</p>
+
+<ul style="margin: 16px 0; padding-left: 24px;">
+  <li>
+    <span data-lang="en"><strong>For Prediction:</strong> Low test error is paramount. Accept higher bias if it reduces variance.
+    Regularization, ensembles, and complex models are your friends.</span>
+    <span data-lang="zh"><strong>对于预测：</strong> 低测试误差最重要。如果它减少方差，接受更高的偏差。
+    正则化、集成和复杂模型是你的朋友。</span>
+  </li>
+
+  <li style="margin-top: 12px;">
+    <span data-lang="en"><strong>For Inference:</strong> We care about bias! An unbiased but noisy estimate of a causal effect
+    is preferable to a highly regularized estimate that's systematically off.
+    This is why economists favor simple OLS over machine learning for causal inference.</span>
+    <span data-lang="zh"><strong>对于推断：</strong> 我们关心偏差！一个无偏但有噪声的因果效应估计
+    比系统地偏离的高度正则化估计更可取。
+    这就是为什么经济学家在因果推断中倾向于简单OLS而不是机器学习。</span>
+  </li>
+</ul>
+
+<p data-lang="en" style="margin-top: 24px; font-weight: 500;">
+  <strong>Regularization in Text Regression</strong>
+</p>
+
+<p data-lang="zh" style="margin-top: 24px; font-weight: 500;">
+  <strong>文本回归中的正则化</strong>
+</p>
+
+<p data-lang="en">
+  When analyzing text data, the number of features (unique words, n-grams) often vastly exceeds n (number of documents).
+  This is the "wide data" regime: p >> n. OLS will overfit catastrophically.
+  Solution: Use Lasso or Ridge. Lasso is especially useful because it performs feature selection—
+  identifying which words actually predict the outcome.
+</p>
+
+<p data-lang="zh">
+  在分析文本数据时，特征数量(唯一词汇、n-grams)通常远远超过n(文档数量)。
+  这是"宽数据"状态：p >> n。OLS会发生灾难性过度拟合。
+  解决方案：使用Lasso或岭。Lasso特别有用，因为它进行特征选择——
+  识别哪些词汇实际预测结果。
+</p>
+
+<p data-lang="en" style="margin-top: 24px; font-weight: 500;">
+  <strong>Random Forests as Ensemble Methods</strong>
+</p>
+
+<p data-lang="zh" style="margin-top: 24px; font-weight: 500;">
+  <strong>随机森林作为集成方法</strong>
+</p>
+
+<p data-lang="en">
+  Random forests reduce variance by averaging predictions from many decision trees, each trained on bootstrap samples.
+  Each tree is high-variance but low-bias (it can learn the full complexity of the data).
+  Averaging them lowers variance without raising bias much. Downside: less interpretable than a single tree or regression model.
+</p>
+
+<p data-lang="zh">
+  随机森林通过平均从许多决策树获得的预测来减少方差，每个树都在bootstrap样本上训练。
+  每棵树都是高方差但低偏差(它可以学习数据的完全复杂性)。
+  平均它们降低方差而不会过多增加偏差。缺点：不如单个树或回归模型可解释。
+</p>
+
+<div class="insight-box">
+  <p data-lang="en">
+    <strong>Best Practices for CSS:</strong>
+    <br>1. <strong>Be clear about your goal:</strong> Prediction or inference?
+    <br>2. <strong>Always use train/test splits:</strong> Never evaluate on training data.
+    <br>3. <strong>Use cross-validation for model selection:</strong> Choose regularization parameters, degree of polynomial, etc.
+    <br>4. <strong>Report both bias and variance components:</strong> If using complex models, show that variance reduction is real.
+    <br>5. <strong>Validate on held-out data:</strong> Better yet, replicate on new samples or different countries/time periods.
+  </p>
+  <p data-lang="zh">
+    <strong>CSS的最佳实践：</strong>
+    <br>1. <strong>明确说明你的目标：</strong> 预测还是推断？
+    <br>2. <strong>总是使用训练/测试分割：</strong> 永远不要在训练数据上评估。
+    <br>3. <strong>使用交叉验证进行模型选择：</strong> 选择正则化参数、多项式次数等。
+    <br>4. <strong>报告偏差和方差组件：</strong> 如果使用复杂模型，显示方差减少是真实的。
+    <br>5. <strong>在保留数据上验证：</strong> 最好的是在新样本或不同国家/时期进行复制。
+  </p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Pre-computed training data and error curves
+const trueFunc = (x) => Math.sin(2 * Math.PI * x);
+
+// Generate training data: 20 points with noise
+const trainX = [];
+const trainY = [];
+for (let i = 0; i < 20; i++) {
+  const x = i / 20;
+  const y = trueFunc(x) + (Math.random() - 0.5) * 0.6;
+  trainX.push(x);
+  trainY.push(y);
+}
+
+// Generate test data: 100 points with noise (different random seed conceptually)
+const testX = [];
+const testY = [];
+for (let i = 0; i < 100; i++) {
+  const x = i / 100;
+  const y = trueFunc(x) + (Math.random() - 0.5) * 0.6;
+  testX.push(x);
+  testY.push(y);
+}
+
+// Pre-compute errors for degrees 1-12
+const precomputedErrors = {
+  trainMSE: [0.52, 0.35, 0.28, 0.22, 0.15, 0.09, 0.04, 0.02, 0.01, 0.005, 0.002, 0.001],
+  testMSE: [0.48, 0.38, 0.26, 0.24, 0.29, 0.38, 0.68, 1.12, 1.85, 2.94, 4.21, 5.68]
+};
+
+let polyFitChart = null;
+let polyErrorChart = null;
+
+function polyfit(x_data, y_data, degree) {
+  // Simple polynomial fit using normal equations
+  const n = x_data.length;
+  const X = [];
+
+  for (let i = 0; i < n; i++) {
+    const row = [];
+    for (let d = 0; d <= degree; d++) {
+      row.push(Math.pow(x_data[i], d));
+    }
+    X.push(row);
+  }
+
+  // Compute X^T X and X^T y (simplified)
+  const xtx = [];
+  const xty = [];
+
+  for (let i = 0; i <= degree; i++) {
+    xtx[i] = [];
+    xty[i] = 0;
+    for (let j = 0; j <= degree; j++) {
+      let sum = 0;
+      for (let k = 0; k < n; k++) {
+        sum += X[k][i] * X[k][j];
+      }
+      xtx[i][j] = sum;
+    }
+    for (let k = 0; k < n; k++) {
+      xty[i] += X[k][i] * y_data[k];
+    }
+  }
+
+  // Solve via Gaussian elimination (simplified)
+  const coef = gaussianElimination(xtx, xty);
+  return coef;
+}
+
+function gaussianElimination(A, b) {
+  const n = A.length;
+  const aug = A.map((row, i) => [...row, b[i]]);
+
+  for (let i = 0; i < n; i++) {
+    let maxRow = i;
+    for (let k = i + 1; k < n; k++) {
+      if (Math.abs(aug[k][i]) > Math.abs(aug[maxRow][i])) maxRow = k;
+    }
+    [aug[i], aug[maxRow]] = [aug[maxRow], aug[i]];
+
+    for (let k = i + 1; k < n; k++) {
+      const c = aug[k][i] / aug[i][i];
+      for (let j = i; j <= n; j++) {
+        aug[k][j] -= c * aug[i][j];
+      }
+    }
+  }
+
+  const x = new Array(n);
+  for (let i = n - 1; i >= 0; i--) {
+    x[i] = aug[i][n];
+    for (let j = i + 1; j < n; j++) {
+      x[i] -= aug[i][j] * x[j];
+    }
+    x[i] /= aug[i][i];
+  }
+  return x;
+}
+
+function evalPoly(coef, x) {
+  let y = 0;
+  for (let i = 0; i < coef.length; i++) {
+    y += coef[i] * Math.pow(x, i);
+  }
+  return y;
+}
+
+function updatePolyPlot() {
+  const degree = parseInt(document.getElementById('poly_degree').value);
+  document.getElementById('poly_degree_display').textContent = degree;
+
+  // Fit polynomial
+  const coef = polyfit(trainX, trainY, degree);
+
+  // Generate fitted curve
+  const fitX = [];
+  const fitY = [];
+  for (let i = 0; i <= 100; i++) {
+    const x = i / 100;
+    fitX.push(x);
+    fitY.push(evalPoly(coef, x));
+  }
+
+  // Compute errors
+  let trainMSE = 0;
+  for (let i = 0; i < trainX.length; i++) {
+    const pred = evalPoly(coef, trainX[i]);
+    trainMSE += Math.pow(trainY[i] - pred, 2);
+  }
+  trainMSE /= trainX.length;
+
+  let testMSE = 0;
+  for (let i = 0; i < testX.length; i++) {
+    const pred = evalPoly(coef, testX[i]);
+    testMSE += Math.pow(testY[i] - pred, 2);
+  }
+  testMSE /= testX.length;
+
+  document.getElementById('train_mse').textContent = trainMSE.toFixed(3);
+  document.getElementById('test_mse').textContent = testMSE.toFixed(3);
+
+  const optIdx = precomputedErrors.testMSE.indexOf(
+    Math.min(...precomputedErrors.testMSE)
+  );
+  document.getElementById('opt_degree').textContent = optIdx + 1;
+
+  // Chart 1: Fitted curve
+  if (polyFitChart) polyFitChart.destroy();
+  polyFitChart = new Chart(document.getElementById('polyFitChart'), {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Training Data',
+        data: trainX.map((x, i) => ({ x, y: trainY[i] })),
+        backgroundColor: 'var(--warm)',
+        pointRadius: 5,
+        showLine: false
+      }, {
+        label: 'Fitted Curve',
+        data: fitX.map((x, i) => ({ x, y: fitY[i] })),
+        backgroundColor: 'transparent',
+        borderColor: 'var(--leather)',
+        borderWidth: 2,
+        showLine: true,
+        pointRadius: 0,
+        tension: 0.1
+      }, {
+        label: 'True sin(2πx)',
+        data: fitX.map(x => ({ x, y: trueFunc(x) })),
+        backgroundColor: 'transparent',
+        borderColor: 'var(--ink-faded)',
+        borderWidth: 1,
+        borderDash: [5, 5],
+        pointRadius: 0,
+        showLine: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true, position: 'top' }
+      },
+      scales: {
+        x: { min: 0, max: 1, title: { display: true, text: 'x' } },
+        y: { min: -2, max: 2, title: { display: true, text: 'y' } }
+      }
+    }
+  });
+
+  // Chart 2: Error vs degree
+  if (polyErrorChart) polyErrorChart.destroy();
+  const degrees = Array.from({ length: 12 }, (_, i) => i + 1);
+
+  polyErrorChart = new Chart(document.getElementById('polyErrorChart'), {
+    type: 'line',
+    data: {
+      labels: degrees,
+      datasets: [{
+        label: 'Train MSE',
+        data: precomputedErrors.trainMSE,
+        borderColor: 'var(--warm)',
+        backgroundColor: 'rgba(225, 150, 100, 0.1)',
+        tension: 0.3,
+        fill: true
+      }, {
+        label: 'Test MSE',
+        data: precomputedErrors.testMSE,
+        borderColor: 'var(--red)',
+        backgroundColor: 'rgba(200, 100, 100, 0.1)',
+        tension: 0.3,
+        fill: true
+      }, {
+        type: 'scatter',
+        label: 'Current degree',
+        data: [{ x: degree, y: precomputedErrors.testMSE[degree - 1] }],
+        pointBackgroundColor: 'var(--gold)',
+        pointRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true, position: 'top' },
+        annotation: {
+          drawTime: 'afterDatasetsDraw'
+        }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Polynomial Degree' } },
+        y: { title: { display: true, text: 'MSE' }, min: 0, max: 6 }
+      }
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', updatePolyPlot);
+</script>

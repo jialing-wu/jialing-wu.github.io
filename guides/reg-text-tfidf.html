@@ -1,0 +1,531 @@
+---
+layout: methods-guide
+title: "TF-IDF & Topic Modeling"
+title_zh: "TF-IDF 与主题模型"
+parent_title: "Text as Data"
+parent_title_zh: "文本分析"
+parent_url: "reg-text.html"
+bilingual: true
+mathjax: true
+---
+
+<h2 id="text-bow">
+  <span data-lang="en">From Text to Numbers: Bag of Words</span>
+  <span data-lang="zh">从文本到数字：词袋模型</span>
+</h2>
+
+<p data-lang="en">
+Text analysis requires converting words into numbers. The simplest approach is the <strong>Bag of Words (BoW)</strong> model: treat each document as a collection of word counts, ignoring word order. This creates a <strong>Document-Term Matrix (DTM)</strong>, where each row is a document and each column is a unique word.
+</p>
+
+<p data-lang="zh">
+文本分析需要将单词转换为数字。最简单的方法是<strong>词袋模型（Bag of Words, BoW）</strong>：将每个文档视为单词计数的集合，忽略单词顺序。这创建了一个<strong>文档-词项矩阵（Document-Term Matrix, DTM）</strong>，其中每行是一个文档，每列是一个唯一单词。
+</p>
+
+<p data-lang="en">
+For example, three political speeches might yield:
+</p>
+
+<p data-lang="zh">
+例如，三次政治演讲可能产生：
+</p>
+
+<table style="width: 100%; margin: 1rem 0; border-collapse: collapse; font-size: 0.9em;">
+  <tr style="background: var(--gold);">
+    <th style="padding: 0.5rem; border: 1px solid var(--ink);">Document</th>
+    <th style="padding: 0.5rem; border: 1px solid var(--ink);">economy</th>
+    <th style="padding: 0.5rem; border: 1px solid var(--ink);">jobs</th>
+    <th style="padding: 0.5rem; border: 1px solid var(--ink);">the</th>
+    <th style="padding: 0.5rem; border: 1px solid var(--ink);">and</th>
+  </tr>
+  <tr style="background: var(--cream);">
+    <td style="padding: 0.5rem; border: 1px solid var(--ink);">Speech 1</td>
+    <td style="padding: 0.5rem; border: 1px solid var(--ink);">8</td>
+    <td style="padding: 0.5rem; border: 1px solid var(--ink);">6</td>
+    <td style="padding: 0.5rem; border: 1px solid var(--ink);">12</td>
+    <td style="padding: 0.5rem; border: 1px solid var(--ink);">10</td>
+  </tr>
+  <tr style="background: var(--parchment);">
+    <td style="padding: 0.5rem; border: 1px solid var(--ink);">Speech 2</td>
+    <td style="padding: 0.5rem; border: 1px solid var(--ink);">3</td>
+    <td style="padding: 0.5rem; border: 1px solid var(--ink);">2</td>
+    <td style="padding: 0.5rem; border: 1px solid var(--ink);">14</td>
+    <td style="padding: 0.5rem; border: 1px solid var(--ink);">11</td>
+  </tr>
+</table>
+
+<p data-lang="en">
+From raw counts, we compute <strong>term frequency (TF)</strong>: the proportion of a word in a document.
+</p>
+
+<p data-lang="zh">
+从原始计数，我们计算<strong>词频（TF）</strong>：单词在文档中的比例。
+</p>
+
+<div class="math-note">
+TF(<i>t</i>, <i>d</i>) = count(<i>t</i> in <i>d</i>) / |<i>d</i>|
+</div>
+
+<p data-lang="en">
+The problem: common words like "the", "and", "of" dominate TF scores. In Speech 1, if TF("the") = 0.25 and TF("economy") = 0.17, we might mistakenly think the speech is mostly about articles, not economics. We need to <strong>downweight</strong> common words.
+</p>
+
+<p data-lang="zh">
+问题是：像"the"、"and"、"of"这样的常见词主导TF得分。在演讲1中，如果TF("the") = 0.25，TF("economy") = 0.17，我们可能错误地认为演讲主要是关于冠词，而不是经济。我们需要<strong>降低</strong>常见词的权重。
+</p>
+
+<p data-lang="en">
+Solution: <strong>Inverse Document Frequency (IDF)</strong> — give higher weight to words that are rare across the corpus.
+</p>
+
+<p data-lang="zh">
+解决方案：<strong>逆文档频率（IDF）</strong>——给予在语料库中稀有的单词更高的权重。
+</p>
+
+<div class="math-note">
+IDF(<i>t</i>) = log(<i>N</i> / <i>df</i>(<i>t</i>))
+</div>
+
+<p data-lang="en">
+where <i>N</i> is total documents, <i>df</i>(<i>t</i>) is count of documents containing <i>t</i>. If "the" appears in all <i>N</i> documents, IDF("the") = log(1) = 0. If "economy" appears in only 5 of 1000 documents, IDF("economy") = log(200) ≈ 5.3 — much higher weight.
+</p>
+
+<p data-lang="zh">
+其中<i>N</i>是总文档数，<i>df</i>(<i>t</i>)是包含<i>t</i>的文档数。如果"the"出现在所有<i>N</i>个文档中，IDF("the") = log(1) = 0。如果"economy"仅出现在1000个文档中的5个，IDF("economy") = log(200) ≈ 5.3——权重高得多。
+</p>
+
+<div class="math-note">
+TF-IDF(<i>t</i>, <i>d</i>) = TF(<i>t</i>, <i>d</i>) × log(<i>N</i> / <i>df</i>(<i>t</i>))
+</div>
+
+<p data-lang="en">
+TF-IDF balances local importance (TF) with global rarity (IDF). Documents are represented as TF-IDF vectors, enabling similarity comparisons and clustering.
+</p>
+
+<p data-lang="zh">
+TF-IDF平衡了本地重要性（TF）和全局稀有性（IDF）。文档被表示为TF-IDF向量，能够进行相似性比较和聚类。
+</p>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="text-tfidf-demo">
+  <span data-lang="en">Interactive TF-IDF Calculator</span>
+  <span data-lang="zh">交互式 TF-IDF 计算器</span>
+</h2>
+
+<p data-lang="en">
+Type a word and click "Calculate" to see its TF-IDF scores across three sample documents.
+</p>
+
+<p data-lang="zh">
+输入一个单词并单击"计算"以查看其在三个示例文档中的TF-IDF得分。
+</p>
+
+<div class="sim-panel" style="background: var(--parchment); padding: 1.5rem; border-radius: 0.5rem; margin: 1.5rem 0;">
+  <div class="ctrl-group" style="margin-bottom: 1rem;">
+    <label class="ctrl-label" style="display: block; margin-bottom: 0.5rem; font-weight: bold;" data-lang="en">Enter a word:</label>
+    <label class="ctrl-label" style="display: block; margin-bottom: 0.5rem; font-weight: bold;" data-lang="zh">输入一个单词：</label>
+    <input type="text" id="word-input" placeholder="e.g., economy" style="width: 200px; padding: 0.5rem; border: 1px solid var(--ink); border-radius: 0.3rem;" />
+  </div>
+
+  <button class="sim-btn" onclick="calculateTFIDF()" style="background: var(--warm); color: white; padding: 0.7rem 1.5rem; border: none; border-radius: 0.3rem; cursor: pointer; font-weight: bold; margin-right: 0.5rem;">
+    <span data-lang="en">Calculate TF-IDF</span>
+    <span data-lang="zh">计算 TF-IDF</span>
+  </button>
+
+  <button class="sim-btn" onclick="resetTFIDF()" style="background: var(--ink-faded); color: white; padding: 0.7rem 1.5rem; border: none; border-radius: 0.3rem; cursor: pointer; font-weight: bold;">
+    <span data-lang="en">Reset</span>
+    <span data-lang="zh">重置</span>
+  </button>
+</div>
+
+<div id="tfidf-results" style="margin: 1rem 0;"></div>
+
+<script>
+// Sample documents
+const documents = [
+  {
+    name: "Speech 1: Economic Policy",
+    text: "economy growth jobs market economy inflation wages jobs tax economy workers jobs",
+    id: "doc1"
+  },
+  {
+    name: "Speech 2: Education Reform",
+    text: "education students schools teachers learning curriculum reform quality education students learning",
+    id: "doc2"
+  },
+  {
+    name: "Speech 3: Economy & Markets",
+    text: "economy markets stocks investors returns portfolio risk economy trading economy returns",
+    id: "doc3"
+  }
+];
+
+function calculateTFIDF() {
+  const word = document.getElementById('word-input').value.toLowerCase().trim();
+  if (!word) {
+    alert("Please enter a word.");
+    return;
+  }
+
+  const N = documents.length;
+  let docFreq = 0;
+
+  // Count docs containing word
+  documents.forEach(doc => {
+    if (doc.text.toLowerCase().includes(' ' + word + ' ') ||
+        doc.text.toLowerCase().startsWith(word + ' ') ||
+        doc.text.toLowerCase().endsWith(' ' + word)) {
+      docFreq++;
+    }
+  });
+
+  if (docFreq === 0) {
+    document.getElementById('tfidf-results').innerHTML =
+      '<p style="color: var(--red);" data-lang="en">Word not found in documents.</p>' +
+      '<p style="color: var(--red);" data-lang="zh">单词在文档中未找到。</p>';
+    return;
+  }
+
+  const idf = Math.log(N / docFreq);
+  let html = '<table style="width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9em;">';
+  html += '<tr style="background: var(--gold);"><th style="padding: 0.5rem; border: 1px solid var(--ink);">Document</th>';
+  html += '<th style="padding: 0.5rem; border: 1px solid var(--ink);">Word Count</th>';
+  html += '<th style="padding: 0.5rem; border: 1px solid var(--ink);">Doc Length</th>';
+  html += '<th style="padding: 0.5rem; border: 1px solid var(--ink);">TF</th>';
+  html += '<th style="padding: 0.5rem; border: 1px solid var(--ink);">IDF</th>';
+  html += '<th style="padding: 0.5rem; border: 1px solid var(--ink);">TF-IDF</th></tr>';
+
+  let maxTFIDF = 0;
+  const results = [];
+
+  documents.forEach(doc => {
+    const words = doc.text.toLowerCase().split(/\s+/);
+    const wordCount = words.filter(w => w === word).length;
+    const tf = wordCount / words.length;
+    const tfidf = tf * idf;
+
+    if (tfidf > maxTFIDF) maxTFIDF = tfidf;
+    results.push({ ...doc, wordCount, tf, tfidf });
+  });
+
+  results.forEach((res, idx) => {
+    const isMax = res.tfidf === maxTFIDF && maxTFIDF > 0;
+    const bgColor = isMax ? 'background: rgba(34, 139, 34, 0.2);' : (idx % 2 === 0 ? 'background: var(--cream);' : 'background: var(--parchment);');
+
+    html += `<tr style="${bgColor}">
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">${res.name}</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">${res.wordCount}</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">${res.text.split(/\s+/).length}</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">${res.tf.toFixed(4)}</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">${idf.toFixed(4)}</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink); ${isMax ? 'color: var(--warm); font-weight: bold;' : ''}">${res.tfidf.toFixed(4)}</td>
+    </tr>`;
+  });
+
+  html += '</table>';
+  html += '<div class="insight-box" style="background: var(--warm); color: white; padding: 1rem; border-radius: 0.3rem; margin-top: 1rem;">';
+  html += '<p data-lang="en"><strong>Insight:</strong> Words that appear frequently in one document but rarely across the corpus receive the highest TF-IDF scores. This makes TF-IDF excellent for identifying distinctive, meaningful terms.</p>';
+  html += '<p data-lang="zh"><strong>洞察：</strong>在一个文档中出现频繁但在整个语料库中很少出现的单词获得最高的TF-IDF得分。这使TF-IDF在识别独特、有意义的术语方面表现出色。</p>';
+  html += '</div>';
+
+  document.getElementById('tfidf-results').innerHTML = html;
+}
+
+function resetTFIDF() {
+  document.getElementById('word-input').value = '';
+  document.getElementById('tfidf-results').innerHTML = '';
+}
+</script>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="text-r-code">
+  <span data-lang="en">Text Analysis in R</span>
+  <span data-lang="zh">R 中的文本分析</span>
+</h2>
+
+<p data-lang="en">
+The <code>quanteda</code> package provides industrial-strength text analysis tools. Here's a complete workflow:
+</p>
+
+<p data-lang="zh">
+<code>quanteda</code> 包提供企业级的文本分析工具。以下是完整的工作流程：
+</p>
+
+<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
+library(quanteda)
+library(quanteda.textstats)
+library(tidyverse)
+
+# Load data: assumes a data frame with 'text' and 'docid' columns
+head(my_corpus_data)
+
+# Create corpus (preserves metadata)
+corp &lt;- corpus(my_corpus_data, docid_field = "docid", text_field = "text")
+
+# Tokenize: split into words, remove punctuation and stopwords
+toks &lt;- tokens(corp,
+                 remove_punct = TRUE,
+                 remove_numbers = TRUE,
+                 remove_stopwords = "english")
+
+# Remove rare words (hapax: appear in &lt;2 documents)
+toks &lt;- tokens_select(toks, min_docfreq = 2, docfreq = "documents")
+
+# Create document-term matrix
+dtm &lt;- dfm(toks)
+
+# Apply TF-IDF weighting
+dtm_tfidf &lt;- dfm_tfidf(dtm, scheme_tf = "prop")
+
+# View top features overall
+topfeatures(dtm_tfidf, n = 20)
+
+# Top features per document
+head(dtm_tfidf, n = 1)
+
+# Similarity: cosine distance between documents
+sim &lt;- textstat_simil(dtm_tfidf, method = "cosine")
+</pre>
+
+<p data-lang="en">
+The key steps:
+</p>
+
+<p data-lang="zh">
+关键步骤：
+</p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Corpus creation:</strong> Organize raw text with metadata (author, date, source).</li>
+  <li data-lang="zh"><strong>语料库创建：</strong>使用元数据（作者、日期、来源）组织原始文本。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Tokenization:</strong> Break text into words; remove punctuation, numbers, and stopwords.</li>
+  <li data-lang="zh"><strong>分词：</strong>将文本分成单词；移除标点符号、数字和停用词。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>DTM creation:</strong> Build word-count matrix.</li>
+  <li data-lang="zh"><strong>DTM 创建：</strong>构建单词计数矩阵。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>TF-IDF weighting:</strong> Normalize by term frequency and document frequency.</li>
+  <li data-lang="zh"><strong>TF-IDF 加权：</strong>按词频和文档频率规范化。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Analysis:</strong> Identify distinctive terms, compute similarity, cluster documents.</li>
+  <li data-lang="zh"><strong>分析：</strong>识别独特术语、计算相似性、聚类文档。</li>
+</ul>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="text-lda">
+  <span data-lang="en">Latent Dirichlet Allocation (LDA)</span>
+  <span data-lang="zh">隐性迪利克雷分配 (LDA)</span>
+</h2>
+
+<p data-lang="en">
+TF-IDF is unsupervised and fast, but treats each document as a bag of independent words. <strong>Latent Dirichlet Allocation (LDA)</strong> is a <strong>generative probabilistic model</strong> that assumes:
+</p>
+
+<p data-lang="zh">
+TF-IDF是无监督和快速的，但将每个文档视为独立单词的集合。<strong>隐性迪利克雷分配（LDA）</strong>是一个<strong>生成概率模型</strong>，假设：
+</p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en">Each document is a mixture of <i>K</i> latent <strong>topics</strong> (e.g., "politics", "economics", "sports").</li>
+  <li data-lang="zh">每个文档是<i>K</i>个潜在<strong>主题</strong>的混合（例如"政治"、"经济"、"体育"）。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en">Each topic is a distribution over words. The "politics" topic has high probability for "vote", "election", "congress"; low probability for "tennis", "basketball".</li>
+  <li data-lang="zh">每个主题是单词的分布。"政治"主题对"vote"、"election"、"congress"有高概率；对"tennis"、"basketball"有低概率。</li>
+</ul>
+
+<p data-lang="en">
+LDA infers two hidden matrices:
+</p>
+
+<p data-lang="zh">
+LDA推断两个隐藏矩阵：
+</p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>θ (theta):</strong> Document-Topic matrix. Shape: (# docs, # topics). θ<sub>dj</sub> = probability document d has topic j.</li>
+  <li data-lang="zh"><strong>θ (theta)：</strong>文档-主题矩阵。形状：（文档数，主题数）。θ<sub>dj</sub> =文档d有主题j的概率。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>φ (phi):</strong> Topic-Word matrix. Shape: (# topics, # words). φ<sub>jw</sub> = probability word w appears in topic j.</li>
+  <li data-lang="zh"><strong>φ (phi)：</strong>主题-单词矩阵。形状：（主题数，单词数）。φ<sub>jw</sub> =单词w出现在主题j中的概率。</li>
+</ul>
+
+<p data-lang="en">
+In R, use the <code>topicmodels</code> package:
+</p>
+
+<p data-lang="zh">
+在R中，使用<code>topicmodels</code>包：
+</p>
+
+<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
+library(topicmodels)
+
+# Fit LDA with K=5 topics, 1000 iterations
+lda_fit &lt;- LDA(dtm,  # dtm from quanteda (converted to topicmodels format)
+               k = 5,
+               method = "Gibbs",
+               control = list(seed = 42, iter = 1000, burnin = 100))
+
+# Top words per topic (shows φ matrix)
+terms(lda_fit, k = 10)
+
+# Document-topic distributions (shows θ matrix)
+topics(lda_fit)  # Dominant topic per document
+head(posterior(lda_fit)$topics, n = 1)  # Full θ for doc 1
+
+# Compute log-likelihood and perplexity
+logLik(lda_fit)
+perplexity(lda_fit, newdata = dtm_test)
+</pre>
+
+<p data-lang="en">
+<strong>Choosing K:</strong> LDA is sensitive to the number of topics. Use:
+</p>
+
+<p data-lang="zh">
+<strong>选择K：</strong>LDA对主题数量很敏感。使用：
+</p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Perplexity:</strong> Lower = better fit. Fit models with K = 2, 3, ..., 20; choose K minimizing perplexity on held-out test set.</li>
+  <li data-lang="zh"><strong>困惑度：</strong>较低 = 更好的拟合。适配K = 2、3、...、20的模型；选择最小化保留测试集困惑度的K。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Coherence:</strong> Measure semantic coherence of top words within topics. High coherence = interpretable topics.</li>
+  <li data-lang="zh"><strong>连贯性：</strong>衡量主题内顶部单词的语义连贯性。高连贯性 = 可解释的主题。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Manual inspection:</strong> Fit multiple K values and evaluate topic interpretability. Are topics substantively meaningful?</li>
+  <li data-lang="zh"><strong>手动检查：</strong>适配多个K值并评估主题可解释性。主题在实质上是否有意义？</li>
+</ul>
+
+<p data-lang="en">
+Advanced: <strong>Structural Topic Model (STM)</strong> allows topic prevalence and content to vary by document-level covariates (e.g., author gender, publication date), enabling causal inference on topic structure.
+</p>
+
+<p data-lang="zh">
+高级：<strong>结构主题模型（STM）</strong>允许主题流行度和内容按文档级协变量（例如作者性别、发表日期）变化，能够对主题结构进行因果推断。
+</p>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="text-sentiment">
+  <span data-lang="en">Sentiment Analysis</span>
+  <span data-lang="zh">情感分析</span>
+</h2>
+
+<p data-lang="en">
+Sentiment analysis classifies text as positive, negative, or neutral. The simplest approach is <strong>dictionary-based</strong>: maintain lexicons of sentiment-bearing words and aggregate document scores.
+</p>
+
+<p data-lang="zh">
+情感分析将文本分类为积极、消极或中性。最简单的方法是<strong>基于字典的</strong>：维护情感词汇的词典并聚合文档得分。
+</p>
+
+<p data-lang="en">
+Common lexicons:
+</p>
+
+<p data-lang="zh">
+常见词典：
+</p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>AFINN:</strong> ~2500 words, each scored -5 (most negative) to +5 (most positive).</li>
+  <li data-lang="zh"><strong>AFINN：</strong>约2500个单词，每个得分-5（最负面）至+5（最积极）。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Bing Liu:</strong> ~6800 words classified as positive or negative (binary).</li>
+  <li data-lang="zh"><strong>Bing Liu：</strong>约6800个单词分类为积极或消极（二进制）。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>NRC:</strong> ~13,900 words labeled with 10 emotions (anger, fear, joy, etc.) and 2 sentiments.</li>
+  <li data-lang="zh"><strong>NRC：</strong>约13,900个单词标记有10种情绪（愤怒、恐惧、快乐等）和2种情感。</li>
+</ul>
+
+<p data-lang="en">
+In R using <code>tidytext</code>:
+</p>
+
+<p data-lang="zh">
+在R中使用<code>tidytext</code>：
+</p>
+
+<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
+library(tidytext)
+library(tidyverse)
+
+# Load sentiment lexicons
+afinn &lt;- get_sentiments("afinn")
+bing &lt;- get_sentiments("bing")
+nrc &lt;- get_sentiments("nrc")
+
+# Tokenize and join with AFINN
+my_text_tidy &lt;- my_text_df %&gt;%
+  unnest_tokens(word, text) %&gt;%
+  inner_join(afinn, by = "word")
+
+# Compute sentiment score per document
+sentiment_scores &lt;- my_text_tidy %&gt;%
+  group_by(docid) %&gt;%
+  summarize(sentiment = sum(value), n_words = n())
+
+# Count positive/negative words (Bing)
+sentiment_counts &lt;- my_text_tidy %&gt;%
+  inner_join(bing, by = "word") %&gt;%
+  group_by(docid, sentiment) %&gt;%
+  count() %&gt;%
+  pivot_wider(names_from = sentiment, values_from = n, values_fill = 0)
+</pre>
+
+<p data-lang="en">
+<strong>Limitations of dictionary methods:</strong>
+</p>
+
+<p data-lang="zh">
+<strong>字典方法的局限性：</strong>
+</p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Negation:</strong> "This is not good" contains positive word "good" but is negative overall. Simple dictionaries miss this.</li>
+  <li data-lang="zh"><strong>否定：</strong>"This is not good"包含积极词"good"但整体上是消极的。简单的词典无法捕捉这种情况。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Sarcasm:</strong> "Oh great, another meeting." Sarcasm flips sentiment but is rarely detected by dictionaries.</li>
+  <li data-lang="zh"><strong>讽刺：</strong>"Oh great, another meeting." 讽刺会翻转情感，但词典很少能检测到。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Domain sensitivity:</strong> A word's sentiment can vary by context (e.g., "sick" is positive in slang but negative in health).</li>
+  <li data-lang="zh"><strong>域敏感性：</strong>一个词的情感可能因上下文而异（例如"sick"在俚语中是积极的，但在卫生中是消极的）。</li>
+</ul>
+
+<p data-lang="en">
+<strong>Advanced: Word Embeddings</strong> (word2vec, GloVe, fastText) map words to dense vectors where semantic similarity is preserved. Words with similar sentiment cluster together, enabling more nuanced sentiment detection without explicit dictionaries. Training embeddings requires large corpora (millions of words) but captures domain-specific meaning.
+</p>
+
+<p data-lang="zh">
+<strong>高级：词嵌入</strong>（word2vec、GloVe、fastText）将单词映射到密集向量，其中保持语义相似性。具有相似情感的单词聚集在一起，能够实现更细致的情感检测，无需显式字典。训练嵌入需要大量语料库（数百万字），但捕捉到特定领域的含义。
+</p>
+
