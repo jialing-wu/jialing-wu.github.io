@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang="en">Dynamic Multipliers &amp; Long-Run Equilibrium | Empirical Modeling</title>
+    <title data-lang="zh">动态乘数与长期均衡 | 经验建模</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="guide-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="zh">
+    <div class="guide-layout">
+        <div class="guide-topbar">
+            <div class="guide-breadcrumb">
+                <a href="../empirical-modeling.html" data-lang="en">Empirical Modeling</a>
+                <a href="../empirical-modeling.html" data-lang="zh">经验建模</a>
+                <span class="sep">/</span>
+                <span data-lang="en">Dynamic Multipliers & Long-Run Equilibrium</span>
+                <span data-lang="zh">动态乘数与长期均衡</span>
+            </div>
+            <div class="guide-lang-toggle">
+                <button class="guide-lang-btn active" data-lang="zh">中文</button>
+                <button class="guide-lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+
+        <div class="guide-content-wrapper">
+            <div class="guide-content">
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="en">Back to Empirical Modeling</a>
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="zh">返回经验建模</a>
+
+                <div class="guide-header">
+                    <div class="guide-tag">
+                        <span data-lang="en">ZERO-BASE FRIENDLY · FROM FIRST PRINCIPLES</span>
+                        <span data-lang="zh">零基础友好 · 从首原理</span>
+                    </div>
+                    <h1>
+                        <span data-lang="en">Dynamic Multipliers & Long-Run Equilibrium</span>
+                        <span data-lang="zh">动态乘数与长期均衡</span>
+                    </h1>
+                    <p>
+                        <span data-lang="en">How shocks propagate through simultaneous systems — with matrix algebra and impulse response intuition.</span>
+                        <span data-lang="zh">冲击如何在联立系统中传播——包含矩阵代数和脉冲响应直觉。</span>
+                    </p>
+                </div>
+
+                <!-- Section 1: What is a System? -->
+            <section>
+                <h2>
+                    <span data-lang="en">1. What is a "System"? Multiple Variables Affecting Each Other</span>
+                    <span data-lang="zh">1. 什么是"系统"？多个变量相互影响</span>
+                </h2>
+
+                <p data-lang="en">In economics, the real world is interconnected. Nothing happens in isolation. Consider a simple economy with three key variables that move together:</p>
+                <p data-lang="zh">在经济学中，现实世界是相互联系的。没有什么发生在孤立中。考虑一个简单的经济体，有三个关键变量一起变动：</p>
+
+                <ul>
+                    <li data-lang="en"><strong>GDP Growth:</strong> How fast the economy is growing (in percent per quarter)</li>
+                    <li data-lang="zh"><strong>GDP增长：</strong>经济增长有多快（每季度百分比）</li>
+                    <li data-lang="en"><strong>Inflation:</strong> How fast prices are rising</li>
+                    <li data-lang="zh"><strong>通货膨胀：</strong>价格上升的速度</li>
+                    <li data-lang="en"><strong>Interest Rate:</strong> What the central bank charges for overnight lending</li>
+                    <li data-lang="zh"><strong>利率：</strong>央行对隔夜借贷收取的费用</li>
+                </ul>
+
+                <div class="definition">
+                    <div class="definition-title">
+                        <span data-lang="en">What makes it a "system"?</span>
+                        <span data-lang="zh">什么使其成为"系统"？</span>
+                    </div>
+                    <p data-lang="en">These variables are not independent. When GDP grows faster, inflation usually rises. When inflation rises, the central bank raises interest rates. When interest rates rise, it becomes expensive to borrow, which slows GDP growth. This circular feedback is what makes it a <em>system</em>—everything affects everything else.</p>
+                    <p data-lang="zh">这些变量不是独立的。当GDP增长更快时，通常通胀会上升。当通胀上升时，央行会提高利率。当利率上升时，借款变得昂贵，这会减缓GDP增长。这种循环反馈就是使其成为<em>系统</em>的原因——一切相互影响。</p>
+                </div>
+
+                <h3 data-lang="en">Why This Matters</h3>
+                <h3 data-lang="zh">为什么这很重要</h3>
+
+                <p data-lang="en">If you want to predict GDP next quarter, you can't just look at past GDP. You also need to know what inflation and interest rates are doing, because they affect GDP. This is where VAR (Vector Autoregression) comes in—it's a framework to model all these interconnections.</p>
+                <p data-lang="zh">如果你想预测下个季度的GDP，你不能只看过去的GDP。你还需要知道通胀和利率在做什么，因为它们会影响GDP。这就是VAR（向量自回归）的作用——它是一个框架来建模所有这些相互连接。</p>
+            </section>
+
+            <!-- Section 2: Why Simple Regression Fails -->
+            <section>
+                <h2>
+                    <span data-lang="en">2. Why Simple Regression Fails: The Chicken & Egg Problem</span>
+                    <span data-lang="zh">2. 为什么简单回归失败：鸡与蛋的问题</span>
+                </h2>
+
+                <p data-lang="en">Traditional regression asks: "What is the relationship between X and Y?" For example, "What is the relationship between interest rates and GDP growth?"</p>
+                <p data-lang="zh">传统回归问：「X和Y之间的关系是什么？」例如，「利率和GDP增长之间的关系是什么？」</p>
+
+                <p data-lang="en">But in a system, this is ambiguous:</p>
+                <p data-lang="zh">但在一个系统中，这是有歧义的：</p>
+
+                <div class="example">
+                    <div class="example-title">
+                        <span data-lang="en">The Identification Problem</span>
+                        <span data-lang="zh">识别问题</span>
+                    </div>
+                    <ul>
+                        <li data-lang="en"><strong>Question:</strong> Does high interest rate cause low GDP growth?</li>
+                        <li data-lang="zh"><strong>问题：</strong>高利率导致GDP增长率低吗？</li>
+                        <li data-lang="en"><strong>Counter-question:</strong> Or does low GDP growth cause the central bank to lower rates (so causality runs the other way)?</li>
+                        <li data-lang="zh"><strong>反问：</strong>或者低GDP增长导致央行降低利率（所以因果关系反向）？</li>
+                        <li data-lang="en"><strong>Third question:</strong> What if BOTH are responding to a third shock (say, a supply shock that simultaneously raises prices and reduces growth)?</li>
+                        <li data-lang="zh"><strong>第三个问题：</strong>如果两者都对第三个冲击做出反应呢（比如，同时提高价格和降低增长的供给冲击）？</li>
+                    </ul>
+                    <p data-lang="en">In a traditional regression, you put one variable on the left (GDP) and another on the right (interest rate), implicitly assuming causality flows left-to-right. But in reality, causality is simultaneous and bidirectional.</p>
+                    <p data-lang="zh">在传统回归中，你把一个变量放在左边（GDP），另一个放在右边（利率），隐含地假设因果关系从左到右。但实际上，因果关系是同时的和双向的。</p>
+                </div>
+
+                <p data-lang="en">This is called the <strong>identification problem</strong>: when everything affects everything, you cannot simply run a regression and trust the coefficients. You need a framework that respects the feedback loops.</p>
+                <p data-lang="zh">这被称为<strong>识别问题</strong>：当一切相互影响时，你不能简单地运行回归并相信系数。你需要一个尊重反馈回路的框架。</p>
+            </section>
+
+            <!-- Section 3: VAR - The Democratic Solution -->
+            <section>
+                <h2>
+                    <span data-lang="en">3. VAR: The Democratic Solution</span>
+                    <span data-lang="zh">3. VAR：民主解决方案</span>
+                </h2>
+
+                <p data-lang="en">Instead of placing variables hierarchically (one causes another), VAR treats all variables symmetrically: <em>each variable predicts itself and all others using past values.</em></p>
+                <p data-lang="zh">与其分层放置变量（一个引起另一个），VAR对所有变量平等对待：<em>每个变量使用过去值预测自身和所有其他变量。</em></p>
+
+                <h3 data-lang="en">A Simple 2-Variable VAR(1) (No Matrix Notation Yet)</h3>
+                <h3 data-lang="zh">一个简单的2变量VAR(1)（还没有矩阵符号）</h3>
+
+                <p data-lang="en">Let's say we have two variables: <span class="math-inline">y_t</span> (GDP growth) and <span class="math-inline">r_t</span> (interest rate). A VAR(1) system is:</p>
+                <p data-lang="zh">假设我们有两个变量：<span class="math-inline">y_t</span>（GDP增长）和<span class="math-inline">r_t</span>（利率）。VAR(1)系统是：</p>
+
+                <div class="equation">
+                    $$y_t = 0.5 \, y_{t-1} + 0.1 \, r_{t-1} + \varepsilon_{y,t}$$
+                    <div class="equation-label">
+                        <span data-lang="en">GDP equation: past GDP and past interest rate both matter</span>
+                        <span data-lang="zh">GDP方程：过去GDP和过去利率都很重要</span>
+                    </div>
+                </div>
+
+                <div class="equation">
+                    $$r_t = 0.2 \, y_{t-1} + 0.6 \, r_{t-1} + \varepsilon_{r,t}$$
+                    <div class="equation-label">
+                        <span data-lang="en">Interest rate equation: past growth and past rates both matter</span>
+                        <span data-lang="zh">利率方程：过去增长和过去利率都很重要</span>
+                    </div>
+                </div>
+
+                <p data-lang="en"><strong>Key observation:</strong> There is no "left-hand side causality." Instead, each variable has its own equation. They talk to each other through past values (lags).</p>
+                <p data-lang="zh"><strong>关键观察：</strong>没有"左手边因果关系"。相反，每个变量都有自己的方程。它们通过过去值（滞后）相互交流。</p>
+
+                <div class="note">
+                    <div class="note-title">
+                        <span data-lang="en">What do the numbers mean?</span>
+                        <span data-lang="zh">数字是什么意思？</span>
+                    </div>
+                    <ul>
+                        <li data-lang="en"><strong>0.5:</strong> If GDP grew by 1% last quarter, it will grow by about 0.5% more this quarter (persistence).</li>
+                        <li data-lang="zh"><strong>0.5：</strong>如果GDP上季度增长了1%，本季度将增长约0.5%（持久性）。</li>
+                        <li data-lang="en"><strong>0.1:</strong> If interest rates were 1% last quarter, that will reduce growth by about 0.1% this quarter.</li>
+                        <li data-lang="zh"><strong>0.1：</strong>如果利率上季度为1%，那将减少本季度增长约0.1%。</li>
+                        <li data-lang="en"><strong>0.2:</strong> If GDP grew 1% last quarter, the central bank will raise rates by about 0.2%.</li>
+                        <li data-lang="zh"><strong>0.2：</strong>如果GDP上季度增长了1%，央行将提高利率约0.2%。</li>
+                        <li data-lang="en"><strong>ε:</strong> The "shock" or unexpected surprise—what's left over after we account for past values.</li>
+                        <li data-lang="zh"><strong>ε：</strong>"冲击"或意外惊喜——在我们考虑过去值后剩下的。</li>
+                    </ul>
+                </div>
+
+                <h3 data-lang="en">The Power of VAR</h3>
+                <h3 data-lang="zh">VAR的力量</h3>
+
+                <p data-lang="en">VAR sidesteps the identification problem by asking a different question: not "which variable causes which?" but rather "how do unexpected shocks propagate through the system?" This is much more answerable with data alone.</p>
+                <p data-lang="zh">VAR通过提出不同的问题来避开识别问题：不是"哪个变量导致哪个？"而是"意外冲击如何通过系统传播？"这更容易仅用数据回答。</p>
+            </section>
+
+            <!-- Section 4: Matrices - Table of Numbers -->
+            <section>
+                <h2>
+                    <span data-lang="en">4. Now with Matrices: Tables of Numbers</span>
+                    <span data-lang="zh">4. 现在用矩阵：数字表</span>
+                </h2>
+
+                <p data-lang="en">A matrix is simply a rectangular table of numbers arranged in rows and columns. Matrices are useful because they let us write down many equations at once, compactly.</p>
+                <p data-lang="zh">矩阵只是一个矩形的数字表，按行和列排列。矩阵很有用，因为它们让我们一次性简洁地写下许多方程。</p>
+
+                <h3 data-lang="en">What is a Matrix? A Concrete Example</h3>
+                <h3 data-lang="zh">什么是矩阵？一个具体的例子</h3>
+
+                <div class="equation">
+                    $$\Phi = \begin{pmatrix} 0.5 & 0.1 \\ 0.2 & 0.6 \end{pmatrix}$$
+                    <div class="equation-label">
+                        <span data-lang="en">A 2×2 matrix: 2 rows, 2 columns</span>
+                        <span data-lang="zh">一个2×2矩阵：2行2列</span>
+                    </div>
+                </div>
+
+                <p data-lang="en">This matrix contains the four coefficients from our VAR(1) system above:</p>
+                <p data-lang="zh">这个矩阵包含了上面我们VAR(1)系统中的四个系数：</p>
+
+                <ul>
+                    <li data-lang="en"><strong>Row 1, Column 1 (0.5):</strong> effect of past GDP on current GDP</li>
+                    <li data-lang="zh"><strong>行1，列1（0.5）：</strong>过去GDP对当前GDP的影响</li>
+                    <li data-lang="en"><strong>Row 1, Column 2 (0.1):</strong> effect of past interest rates on current GDP</li>
+                    <li data-lang="zh"><strong>行1，列2（0.1）：</strong>过去利率对当前GDP的影响</li>
+                    <li data-lang="en"><strong>Row 2, Column 1 (0.2):</strong> effect of past GDP on current interest rates</li>
+                    <li data-lang="zh"><strong>行2，列1（0.2）：</strong>过去GDP对当前利率的影响</li>
+                    <li data-lang="en"><strong>Row 2, Column 2 (0.6):</strong> effect of past rates on current rates</li>
+                    <li data-lang="zh"><strong>行2，列2（0.6）：</strong>过去利率对当前利率的影响</li>
+                </ul>
+
+                <h3 data-lang="en">What Does Matrix Multiplication Do?</h3>
+                <h3 data-lang="zh">矩阵乘法做什么？</h3>
+
+                <p data-lang="en">Matrix multiplication combines many equations into one. Instead of writing two separate equations (one for GDP, one for rates), we can write:</p>
+                <p data-lang="zh">矩阵乘法将许多方程组合成一个。与其写两个单独的方程（一个用于GDP，一个用于利率），我们可以写：</p>
+
+                <div class="equation">
+                    $$\begin{pmatrix} y_t \\ r_t \end{pmatrix} = \begin{pmatrix} 0.5 & 0.1 \\ 0.2 & 0.6 \end{pmatrix} \begin{pmatrix} y_{t-1} \\ r_{t-1} \end{pmatrix} + \begin{pmatrix} \varepsilon_{y,t} \\ \varepsilon_{r,t} \end{pmatrix}$$
+                    <div class="equation-label">
+                        <span data-lang="en">The VAR(1) in matrix form: one line replaces two equations</span>
+                        <span data-lang="zh">矩阵形式的VAR(1)：一行替换了两个方程</span>
+                    </div>
+                </div>
+
+                <p data-lang="en">When we multiply the matrix <span class="math-inline">Φ</span> by the vector <span class="math-inline">[y_{t-1}, r_{t-1}]</span>, we get:</p>
+                <p data-lang="zh">当我们将矩阵<span class="math-inline">Φ</span>乘以向量<span class="math-inline">[y_{t-1}, r_{t-1}]</span>时，我们得到：</p>
+
+                <ul>
+                    <li data-lang="en"><strong>First row:</strong> 0.5 × y_{t-1} + 0.1 × r_{t-1} = the right-hand side of the GDP equation</li>
+                    <li data-lang="zh"><strong>第一行：</strong>0.5 × y_{t-1} + 0.1 × r_{t-1} = GDP方程的右边</li>
+                    <li data-lang="en"><strong>Second row:</strong> 0.2 × y_{t-1} + 0.6 × r_{t-1} = the right-hand side of the rate equation</li>
+                    <li data-lang="zh"><strong>第二行：</strong>0.2 × y_{t-1} + 0.6 × r_{t-1} = 利率方程的右边</li>
+                </ul>
+
+                <div class="definition">
+                    <div class="definition-title">
+                        <span data-lang="en">Definition: Matrix Notation</span>
+                        <span data-lang="zh">定义：矩阵符号</span>
+                    </div>
+                    <p data-lang="en">We write the VAR(1) as <span class="math-inline">Y_t = Φ Y_{t-1} + ε_t</span>, where:</p>
+                    <p data-lang="zh">我们将VAR(1)写为<span class="math-inline">Y_t = Φ Y_{t-1} + ε_t</span>，其中：</p>
+                    <ul>
+                        <li data-lang="en"><span class="math-inline">Y_t</span> is a vector (column) of today's variables: <span class="math-inline">[y_t, r_t]'</span></li>
+                        <li data-lang="zh"><span class="math-inline">Y_t</span>是今天变量的向量（列）：<span class="math-inline">[y_t, r_t]'</span></li>
+                        <li data-lang="en"><span class="math-inline">Φ</span> (phi) is the 2×2 matrix of coefficients</li>
+                        <li data-lang="zh"><span class="math-inline">Φ</span>（phi）是2×2系数矩阵</li>
+                        <li data-lang="en"><span class="math-inline">ε_t</span> (epsilon) is the vector of shocks: <span class="math-inline">[ε_{y,t}, ε_{r,t}]'</span></li>
+                        <li data-lang="zh"><span class="math-inline">ε_t</span>（epsilon）是冲击向量：<span class="math-inline">[ε_{y,t}, ε_{r,t}]'</span></li>
+                    </ul>
+                    <p data-lang="en">This is the <strong>reduced-form VAR(1)</strong>, the foundation of everything that follows.</p>
+                    <p data-lang="zh">这是<strong>约化形式VAR(1)</strong>，是接下来所有内容的基础。</p>
+                </div>
+            </section>
+
+            <!-- Section 5: Impulse Response Functions -->
+            <section>
+                <h2>
+                    <span data-lang="en">5. Impulse Response Functions: Tracing a Shock</span>
+                    <span data-lang="zh">5. 脉冲响应函数：追踪冲击</span>
+                </h2>
+
+                <p data-lang="en">An impulse response function (IRF) answers a simple question: <em>"If GDP gets a surprise boost of 1% today, what happens to GDP and interest rates over the next few quarters?"</em></p>
+                <p data-lang="zh">脉冲响应函数（IRF）回答了一个简单的问题：<em>「如果GDP今天得到1%的意外提升，接下来几个季度GDP和利率会发生什么？」</em></p>
+
+                <h3 data-lang="en">Walking Through 5 Periods: A Numerical Example</h3>
+                <h3 data-lang="zh">走过5个周期：一个数值例子</h3>
+
+                <p data-lang="en">We start with our VAR(1) system and the Φ matrix. Suppose at time t=0, there is a 1% positive shock to GDP (ε_{y,0} = 1), and no shock to interest rates (ε_{r,0} = 0). The system is at equilibrium before.</p>
+                <p data-lang="zh">我们从VAR(1)系统和Φ矩阵开始。假设在t=0时，GDP有1%的正冲击（ε_{y,0} = 1），利率没有冲击（ε_{r,0} = 0）。系统之前处于均衡状态。</p>
+
+                <div class="equation">
+                    $$\Phi = \begin{pmatrix} 0.5 & 0.1 \\ 0.2 & 0.6 \end{pmatrix}$$
+                </div>
+
+                <div class="example">
+                    <div class="example-title">
+                        <span data-lang="en">Period by Period: What Happens?</span>
+                        <span data-lang="zh">逐个周期：会发生什么？</span>
+                    </div>
+
+                    <p data-lang="en"><strong>Period 0 (Today):</strong></p>
+                    <p data-lang="zh"><strong>期间0（今天）：</strong></p>
+                    <ul>
+                        <li data-lang="en">GDP shock: +1%</li>
+                        <li data-lang="zh">GDP冲击：+1%</li>
+                        <li data-lang="en">Interest rate response: The shock hits directly. No lagged effects yet.</li>
+                        <li data-lang="zh">利率反应：冲击直接发生。还没有滞后效应。</li>
+                        <li data-lang="en">Change: ε_{y,0} = 1%, ε_{r,0} = 0%</li>
+                        <li data-lang="zh">变化：ε_{y,0} = 1%，ε_{r,0} = 0%</li>
+                    </ul>
+
+                    <p data-lang="en"><strong>Period 1 (One Quarter Later):</strong></p>
+                    <p data-lang="zh"><strong>期间1（一个季度后）：</strong></p>
+                    <p data-lang="en">Now we apply Φ to the past values:</p>
+                    <p data-lang="zh">现在我们将Φ应用到过去的值：</p>
+                    <div class="equation">
+                        $$\begin{pmatrix} y_1 \\ r_1 \end{pmatrix} = \begin{pmatrix} 0.5 & 0.1 \\ 0.2 & 0.6 \end{pmatrix} \begin{pmatrix} 1 \\ 0 \end{pmatrix} = \begin{pmatrix} 0.5 \\ 0.2 \end{pmatrix}$$
+                    </div>
+                    <ul>
+                        <li data-lang="en">GDP growth: 0.5% (the shock decays, but 50% of it persists)</li>
+                        <li data-lang="zh">GDP增长：0.5%（冲击衰减，但50%仍然存在）</li>
+                        <li data-lang="en">Interest rate: +0.2% (the central bank responds to higher growth by tightening)</li>
+                        <li data-lang="zh">利率：+0.2%（央行通过收紧对更高增长做出反应）</li>
+                    </ul>
+
+                    <p data-lang="en"><strong>Period 2 (Two Quarters Later):</strong></p>
+                    <p data-lang="zh"><strong>期间2（两个季度后）：</strong></p>
+                    <p data-lang="en">The second period values become the inputs:</p>
+                    <p data-lang="zh">第二个周期的值成为输入：</p>
+                    <div class="equation">
+                        $$\begin{pmatrix} y_2 \\ r_2 \end{pmatrix} = \begin{pmatrix} 0.5 & 0.1 \\ 0.2 & 0.6 \end{pmatrix} \begin{pmatrix} 0.5 \\ 0.2 \end{pmatrix} = \begin{pmatrix} 0.5 \times 0.5 + 0.1 \times 0.2 \\ 0.2 \times 0.5 + 0.6 \times 0.2 \end{pmatrix} = \begin{pmatrix} 0.27 \\ 0.22 \end{pmatrix}$$
+                    </div>
+                    <ul>
+                        <li data-lang="en">GDP growth: 0.27% (continuing to decay)</li>
+                        <li data-lang="zh">GDP增长：0.27%（继续衰减）</li>
+                        <li data-lang="en">Interest rate: 0.22% (still elevated due to earlier growth)</li>
+                        <li data-lang="zh">利率：0.22%（由于早期增长仍然升高）</li>
+                    </ul>
+
+                    <p data-lang="en"><strong>Period 3 (Three Quarters Later):</strong></p>
+                    <p data-lang="zh"><strong>期间3（三个季度后）：</strong></p>
+                    <div class="equation">
+                        $$\begin{pmatrix} y_3 \\ r_3 \end{pmatrix} = \begin{pmatrix} 0.5 & 0.1 \\ 0.2 & 0.6 \end{pmatrix} \begin{pmatrix} 0.27 \\ 0.22 \end{pmatrix} = \begin{pmatrix} 0.159 \\ 0.186 \end{pmatrix}$$
+                    </div>
+
+                    <p data-lang="en"><strong>Period 4 (Four Quarters Later):</strong></p>
+                    <p data-lang="zh"><strong>期间4（四个季度后）：</strong></p>
+                    <div class="equation">
+                        $$\begin{pmatrix} y_4 \\ r_4 \end{pmatrix} = \begin{pmatrix} 0.5 & 0.1 \\ 0.2 & 0.6 \end{pmatrix} \begin{pmatrix} 0.159 \\ 0.186 \end{pmatrix} = \begin{pmatrix} 0.098 \\ 0.191 \end{pmatrix}$$
+                    </div>
+
+                    <p data-lang="en"><strong>The Pattern:</strong> Notice that after a GDP shock, the effect fades over time (0.5 → 0.27 → 0.159 → 0.098), while the interest rate response grows then stabilizes (0.2 → 0.22 → 0.186 → 0.191). This is the impulse response in action.</p>
+                    <p data-lang="zh"><strong>模式：</strong>注意到在GDP冲击后，效应随着时间消退（0.5 → 0.27 → 0.159 → 0.098），而利率反应增长然后稳定（0.2 → 0.22 → 0.186 → 0.191）。这是脉冲响应的实际作用。</p>
+                </div>
+
+                <h3 data-lang="en">Visualizing the IRF</h3>
+                <h3 data-lang="zh">可视化IRF</h3>
+
+                <p data-lang="en">Typically, an IRF is plotted as a graph with time (quarters) on the x-axis and the response (percentage points) on the y-axis. Each line shows how a particular variable responds to a particular shock over time.</p>
+                <p data-lang="zh">通常，IRF被绘制为一个图形，x轴是时间（季度），y轴是响应（百分点）。每条线显示特定变量如何随时间对特定冲击做出响应。</p>
+
+                <div class="definition">
+                    <div class="definition-title">
+                        <span data-lang="en">Key Insight: What IRF Tells Us</span>
+                        <span data-lang="zh">关键洞察：IRF告诉我们什么</span>
+                    </div>
+                    <ul>
+                        <li data-lang="en"><strong>Shape:</strong> Is the response fast (dies out quickly) or slow (persists)?</li>
+                        <li data-lang="zh"><strong>形状：</strong>响应是快速的（很快消退）还是缓慢的（持续）？</li>
+                        <li data-lang="en"><strong>Direction:</strong> Positive shock → positive response, or negative? (Sometimes a positive GDP shock can eventually lead to lower interest rates if feedback loops dominate.)</li>
+                        <li data-lang="zh"><strong>方向：</strong>正冲击→正响应，还是负的？（有时，如果反馈回路占主导，正GDP冲击最终可能导致利率下降。）</li>
+                        <li data-lang="en"><strong>Spillovers:</strong> Does a GDP shock affect interest rates? By how much and how soon?</li>
+                        <li data-lang="zh"><strong>溅射：</strong>GDP冲击是否会影响利率？多少以及何时？</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 6: Variance Decomposition - Who Drives Whom? -->
+            <section>
+                <h2>
+                    <span data-lang="en">6. Variance Decomposition: What Fraction Comes From Which Shock?</span>
+                    <span data-lang="zh">6. 方差分解：哪个部分来自哪个冲击？</span>
+                </h2>
+
+                <p data-lang="en">While IRF shows <em>how</em> variables respond over time, variance decomposition (FEVD) answers a different question: <em>How important is each shock for explaining unpredictability?</em></p>
+                <p data-lang="zh">虽然IRF显示<em>变量如何</em>随时间做出反应，但方差分解（FEVD）回答了不同的问题：<em>每个冲击对解释不可预测性有多重要？</em></p>
+
+                <h3 data-lang="en">The Intuition (Without Formulas First)</h3>
+                <h3 data-lang="zh">直觉（先不用公式）</h3>
+
+                <p data-lang="en">Imagine you are forecasting GDP for next year. You make your best guess using past data. But you'll be wrong—there's always some forecast error. Where does that error come from?</p>
+                <p data-lang="zh">想象你在预测明年的GDP。你用过去的数据做出最好的猜测。但你会出错——总有一些预测误差。那个错误来自哪里？</p>
+
+                <ul>
+                    <li data-lang="en"><strong>Option 1:</strong> A surprise in GDP (a demand shock you didn't see coming)</li>
+                    <li data-lang="zh"><strong>选项1：</strong>GDP的意外（你没有看到的需求冲击）</li>
+                    <li data-lang="en"><strong>Option 2:</strong> A surprise in interest rates (the central bank did something unexpected)</li>
+                    <li data-lang="zh"><strong>选项2：</strong>利率的意外（央行做了意想不到的事）</li>
+                    <li data-lang="en"><strong>Option 3:</strong> Both equally</li>
+                    <li data-lang="zh"><strong>选项3：</strong>两者相等</li>
+                </ul>
+
+                <p data-lang="en">Variance decomposition quantifies this: "70% of your forecast error for GDP comes from GDP shocks, and 30% comes from interest rate shocks."</p>
+                <p data-lang="zh">方差分解量化了这一点：「GDP预测误差的70%来自GDP冲击，30%来自利率冲击。」</p>
+
+                <h3 data-lang="en">How It Works (Simple Version)</h3>
+                <h3 data-lang="zh">它如何工作（简单版本）</h3>
+
+                <p data-lang="en">Forecast error variance can be decomposed by looking at the squares of the impulse responses. For each shock, sum the squared responses over time. That tells you how much of the variance that shock explains.</p>
+                <p data-lang="zh">预测误差方差可以通过查看脉冲响应的平方来分解。对于每个冲击，对平方响应求和。这告诉你该冲击解释了多少方差。</p>
+
+                <div class="example">
+                    <div class="example-title">
+                        <span data-lang="en">Variance Decomposition in Practice</span>
+                        <span data-lang="zh">方差分解的实践</span>
+                    </div>
+                    <p data-lang="en">Suppose we sum the squared responses of GDP to a GDP shock over the first 4 quarters: 1² + 0.5² + 0.27² + 0.159² = 1 + 0.25 + 0.073 + 0.025 = 1.348</p>
+                    <p data-lang="zh">假设我们对GDP在前4个季度对GDP冲击的平方响应求和：1² + 0.5² + 0.27² + 0.159² = 1 + 0.25 + 0.073 + 0.025 = 1.348</p>
+                    <p data-lang="en">And the squared responses to an interest rate shock might sum to 0.15 (a hypothetical number).</p>
+                    <p data-lang="zh">而对利率冲击的平方响应可能总和为0.15（一个假设数字）。</p>
+                    <p data-lang="en">Then the variance contribution of GDP shocks is: 1.348 / (1.348 + 0.15) = 90%, and interest rate shocks account for 10%.</p>
+                    <p data-lang="zh">然后GDP冲击的方差贡献是：1.348 / (1.348 + 0.15) = 90%，利率冲击占10%。</p>
+                    <p data-lang="en"><strong>Interpretation:</strong> 90% of GDP's unpredictability comes from GDP shocks (domestic), and only 10% comes from interest rate surprises (policy).</p>
+                    <p data-lang="zh"><strong>解释：</strong>GDP不可预测性的90%来自GDP冲击（国内），只有10%来自利率惊喜（政策）。</p>
+                </div>
+
+                <h3 data-lang="en">Why This Matters</h3>
+                <h3 data-lang="zh">为什么这很重要</h3>
+
+                <p data-lang="en">Variance decomposition helps policymakers and economists prioritize. If GDP is 90% driven by its own shocks, monetary policy (interest rates) has limited power. But if it's 50-50, then policy is a major driver, and central banks should be careful about their decisions.</p>
+                <p data-lang="zh">方差分解帮助政策制定者和经济学家优先考虑。如果GDP 90%由其自身冲击驱动，货币政策（利率）的力量有限。但如果是50-50，那么政策是主要驱动力，央行应该对他们的决定谨慎。</p>
+            </section>
+
+            <!-- Section 7: The Direct Coefficient vs. Total System Effect -->
+            <section>
+                <h2>
+                    <span data-lang="en">7. The Multiplier: Direct Effect vs. System Feedback</span>
+                    <span data-lang="zh">7. 乘数：直接效应对系统反馈</span>
+                </h2>
+
+                <p data-lang="en">A "multiplier" in economics measures the total impact of a change, accounting for feedback loops. This is fundamentally different from the direct coefficient in our VAR.</p>
+                <p data-lang="zh">经济学中的"乘数"衡量一个变化的总体影响，考虑到反馈回路。这与我们VAR中的直接系数根本不同。</p>
+
+                <h3 data-lang="en">Direct Coefficient vs. Dynamic Multiplier</h3>
+                <h3 data-lang="zh">直接系数与动态乘数</h3>
+
+                <div class="example">
+                    <div class="example-title">
+                        <span data-lang="en">Why They Differ</span>
+                        <span data-lang="zh">为什么它们不同</span>
+                    </div>
+
+                    <p data-lang="en">Look at our VAR coefficient for "effect of past GDP on current interest rate":</p>
+                    <p data-lang="zh">看看我们VAR系数"过去GDP对当前利率的影响"：</p>
+                    <div class="equation">
+                        $$\Phi_{21} = 0.2$$
+                    </div>
+                    <p data-lang="en">This is the <strong>direct coefficient:</strong> if GDP grew 1% last quarter, the central bank raises rates by 0.2%.</p>
+                    <p data-lang="zh">这是<strong>直接系数：</strong>如果GDP上季度增长了1%，央行会提高利率0.2%。</p>
+
+                    <p data-lang="en">But remember: higher interest rates slow growth. So indirectly, a 1% GDP growth has a <em>negative</em> feedback onto itself.</p>
+                    <p data-lang="zh">但请记住：更高的利率会减缓增长。所以间接地，1%的GDP增长对自身有<em>负的</em>反馈。</p>
+
+                    <p data-lang="en">The <strong>dynamic multiplier</strong> accounts for this full feedback loop:</p>
+                    <p data-lang="zh"><strong>动态乘数</strong>考虑到这个完整的反馈回路：</p>
+                    <ul>
+                        <li data-lang="en">Period 0: GDP shock = +1%</li>
+                        <li data-lang="zh">期间0：GDP冲击 = +1%</li>
+                        <li data-lang="en">Period 1: GDP grows by +0.5% (from Φ₁₁), but rates rise +0.2% (from Φ₂₁)</li>
+                        <li data-lang="zh">期间1：GDP增长+0.5%（来自Φ₁₁），但利率上升+0.2%（来自Φ₂₁）</li>
+                        <li data-lang="en">Period 2: The higher rates slow growth, so the growth response decays faster than 0.5 × 0.5</li>
+                        <li data-lang="zh">期间2：更高的利率减缓增长，所以增长响应的衰减速度比0.5 × 0.5更快</li>
+                    </ul>
+
+                    <p data-lang="en">The total long-run effect (multiplier) of a 1% permanent GDP boost is <strong>not just 0.5</strong> (the direct coefficient), but rather the result of summing all future effects in the IRF. This is often called the <strong>cumulative multiplier</strong>.</p>
+                    <p data-lang="zh">1%永久GDP提升的总长期效应（乘数）<strong>不仅仅是0.5</strong>（直接系数），而是IRF中所有未来效应求和的结果。这通常被称为<strong>累积乘数</strong>。</p>
+                </div>
+
+                <h3 data-lang="en">Numerical Example: Why Multipliers Can Be Large (or Small)</h3>
+                <h3 data-lang="zh">数值例子：为什么乘数可能很大（或很小）</h3>
+
+                <p data-lang="en">Suppose a government spends an extra 1 billion dollars (autonomous spending). This directly increases GDP by 1 billion. But:</p>
+                <p data-lang="zh">假设政府额外支出10亿美元（自主支出）。这直接使GDP增加10亿美元。但是：</p>
+
+                <ul>
+                    <li data-lang="en">Higher GDP means incomes rise, so households consume more (positive feedback)</li>
+                    <li data-lang="zh">更高的GDP意味着收入上升，所以家庭消费更多（正反馈）</li>
+                    <li data-lang="en">Higher GDP also means the central bank raises rates, which reduces investment (negative feedback)</li>
+                    <li data-lang="zh">更高的GDP也意味着央行提高利率，这减少了投资（负反馈）</li>
+                    <li data-lang="en">Which feedback dominates determines the total multiplier</li>
+                    <li data-lang="zh">哪种反馈占主导地位决定了总乘数</li>
+                </ul>
+
+                <div class="definition">
+                    <div class="definition-title">
+                        <span data-lang="en">Definition: The Multiplier</span>
+                        <span data-lang="zh">定义：乘数</span>
+                    </div>
+                    <p data-lang="en">The <strong>dynamic multiplier</strong> at horizon h is the cumulative sum of all IRF responses up to horizon h. If a 1% GDP shock leads to immediate +1% response and +0.5% response next period, the 2-period cumulative multiplier is 1.5.</p>
+                    <p data-lang="zh"><strong>动态乘数</strong>在地平线h处是所有IRF响应直到地平线h的累积总和。如果1%的GDP冲击导致立即+1%的响应和下一期+0.5%的响应，那么2期累积乘数是1.5。</p>
+                </div>
+            </section>
+
+            <!-- Section 8: The Identification Problem - Who Affects Whom First? -->
+            <section>
+                <h2>
+                    <span data-lang="en">8. The Identification Problem: Who Affects Whom First?</span>
+                    <span data-lang="zh">8. 识别问题：谁先影响谁？</span>
+                </h2>
+
+                <p data-lang="en">We now arrive at a critical issue: <strong>we cannot estimate the IRF from data alone without making assumptions about causality.</strong></p>
+                <p data-lang="zh">我们现在到达一个关键问题：<strong>没有做出关于因果关系的假设，我们不能仅从数据估计IRF。</strong></p>
+
+                <h3 data-lang="en">The Problem</h3>
+                <h3 data-lang="zh">问题</h3>
+
+                <p data-lang="en">Our VAR system gives us the coefficient matrix Φ and the variance-covariance matrix of residuals Σ. But the shocks (ε) we observe are <em>reduced-form residuals</em>, which are mixtures of all the structural shocks hitting the economy.</p>
+                <p data-lang="zh">我们的VAR系统给我们系数矩阵Φ和残差的方差-协方差矩阵Σ。但我们观察到的冲击（ε）是<em>约化形式残差</em>，是所有结构冲击撞击经济的混合。</p>
+
+                <div class="definition">
+                    <div class="definition-title">
+                        <span data-lang="en">Structural vs. Reduced-Form Shocks</span>
+                        <span data-lang="zh">结构性与约化形式冲击</span>
+                    </div>
+                    <ul>
+                        <li data-lang="en"><strong>Structural shocks (u):</strong> The "true" economic shocks—a tech innovation, a demand wave, a policy change. We want to know the effect of these.</li>
+                        <li data-lang="zh"><strong>结构冲击（u）：</strong>"真实"经济冲击——技术创新、需求浪潮、政策变化。我们想知道这些的效果。</li>
+                        <li data-lang="en"><strong>Reduced-form residuals (ε):</strong> What's left over after we fit the VAR. These are mixtures of structural shocks because everything happens simultaneously.</li>
+                        <li data-lang="zh"><strong>约化形式残差（ε）：</strong>我们拟合VAR后剩下的。这些是结构冲击的混合，因为一切同时发生。</li>
+                    </ul>
+                    <p data-lang="en">Example: The ε we observe for GDP might partly be a technology shock AND partly a demand shock happening at the same time. We can't tell which is which without additional structure.</p>
+                    <p data-lang="zh">例子：我们为GDP观察到的ε可能既是技术冲击的一部分，也是同时发生的需求冲击的一部分。没有额外的结构，我们无法区分。</p>
+                </div>
+
+                <h3 data-lang="en">The Solution: Recursive Ordering (Cholesky Decomposition)</h3>
+                <h3 data-lang="zh">解决方案：递归排序（Cholesky分解）</h3>
+
+                <p data-lang="en">One practical approach is to impose a <strong>causal ordering:</strong> assume that some variables respond instantly to shocks, while others respond only with a lag. This is the Cholesky decomposition.</p>
+                <p data-lang="zh">一个实用的方法是施加<strong>因果排序：</strong>假设某些变量对冲击做出即时反应，而其他变量仅以滞后方式做出反应。这是Cholesky分解。</p>
+
+                <h3 data-lang="en">Causal Ordering: An Example</h3>
+                <h3 data-lang="zh">因果排序：一个例子</h3>
+
+                <div class="example">
+                    <div class="example-title">
+                        <span data-lang="en">GDP First, Then Interest Rates</span>
+                        <span data-lang="zh">首先GDP，然后利率</span>
+                    </div>
+
+                    <p data-lang="en">We assume: <strong>GDP shocks hit first and immediately affect the economy. Interest rates respond a period later (with a lag) because the central bank needs time to observe and react.</strong></p>
+                    <p data-lang="zh">我们假设：<strong>GDP冲击首先发生并立即影响经济。利率以后延迟反应（滞后），因为央行需要时间观察和反应。</strong></p>
+
+                    <p data-lang="en">Under this ordering:</p>
+                    <p data-lang="zh">在这个排序下：</p>
+                    <ul>
+                        <li data-lang="en">Today's interest rate <strong>cannot</strong> respond to today's GDP surprise (no contemporaneous effect). It can only respond to last quarter's GDP.</li>
+                        <li data-lang="zh">今天的利率<strong>不能</strong>对今天的GDP惊喜做出反应（没有同期效应）。它只能对上季度的GDP做出反应。</li>
+                        <li data-lang="en">Today's GDP shock, however, does not depend on today's interest rate (the shock happens before the policy response).</li>
+                        <li data-lang="zh">然而，今天的GDP冲击不取决于今天的利率（冲击发生在政策反应之前）。</li>
+                    </ul>
+
+                    <p data-lang="en">This is reasonable: in reality, if the stock market crashes today, the Fed doesn't immediately change rates the same day. They wait, observe, then adjust.</p>
+                    <p data-lang="zh">这是合理的：实际上，如果股市今天崩盘，美联储不会在同一天立即改变利率。他们等待、观察，然后调整。</p>
+                </div>
+
+                <h3 data-lang="en">What the Cholesky Decomposition Does</h3>
+                <h3 data-lang="zh">Cholesky分解做什么</h3>
+
+                <p data-lang="en">Mathematically, the Cholesky decomposition takes the variance-covariance matrix Σ and factors it into a lower triangular matrix L and its transpose. The triangular structure encodes the causal ordering.</p>
+                <p data-lang="zh">数学上，Cholesky分解将方差-协方差矩阵Σ分解为下三角矩阵L及其转置。三角形结构编码了因果排序。</p>
+
+                <div class="equation">
+                    $$\Sigma = L L'$$
+                    <div class="equation-label">
+                        <span data-lang="en">Cholesky factorization</span>
+                        <span data-lang="zh">Cholesky分解</span>
+                    </div>
+                </div>
+
+                <p data-lang="en">Where L is lower triangular. This matrix L contains the "structural" relationships—how shocks translate into reduced-form residuals.</p>
+                <p data-lang="zh">其中L是下三角的。这个矩阵L包含"结构"关系——冲击如何转化为约化形式残差。</p>
+
+                <h3 data-lang="en">A Critical Caveat: Ordering Matters!</h3>
+                <h3 data-lang="zh">关键警告：排序很重要！</h3>
+
+                <div class="note">
+                    <div class="note-title">
+                        <span data-lang="en">The Order is Not Unique</span>
+                        <span data-lang="zh">顺序不是唯一的</span>
+                    </div>
+                    <p data-lang="en">If you change the order of variables (e.g., put interest rates first, GDP second), you get different IRFs. There is no "correct" ordering from the data alone—it requires economic judgment.</p>
+                    <p data-lang="zh">如果你改变变量的顺序（例如，把利率放在首位，GDP放在第二位），你会得到不同的IRF。仅从数据看没有"正确"的排序——它需要经济判断。</p>
+
+                    <p data-lang="en">Researchers typically defend their choice based on institutional knowledge. For instance: "The central bank is the last responder" or "Technology shocks affect output before prices." These assumptions should be stated clearly and tested for robustness (sensitivity analysis).</p>
+                    <p data-lang="zh">研究人员通常基于制度知识为其选择辩护。例如："央行是最后的应答者"或"技术冲击在价格之前影响产出。"这些假设应该清楚地说明并测试稳健性（敏感性分析）。</p>
+                </div>
+            </section>
+
+            <!-- Section 9: Bringing It All Together -->
+            <section>
+                <h2>
+                    <span data-lang="en">9. Bringing It All Together: A Complete Example</span>
+                    <span data-lang="zh">9. 把所有东西整合在一起：一个完整的例子</span>
+                </h2>
+
+                <p data-lang="en">Let's walk through a realistic scenario using all the concepts we've learned.</p>
+                <p data-lang="zh">让我们使用我们学到的所有概念来完成一个真实的场景。</p>
+
+                <h3 data-lang="en">The Setup</h3>
+                <h3 data-lang="zh">设置</h3>
+
+                <p data-lang="en">We have quarterly data for a small economy with two key variables: GDP growth (y) and the central bank policy rate (r). We estimate a VAR(1) and find:</p>
+                <p data-lang="zh">我们有一个小经济体的季度数据，有两个关键变量：GDP增长（y）和央行政策利率（r）。我们估计了VAR(1)并发现：</p>
+
+                <div class="equation">
+                    $$\Phi = \begin{pmatrix} 0.40 & 0.10 \\ -0.15 & 0.85 \end{pmatrix}, \quad \Sigma = \begin{pmatrix} 0.64 & -0.12 \\ -0.12 & 0.25 \end{pmatrix}$$
+                </div>
+
+                <h3 data-lang="en">Step 1: Identify Causality (Cholesky)</h3>
+                <h3 data-lang="zh">步骤1：识别因果关系（Cholesky）</h3>
+
+                <p data-lang="en">We assume: GDP shocks hit first, then the central bank responds. So we order variables as [y, r].</p>
+                <p data-lang="zh">我们假设：GDP冲击首先发生，然后央行做出反应。所以我们按[y, r]的顺序排列变量。</p>
+
+                <p data-lang="en">The Cholesky decomposition of Σ gives:</p>
+                <p data-lang="zh">Σ的Cholesky分解给出：</p>
+
+                <div class="equation">
+                    $$L = \begin{pmatrix} 0.8 & 0 \\ -0.15 & 0.457 \end{pmatrix}$$
+                </div>
+
+                <h3 data-lang="en">Step 2: Compute IRFs</h3>
+                <h3 data-lang="zh">步骤2：计算IRF</h3>
+
+                <p data-lang="en">Period 0 (impact): IRF = L</p>
+                <p data-lang="zh">周期0（冲击）：IRF = L</p>
+
+                <div class="equation">
+                    $$\text{Shock to GDP:} \quad y \uparrow 0.8\%, \quad r \uparrow -0.15\% \text{ (no immediate effect)}$$
+                </div>
+
+                <div class="equation">
+                    $$\text{Shock to rates:} \quad y \uparrow 0\%, \quad r \uparrow 0.457\%$$
+                </div>
+
+                <p data-lang="en">Period 1: IRF = Φ × L</p>
+                <p data-lang="zh">周期1：IRF = Φ × L</p>
+
+                <div class="equation">
+                    $$\Theta_1 = \begin{pmatrix} 0.40 & 0.10 \\ -0.15 & 0.85 \end{pmatrix} \begin{pmatrix} 0.8 & 0 \\ -0.15 & 0.457 \end{pmatrix} = \begin{pmatrix} 0.305 & 0.0457 \\ -0.141 & 0.389 \end{pmatrix}$$
+                </div>
+
+                <p data-lang="en">The GDP shock echoes: a 0.8% shock leads to 0.305% growth in period 1 (decaying).</p>
+                <p data-lang="zh">GDP冲击回荡：0.8%的冲击导致第1期0.305%的增长（衰减）。</p>
+
+                <h3 data-lang="en">Step 3: Variance Decomposition</h3>
+                <h3 data-lang="zh">步骤3：方差分解</h3>
+
+                <p data-lang="en">We sum the squared IRFs over, say, 8 quarters. Suppose we find:</p>
+                <p data-lang="zh">我们对平方IRF求和，比如8个季度。假设我们发现：</p>
+
+                <ul>
+                    <li data-lang="en">GDP variance explained by GDP shocks: 78%</li>
+                    <li data-lang="zh">GDP方差由GDP冲击解释：78%</li>
+                    <li data-lang="en">GDP variance explained by rate shocks: 22%</li>
+                    <li data-lang="zh">GDP方差由利率冲击解释：22%</li>
+                </ul>
+
+                <p data-lang="en"><strong>Interpretation:</strong> Most GDP volatility comes from its own sector (supply, demand), but about 1/4 is due to monetary policy shocks.</p>
+                <p data-lang="zh"><strong>解释：</strong>大多数GDP波动来自其自身部门（供给、需求），但约1/4是由于货币政策冲击。</p>
+
+                <h3 data-lang="en">Step 4: Cumulative Multipliers</h3>
+                <h3 data-lang="zh">步骤4：累积乘数</h3>
+
+                <p data-lang="en">Sum the IRFs for a GDP shock over 4 quarters: 0.8 + 0.305 + ... ≈ 1.5. This means a 1% permanent shock to GDP has a cumulative effect of 1.5% over the first year (due to persistence and positive feedback).</p>
+                <p data-lang="zh">对4个季度的GDP冲击求和IRF：0.8 + 0.305 + ... ≈ 1.5。这意味着1%的永久GDP冲击在第一年内的累积效果为1.5%（由于持久性和正反馈）。</p>
+            </section>
+
+            <!-- Section 10: Key Takeaways -->
+            <section>
+                <h2>
+                    <span data-lang="en">10. Key Takeaways & Next Steps</span>
+                    <span data-lang="zh">10. 关键要点和后续步骤</span>
+                </h2>
+
+                <div class="definition">
+                    <div class="definition-title">
+                        <span data-lang="en">You Now Understand:</span>
+                        <span data-lang="zh">你现在理解：</span>
+                    </div>
+                    <ol>
+                        <li data-lang="en"><strong>Systems:</strong> Multiple variables that affect each other through feedback loops. The economy is a system.</li>
+                        <li data-lang="zh"><strong>系统：</strong>通过反馈回路相互影响的多个变量。经济是一个系统。</li>
+                        <li data-lang="en"><strong>Why simple regression fails:</strong> Causality is bidirectional; we cannot determine "which causes which" by regressing one variable on another.</li>
+                        <li data-lang="zh"><strong>为什么简单回归失败：</strong>因果关系是双向的；我们不能通过将一个变量回归到另一个来确定"哪个导致哪个"。</li>
+                        <li data-lang="en"><strong>VAR models:</strong> Treat all variables symmetrically. Each variable predicts itself and others using lags.</li>
+                        <li data-lang="zh"><strong>VAR模型：</strong>对所有变量平等对待。每个变量使用滞后预测自身和其他变量。</li>
+                        <li data-lang="en"><strong>Matrices:</strong> A compact way to write many equations. Matrix multiplication combines equations efficiently.</li>
+                        <li data-lang="zh"><strong>矩阵：</strong>一个紧凑的方式来写很多方程。矩阵乘法有效地组合方程。</li>
+                        <li data-lang="en"><strong>Impulse Responses:</strong> Show how variables respond over time to a shock. Can be computed period-by-period.</li>
+                        <li data-lang="zh"><strong>脉冲响应：</strong>显示变量如何随着时间对冲击做出响应。可以逐周期计算。</li>
+                        <li data-lang="en"><strong>Variance Decomposition:</strong> Shows which shocks explain forecast errors. Helps identify the relative importance of different sources of volatility.</li>
+                        <li data-lang="zh"><strong>方差分解：</strong>显示哪些冲击解释预测误差。有助于识别不同波动来源的相对重要性。</li>
+                        <li data-lang="en"><strong>Multipliers:</strong> The cumulative effect of a shock, accounting for feedback. Often larger (or sometimes smaller) than the direct coefficient.</li>
+                        <li data-lang="zh"><strong>乘数：</strong>冲击的累积效应，考虑到反馈。通常比直接系数更大（或有时更小）。</li>
+                        <li data-lang="en"><strong>Identification:</strong> We must assume a causal ordering (e.g., via Cholesky) to map structural shocks from reduced-form residuals. The choice matters and should be justified economically.</li>
+                        <li data-lang="zh"><strong>识别：</strong>我们必须假设因果排序（例如，通过Cholesky）来从约化形式残差映射结构冲击。选择很重要，应该在经济上合理。</li>
+                    </ol>
+                </div>
+
+                <h3 data-lang="en">Where to Go From Here</h3>
+                <h3 data-lang="zh">下一步去哪里</h3>
+
+                <ul>
+                    <li data-lang="en"><strong>Higher-order VARs:</strong> VAR(2), VAR(3), etc., capture richer dynamics but at the cost of more parameters.</li>
+                    <li data-lang="zh"><strong>更高阶VAR：</strong>VAR(2)、VAR(3)等捕捉更丰富的动态，但代价是更多参数。</li>
+                    <li data-lang="en"><strong>Structural VARs (SVAR):</strong> Instead of Cholesky, impose restrictions based on economic theory to identify shocks.</li>
+                    <li data-lang="zh"><strong>结构VAR（SVAR）：</strong>与其说Cholesky，不如基于经济理论施加限制来识别冲击。</li>
+                    <li data-lang="en"><strong>Bayesian VARs:</strong> Use prior beliefs about coefficients and shocks to stabilize estimates when data is sparse.</li>
+                    <li data-lang="zh"><strong>贝叶斯VAR：</strong>在数据稀疏时，使用对系数和冲击的先验信念来稳定估计。</li>
+                    <li data-lang="en"><strong>Sign restrictions:</strong> Instead of ordering, restrict IRFs to have economically plausible signs (e.g., "demand shocks raise both output and prices").</li>
+                    <li data-lang="zh"><strong>符号限制：</strong>与其排序，不如将IRF限制为具有经济上合理的符号（例如，"需求冲击提高产出和价格"）。</li>
+                    <li data-lang="en"><strong>Local Projections:</strong> A flexible alternative to VARs that estimates impulse responses directly.</li>
+                    <li data-lang="zh"><strong>局部投影：</strong>VAR的灵活替代品，直接估计脉冲响应。</li>
+                </ul>
+
+                <h3 data-lang="en">Final Thought</h3>
+                <h3 data-lang="zh">最后的思考</h3>
+
+                <p data-lang="en">VAR models and impulse responses are workhorses in macroeconomics, finance, and policy analysis. They are powerful because they respect the feedback structure of real-world systems while remaining estimable from data. But remember: <strong>no statistical method can overcome the fundamental challenge of identifying causality from observational data alone.</strong> Economic judgment, institutional knowledge, and robustness checks are essential.</p>
+                <p data-lang="zh">VAR模型和脉冲响应在宏观经济学、金融和政策分析中是主力军。它们很强大，因为它们尊重现实世界系统的反馈结构，同时仍然可以从数据估计。但请记住：<strong>没有统计方法可以克服仅从观察数据识别因果关系的根本挑战。</strong>经济判断、制度知识和稳健性检查是必不可少的。</p>
+            </section></section>
+
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langBtns = document.querySelectorAll('.guide-lang-btn');
+        // Exclude buttons from content elements
+        const enElements = document.querySelectorAll('.guide-content [data-lang="en"], .guide-breadcrumb [data-lang="en"], a.guide-back[data-lang="en"], .guide-header [data-lang="en"], .guide-tag [data-lang="en"]');
+        const zhElements = document.querySelectorAll('.guide-content [data-lang="zh"], .guide-breadcrumb [data-lang="zh"], a.guide-back[data-lang="zh"], .guide-header [data-lang="zh"], .guide-tag [data-lang="zh"]');
+        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        setLanguage(savedLang);
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                localStorage.setItem('preferred-lang', lang);
+                setLanguage(lang);
+            });
+        });
+        function setLanguage(lang) {
+            langBtns.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('.guide-lang-btn[data-lang="' + lang + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            if (lang === 'en') {
+                enElements.forEach(el => { el.style.display = ''; });
+                zhElements.forEach(el => { el.style.display = 'none'; });
+                document.body.className = 'en';
+            } else {
+                enElements.forEach(el => { el.style.display = 'none'; });
+                zhElements.forEach(el => { el.style.display = ''; });
+                document.body.className = 'zh';
+            }
+        }
+    });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang="en">Multilevel Models (HLM) | Empirical Modeling</title>
+    <title data-lang="zh">多层模型 (HLM) | 经验建模</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="guide-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="zh">
+    <div class="guide-layout">
+        <div class="guide-topbar">
+            <div class="guide-breadcrumb">
+                <a href="../empirical-modeling.html" data-lang="en">Empirical Modeling</a>
+                <a href="../empirical-modeling.html" data-lang="zh">经验建模</a>
+                <span class="sep">/</span>
+                <span data-lang="en">Multilevel Models (HLM)</span>
+                <span data-lang="zh">多层模型 (HLM)</span>
+            </div>
+            <div class="guide-lang-toggle">
+                <button class="guide-lang-btn active" data-lang="zh">中文</button>
+                <button class="guide-lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+
+        <div class="guide-content-wrapper">
+            <div class="guide-content">
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="en">Back to Empirical Modeling</a>
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="zh">返回经验建模</a>
+
+                <div class="guide-header">
+                    <div class="guide-tag">
+                        <span data-lang="en">ZERO-BASE FRIENDLY · FROM FIRST PRINCIPLES</span>
+                        <span data-lang="zh">零基础友好 · 从首原理</span>
+                    </div>
+                    <h1>
+                        <span data-lang="en">Multilevel Models (HLM)</span>
+                        <span data-lang="zh">多层模型 (HLM)</span>
+                    </h1>
+                    <p>
+                        <span data-lang="en">Nested data, ICC, random slopes — when students are nested in schools and observations are not independent.</span>
+                        <span data-lang="zh">嵌套数据、ICC、随机斜率——当学生嵌套在学校中且观测值不独立时。</span>
+                    </p>
+                </div>
+
+                <div class="section">
+                <h2 data-lang="en">1. What is Nested Data?</h2>
+                <h2 data-lang="zh">1. 什么是嵌套数据？</h2>
+
+                <p data-lang="en">
+                    Nested data is when lower-level observations are grouped inside higher-level units. Real-world examples:
+                </p>
+                <p data-lang="zh">
+                    嵌套数据是指低级观察被分组到更高级单位内。现实世界的例子：
+                </p>
+
+                <div class="card-row">
+                    <div class="card">
+                        <div class="card-tag" data-lang="en">EDUCATION</div>
+                        <div class="card-tag" data-lang="zh">教育</div>
+                        <h4 data-lang="en">Students in Schools</h4>
+                        <h4 data-lang="zh">学校里的学生</h4>
+                        <p data-lang="en">
+                            Level 1: Individual student test scores
+                            <br>
+                            Level 2: School classroom dynamics, school funding
+                        </p>
+                        <p data-lang="zh">
+                            第1级：单个学生的考试成绩
+                            <br>
+                            第2级：学校课堂动态、学校资金
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="card-tag" data-lang="en">HEALTH</div>
+                        <div class="card-tag" data-lang="zh">健康</div>
+                        <h4 data-lang="en">Patients in Hospitals</h4>
+                        <h4 data-lang="zh">医院里的患者</h4>
+                        <p data-lang="en">
+                            Level 1: Individual patient health outcomes
+                            <br>
+                            Level 2: Hospital quality, doctor experience, equipment
+                        </p>
+                        <p data-lang="zh">
+                            第1级：单个患者的健康结果
+                            <br>
+                            第2级：医院质量、医生经验、设备
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="card-tag" data-lang="en">BUSINESS</div>
+                        <div class="card-tag" data-lang="zh">商业</div>
+                        <h4 data-lang="en">Sales Reps in Regions</h4>
+                        <h4 data-lang="zh">地区销售代表</h4>
+                        <p data-lang="en">
+                            Level 1: Individual sale transaction
+                            <br>
+                            Level 2: Regional market conditions, manager quality
+                        </p>
+                        <p data-lang="zh">
+                            第1级：单个销售交易
+                            <br>
+                            第2级：地区市场条件、经理质量
+                        </p>
+                    </div>
+                </div>
+
+                <h3 data-lang="en">Why This Matters: The Similarity Problem</h3>
+                <h3 data-lang="zh">为什么重要：相似性问题</h3>
+
+                <p data-lang="en">
+                    Here's the key insight: <strong>Students in the same school are more similar to each other than students from different schools.</strong> This is not random. They share:
+                </p>
+                <p data-lang="zh">
+                    这是关键：<strong>同一所学校的学生彼此之间比来自不同学校的学生更相似。</strong> 这不是随机的。他们共享：
+                </p>
+
+                <ul>
+                    <li data-lang="en">The same teachers and curriculum</li>
+                    <li data-lang="zh">相同的教师和课程</li>
+                    <li data-lang="en">The same peer group and social influences</li>
+                    <li data-lang="zh">相同的同龄人和社会影响</li>
+                    <li data-lang="en">The same school resources and facilities</li>
+                    <li data-lang="zh">相同的学校资源和设施</li>
+                    <li data-lang="en">Often, the same socioeconomic neighborhood</li>
+                    <li data-lang="zh">通常是相同的社会经济邻域</li>
+                </ul>
+
+                <p data-lang="en">
+                    This correlation within schools—called <strong>clustering</strong> or <strong>dependence</strong>—violates a key OLS assumption: observations are independent. When you ignore this structure, bad things happen to your inference.
+                </p>
+                <p data-lang="zh">
+                    这种学校内的相关性——称为<strong>聚类</strong>或<strong>依赖</strong>——违反了关键的OLS假设：观察是独立的。当你忽视这个结构时，你的推断会出现坏事。
+                </p>
+            </div>
+
+            <!-- 2. The Problem: Ignoring Clusters -->
+            <div class="section">
+                <h2 data-lang="en">2. The Problem: What Happens When You Ignore Clusters</h2>
+                <h2 data-lang="zh">2. 问题：忽视集群时会发生什么</h2>
+
+                <p data-lang="en">
+                    Suppose you collect test scores from 3,000 students across 60 schools. You want to know: does class size affect student performance?
+                </p>
+                <p data-lang="zh">
+                    假设你从60所学校的3000名学生中收集考试成绩。你想知道：班级大小是否影响学生成绩？
+                </p>
+
+                <h3 data-lang="en">The Naive Approach (Wrong)</h3>
+                <h3 data-lang="zh">天真的方法（错误）</h3>
+
+                <div class="math-box" data-lang="en">
+                    $$\text{TestScore}_i = \beta_0 + \beta_1 \cdot \text{ClassSize}_i + \epsilon_i$$
+                    <br>
+                    Run OLS on all 3,000 students as if they're independent.
+                </div>
+                <div class="math-box" data-lang="zh">
+                    $$\text{TestScore}_i = \beta_0 + \beta_1 \cdot \text{ClassSize}_i + \epsilon_i$$
+                    <br>
+                    对所有3000名学生运行OLS，就好像他们是独立的一样。
+                </div>
+
+                <p data-lang="en">
+                    You'll get a coefficient estimate for β₁. But here's the problem:
+                </p>
+                <p data-lang="zh">
+                    你会得到β₁的系数估计。但这里有个问题：
+                </p>
+
+                <div class="warning-box" data-lang="en">
+                    <strong>Your standard error is too small.</strong>
+                    <br><br>
+                    OLS calculates standard errors assuming 3,000 independent data points. But you don't really have 3,000 independent pieces of information—you only have 60 schools. The students within each school contain <strong>redundant information</strong> about their school's effect.
+                    <br><br>
+                    Real effective sample size ≈ 60 schools, not 3,000 students.
+                </div>
+                <div class="warning-box" data-lang="zh">
+                    <strong>你的标准误太小了。</strong>
+                    <br><br>
+                    OLS假设3000个独立数据点来计算标准误。但你真的没有3000个独立的信息——你只有60所学校。每所学校内的学生包含关于其学校效应的<strong>冗余信息</strong>。
+                    <br><br>
+                    真实有效样本量≈60所学校，不是3000名学生。
+                </div>
+
+                <h3 data-lang="en">What This Means for Your Inference</h3>
+                <h3 data-lang="zh">这对你的推断意味着什么</h3>
+
+                <div class="example-box">
+                    <p data-lang="en">
+                        <strong>Example:</strong> Your OLS regression gives you:
+                        <br>
+                        $$\hat{\beta}_1 = -2.5 \quad (\text{SE} = 0.4)$$
+                        <br>
+                        <br>
+                        This looks highly significant! A 95% confidence interval would be: [-3.3, -1.7]
+                        <br>
+                        <br>
+                        But the true standard error (accounting for clustering) is actually SE = 1.2. Then:
+                        <br>
+                        $$\text{95% CI} = [-2.5 - 1.96 \times 1.2, -2.5 + 1.96 \times 1.2] = [-4.86, -0.14]$$
+                        <br>
+                        <br>
+                        Much wider! And that makes sense: you really only have 60 independent clusters.
+                    </p>
+                    <p data-lang="zh">
+                        <strong>例子：</strong> 你的OLS回归给你：
+                        <br>
+                        $$\hat{\beta}_1 = -2.5 \quad (\text{SE} = 0.4)$$
+                        <br>
+                        <br>
+                        这看起来非常重要！ 95%置信区间为：[-3.3, -1.7]
+                        <br>
+                        <br>
+                        但真实的标准误（考虑聚类）实际上是SE = 1.2。然后：
+                        <br>
+                        $$\text{95% CI} = [-2.5 - 1.96 \times 1.2, -2.5 + 1.96 \times 1.2] = [-4.86, -0.14]$$
+                        <br>
+                        <br>
+                        更宽了！这是有道理的：你真的只有60个独立的集群。
+                    </p>
+                </div>
+
+                <p data-lang="en">
+                    <strong>The bottom line:</strong> Ignoring clustering gives you false confidence. Your standard errors shrink, your t-statistics inflate, and you'll reject the null hypothesis too often. Multilevel models fix this by explicitly modeling the structure.
+                </p>
+                <p data-lang="zh">
+                    <strong>底线：</strong> 忽视聚类会给你虚假的信心。你的标准误会缩小，你的t统计量会膨胀，你会过于频繁地拒绝零假设。多层模型通过明确建模结构来修复这个问题。
+                </p>
+            </div>
+
+            <!-- 3. ICC: Quantifying Clustering -->
+            <div class="section">
+                <h2 data-lang="en">3. Intraclass Correlation (ICC): How Much Clustering Is There?</h2>
+                <h2 data-lang="zh">3. 类内相关系数（ICC）：有多少聚类？</h2>
+
+                <p data-lang="en">
+                    The <strong>Intraclass Correlation (ICC)</strong> measures: what fraction of the total variation in your outcome is due to differences <strong>between groups</strong> (schools) versus <strong>within groups</strong> (students in the same school)?
+                </p>
+                <p data-lang="zh">
+                    <strong>类内相关系数（ICC）</strong>衡量：总结果变化中有多少比例是由于<strong>组之间</strong>（学校）的差异与<strong>组内</strong>（同一学校的学生）的差异？
+                </p>
+
+                <h3 data-lang="en">The Formula</h3>
+                <h3 data-lang="zh">公式</h3>
+
+                <div class="math-box">
+                    $$\text{ICC} = \frac{\tau^2}{\tau^2 + \sigma^2}$$
+                    <br>
+                    <span data-lang="en">where:</span>
+                    <span data-lang="zh">其中：</span>
+                    <br>
+                    • τ² = between-group variance (variation <strong>across</strong> schools)
+                    <br>
+                    • τ² = 组间方差（学校<strong>之间</strong>的变化）
+                    <br>
+                    • σ² = within-group variance (variation <strong>within</strong> schools)
+                    <br>
+                    • σ² = 组内方差（学校<strong>内</strong>的变化）
+                </div>
+
+                <h3 data-lang="en">Numerical Example</h3>
+                <h3 data-lang="zh">数值示例</h3>
+
+                <div class="example-box">
+                    <p data-lang="en">
+                        <strong>Test scores at three schools:</strong>
+                    </p>
+                    <p data-lang="zh">
+                        <strong>三所学校的考试成绩：</strong>
+                    </p>
+
+                    <table style="margin: 20px 0; width: 100%; border-collapse: collapse;">
+                        <tr style="background: var(--cream); border-bottom: 2px solid var(--ink);">
+                            <td style="padding: 10px; border-right: 1px solid var(--ink);" data-lang="en">School A</td>
+                            <td style="padding: 10px;" data-lang="zh">学校A</td>
+                            <td style="padding: 10px;">72, 75, 73, 74, 76</td>
+                        </tr>
+                        <tr style="background: var(--white); border-bottom: 2px solid var(--ink);">
+                            <td style="padding: 10px; border-right: 1px solid var(--ink);" data-lang="en">School B</td>
+                            <td style="padding: 10px;" data-lang="zh">学校B</td>
+                            <td style="padding: 10px;">82, 84, 83, 85, 81</td>
+                        </tr>
+                        <tr style="background: var(--cream);">
+                            <td style="padding: 10px; border-right: 1px solid var(--ink);" data-lang="en">School C</td>
+                            <td style="padding: 10px;" data-lang="zh">学校C</td>
+                            <td style="padding: 10px;">90, 92, 91, 93, 89</td>
+                        </tr>
+                    </table>
+
+                    <p data-lang="en">
+                        <strong>Calculate:</strong>
+                        <br><br>
+                        Grand mean: (72+75+...+89)/15 = 82
+                        <br><br>
+                        School means:
+                        <br>
+                        School A: mean = 74, School B: mean = 83, School C: mean = 91
+                        <br><br>
+                        <strong>Between-school variance (τ²):</strong> Variance of school means around grand mean
+                        <br>
+                        τ² = [(74-82)² + (83-82)² + (91-82)²] / 3 = [64 + 1 + 81] / 3 = 48.67
+                        <br><br>
+                        <strong>Within-school variance (σ²):</strong> Average variance within each school
+                        <br>
+                        School A: var = 2.5, School B: var = 2.5, School C: var = 2.5
+                        <br>
+                        σ² = (2.5 + 2.5 + 2.5) / 3 = 2.5
+                        <br><br>
+                        <strong>ICC:</strong> τ² / (τ² + σ²) = 48.67 / (48.67 + 2.5) = 48.67 / 51.17 = 0.95
+                    </p>
+                    <p data-lang="zh">
+                        <strong>计算：</strong>
+                        <br><br>
+                        总体平均值：(72+75+...+89)/15 = 82
+                        <br><br>
+                        学校平均值：
+                        <br>
+                        学校A：平均值 = 74，学校B：平均值 = 83，学校C：平均值 = 91
+                        <br><br>
+                        <strong>学校间方差（τ²）：</strong> 学校平均值围绕总体平均值的方差
+                        <br>
+                        τ² = [(74-82)² + (83-82)² + (91-82)²] / 3 = [64 + 1 + 81] / 3 = 48.67
+                        <br><br>
+                        <strong>学校内方差（σ²）：</strong> 每所学校内的平均方差
+                        <br>
+                        学校A：方差 = 2.5，学校B：方差 = 2.5，学校C：方差 = 2.5
+                        <br>
+                        σ² = (2.5 + 2.5 + 2.5) / 3 = 2.5
+                        <br><br>
+                        <strong>ICC：</strong> τ² / (τ² + σ²) = 48.67 / (48.67 + 2.5) = 48.67 / 51.17 = 0.95
+                    </p>
+                </div>
+
+                <h3 data-lang="en">What the ICC Tells You</h3>
+                <h3 data-lang="zh">ICC告诉你什么</h3>
+
+                <div class="card-row">
+                    <div class="card">
+                        <h4>ICC = 0.95</h4>
+                        <p data-lang="en">
+                            95% of score variation is <strong>between schools</strong>. Schools are very different. Strong clustering. Multilevel models are essential.
+                        </p>
+                        <p data-lang="zh">
+                            95%的成绩变化是<strong>学校之间</strong>的。学校差异很大。强聚类。多层模型至关重要。
+                        </p>
+                    </div>
+                    <div class="card">
+                        <h4>ICC = 0.20</h4>
+                        <p data-lang="en">
+                            20% of variation is between schools, 80% within schools. Moderate clustering. Multilevel is worthwhile to get right standard errors.
+                        </p>
+                        <p data-lang="zh">
+                            20%的变化是学校之间的，80%是学校内的。中等聚类。多层模型值得正确获得标准误。
+                        </p>
+                    </div>
+                    <div class="card">
+                        <h4>ICC = 0.05</h4>
+                        <p data-lang="en">
+                            Only 5% between schools, mostly within. Weak clustering. OLS might be OK, but multilevel doesn't hurt.
+                        </p>
+                        <p data-lang="zh">
+                            学校间只有5%，主要是学校内的。弱聚类。OLS可能还好，但多层不会伤害。
+                        </p>
+                    </div>
+                </div>
+
+                <p data-lang="en">
+                    <strong>Rule of thumb:</strong> If ICC > 0.05, you should consider multilevel models. Below that, clustering is minimal. Above 0.10, it's pretty important.
+                </p>
+                <p data-lang="zh">
+                    <strong>经验法则：</strong> 如果ICC > 0.05，你应该考虑多层模型。低于这个值，聚类是最小的。在0.10以上，这相当重要。
+                </p>
+            </div>
+
+            <!-- 4. Random Intercepts: The Simplest Multilevel Model -->
+            <div class="section">
+                <h2 data-lang="en">4. Random Intercepts: Each School Has Its Own Baseline</h2>
+                <h2 data-lang="zh">4. 随机截距：每所学校都有自己的基线</h2>
+
+                <p data-lang="en">
+                    The simplest multilevel model is the <strong>random intercept model</strong>. Here's the idea:
+                </p>
+                <p data-lang="zh">
+                    最简单的多层模型是<strong>随机截距模型</strong>。这是想法：
+                </p>
+
+                <ul>
+                    <li data-lang="en">Each school has a different baseline test score (intercept)</li>
+                    <li data-lang="zh">每所学校有不同的基线考试成绩（截距）</li>
+                    <li data-lang="en">Some schools naturally have higher-performing students, others lower</li>
+                    <li data-lang="zh">一些学校自然有高表现的学生，其他则较低</li>
+                    <li data-lang="en">We allow this intercept to vary randomly across schools</li>
+                    <li data-lang="zh">我们允许这个截距在学校间随机变化</li>
+                </ul>
+
+                <h3 data-lang="en">The Model Structure (Two Levels)</h3>
+                <h3 data-lang="zh">模型结构（两个级别）</h3>
+
+                <p data-lang="en">
+                    <strong>Level 1 (Student level):</strong>
+                </p>
+                <p data-lang="zh">
+                    <strong>第1级（学生级）：</strong>
+                </p>
+
+                <div class="math-box">
+                    $$Y_{ij} = \beta_{0j} + r_{ij}$$
+                    <br>
+                    <span data-lang="en">where:</span>
+                    <span data-lang="zh">其中：</span>
+                    <br>
+                    • Yᵢⱼ = test score of student i in school j
+                    <br>
+                    • Yᵢⱼ = 学校j中学生i的考试成绩
+                    <br>
+                    • β₀ⱼ = intercept (baseline score) for school j
+                    <br>
+                    • β₀ⱼ = 学校j的截距（基线成绩）
+                    <br>
+                    • rᵢⱼ = student-level residual (how much student i differs from their school's mean)
+                    <br>
+                    • rᵢⱼ = 学生级残差（学生i与其学校平均值的偏差有多大）
+                </div>
+
+                <p data-lang="en">
+                    <strong>Level 2 (School level):</strong> Now we model where each school's intercept comes from.
+                </p>
+                <p data-lang="zh">
+                    <strong>第2级（学校级）：</strong> 现在我们模型每所学校的截距来自哪里。
+                </p>
+
+                <div class="math-box">
+                    $$\beta_{0j} = \gamma_{00} + u_{0j}$$
+                    <br>
+                    <span data-lang="en">where:</span>
+                    <span data-lang="zh">其中：</span>
+                    <br>
+                    • γ₀₀ = grand mean (overall average test score across all schools)
+                    <br>
+                    • γ₀₀ = 总平均值（所有学校的总体平均考试成绩）
+                    <br>
+                    • u₀ⱼ = school-level deviation (how much school j's mean differs from the grand mean)
+                    <br>
+                    • u₀ⱼ = 学校级偏差（学校j的平均值与总平均值相差多少）
+                </div>
+
+                <h3 data-lang="en">The Combined (Reduced Form) Equation</h3>
+                <h3 data-lang="zh">组合（简化形式）方程</h3>
+
+                <p data-lang="en">
+                    Substitute Level 2 into Level 1:
+                </p>
+                <p data-lang="zh">
+                    将第2级代入第1级：
+                </p>
+
+                <div class="math-box">
+                    $$Y_{ij} = \gamma_{00} + u_{0j} + r_{ij}$$
+                </div>
+
+                <p data-lang="en">
+                    <strong>Reading this equation:</strong>
+                    <br>
+                    Student i's score = Overall mean + School j's unique effect + Student i's unique deviation
+                    <br><br>
+                    The magic: we've split the error into two pieces:
+                    <br>
+                    • u₀ⱼ: the school's contribution (shared by all students in that school)
+                    <br>
+                    • rᵢⱼ: the student's own contribution (specific to that student)
+                </p>
+                <p data-lang="zh">
+                    <strong>阅读这个方程：</strong>
+                    <br>
+                    学生i的成绩 = 总体平均值 + 学校j的独特效应 + 学生i的独特偏差
+                    <br><br>
+                    魔力：我们将误差分成两部分：
+                    <br>
+                    • u₀ⱼ：学校的贡献（由该学校的所有学生共享）
+                    <br>
+                    • rᵢⱼ：学生自己的贡献（特定于该学生）
+                </p>
+
+                <h3 data-lang="en">Assumptions About the Random Parts</h3>
+                <h3 data-lang="zh">关于随机部分的假设</h3>
+
+                <div class="card-row">
+                    <div class="card">
+                        <h4 data-lang="en">u₀ⱼ (School effects)</h4>
+                        <h4 data-lang="zh">u₀ⱼ（学校效应）</h4>
+                        <p data-lang="en">
+                            u₀ⱼ ~ Normal(0, τ²)
+                            <br>
+                            School effects are normally distributed with mean 0 and variance τ² (between-school variance).
+                        </p>
+                        <p data-lang="zh">
+                            u₀ⱼ ~ 正态分布(0, τ²)
+                            <br>
+                            学校效应是均值为0、方差为τ²的正态分布（学校间方差）。
+                        </p>
+                    </div>
+                    <div class="card">
+                        <h4 data-lang="en">rᵢⱼ (Student errors)</h4>
+                        <h4 data-lang="zh">rᵢⱼ（学生错误）</h4>
+                        <p data-lang="en">
+                            rᵢⱼ ~ Normal(0, σ²)
+                            <br>
+                            Student deviations are normally distributed with mean 0 and variance σ² (within-school variance).
+                        </p>
+                        <p data-lang="zh">
+                            rᵢⱼ ~ 正态分布(0, σ²)
+                            <br>
+                            学生偏差是均值为0、方差为σ²的正态分布（学校内方差）。
+                        </p>
+                    </div>
+                </div>
+
+                <h3 data-lang="en">What We Estimate</h3>
+                <h3 data-lang="zh">我们估计什么</h3>
+
+                <ul>
+                    <li data-lang="en"><strong>γ₀₀:</strong> the overall mean test score</li>
+                    <li data-lang="zh"><strong>γ₀₀：</strong> 总体平均考试成绩</li>
+                    <li data-lang="en"><strong>τ²:</strong> variance of school intercepts (how spread out schools are)</li>
+                    <li data-lang="zh"><strong>τ²：</strong> 学校截距的方差（学校的分散程度）</li>
+                    <li data-lang="en"><strong>σ²:</strong> variance of student residuals (how spread out students are within schools)</li>
+                    <li data-lang="zh"><strong>σ²：</strong> 学生残差的方差（学生在学校内的分散程度）</li>
+                    <li data-lang="en"><strong>u₀ⱼ:</strong> predicted school effects (often called "school random effects" or "school intercepts")</li>
+                    <li data-lang="zh"><strong>u₀ⱼ：</strong> 预测的学校效应（通常称为"学校随机效应"或"学校截距"）</li>
+                </ul>
+
+                <h3 data-lang="en">Why This Fixes the Problem</h3>
+                <h3 data-lang="zh">为什么这修复了问题</h3>
+
+                <p data-lang="en">
+                    By explicitly modeling u₀ⱼ, the multilevel model accounts for clustering:
+                    <br>
+                    • The within-school correlation (students in the same school share u₀ⱼ) is built into the model
+                    <br>
+                    • Standard errors for higher-level parameters are correctly calculated based on the number of schools, not students
+                    <br>
+                    • You get valid inference
+                </p>
+                <p data-lang="zh">
+                    通过明确建模u₀ⱼ，多层模型考虑了聚类：
+                    <br>
+                    • 学校内相关性（同一学校的学生共享u₀ⱼ）内置于模型中
+                    <br>
+                    • 更高级别参数的标准误根据学校数量（而不是学生数量）正确计算
+                    <br>
+                    • 你得到有效的推断
+                </p>
+            </div>
+
+            <!-- 5. Adding a Student-Level Predictor -->
+            <div class="section">
+                <h2 data-lang="en">5. Adding Student-Level Predictors</h2>
+                <h2 data-lang="zh">5. 添加学生级预测变量</h2>
+
+                <p data-lang="en">
+                    Now suppose you want to test: does higher SES (socioeconomic status) lead to higher test scores? Add SES as a predictor.
+                </p>
+                <p data-lang="zh">
+                    现在假设你想测试：更高的SES（社会经济状况）是否导致更高的考试成绩？添加SES作为预测变量。
+                </p>
+
+                <h3 data-lang="en">The Model with a Level-1 Predictor</h3>
+                <h3 data-lang="zh">具有第1级预测变量的模型</h3>
+
+                <p data-lang="en">
+                    <strong>Level 1:</strong>
+                </p>
+                <p data-lang="zh">
+                    <strong>第1级：</strong>
+                </p>
+
+                <div class="math-box">
+                    $$Y_{ij} = \beta_{0j} + \beta_{1j} \cdot \text{SES}_{ij} + r_{ij}$$
+                    <br>
+                    <span data-lang="en">where:</span>
+                    <span data-lang="zh">其中：</span>
+                    <br>
+                    • SESᵢⱼ = socioeconomic status of student i in school j
+                    <br>
+                    • SESᵢⱼ = 学校j中学生i的社会经济地位
+                    <br>
+                    • β₁ⱼ = slope (effect of SES) for school j
+                    <br>
+                    • β₁ⱼ = 学校j的斜率（SES的效应）
+                </div>
+
+                <p data-lang="en">
+                    <strong>Level 2:</strong> For now, let's assume the effect of SES is the same across all schools (more on this later).
+                </p>
+                <p data-lang="zh">
+                    <strong>第2级：</strong> 现在，我们假设SES的效应在所有学校都是相同的（稍后详细说明）。
+                </p>
+
+                <div class="math-box">
+                    $$\beta_{0j} = \gamma_{00} + u_{0j}$$
+                    $$\beta_{1j} = \gamma_{10} \quad \text{(no variation across schools)}$$
+                    <br>
+                    <span data-lang="en">where:</span>
+                    <span data-lang="zh">其中：</span>
+                    <br>
+                    • γ₁₀ = the (fixed) effect of SES across all schools
+                    <br>
+                    • γ₁₀ = 所有学校的（固定）SES效应
+                </div>
+
+                <p data-lang="en">
+                    <strong>Combined form:</strong>
+                </p>
+                <p data-lang="zh">
+                    <strong>组合形式：</strong>
+                </p>
+
+                <div class="math-box">
+                    $$Y_{ij} = \gamma_{00} + \gamma_{10} \cdot \text{SES}_{ij} + u_{0j} + r_{ij}$$
+                </div>
+
+                <h3 data-lang="en">Interpretation</h3>
+                <h3 data-lang="zh">解释</h3>
+
+                <p data-lang="en">
+                    • <strong>γ₀₀:</strong> Average test score when SES = 0 (or the reference group)
+                    <br>
+                    • <strong>γ₁₀:</strong> On average, a one-unit increase in SES is associated with a γ₁₀ unit increase in test score. This is the same for all schools.
+                    <br>
+                    • <strong>u₀ⱼ:</strong> School j's deviation from the overall average. Even after accounting for SES, some schools are still better than others.
+                </p>
+                <p data-lang="zh">
+                    • <strong>γ₀₀：</strong> 当SES = 0（或参考组）时的平均考试成绩
+                    <br>
+                    • <strong>γ₁₀：</strong> 平均来说，SES增加一个单位与考试成绩增加γ₁₀个单位相关。这对所有学校都是一样的。
+                    <br>
+                    • <strong>u₀ⱼ：</strong> 学校j与总体平均值的偏差。即使考虑了SES，一些学校仍然比其他学校更好。
+                </p>
+
+                <h3 data-lang="en">Why γ₁₀ is "Fixed" but β₀ⱼ is "Random"</h3>
+                <h3 data-lang="zh">为什么γ₁₀是"固定的"但β₀ⱼ是"随机的"</h3>
+
+                <ul>
+                    <li data-lang="en">
+                        <strong>γ₁₀ is fixed:</strong> We assume SES has the same effect in all schools. There's one SES effect across the board.
+                    </li>
+                    <li data-lang="zh">
+                        <strong>γ₁₀是固定的：</strong> 我们假设SES在所有学校都有相同的效应。所有地方都有一个SES效应。
+                    </li>
+                    <li data-lang="en">
+                        <strong>β₀ⱼ (equivalently, u₀ⱼ) is random:</strong> Each school's baseline is different. We don't estimate 60 separate intercepts; instead, we model them as draws from a Normal distribution with variance τ².
+                    </li>
+                    <li data-lang="zh">
+                        <strong>β₀ⱼ（等价地，u₀ⱼ）是随机的：</strong> 每所学校的基线都不同。我们不估计60个独立的截距；相反，我们将它们建模为从方差为τ²的正态分布中的抽取。
+                    </li>
+                </ul>
+
+                <p data-lang="en">
+                    This is the key distinction in multilevel models:
+                    <br>
+                    <strong>Fixed effects</strong> = parameters that are the same across all groups
+                    <br>
+                    <strong>Random effects</strong> = deviations that vary across groups, modeled probabilistically
+                </p>
+                <p data-lang="zh">
+                    这是多层模型中的关键区别：
+                    <br>
+                    <strong>固定效应</strong> = 所有组中相同的参数
+                    <br>
+                    <strong>随机效应</strong> = 跨组变化的偏差，用概率建模
+                </p>
+            </div>
+
+            <!-- 6. Adding a School-Level Predictor -->
+            <div class="section">
+                <h2 data-lang="en">6. Adding School-Level Predictors</h2>
+                <h2 data-lang="zh">6. 添加学校级预测变量</h2>
+
+                <p data-lang="en">
+                    Here's where multilevel models shine: you can explain variation at different levels.
+                    <br><br>
+                    Suppose you have data on school funding. You want to ask: do better-funded schools have higher test scores?
+                </p>
+                <p data-lang="zh">
+                    这是多层模型的闪光点：你可以解释不同级别的变化。
+                    <br><br>
+                    假设你有学校资金的数据。你想问：资金更好的学校是否有更高的考试成绩？
+                </p>
+
+                <h3 data-lang="en">Modify Level 2 to Include School Funding</h3>
+                <h3 data-lang="zh">修改第2级以包括学校资金</h3>
+
+                <div class="math-box">
+                    $$\beta_{0j} = \gamma_{00} + \gamma_{01} \cdot \text{Funding}_j + u_{0j}$$
+                    <br>
+                    <span data-lang="en">where:</span>
+                    <span data-lang="zh">其中：</span>
+                    <br>
+                    • Fundingⱼ = per-student funding at school j
+                    <br>
+                    • Fundingⱼ = 学校j的人均资金
+                    <br>
+                    • γ₀₁ = effect of school funding on the school's baseline test score
+                    <br>
+                    • γ₀₁ = 学校资金对学校基线考试成绩的效应
+                    <br>
+                    • u₀ⱼ = unexplained variation in school intercepts (after accounting for funding)
+                    <br>
+                    • u₀ⱼ = 学校截距中无法解释的变化（在考虑资金后）
+                </div>
+
+                <p data-lang="en">
+                    <strong>The full model:</strong>
+                </p>
+                <p data-lang="zh">
+                    <strong>完整模型：</strong>
+                </p>
+
+                <div class="math-box">
+                    $$Y_{ij} = \gamma_{00} + \gamma_{10} \cdot \text{SES}_{ij} + \gamma_{01} \cdot \text{Funding}_j + u_{0j} + r_{ij}$$
+                </div>
+
+                <h3 data-lang="en">Interpretation</h3>
+                <h3 data-lang="zh">解释</h3>
+
+                <ul>
+                    <li data-lang="en">
+                        <strong>γ₁₀:</strong> Effect of student SES on test scores (within and across schools)
+                    </li>
+                    <li data-lang="zh">
+                        <strong>γ₁₀：</strong> 学生SES对考试成绩的影响（学校内和学校间）
+                    </li>
+                    <li data-lang="en">
+                        <strong>γ₀₁:</strong> Effect of school funding: a $1,000 increase in per-student funding is associated with a γ₀₁ unit increase in test scores
+                    </li>
+                    <li data-lang="zh">
+                        <strong>γ₀₁：</strong> 学校资金的效应：人均资金增加$1,000与考试成绩增加γ₀₁个单位相关
+                    </li>
+                    <li data-lang="en">
+                        <strong>u₀ⱼ:</strong> School differences that are NOT explained by funding. Some schools outperform or underperform what funding alone would predict.
+                    </li>
+                    <li data-lang="zh">
+                        <strong>u₀ⱼ：</strong> 资金无法解释的学校差异。一些学校超出或低于资金本身预测的表现。
+                    </li>
+                </ul>
+
+                <div class="insight-box">
+                    <p data-lang="en">
+                        <strong>Key insight:</strong> Before adding funding to Level 2, the variance in u₀ⱼ was large (all school variation was unexplained). After adding funding, the variance in u₀ⱼ should shrink, because funding explains some of the school differences.
+                    </p>
+                    <p data-lang="zh">
+                        <strong>关键洞察：</strong> 在向第2级添加资金之前，u₀ⱼ中的方差很大（所有学校变化都无法解释）。添加资金后，u₀ⱼ中的方差应该缩小，因为资金解释了一些学校差异。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 7. Random Slopes: Effects Vary by School -->
+            <div class="section">
+                <h2 data-lang="en">7. Random Slopes: The Effect of SES Varies by School</h2>
+                <h2 data-lang="zh">7. 随机斜率：SES的效应因学校而异</h2>
+
+                <p data-lang="en">
+                    So far, we've assumed the SES effect is the same everywhere. But what if it's not?
+                    <br><br>
+                    Reality: In some schools, SES might matter a lot (high-inequality schools where poor students do much worse). In other schools, SES might matter less (because the school has strong support systems for all students).
+                </p>
+                <p data-lang="zh">
+                    到目前为止，我们假设SES效应在任何地方都是相同的。但如果不是呢？
+                    <br><br>
+                    现实：在某些学校，SES可能很重要（高不平等学校，其中贫困学生表现更差）。在其他学校，SES可能不太重要（因为学校对所有学生都有强有力的支持系统）。
+                </p>
+
+                <h3 data-lang="en">The Random Slopes Model</h3>
+                <h3 data-lang="zh">随机斜率模型</h3>
+
+                <p data-lang="en">
+                    <strong>Level 1 (same as before):</strong>
+                </p>
+                <p data-lang="zh">
+                    <strong>第1级（与之前相同）：</strong>
+                </p>
+
+                <div class="math-box">
+                    $$Y_{ij} = \beta_{0j} + \beta_{1j} \cdot \text{SES}_{ij} + r_{ij}$$
+                </div>
+
+                <p data-lang="en">
+                    <strong>Level 2 (now both intercept AND slope vary):</strong>
+                </p>
+                <p data-lang="zh">
+                    <strong>第2级（现在截距和斜率都变化）：</strong>
+                </p>
+
+                <div class="math-box">
+                    $$\beta_{0j} = \gamma_{00} + u_{0j}$$
+                    $$\beta_{1j} = \gamma_{10} + u_{1j}$$
+                    <br>
+                    <span data-lang="en">where:</span>
+                    <span data-lang="zh">其中：</span>
+                    <br>
+                    • γ₁₀ = average effect of SES across all schools
+                    <br>
+                    • γ₁₀ = 所有学校的SES平均效应
+                    <br>
+                    • u₁ⱼ = school j's deviation from the average SES effect
+                    <br>
+                    • u₁ⱼ = 学校j与平均SES效应的偏差
+                </div>
+
+                <p data-lang="en">
+                    <strong>Combined form:</strong>
+                </p>
+                <p data-lang="zh">
+                    <strong>组合形式：</strong>
+                </p>
+
+                <div class="math-box">
+                    $$Y_{ij} = \gamma_{00} + \gamma_{10} \cdot \text{SES}_{ij} + u_{0j} + u_{1j} \cdot \text{SES}_{ij} + r_{ij}$$
+                </div>
+
+                <h3 data-lang="en">What Changed?</h3>
+                <h3 data-lang="zh">什么改变了？</h3>
+
+                <ul>
+                    <li data-lang="en">
+                        <strong>Random intercept u₀ⱼ:</strong> School j's baseline (as before)
+                    </li>
+                    <li data-lang="zh">
+                        <strong>随机截距u₀ⱼ：</strong> 学校j的基线（如前所述）
+                    </li>
+                    <li data-lang="en">
+                        <strong>Random slope u₁ⱼ:</strong> NEW. School j's SES effect is (γ₁₀ + u₁ⱼ). Some schools have stronger SES effects (high u₁ⱼ), others weaker (low u₁ⱼ).
+                    </li>
+                    <li data-lang="zh">
+                        <strong>随机斜率u₁ⱼ：</strong> 新。学校j的SES效应是（γ₁₀ + u₁ⱼ）。一些学校有更强的SES效应（高u₁ⱼ），其他学校较弱（低u₁ⱼ）。
+                    </li>
+                </ul>
+
+                <h3 data-lang="en">Visualizing Random Slopes</h3>
+                <h3 data-lang="zh">可视化随机斜率</h3>
+
+                <div class="text-visual" data-lang="en">
+                    <p>
+                        Imagine plotting test score vs. SES for three schools:
+                    </p>
+                    <pre style="background: var(--cream); padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 12px;">
+School A (weak SES effect):     School B (average):        School C (strong SES effect):
+  Score                           Score                        Score
+   |      ___                      |       ____                  |___
+   |   __-    (shallow slope)      |   ___-     (medium slope)   |      ___ (steep slope)
+   |_/______________SES            |_/______________SES          |__________________SES
+
+   School A: β₁ⱼ = γ₁₀ - ε        School B: β₁ⱼ = γ₁₀          School C: β₁ⱼ = γ₁₀ + ε
+                    </pre>
+                </div>
+                <div class="text-visual" data-lang="zh">
+                    <p>
+                        想象为三所学校绘制考试成绩与SES：
+                    </p>
+                    <pre style="background: var(--cream); padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 12px;">
+学校A（弱SES效应）：   学校B（平均）：    学校C（强SES效应）：
+  成绩                  成绩                  成绩
+   |      ___             |       ____            |___
+   |   __-    (浅斜率)   |   ___-   (中等斜率)  |      ___ (陡峭)
+   |_/______________SES  |_/______________SES  |__________________SES
+
+   学校A: β₁ⱼ = γ₁₀ - ε  学校B: β₁ⱼ = γ₁₀      学校C: β₁ⱼ = γ₁₀ + ε
+                    </pre>
+                </div>
+
+                <p data-lang="en">
+                    All three schools have different SES effects. The multilevel model with random slopes lets each school have its own relationship between SES and scores.
+                </p>
+                <p data-lang="zh">
+                    所有三所学校都有不同的SES效应。具有随机斜率的多层模型让每所学校都有自己的SES和成绩之间的关系。
+                </p>
+
+                <h3 data-lang="en">Assumptions for Random Slopes</h3>
+                <h3 data-lang="zh">随机斜率的假设</h3>
+
+                <div class="math-box">
+                    $$(u_{0j}, u_{1j}) \sim \text{Bivariate Normal}(0, 0; \tau^2_0, \tau^2_1, \rho)$$
+                    <br>
+                    <span data-lang="en">where:</span>
+                    <span data-lang="zh">其中：</span>
+                    <br>
+                    • τ₀² = variance in school intercepts
+                    <br>
+                    • τ₀² = 学校截距中的方差
+                    <br>
+                    • τ₁² = variance in school slopes
+                    <br>
+                    • τ₁² = 学校斜率中的方差
+                    <br>
+                    • ρ = correlation between intercepts and slopes
+                    <br>
+                    • ρ = 截距和斜率之间的相关性
+                </div>
+
+                <p data-lang="en">
+                    If ρ is negative, it means: schools with higher baselines tend to have weaker SES effects (i.e., high-performing schools are more equitable). If ρ is positive, the opposite.
+                </p>
+                <p data-lang="zh">
+                    如果ρ为负，则意味着：基线较高的学校往往有较弱的SES效应（即高表现学校更公平）。如果ρ为正，则相反。
+                </p>
+            </div>
+
+            <!-- 8. Full Model Assembly: Putting It All Together -->
+            <div class="section">
+                <h2 data-lang="en">8. Full Model Assembly: Putting Levels Together</h2>
+                <h2 data-lang="zh">8. 完整模型组装：将级别放在一起</h2>
+
+                <p data-lang="en">
+                    Let's build the most complex model we've discussed, step by step.
+                </p>
+                <p data-lang="zh">
+                    让我们逐步构建我们讨论过的最复杂的模型。
+                </p>
+
+                <h3 data-lang="en">Starting Point: Level Equations</h3>
+                <h3 data-lang="zh">起点：级别方程</h3>
+
+                <p data-lang="en">
+                    <strong>Level 1 (Student level):</strong>
+                </p>
+                <p data-lang="zh">
+                    <strong>第1级（学生级）：</strong>
+                </p>
+
+                <div class="math-box">
+                    $$Y_{ij} = \beta_{0j} + \beta_{1j} \cdot \text{SES}_{ij} + r_{ij}$$
+                </div>
+
+                <p data-lang="en">
+                    <strong>Level 2 (School level):</strong> (assume random intercepts only for simplicity)
+                </p>
+                <p data-lang="zh">
+                    <strong>第2级（学校级）：</strong> （为简单起见，假设仅随机截距）
+                </p>
+
+                <div class="math-box">
+                    $$\beta_{0j} = \gamma_{00} + \gamma_{01} \cdot \text{Funding}_j + u_{0j}$$
+                    $$\beta_{1j} = \gamma_{10}$$
+                </div>
+
+                <h3 data-lang="en">Step 1: Substitute β₁ⱼ into Level 1</h3>
+                <h3 data-lang="zh">第1步：将β₁ⱼ代入第1级</h3>
+
+                <div class="math-box">
+                    $$Y_{ij} = \beta_{0j} + \gamma_{10} \cdot \text{SES}_{ij} + r_{ij}$$
+                </div>
+
+                <h3 data-lang="en">Step 2: Substitute β₀ⱼ into the modified Level 1</h3>
+                <h3 data-lang="zh">第2步：将β₀ⱼ代入修改后的第1级</h3>
+
+                <div class="math-box">
+                    $$Y_{ij} = [\gamma_{00} + \gamma_{01} \cdot \text{Funding}_j + u_{0j}] + \gamma_{10} \cdot \text{SES}_{ij} + r_{ij}$$
+                </div>
+
+                <h3 data-lang="en">Step 3: Rearrange to Reduced Form</h3>
+                <h3 data-lang="zh">第3步：重新排列为简化形式</h3>
+
+                <div class="math-box">
+                    $$Y_{ij} = \gamma_{00} + \gamma_{01} \cdot \text{Funding}_j + \gamma_{10} \cdot \text{SES}_{ij} + u_{0j} + r_{ij}$$
+                </div>
+
+                <p data-lang="en">
+                    This is the single equation that represents the full two-level model. Now read it carefully:
+                </p>
+                <p data-lang="zh">
+                    这是代表完整两级模型的单个方程。现在仔细阅读：
+                </p>
+
+                <ul>
+                    <li data-lang="en">
+                        <strong>γ₀₀:</strong> Grand mean (baseline test score when SES=0 and Funding=0)
+                    </li>
+                    <li data-lang="zh">
+                        <strong>γ₀₀：</strong> 总平均值（当SES=0且Funding=0时的基线考试成绩）
+                    </li>
+                    <li data-lang="en">
+                        <strong>γ₀₁ × Funding_j:</strong> Effect of school-level funding (same for all students in that school)
+                    </li>
+                    <li data-lang="zh">
+                        <strong>γ₀₁ × Funding_j：</strong> 学校级资金的效应（对该学校的所有学生相同）
+                    </li>
+                    <li data-lang="en">
+                        <strong>γ₁₀ × SES_ij:</strong> Effect of student-level SES (same across all schools)
+                    </li>
+                    <li data-lang="zh">
+                        <strong>γ₁₀ × SES_ij：</strong> 学生级SES的效应（在所有学校中相同）
+                    </li>
+                    <li data-lang="en">
+                        <strong>u₀ⱼ:</strong> School j's random deviation (unexplained school effects)
+                    </li>
+                    <li data-lang="zh">
+                        <strong>u₀ⱼ：</strong> 学校j的随机偏差（无法解释的学校效应）
+                    </li>
+                    <li data-lang="en">
+                        <strong>r_ij:</strong> Student i's random deviation (residual)
+                    </li>
+                    <li data-lang="zh">
+                        <strong>r_ij：</strong> 学生i的随机偏差（残差）
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 9. Estimation: ML vs REML -->
+            <div class="section">
+                <h2 data-lang="en">9. Estimation: Maximum Likelihood vs REML</h2>
+                <h2 data-lang="zh">9. 估计：最大似然 vs REML</h2>
+
+                <p data-lang="en">
+                    How do we actually estimate the multilevel model? Two main approaches:
+                </p>
+                <p data-lang="zh">
+                    我们如何真正估计多层模型？两种主要方法：
+                </p>
+
+                <h3 data-lang="en">Maximum Likelihood (ML)</h3>
+                <h3 data-lang="zh">最大似然（ML）</h3>
+
+                <p data-lang="en">
+                    <strong>Idea:</strong> Find parameters that maximize the probability of observing your data.
+                </p>
+                <p data-lang="zh">
+                    <strong>想法：</strong> 找到最大化观察数据概率的参数。
+                </p>
+
+                <ul>
+                    <li data-lang="en">
+                        Estimates both fixed effects (γs) and variance components (τ², σ²)
+                    </li>
+                    <li data-lang="zh">
+                        估计固定效应（γs）和方差成分（τ²、σ²）
+                    </li>
+                    <li data-lang="en">
+                        <strong>Problem:</strong> ML estimates of variance components are slightly biased. Specifically, ML <strong>underestimates</strong> the variance because it doesn't account for the number of fixed effects you estimated.
+                    </li>
+                    <li data-lang="zh">
+                        <strong>问题：</strong> ML对方差成分的估计略有偏差。具体来说，ML<strong>低估</strong>了方差，因为它不考虑你估计的固定效应数量。
+                    </li>
+                </ul>
+
+                <h3 data-lang="en">REML (Restricted Maximum Likelihood)</h3>
+                <h3 data-lang="zh">REML（受限最大似然）</h3>
+
+                <p data-lang="en">
+                    <strong>Idea:</strong> First, remove the influence of fixed effects, then estimate variance components.
+                </p>
+                <p data-lang="zh">
+                    <strong>想法：</strong> 首先，移除固定效应的影响，然后估计方差成分。
+                </p>
+
+                <ul>
+                    <li data-lang="en">
+                        Provides unbiased estimates of variance components
+                    </li>
+                    <li data-lang="zh">
+                        提供方差成分的无偏估计
+                    </li>
+                    <li data-lang="en">
+                        <strong>Trade-off:</strong> Can't directly compare models with different fixed effects using likelihood ratio tests (unless you use ML)
+                    </li>
+                    <li data-lang="zh">
+                        <strong>权衡：</strong> 无法使用似然比测试直接比较具有不同固定效应的模型（除非你使用ML）
+                    </li>
+                </ul>
+
+                <h3 data-lang="en">Which One to Use?</h3>
+                <h3 data-lang="zh">使用哪一个？</h3>
+
+                <div class="card-row">
+                    <div class="card">
+                        <h4 data-lang="en">Use REML if:</h4>
+                        <h4 data-lang="zh">如果以下情况使用REML：</h4>
+                        <ul>
+                            <li data-lang="en">Your main interest is the variance components (τ², σ²)</li>
+                            <li data-lang="zh">你主要关心的是方差成分（τ²、σ²）</li>
+                            <li data-lang="en">You have a small sample size</li>
+                            <li data-lang="zh">你的样本量很小</li>
+                            <li data-lang="en">You're not comparing models with different fixed effects</li>
+                            <li data-lang="zh">你不比较具有不同固定效应的模型</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4 data-lang="en">Use ML if:</h4>
+                        <h4 data-lang="zh">如果以下情况使用ML：</h4>
+                        <ul>
+                            <li data-lang="en">You're comparing models (e.g., adding predictors)</li>
+                            <li data-lang="zh">你正在比较模型（例如，添加预测变量）</li>
+                            <li data-lang="en">You want to test fixed effects formally</li>
+                            <li data-lang="zh">你想正式测试固定效应</li>
+                            <li data-lang="en">You're interested in likelihood ratio tests</li>
+                            <li data-lang="zh">你对似然比测试感兴趣</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 data-lang="en">In Practice</h3>
+                <h3 data-lang="zh">在实践中</h3>
+
+                <p data-lang="en">
+                    Many researchers use REML as default and ML only for model comparison. This is a reasonable approach, but know the trade-offs.
+                </p>
+                <p data-lang="zh">
+                    许多研究人员使用REML作为默认值，只对模型比较使用ML。这是合理的方法，但知道权衡。
+                </p>
+            </div>
+
+            <!-- 10. When to Use Multilevel Models: Decision Checklist -->
+            <div class="section">
+                <h2 data-lang="en">10. Decision Checklist: When to Use Multilevel Models</h2>
+                <h2 data-lang="zh">10. 决策检查清单：何时使用多层模型</h2>
+
+                <p data-lang="en">
+                    Multilevel models are powerful, but not always necessary. Here's a straightforward checklist:
+                </p>
+                <p data-lang="zh">
+                    多层模型很强大，但不总是必要的。这是一个直接的检查清单：
+                </p>
+
+                <div class="checklist-box">
+                    <h4 data-lang="en">Question 1: Do you have nested data?</h4>
+                    <h4 data-lang="zh">问题1：你有嵌套数据吗？</h4>
+                    <ul>
+                        <li data-lang="en">
+                            ✓ YES: Students in schools, patients in hospitals, sales in regions, repeated measures on individuals
+                        </li>
+                        <li data-lang="zh">
+                            ✓ 是：学校里的学生、医院里的患者、地区销售、个人的重复测量
+                        </li>
+                        <li data-lang="en">
+                            ✗ NO: Cross-sectional data of independent units (e.g., 500 firms, no nesting)
+                        </li>
+                        <li data-lang="zh">
+                            ✗ 否：独立单位的横截面数据（例如，500家公司，没有嵌套）
+                        </li>
+                    </ul>
+                    <p data-lang="en">
+                        → If NO, stop. Multilevel models won't help.
+                    </p>
+                    <p data-lang="zh">
+                        → 如果否，停止。多层模型不会帮助。
+                    </p>
+                </div>
+
+                <div class="checklist-box">
+                    <h4 data-lang="en">Question 2: Is ICC > 0.05?</h4>
+                    <h4 data-lang="zh">问题2：ICC > 0.05吗？</h4>
+                    <ul>
+                        <li data-lang="en">
+                            ✓ YES: More than 5% of variation is between groups → clustering exists
+                        </li>
+                        <li data-lang="zh">
+                            ✓ 是：超过5%的变化在组之间 → 聚类存在
+                        </li>
+                        <li data-lang="en">
+                            ✗ NO: Less than 5% between-group variation → clustering is minimal
+                        </li>
+                        <li data-lang="zh">
+                            ✗ 否：组间变化少于5% → 聚类最小
+                        </li>
+                    </ul>
+                    <p data-lang="en">
+                        → If NO, regular regression (with clustered standard errors) may be sufficient. If YES or UNSURE, continue.
+                    </p>
+                    <p data-lang="zh">
+                        → 如果否，常规回归（带有聚类标准误）可能就足够了。如果是或不确定，继续。
+                    </p>
+                </div>
+
+                <div class="checklist-box">
+                    <h4 data-lang="en">Question 3: Do you want to explain group-level variation?</h4>
+                    <h4 data-lang="zh">问题3：你想解释组级变化吗？</h4>
+                    <ul>
+                        <li data-lang="en">
+                            ✓ YES: Add school-level predictors (funding, size, location) to explain why schools differ
+                        </li>
+                        <li data-lang="zh">
+                            ✓ 是：添加学校级预测变量（资金、大小、位置）来解释学校为什么不同
+                        </li>
+                        <li data-lang="en">
+                            ✗ NO: Just want to correct standard errors for clustering
+                        </li>
+                        <li data-lang="zh">
+                            ✗ 否：只想修正聚类的标准误
+                        </li>
+                    </ul>
+                    <p data-lang="en">
+                        → If YES, multilevel is the natural choice. If NO, you might use clustered standard errors, but multilevel is still valid.
+                    </p>
+                    <p data-lang="zh">
+                        → 如果是，多层是自然的选择。如果否，你可能使用聚类标准误，但多层仍然有效。
+                    </p>
+                </div>
+
+                <h3 data-lang="en">Final Decision Tree</h3>
+                <h3 data-lang="zh">最终决策树</h3>
+
+                <div style="background: var(--cream); padding: 20px; border-radius: 8px; margin: 20px 0; font-family: var(--mono);">
+                    <p data-lang="en">
+                        Nested data? → NO  → Use regular OLS
+                        <br>
+                        ↓ YES
+                        <br>
+                        <br>
+                        ICC > 0.05? → NO  → Clustered SEs might suffice
+                        <br>
+                        ↓ YES / UNSURE
+                        <br>
+                        <br>
+                        Explain group differences? → NO → Random intercept model (for correct SEs)
+                        <br>
+                        ↓ YES
+                        <br>
+                        <br>
+                        → Use random intercept + group-level predictors (or random slopes if effects vary)
+                    </p>
+                    <p data-lang="zh">
+                        嵌套数据？→ 否  → 使用常规OLS
+                        <br>
+                        ↓ 是
+                        <br>
+                        <br>
+                        ICC > 0.05？ → 否  → 聚类SEs可能就足够了
+                        <br>
+                        ↓ 是 / 不确定
+                        <br>
+                        <br>
+                        解释组差异？ → 否 → 随机截距模型（用于正确的SEs）
+                        <br>
+                        ↓ 是
+                        <br>
+                        <br>
+                        → 使用随机截距 + 组级预测变量（如果效应变化，则使用随机斜率）
+                    </p>
+                </div>
+            </div>
+
+            <!-- Key Takeaways -->
+            <div class="section">
+                <h2 data-lang="en">Key Takeaways</h2>
+                <h2 data-lang="zh">关键要点</h2>
+
+                <div class="summary-box">
+                    <ol>
+                        <li data-lang="en">
+                            <strong>Nested data creates clustering:</strong> Observations within the same group are not independent. Ignoring this inflates your confidence (shrinks standard errors).
+                        </li>
+                        <li data-lang="zh">
+                            <strong>嵌套数据会创建聚类：</strong> 同一组内的观察不是独立的。忽视这一点会膨胀你的信心（缩小标准误）。
+                        </li>
+
+                        <li data-lang="en">
+                            <strong>ICC quantifies clustering:</strong> It tells you what fraction of variation is between vs. within groups. ICC > 0.05 usually warrants multilevel modeling.
+                        </li>
+                        <li data-lang="zh">
+                            <strong>ICC量化聚类：</strong> 它告诉你多少比例的变化是组之间vs.组内的。ICC > 0.05通常值得使用多层建模。
+                        </li>
+
+                        <li data-lang="en">
+                            <strong>Random effects model the structure:</strong> Instead of 60 separate intercept parameters, model intercepts as draws from a distribution (N(0, τ²)).
+                        </li>
+                        <li data-lang="zh">
+                            <strong>随机效应模型结构：</strong> 不是60个独立的截距参数，而是将截距建模为从分布（N(0, τ²)）中的抽取。
+                        </li>
+
+                        <li data-lang="en">
+                            <strong>Fixed effects are shared; random effects vary:</strong> γ₁₀ (SES effect) is the same across all schools; u₀ⱼ (school effect) is different for each school.
+                        </li>
+                        <li data-lang="zh">
+                            <strong>固定效应是共享的；随机效应变化：</strong> γ₁₀（SES效应）在所有学校中都是相同的；u₀ⱼ（学校效应）对每所学校都不同。
+                        </li>
+
+                        <li data-lang="en">
+                            <strong>You can explain group variation:</strong> Add group-level predictors (school funding) to explain some of the group-level variance.
+                        </li>
+                        <li data-lang="zh">
+                            <strong>你可以解释组变化：</strong> 添加组级预测变量（学校资金）来解释一些组级方差。
+                        </li>
+
+                        <li data-lang="en">
+                            <strong>Random slopes extend the model:</strong> If effects vary across groups (SES matters more in some schools), let slopes be random too.
+                        </li>
+                        <li data-lang="zh">
+                            <strong>随机斜率扩展模型：</strong> 如果效应在组间变化（SES在某些学校更重要），让斜率也是随机的。
+                        </li>
+
+                        <li data-lang="en">
+                            <strong>REML for variance, ML for comparison:</strong> Use REML to estimate variance components; use ML when comparing models with different fixed effects.
+                        </li>
+                        <li data-lang="zh">
+                            <strong>方差用REML，比较用ML：</strong> 使用REML估计方差成分；在比较具有不同固定效应的模型时使用ML。
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Further Resources -->
+            <div class="section">
+                <h2 data-lang="en">Further Learning Resources</h2>
+                <h2 data-lang="zh">进一步学习资源</h2>
+
+                <ul>
+                    <li data-lang="en">
+                        <strong>Raudenbush & Bryk (2002):</strong> <em>Hierarchical Linear Models: Applications and Data Analysis Methods</em> — The definitive textbook.
+                    </li>
+                    <li data-lang="zh">
+                        <strong>Raudenbush & Bryk (2002)：</strong> <em>分层线性模型：应用和数据分析方法</em> — 权威教科书。
+                    </li>
+
+                    <li data-lang="en">
+                        <strong>Gelman & Hill (2007):</strong> <em>Data Analysis Using Regression and Multilevel/Hierarchical Models</em> — Very intuitive and practical.
+                    </li>
+                    <li data-lang="zh">
+                        <strong>Gelman & Hill (2007)：</strong> <em>使用回归和多层/分层模型的数据分析</em> — 非常直观和实用。
+                    </li>
+
+                    <li data-lang="en">
+                        <strong>Software:</strong> R packages (lme4, nlme), Stata (mixed), or Python (statsmodels) all have good multilevel implementations.
+                    </li>
+                    <li data-lang="zh">
+                        <strong>软件：</strong> R包（lme4、nlme）、Stata（混合）或Python（statsmodels）都有很好的多层实现。
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langBtns = document.querySelectorAll('.guide-lang-btn');
+        // Exclude buttons from content elements
+        const enElements = document.querySelectorAll('.guide-content [data-lang="en"], .guide-breadcrumb [data-lang="en"], a.guide-back[data-lang="en"], .guide-header [data-lang="en"], .guide-tag [data-lang="en"]');
+        const zhElements = document.querySelectorAll('.guide-content [data-lang="zh"], .guide-breadcrumb [data-lang="zh"], a.guide-back[data-lang="zh"], .guide-header [data-lang="zh"], .guide-tag [data-lang="zh"]');
+        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        setLanguage(savedLang);
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                localStorage.setItem('preferred-lang', lang);
+                setLanguage(lang);
+            });
+        });
+        function setLanguage(lang) {
+            langBtns.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('.guide-lang-btn[data-lang="' + lang + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            if (lang === 'en') {
+                enElements.forEach(el => { el.style.display = ''; });
+                zhElements.forEach(el => { el.style.display = 'none'; });
+                document.body.className = 'en';
+            } else {
+                enElements.forEach(el => { el.style.display = 'none'; });
+                zhElements.forEach(el => { el.style.display = ''; });
+                document.body.className = 'zh';
+            }
+        }
+    });
+    </script>
+
+</body>
+</html>

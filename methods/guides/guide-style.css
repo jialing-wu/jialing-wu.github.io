@@ -1,0 +1,926 @@
+/* ============================================================================
+   Guide Pages Shared Stylesheet
+   ============================================================================
+   Shared styles for all guide pages (EM, TM, ML guides).
+   Uses CSS variables from main style.css for theming.
+   ========================================================================== */
+
+/* ============================================================================
+   BASE LAYOUT
+   ========================================================================== */
+
+.guide-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ============================================================================
+   TOP NAVIGATION BAR
+   ========================================================================== */
+
+.guide-topbar {
+    position: sticky;
+    top: 0;
+    background: rgba(248, 244, 236, 0.95);
+    backdrop-filter: blur(16px);
+    padding: 14px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 50;
+    border-bottom: 1px solid var(--parchment);
+}
+
+.guide-breadcrumb {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--ink-ghost);
+    letter-spacing: 0.04em;
+}
+
+.guide-breadcrumb a {
+    color: var(--ink-ghost);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.guide-breadcrumb a:hover { color: var(--red); }
+
+.guide-breadcrumb .sep {
+    margin: 0 6px;
+    opacity: 0.5;
+}
+
+/* ============================================================================
+   LANGUAGE TOGGLE — used in both topbar and older pages
+   ========================================================================== */
+
+.guide-lang-toggle,
+.lang-toggle {
+    display: flex;
+    gap: 4px;
+}
+
+.guide-lang-btn,
+.lang-btn {
+    font-family: var(--sans);
+    font-size: 11px;
+    padding: 3px 10px;
+    border: 1px solid var(--parchment);
+    border-radius: 3px;
+    background: var(--paper);
+    color: var(--ink-ghost);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-block !important; /* never hidden by lang rules */
+}
+
+.guide-lang-btn.active,
+.lang-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+}
+
+.guide-lang-btn:hover,
+.lang-btn:hover { border-color: var(--tea); }
+
+/* ============================================================================
+   CONTENT WRAPPER
+   ========================================================================== */
+
+.guide-content-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 0 20px;
+}
+
+.guide-content {
+    max-width: 780px;
+    width: 100%;
+    padding: 40px 0 60px;
+}
+
+/* ============================================================================
+   PAGE HEADER & BACK LINK
+   ========================================================================== */
+
+.guide-header {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.guide-tag {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+}
+
+.guide-header h1 {
+    font-family: var(--display);
+    font-size: 44px;
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+}
+
+.guide-header p {
+    font-family: var(--body);
+    font-size: 15.5px;
+    color: var(--ink-faded);
+    line-height: 1.75;
+    margin-bottom: 0;
+}
+
+/* Back link */
+.guide-back {
+    display: inline-block;
+    margin-bottom: 24px;
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-ghost);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.guide-back:hover { color: var(--red); }
+.guide-back::before { content: "← "; }
+
+/* Variant: back link inside a div wrapper */
+.guide-back a {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-ghost);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.guide-back a:hover { color: var(--red); }
+
+/* ============================================================================
+   SECTION TYPOGRAPHY
+   ========================================================================== */
+
+/* Set base font size here so all descendants (including callout boxes) inherit */
+.guide-section {
+    margin-bottom: 44px;
+    font-family: var(--body);
+    font-size: 15.5px;
+    line-height: 1.78;
+    color: var(--ink-faded);
+}
+
+.guide-section h2 {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0 0 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--parchment);
+}
+
+/* h3 gets noticeably smaller top margin than h2 to show hierarchy */
+.guide-section h3 {
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin: 28px 0 10px;
+}
+
+.guide-section h4 {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-ghost);
+    margin: 20px 0 8px;
+}
+
+.guide-section p {
+    margin-bottom: 14px;
+}
+
+.guide-section ul,
+.guide-section ol {
+    padding-left: 26px;
+    margin-bottom: 14px;
+}
+
+.guide-section li {
+    line-height: 1.75;
+    margin-bottom: 8px;
+}
+
+/* Section title alias (for older pages) */
+.section-title {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0 0 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--parchment);
+}
+
+.guide-subtitle {
+    font-family: var(--body);
+    font-size: 15.5px;
+    color: var(--ink-faded);
+    line-height: 1.75;
+}
+
+/* ============================================================================
+   TABLES
+   ========================================================================== */
+
+/* Primary guide table — warm header with gold accent */
+.guide-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    border: 1px solid var(--parchment);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.guide-table th {
+    background: var(--warm);
+    color: var(--ink-soft);
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid var(--gold);
+}
+
+.guide-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--parchment);
+    line-height: 1.65;
+    vertical-align: top;
+}
+
+.guide-table tr:last-child td { border-bottom: none; }
+.guide-table tr:hover td { background: rgba(242, 235, 222, 0.5); }
+
+/* Secondary: comparison/numeric tables (used in EM/TM guides) */
+.numeric-table,
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    border: 1px solid var(--parchment);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.numeric-table th,
+.comparison-table th {
+    background: var(--warm);
+    color: var(--ink-soft);
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 11px 14px;
+    text-align: left;
+    border-bottom: 2px solid var(--gold);
+}
+
+.numeric-table td,
+.comparison-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--parchment);
+    line-height: 1.6;
+    vertical-align: top;
+}
+
+.numeric-table tr:last-child td,
+.comparison-table tr:last-child td { border-bottom: none; }
+
+.numeric-table tbody tr:nth-child(even) td,
+.comparison-table tbody tr:nth-child(even) td { background: rgba(242, 235, 222, 0.4); }
+
+/* ============================================================================
+   MATH & EQUATION BOXES
+   ============================================================================
+   Single source of truth: use .math-box for all displayed equations.
+   Aliases .math-display, .equation, .formula all map to same style.
+   ========================================================================== */
+
+.math-box,
+.math-display,
+.equation,
+.formula {
+    background: var(--warm);
+    border-left: 4px solid var(--gold);
+    padding: 18px 22px;
+    margin: 18px 0;
+    border-radius: 0 3px 3px 0;
+    overflow-x: auto;
+}
+
+/* math-block: bordered variant (used in some older guides) */
+.math-block {
+    background: var(--warm);
+    border: 1px solid var(--parchment);
+    border-top: 2px solid var(--gold);
+    padding: 18px 22px;
+    margin: 18px 0;
+    border-radius: 3px;
+    overflow-x: auto;
+}
+
+.math-block mjx-container {
+    display: flex;
+    justify-content: center;
+}
+
+/* Math box title label */
+.math-box-title {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+}
+
+/* ============================================================================
+   INFORMATION BOXES
+   ============================================================================
+   Three semantic types:
+   • .definition-box  — parchment bg, gold top border — definitions / key takeaways
+   • .guide-info      — warm bg, gold left border — notes / tips / asides
+   • .guide-finding   — red-tinted bg, red left border — warnings / caveats
+   ========================================================================== */
+
+/* Definition / key takeaway box */
+.definition-box {
+    background: var(--parchment);
+    border-top: 2px solid var(--gold);
+    padding: 18px 22px;
+    margin: 20px 0;
+    border-radius: 0 0 3px 3px;
+}
+
+.definition-box .def-label,
+.definition-title {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Info / note box — aliases: .note-box, .highlight-box, .guide-info */
+.guide-info,
+.note-box,
+.highlight-box {
+    background: var(--warm);
+    border-left: 3px solid var(--gold);
+    padding: 15px 20px;
+    margin: 18px 0;
+    border-radius: 0 3px 3px 0;
+}
+
+.guide-info .label,
+.note-box .label {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+    display: block;
+}
+
+.guide-info p,
+.note-box p { margin-bottom: 0; }
+
+/* Warning / caveat / finding box */
+.guide-finding {
+    background: rgba(181, 55, 42, 0.05);
+    border-left: 3px solid var(--red);
+    padding: 15px 20px;
+    margin: 18px 0;
+    border-radius: 0 3px 3px 0;
+}
+
+.guide-finding h4 {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 6px;
+}
+
+.guide-finding p { margin-bottom: 0; }
+
+/* Example box (distinct from finding — neutral gray-left-border) */
+.example-box {
+    background: rgba(154, 142, 126, 0.06);
+    border-left: 3px solid var(--tea);
+    padding: 15px 20px;
+    margin: 18px 0;
+    border-radius: 0 3px 3px 0;
+}
+
+/* ============================================================================
+   PROOF & DERIVATION BOXES
+   ========================================================================== */
+
+.proof-box {
+    border: 1px solid var(--parchment);
+    border-left: 4px solid var(--leather);
+    background: rgba(139, 115, 85, 0.05);
+    padding: 18px 22px;
+    margin: 18px 0;
+    border-radius: 0 3px 3px 0;
+}
+
+.proof-box .proof-title,
+.proof-box .box-title {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--leather);
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* Derivation step (within a proof box) */
+.derivation-step {
+    background: var(--warm);
+    padding: 14px 18px;
+    margin: 12px 0;
+    border-radius: 2px;
+    border-left: 3px solid var(--parchment);
+}
+
+.derivation-step-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-ghost);
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* Equation numbering */
+.eq-num {
+    display: block;
+    text-align: right;
+    margin-top: 4px;
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--ink-ghost);
+}
+
+/* ============================================================================
+   NUMBERED STEP BOXES
+   ========================================================================== */
+
+.step-box {
+    counter-increment: step;
+    background: var(--warm);
+    border-left: 3px solid var(--gold);
+    padding: 14px 18px;
+    margin: 14px 0;
+    border-radius: 0 3px 3px 0;
+}
+
+.step-box::before {
+    content: "Step " counter(step);
+    display: block;
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+}
+
+/* ============================================================================
+   COMMAND REFERENCE BLOCKS (used in em-commands.html)
+   ========================================================================== */
+
+.command-group {
+    border: 1px solid var(--parchment);
+    border-radius: 4px;
+    margin: 16px 0;
+    overflow: hidden;
+    background: var(--paper);
+}
+
+.software-label {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin: 14px 16px 0;
+}
+
+.software-label.stata {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.software-label.r {
+    background: var(--leather);
+    color: var(--paper);
+}
+
+.command-label {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    padding: 8px 16px 4px;
+    letter-spacing: 0.02em;
+}
+
+.command-code {
+    background: var(--ink);
+    color: rgba(248, 244, 236, 0.88);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+    padding: 12px 16px;
+    margin: 6px 0 0;
+    white-space: pre;
+    overflow-x: auto;
+}
+
+.command-description {
+    padding: 10px 16px 0;
+    margin: 0;
+}
+
+.command-when {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--gold);
+    padding: 8px 16px;
+    border-top: 1px solid var(--parchment);
+    margin-top: 10px;
+}
+
+.command-tips {
+    font-size: 14px;
+    color: var(--ink-ghost);
+    padding: 6px 16px 12px;
+    font-style: italic;
+}
+
+/* ============================================================================
+   CODE BLOCKS
+   ========================================================================== */
+
+.code-block {
+    background: var(--ink);
+    color: rgba(248, 244, 236, 0.88);
+    padding: 18px 22px;
+    border-radius: 3px;
+    overflow-x: auto;
+    margin: 18px 0;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.code-block .comment  { color: rgba(194, 153, 61, 0.7); }
+.code-block .keyword  { color: #E06C75; }
+.code-block .string   { color: #98C379; }
+.code-block .func     { color: #61AFEF; }
+.code-block .number   { color: #D19A66; }
+
+/* Lighter code display (warm background) */
+.code-display {
+    background: var(--warm);
+    border: 1px solid var(--parchment);
+    padding: 14px 18px;
+    border-radius: 3px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+}
+
+/* Algorithm pseudo-code box */
+.algorithm {
+    background: var(--warm);
+    border: 1px solid var(--parchment);
+    border-top: 2px solid var(--leather);
+    padding: 18px 22px;
+    margin: 18px 0;
+    border-radius: 0 0 3px 3px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+}
+
+.algorithm-title {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--leather);
+    margin-bottom: 14px;
+    display: block;
+}
+
+.line { margin-bottom: 6px; }
+
+.line-num {
+    color: var(--ink-ghost);
+    margin-right: 14px;
+    display: inline-block;
+    width: 20px;
+    text-align: right;
+    user-select: none;
+}
+
+/* ============================================================================
+   INLINE UTILITIES
+   ========================================================================== */
+
+.highlight-key {
+    color: var(--red);
+    font-weight: 600;
+}
+
+.highlight {
+    background: rgba(194, 153, 61, 0.15);
+    padding: 1px 5px;
+    border-radius: 2px;
+}
+
+.text-center { text-align: center; }
+
+/* Footnote / references */
+.footnote {
+    font-family: var(--body);
+    font-size: 13.5px;
+    line-height: 1.85;
+    color: var(--ink-ghost);
+    padding-top: 16px;
+    border-top: 1px solid var(--parchment);
+}
+
+/* ============================================================================
+   DIAGRAM / ASCII ART CONTAINERS
+   ========================================================================== */
+
+.diagram-box {
+    text-align: center;
+    margin: 20px 0;
+    padding: 20px;
+    background: var(--warm);
+    border: 1px solid var(--parchment);
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 12px;
+    overflow-x: auto;
+    color: var(--ink-soft);
+}
+
+/* ============================================================================
+   KERNEL COMPARISON GRID (two-column layout used in SVM guide)
+   ========================================================================== */
+
+.kernel-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.kernel-item {
+    background: var(--warm);
+    padding: 18px;
+    border-radius: 3px;
+    border-left: 3px solid var(--gold);
+}
+
+.kernel-name {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+}
+
+.kernel-formula {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-faded);
+    line-height: 1.6;
+}
+
+/* ============================================================================
+   BILINGUAL CONTENT TOGGLE
+   JS controls display switching — CSS sets initial fallback state.
+   ========================================================================== */
+
+/* Default before JS: show EN, hide ZH */
+.guide-layout .guide-content [data-lang="zh"],
+.guide-layout .guide-breadcrumb [data-lang="zh"],
+.guide-layout a.guide-back[data-lang="zh"],
+.guide-layout .guide-header [data-lang="zh"],
+.guide-layout .guide-tag [data-lang="zh"] {
+    display: none;
+}
+
+/* body.zh: show ZH, hide EN */
+body.zh .guide-layout .guide-content [data-lang="zh"],
+body.zh .guide-layout .guide-breadcrumb [data-lang="zh"],
+body.zh .guide-layout a.guide-back[data-lang="zh"],
+body.zh .guide-layout .guide-header [data-lang="zh"],
+body.zh .guide-layout .guide-tag [data-lang="zh"] {
+    display: revert;
+}
+
+body.zh .guide-layout .guide-content [data-lang="en"],
+body.zh .guide-layout .guide-breadcrumb [data-lang="en"],
+body.zh .guide-layout a.guide-back[data-lang="en"],
+body.zh .guide-layout .guide-header [data-lang="en"],
+body.zh .guide-layout .guide-tag [data-lang="en"] {
+    display: none;
+}
+
+/* content-block variant used in older pages */
+.content-block[data-lang="zh"] { display: none; }
+body.zh .content-block[data-lang="zh"] { display: block; }
+body.zh .content-block[data-lang="en"] { display: none; }
+body.en .content-block[data-lang="en"] { display: block; }
+
+/* ============================================================================
+   SIMULATION-SPECIFIC (TM interactive pages)
+   ========================================================================== */
+
+.sim-panel {
+    background: var(--paper);
+    border: 1px solid var(--parchment);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin: 16px 0;
+}
+
+.sim-btns {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+}
+
+.sim-btn {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 18px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: background 0.2s;
+}
+
+.sim-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.sim-stat-row {
+    display: flex;
+    gap: 12px;
+    margin: 14px 0;
+    flex-wrap: wrap;
+}
+
+.sim-stat-chip {
+    flex: 1;
+    min-width: 100px;
+    background: var(--warm);
+    border: 1px solid var(--parchment);
+    border-radius: 3px;
+    padding: 10px 14px;
+    text-align: center;
+}
+
+.sim-stat-chip .slabel {
+    font-family: var(--sans);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-ghost);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.sim-stat-chip .sval {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--ink);
+}
+
+/* ============================================================================
+   PAGE NAVIGATION (prev/next between guide pages)
+   ========================================================================== */
+
+.guide-page-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--parchment);
+}
+
+.guide-page-nav a {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--red);
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.guide-page-nav a:hover { opacity: 0.65; }
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+
+@media (max-width: 860px) {
+    .guide-topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 14px 20px;
+    }
+
+    .guide-lang-toggle { align-self: flex-start; }
+
+    .guide-content { padding: 28px 0 48px; }
+
+    .guide-header h1 { font-size: 32px; }
+    .guide-section h2 { font-size: 22px; }
+    .guide-section h3 { font-size: 17px; }
+    .guide-section p,
+    .guide-section li { font-size: 15px; }
+
+    .code-block { font-size: 12px; }
+
+    .guide-table th,
+    .guide-table td { padding: 10px 12px; }
+
+    .kernel-comparison { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+    .guide-content-wrapper { padding: 0 16px; }
+    .guide-topbar { padding: 12px 16px; }
+    .guide-header h1 { font-size: 28px; }
+    .guide-section h2 { font-size: 20px; }
+    .guide-section h3 { font-size: 16px; }
+}

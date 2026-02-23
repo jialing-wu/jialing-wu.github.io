@@ -1,0 +1,570 @@
+---
+layout: methods-guide
+title: "Multilevel Models in R: lme4 Step-by-Step"
+title_zh: "R 语言多层模型：lme4 全流程"
+parent_title: "Multilevel Models"
+parent_title_zh: "多层模型"
+parent_url: "reg-multilevel.html"
+bilingual: true
+---
+
+<style>
+  .method-header {
+    background: linear-gradient(135deg, var(--cream) 0%, var(--parchment) 100%);
+    border-left: 4px solid var(--gold);
+    padding: 24px;
+    margin-bottom: 28px;
+    border-radius: 3px;
+  }
+  
+  .method-meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faded);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 12px;
+  }
+  
+  .method-header h1 {
+    font-family: var(--serif);
+    font-size: 32px;
+    color: var(--ink);
+    margin: 8px 0 12px 0;
+    font-weight: normal;
+  }
+  
+  .method-header p {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--ink-faded);
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  .insight-box {
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-family: var(--serif);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  
+  .math-note {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--parchment);
+    padding: 12px 16px;
+    border-radius: 3px;
+    margin: 10px 0;
+    color: var(--ink);
+    overflow-x: auto;
+  }
+  
+  .section-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--ink);
+    margin: 28px 0 14px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gold);
+  }
+  
+  .theory-text {
+    font-family: var(--serif);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 12px 0;
+  }
+  
+  .step-box {
+    background: var(--parchment);
+    padding: 18px;
+    border-radius: 3px;
+    margin: 16px 0;
+    border-left: 4px solid var(--warm);
+  }
+  
+  .step-title {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--warm);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+  }
+  
+  .code-block {
+    background: var(--paper);
+    padding: 16px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 13px;
+    overflow-x: auto;
+    line-height: 1.7;
+    margin: 12px 0;
+    color: var(--ink);
+    border: 1px solid var(--ink-ghost);
+  }
+  
+  .code-label {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ink-faded);
+    margin-top: 14px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 16px 0;
+    border: 1px solid var(--ink-ghost);
+    border-radius: 3px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--serif);
+    font-size: 13px;
+  }
+  
+  table th {
+    background: var(--cream);
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 2px solid var(--gold);
+    color: var(--ink);
+    font-weight: 600;
+  }
+  
+  table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--ink-ghost);
+    color: var(--ink);
+  }
+  
+  table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .warning-box {
+    background: rgba(204, 0, 0, 0.05);
+    border-left: 3px solid var(--red);
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-family: var(--serif);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  
+  [data-lang="zh"] {
+    display: none;
+  }
+  
+  body.lang-zh [data-lang="en"] {
+    display: none;
+  }
+  
+  body.lang-zh [data-lang="zh"] {
+    display: inline;
+  }
+</style>
+
+<div class="method-header">
+  <div class="method-meta" data-lang="en">CODE WALKTHROUGH · GUIDE 1</div>
+  <div class="method-meta" data-lang="zh">代码演示 · 指南 1</div>
+  <h1 data-lang="en">Multilevel Models in R: lme4 Step-by-Step</h1>
+  <h1 data-lang="zh">R 语言多层模型：lme4 全流程</h1>
+  <p data-lang="en">Students nested in schools, voters nested in districts—how to model clustered data properly using lme4 and interpret ICC, random effects, and interactions.</p>
+  <p data-lang="zh">学生嵌套在学校中，选民嵌套在地区中——如何使用 lme4 正确建模聚类数据并解释 ICC、随机效应和交互。</p>
+</div>
+
+<div class="section-title" data-lang="en">The Dataset & Setup</div>
+<div class="section-title" data-lang="zh">数据集和设置</div>
+
+<div class="theory-text" data-lang="en">
+  We analyze 3,000 students nested within 60 schools. Outcome: math test score (0–100). Predictors:
+</div>
+<div class="theory-text" data-lang="zh">
+  我们分析 3,000 名学生嵌套在 60 所学校中。结果：数学测试得分 (0–100)。预测变量：
+</div>
+
+<div class="table-wrapper">
+  <table>
+    <tr>
+      <th data-lang="en">Variable</th>
+      <th data-lang="zh">变量</th>
+      <th data-lang="en">Level</th>
+      <th data-lang="zh">层级</th>
+      <th data-lang="en">Description</th>
+      <th data-lang="zh">描述</th>
+    </tr>
+    <tr>
+      <td>math_score</td>
+      <td></td>
+      <td data-lang="en">L1</td>
+      <td data-lang="zh">L1</td>
+      <td data-lang="en">Student outcome</td>
+      <td data-lang="zh">学生结果</td>
+    </tr>
+    <tr>
+      <td>ses_student</td>
+      <td></td>
+      <td data-lang="en">L1</td>
+      <td data-lang="zh">L1</td>
+      <td data-lang="en">Student socioeconomic status</td>
+      <td data-lang="zh">学生社会经济地位</td>
+    </tr>
+    <tr>
+      <td>school_resources</td>
+      <td></td>
+      <td data-lang="en">L2</td>
+      <td data-lang="zh">L2</td>
+      <td data-lang="en">School-level funding/resources</td>
+      <td data-lang="zh">学校级别的资金/资源</td>
+    </tr>
+    <tr>
+      <td>school_id</td>
+      <td></td>
+      <td data-lang="en">L2</td>
+      <td data-lang="zh">L2</td>
+      <td data-lang="en">School identifier</td>
+      <td data-lang="zh">学校标识符</td>
+    </tr>
+  </table>
+</div>
+
+<div class="section-title" data-lang="en">Step 1: Always Start with a Null Model</div>
+<div class="section-title" data-lang="zh">步骤 1：始终从零模型开始</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">The null model: no predictors, only intercept variance</div>
+  <div class="step-title" data-lang="zh">零模型：无预测变量，仅截距方差</div>
+  
+  <div class="code-block"><code>library(lme4)
+library(lmerTest)  # adds p-values to lmer output
+library(tidyverse)
+
+# Null model: random intercepts only
+null_model <- lmer(math_score ~ 1 + (1 | school_id), data = students)
+summary(null_model)</code></pre>
+</div>
+
+  <div class="theory-text" data-lang="en">
+    The null model output shows:
+  </div>
+  <div class="theory-text" data-lang="zh">
+    零模型输出显示：
+  </div>
+
+  <div class="code-block"><code>Random effects:
+ Groups    Name        Variance  Std.Dev.
+ school_id (Intercept) 45.2      6.72    
+ Residual              234.5     15.31   
+Number of obs: 3000, groups: school_id, 60</code></pre>
+</div>
+
+  <div class="math-note">
+    <strong>ICC (Intraclass Correlation Coefficient):</strong><br>
+    ICC = σ²_between / (σ²_between + σ²_within)<br>
+    = 45.2 / (45.2 + 234.5) = 0.161<br><br>
+    <span data-lang="en">Interpretation: 16.1% of math score variance is between schools; 83.9% is within schools.</span>
+    <span data-lang="zh">解释：数学得分方差的 16.1% 在学校之间；83.9% 在学校内。</span>
+  </div>
+
+  <div class="code-block"><code># Extract ICC automatically
+library(performance)
+icc(null_model)
+# ICC(1) = 0.161</code></pre>
+</div>
+
+  <div class="insight-box" data-lang="en">
+    <strong>Decision rule for ICC:</strong><br>
+    • ICC < 0.05: Schools are very similar. Multilevel model may not be necessary; use OLS with clustered SEs instead.<br>
+    • ICC 0.05–0.10: Modest clustering. Multilevel model is justified but SEs don't change much.<br>
+    • ICC > 0.10: Strong clustering. Multilevel model is essential to avoid bias.
+  </div>
+  <div class="insight-box" data-lang="zh">
+    <strong>ICC 的决策规则：</strong><br>
+    • ICC < 0.05：学校非常相似。可能不需要多层模型；改用聚类 SE 的 OLS。<br>
+    • ICC 0.05–0.10：适度聚类。多层模型是合理的，但 SE 变化不大。<br>
+    • ICC > 0.10：强聚类。多层模型是必要的，以避免偏差。
+  </div>
+</div>
+
+<div class="section-title" data-lang="en">Step 2: Add Level-1 Predictors (Student-Level)</div>
+<div class="section-title" data-lang="zh">步骤 2：添加 1 级预测变量（学生级别）</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">Model with student SES</div>
+  <div class="step-title" data-lang="zh">包含学生社会经济地位的模型</div>
+  
+  <div class="code-block"><code>model_l1 <- lmer(math_score ~ ses_student + (1 | school_id), 
+                 data = students)
+summary(model_l1)
+
+# Compare to null model
+anova(null_model, model_l1)
+# -2LL difference should be significant
+# AIC lower in model_l1 suggests SES improves fit</code></pre>
+</div>
+
+  <div class="theory-text" data-lang="en">
+    <strong>Interpretation:</strong> The fixed effect "ses_student" is the average within-school effect of SES on math score. If coefficient = 5.2, then a 1-unit increase in student SES is associated with 5.2-point increase in math score (on average across schools).
+  </div>
+  <div class="theory-text" data-lang="zh">
+    <strong>解释：</strong>固定效应 "ses_student" 是社会经济地位对数学成绩的平均校内效应。如果系数 = 5.2，则学生社会经济地位增加 1 个单位与数学成绩增加 5.2 分相关联（在各学校的平均值上）。
+  </div>
+</div>
+
+<div class="section-title" data-lang="en">Step 3: Add Level-2 Predictors (School-Level)</div>
+<div class="section-title" data-lang="zh">步骤 3：添加 2 级预测变量（学校级别）</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">Model with school resources</div>
+  <div class="step-title" data-lang="zh">包含学校资源的模型</div>
+  
+  <div class="code-block"><code>model_l2 <- lmer(math_score ~ ses_student + school_resources + (1 | school_id),
+                 data = students)
+summary(model_l2)
+
+# Interpretation:
+# - Fixed effects (ses_student, school_resources): population average effects
+# - Random intercepts: how much each school deviates from grand mean
+
+# Extract school-specific intercepts (random effects)
+ranef(model_l2)$school_id
+# School 5 might have intercept = +3.8 (above average)
+# School 22 might have intercept = -2.1 (below average)</code></pre>
+</div>
+
+  <div class="insight-box" data-lang="en">
+    <strong>Fixed vs. Random Effects:</strong><br>
+    Fixed effects (SES, resources) are constant—their effect is the same in every school. Random effects (school intercepts) vary—each school can have a different baseline math score. Use random effects when you treat the groups (schools) as a sample from a larger population.
+  </div>
+  <div class="insight-box" data-lang="zh">
+    <strong>固定效应 vs. 随机效应：</strong><br>
+    固定效应（社会经济地位、资源）是常数——它们的效应在每所学校中都相同。随机效应（学校截距）是可变的——每所学校可以有不同的基线数学成绩。当您将组（学校）视为来自更大人群的样本时，使用随机效应。
+  </div>
+</div>
+
+<div class="section-title" data-lang="en">Step 4: Random Slopes (Contextual Moderation)</div>
+<div class="section-title" data-lang="zh">步骤 4：随机斜率（背景调节）</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">Do schools differ in how SES affects math scores?</div>
+  <div class="step-title" data-lang="zh">学校在社会经济地位如何影响数学成绩方面有所不同吗？</div>
+  
+  <div class="code-block"><code># Random slopes: SES effect varies by school
+model_rs <- lmer(math_score ~ ses_student + school_resources + 
+                   (1 + ses_student | school_id),
+                 data = students)
+summary(model_rs)
+
+# Compare fit
+anova(model_l2, model_rs)
+# If p < 0.05: random slopes significantly improve fit</code></pre>
+</div>
+
+  <div class="code-block"><code># Extract random intercepts AND slopes
+ranef(model_rs)$school_id
+# School 5: intercept = +3.8, ses_student slope = +4.1
+#           (SES effect is stronger in School 5)
+# School 22: intercept = -2.1, ses_student slope = +6.2
+#           (SES effect is even stronger in School 22)</code></pre>
+</div>
+
+  <div class="insight-box" data-lang="en">
+    <strong>Why random slopes matter:</strong> In some schools, SES is a powerful predictor of math scores; in others, it's weaker. This tells you where SES-based gaps are largest (where intervention is most needed) and where schools are more equitable (small SES effect).
+  </div>
+  <div class="insight-box" data-lang="zh">
+    <strong>为什么随机斜率重要：</strong>在某些学校中，社会经济地位是数学成绩的有力预测变量；在其他学校中，它更弱。这告诉您社会经济地位差距最大的位置（最需要干预的位置）以及学校更公平的位置（小社会经济地位效应）。
+  </div>
+
+  <div class="warning-box" data-lang="en">
+    <strong>Singular fit warning:</strong> If you see "boundary (singular) fit" warning, the random effects variance may be near zero. Simplify: remove random slope or remove the random intercept correlation.
+  </div>
+  <div class="warning-box" data-lang="zh">
+    <strong>奇异拟合警告：</strong>如果看到"boundary (singular) fit"警告，随机效应方差可能接近零。简化：删除随机斜率或删除随机截距相关性。
+  </div>
+</div>
+
+<div class="section-title" data-lang="en">Step 5: Cross-Level Interactions</div>
+<div class="section-title" data-lang="zh">步骤 5：交叉层级交互</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">Does school resources moderate the SES effect?</div>
+  <div class="step-title" data-lang="zh">学校资源是否调节社会经济地位效应？</div>
+  
+  <div class="code-block"><code># Cross-level interaction: L1 × L2
+model_interaction <- lmer(
+  math_score ~ ses_student * school_resources + 
+    (1 + ses_student | school_id),
+  data = students
+)
+summary(model_interaction)
+
+# Coefficient on ses_student:school_resources interaction:
+# If coefficient = +0.8, p < 0.05:
+# Schools with more resources have stronger SES effects
+# (or weaker SES gaps, depending on how you frame it)</code></pre>
+</div>
+
+  <div class="insight-box" data-lang="en">
+    <strong>Interpreting cross-level interactions:</strong> A positive interaction on the ses_student × school_resources term might mean: "In well-resourced schools, SES matters more." This could reflect selection (wealthier families choose better schools) or quality differentiation (high-resource schools better serve high-SES students).
+  </div>
+  <div class="insight-box" data-lang="zh">
+    <strong>解释交叉层级交互：</strong>在 ses_student × school_resources 项上的正交互可能意味着："在资源充足的学校中，社会经济地位更重要。"这可能反映选择（较富裕的家庭选择更好的学校）或质量差异（高资源学校更好地为高社会经济地位学生服务）。
+  </div>
+</div>
+
+<div class="section-title" data-lang="en">Step 6: Three-Level Models</div>
+<div class="section-title" data-lang="zh">步骤 6：三层模型</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">Students in schools in school districts</div>
+  <div class="step-title" data-lang="zh">学生在学区的学校中</div>
+  
+  <div class="code-block"><code># 3-level model: students (L1) within schools (L2) within districts (L3)
+model_3level <- lmer(
+  math_score ~ ses_student + school_resources + 
+    (1 | district_id/school_id),
+  data = students
+)
+summary(model_3level)
+
+# Random effects structure: district_id/school_id means:
+# Random intercepts for schools nested within districts
+# (equivalent to: (1 | district_id) + (1 | school_id:district_id))</code></pre>
+</div>
+
+  <div class="code-block"><code># Extract ICCs for each level
+icc(model_3level)
+# Returns:
+# L1 (student): residual variance
+# L2 (school): between-school, within-district variance
+# L3 (district): between-district variance</code></pre>
+</div>
+
+  <div class="insight-box" data-lang="en">
+    <strong>Interpreting 3-level ICC:</strong> You can calculate separate ICCs: between-school ICC and between-district ICC. Between-district ICC typically smaller (students more similar within schools than within districts). Add L3 predictor (e.g., district spending) to explain between-district variance.
+  </div>
+  <div class="insight-box" data-lang="zh">
+    <strong>解释 3 级 ICC：</strong>您可以计算单独的 ICC：校间 ICC 和区间 ICC。区间 ICC 通常较小（学生在学校内的相似程度比在学区内更相似）。添加 L3 预测变量（例如地区支出）以解释区间方差。
+  </div>
+</div>
+
+<div class="section-title" data-lang="en">Model Comparison Summary Table</div>
+<div class="section-title" data-lang="zh">模型比较总结表</div>
+
+<div class="table-wrapper">
+  <table>
+    <tr>
+      <th data-lang="en">Model</th>
+      <th data-lang="zh">模型</th>
+      <th data-lang="en">Predictors</th>
+      <th data-lang="zh">预测变量</th>
+      <th data-lang="en">Random Structure</th>
+      <th data-lang="zh">随机结构</th>
+      <th data-lang="en">AIC</th>
+      <th data-lang="zh">AIC</th>
+      <th data-lang="en">ICC</th>
+      <th data-lang="zh">ICC</th>
+    </tr>
+    <tr>
+      <td>Null</td>
+      <td></td>
+      <td>Intercept only</td>
+      <td>仅截距</td>
+      <td>(1 | school)</td>
+      <td></td>
+      <td>23450</td>
+      <td></td>
+      <td>0.161</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>L1</td>
+      <td></td>
+      <td>SES</td>
+      <td></td>
+      <td>(1 | school)</td>
+      <td></td>
+      <td>22890</td>
+      <td></td>
+      <td>0.138</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>L1+L2</td>
+      <td></td>
+      <td>SES + Resources</td>
+      <td></td>
+      <td>(1 | school)</td>
+      <td></td>
+      <td>22680</td>
+      <td></td>
+      <td>0.119</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Random Slopes</td>
+      <td></td>
+      <td>SES + Resources</td>
+      <td></td>
+      <td>(1 + SES | school)</td>
+      <td></td>
+      <td>22610</td>
+      <td></td>
+      <td>0.115</td>
+      <td></td>
+    </tr>
+  </table>
+</div>
+
+<div class="theory-text" data-lang="en">
+  <strong>Model selection:</strong> Use likelihood ratio test (anova) for nested models. Prefer simpler model if AIC difference < 2. Include random slopes if theory suggests schools differ in predictor effects.
+</div>
+<div class="theory-text" data-lang="zh">
+  <strong>模型选择：</strong>对于嵌套模型，使用似然比检验（anova）。如果 AIC 差异 < 2，则选择更简单的模型。如果理论表明学校在预测变量效应方面有所不同，则包括随机斜率。
+</div>
+
+<div class="section-title" data-lang="en">Common Issues & Solutions</div>
+<div class="section-title" data-lang="zh">常见问题和解决方案</div>
+
+<div class="warning-box" data-lang="en">
+  <strong>1. Singular fit warning:</strong> Random effects variance near zero. Solution: Remove the problematic random term, or use (1 + x || school) to drop the correlation.
+</div>
+<div class="warning-box" data-lang="zh">
+  <strong>1. 奇异拟合警告：</strong>随机效应方差接近零。解决方案：删除有问题的随机项，或使用 (1 + x || school) 删除相关性。
+</div>
+
+<div class="warning-box" data-lang="en">
+  <strong>2. Convergence failures:</strong> Model fails to converge. Solution: (a) Scale predictors to mean=0, SD=1; (b) Try different optimizer: lmerControl(optimizer="bobyqa"); (c) Use fewer random effects.
+</div>
+<div class="warning-box" data-lang="zh">
+  <strong>2. 收敛失败：</strong>模型无法收敛。解决方案：(a) 将预测变量缩放为平均值 = 0，SD = 1；(b) 尝试不同的优化器：lmerControl(optimizer="bobyqa")；(c) 减少随机效应。
+</div>
+
+<div class="warning-box" data-lang="en">
+  <strong>3. Ignoring clustering in inference:</strong> lme4 doesn't report p-values by default (lmerTest does). Always get confidence intervals and conduct tests—don't just look at estimates.
+</div>
+<div class="warning-box" data-lang="zh">
+  <strong>3. 在推论中忽视聚类：</strong>lme4 默认不报告 p 值（lmerTest 会）。始终获得置信区间并进行测试——不要仅看估计值。
+</div>
+
+<div class="warning-box" data-lang="en">
+  <strong>4. Misinterpreting random effects as predictions:</strong> School-specific intercepts (random effects) are population-level summaries, not predictions for individual schools. Use ranef() for inference about school effects, not for prediction.
+</div>
+<div class="warning-box" data-lang="zh">
+  <strong>4. 误解随机效应为预测：</strong>学校特定的截距（随机效应）是人群级别的摘要，而不是对个别学校的预测。使用 ranef() 来推论学校效应，而不是进行预测。
+</div>
+

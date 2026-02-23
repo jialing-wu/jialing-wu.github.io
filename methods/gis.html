@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIS &amp; Spatial Analysis — Research Methods Notebook</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="sb-brand" href="index.html"><h2>Methods <span>Notebook</span></h2><div class="sb-sub">Jialing Wu</div></a>
+    <div class="sb-cat">Person-Centered Quantitative Methods</div>
+    <a class="sb-link" href="lpa.html"><span class="sb-num">01</span> Latent Profile Analysis</a>
+    <div class="sb-cat">Computational Social Science</div>
+    <div class="sb-subcat">Foundations</div>
+    <a class="sb-link" href="machine-learning.html" style="display:none"><span class="sb-num">01</span> Machine Learning</a>
+    <a class="sb-link" href="llm.html" style="display:none"><span class="sb-num">02</span> LLM &amp; NLP</a>
+    <a class="sb-link" href="text-analysis.html"><span class="sb-num">03</span> Text as Data</a>
+    <a class="sb-link" href="theoretical-modeling.html"><span class="sb-num">04</span> Theoretical Modeling</a>
+    <div class="sb-cat">Statistics</div>
+    <div class="sb-subcat">Foundations</div>
+    <a class="sb-link" href="empirical-modeling.html"><span class="sb-num">01</span> Empirical Modeling</a>
+    <div class="sb-footer"><a href="https://jialing-wu.github.io">&larr; My Website</a></div>
+  </aside>
+  <div class="sidebar-overlay" id="overlay" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"></div>
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"><span></span></button>
+      <div class="breadcrumb"><a href="index.html">Methods</a><span class="sep">/</span> GIS &amp; Spatial Analysis</div>
+    </div>
+    <div class="content">
+      <div class="method-header">
+        <h1>GIS &amp; Spatial Analysis</h1>
+        <div class="method-meta">Spatial &amp; Temporal · 10</div>
+      </div>
+
+      <div class="section">
+        <h2>Overview</h2>
+        <p>Geographic Information Systems (GIS) and spatial analysis methods incorporate location and geography into research design. In education research, spatial methods are used to study questions of access, equity, and resource distribution: How far do students travel to school? Are educational resources equitably distributed across neighborhoods? Do spatial patterns of school quality correlate with housing segregation?</p>
+        <p>Spatial analysis goes beyond simple mapping to include spatial autocorrelation (Moran's I), geographically weighted regression (GWR), and accessibility analysis. These methods account for the fact that nearby observations tend to be more similar than distant ones (Tobler's First Law of Geography), which violates standard regression assumptions of independence.</p>
+      </div>
+
+      <div class="section">
+        <h2>Key Concepts</h2>
+        <ul>
+          <li><strong>Geocoding</strong> — converting addresses or place names into geographic coordinates (latitude/longitude) for spatial analysis.</li>
+          <li><strong>Spatial Autocorrelation (Moran's I)</strong> — measures whether nearby locations have more similar values than expected by chance; positive autocorrelation indicates clustering.</li>
+          <li><strong>Accessibility Analysis</strong> — measures how easily populations can reach services or resources, often using travel time or distance-based metrics.</li>
+          <li><strong>Geographically Weighted Regression</strong> — allows regression coefficients to vary across space, revealing where relationships are stronger or weaker.</li>
+          <li><strong>Spatial Equity Analysis</strong> — examines whether resources, opportunities, or outcomes are equitably distributed across geographic areas and demographic groups.</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>Article Examples</h2>
+
+        <h3>Example 1: Educational Opportunity and Geography</h3>
+        <div class="article-box">
+          <div class="article-cite">Tate, W. F. (2008). "Geography of opportunity": Poverty, place, and educational outcomes. <em>Educational Researcher, 37</em>(7), 397–411.</div>
+          <p>This influential paper used <strong>GIS mapping and spatial analysis</strong> to demonstrate how educational outcomes are spatially patterned and linked to neighborhood characteristics. By mapping school performance data alongside poverty rates, housing values, and access to resources, Tate showed that "geography of opportunity" structures educational inequality. The spatial visualization revealed patterns invisible in non-spatial analyses — clusters of underperforming schools in specific neighborhoods, spatial mismatch between student needs and available resources.</p>
+          <div class="article-method">Method used: GIS mapping with spatial overlay analysis</div>
+        </div>
+
+        <h3>Example 2: Access to STEM Programs</h3>
+        <div class="article-box">
+          <div class="article-cite">Hillman, N. W. (2016). Geography of college opportunity: The case of education deserts. <em>American Educational Research Journal, 53</em>(4), 987–1021.</div>
+          <p>Hillman coined the term "education deserts" using <strong>spatial accessibility analysis</strong> to identify communities where residents lack nearby access to higher education institutions. By calculating drive times from population centers to the nearest college, the study mapped areas where geographic isolation limits educational opportunity. The spatial analysis revealed that education deserts disproportionately affect rural and low-income communities, with important implications for online education policy and institutional placement.</p>
+          <div class="article-method">Method used: GIS-based accessibility analysis with drive-time calculations</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>When to Use</h2>
+        <ul>
+          <li>Your research question involves location, access, or geographic distribution of resources</li>
+          <li>You suspect that outcomes or processes vary systematically across space</li>
+          <li>You want to visualize spatial patterns to communicate findings to policy audiences</li>
+          <li>Standard regression residuals show spatial autocorrelation (nearby observations are correlated)</li>
+        </ul>
+      </div>
+
+      <div class="materials">
+        <h3>Materials &amp; References</h3>
+        <div class="mat-item">
+          <span class="mat-icon">📘</span>
+          <a class="mat-link" href="https://geocompr.robinlovelace.net/" target="_blank">Lovelace et al. — Geocomputation with R (free online)</a>
+          <span class="mat-note">Textbook</span>
+        </div>
+        <div class="mat-item">
+          <span class="mat-icon">💻</span>
+          <a class="mat-link" href="https://geopandas.org/" target="_blank">GeoPandas — Python geospatial library</a>
+          <span class="mat-note">Tool</span>
+        </div>
+        <div class="mat-item">
+          <span class="mat-icon">💻</span>
+          <a class="mat-link" href="https://www.esri.com/en-us/arcgis/products/arcgis-pro/overview" target="_blank">ArcGIS Pro — Enterprise GIS Software</a>
+          <span class="mat-note">Tool</span>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <a href="network-analysis.html"><div class="nav-label">← Previous</div><div class="nav-title">Network Analysis</div></a>
+        <a class="next" href="time-series.html"><div class="nav-label">Next →</div><div class="nav-title">Time Series Analysis</div></a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

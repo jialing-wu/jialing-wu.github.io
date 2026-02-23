@@ -1,0 +1,400 @@
+---
+layout: methods-guide
+title: "Cellular Automata"
+title_zh: "元胞自动机"
+parent_title: "Theoretical Modeling"
+parent_title_zh: "理论建模"
+parent_url: "theoretical-modeling.html"
+bilingual: true
+---
+
+<style>
+  .tab-bar{display:flex;gap:0;border-bottom:2px solid var(--parchment);margin-bottom:20px;}
+  .tab-btn{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.04em;padding:9px 20px;border:none;background:none;cursor:pointer;color:var(--ink-ghost);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;}
+  .tab-btn.active{color:var(--red);border-bottom-color:var(--red);}
+  .tab-pane{display:none;} .tab-pane.active{display:block;}
+  .sim-panel{background:var(--paper);border:1px solid var(--parchment);border-radius:4px;padding:24px 28px;margin:16px 0;}
+  .sim-canvas-wrap{display:flex;justify-content:center;margin:12px 0;overflow:auto;}
+  canvas{display:block;border:1px solid var(--parchment);}
+  .sim-btns{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap;}
+  .sim-btn{font-family:var(--sans);font-size:12px;font-weight:600;padding:7px 18px;border:none;border-radius:3px;cursor:pointer;letter-spacing:.03em;transition:background .2s;}
+  .sim-btn.run{background:var(--red);color:var(--paper);}
+  .sim-btn.run:hover{background:var(--leather);}
+  .sim-btn.step{background:var(--parchment);color:var(--ink);}
+  .sim-btn.pause{background:var(--gold);color:var(--paper);}
+  .sim-btn.reset{background:transparent;border:1px solid var(--parchment);color:var(--ink-ghost);}
+  .sim-btn.clear{background:transparent;border:1px solid var(--parchment);color:var(--ink-ghost);}
+  .sim-btn:disabled{opacity:.4;cursor:not-allowed;}
+  .ctrl-row{display:flex;align-items:center;gap:12px;margin:10px 0;flex-wrap:wrap;}
+  .ctrl-label{font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-ghost);min-width:100px;}
+  .ctrl-val{font-family:var(--mono);font-size:12px;color:var(--red);min-width:32px;}
+  input[type=range]{accent-color:var(--red);flex:1;min-width:100px;}
+  select{font-family:var(--sans);font-size:12px;padding:4px 8px;border:1px solid var(--parchment);border-radius:3px;background:var(--cream);color:var(--ink);}
+  .stat-row{display:flex;gap:16px;margin-top:12px;}
+  .stat-chip{flex:1;background:var(--cream);border:1px solid var(--parchment);border-radius:3px;padding:8px 12px;text-align:center;}
+  .stat-chip .slabel{font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-ghost);display:block;margin-bottom:3px;}
+  .stat-chip .sval{font-family:var(--mono);font-size:16px;color:var(--ink);}
+  .math-note{font-family:var(--mono);font-size:12px;background:var(--parchment);padding:10px 14px;border-radius:3px;margin:10px 0;color:var(--ink);}
+  .insight-box{background:var(--cream);border-left:3px solid var(--gold);padding:14px 18px;margin:14px 0;font-family:var(--serif);font-size:14px;line-height:1.6;color:var(--ink);}
+  .rule-grid{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;}
+  .rule-cell{background:var(--cream);border:1px solid var(--parchment);border-radius:3px;padding:6px 10px;font-family:var(--mono);font-size:12px;color:var(--ink);}
+  .hint{font-family:var(--sans);font-size:11px;color:var(--ink-ghost);margin:6px 0;}
+</style>
+
+<div class="method-header">
+  <div class="method-meta">
+    <span data-lang="en">INTERACTIVE SIMULATION · MODULE 3</span>
+    <span data-lang="zh">互动模拟 · 模块三</span>
+  </div>
+  <h1>
+    <span data-lang="en">Cellular Automata</span>
+    <span data-lang="zh">元胞自动机</span>
+  </h1>
+  <p>
+    <span data-lang="en">From Conway's Game of Life to Wolfram's 256 rules — how simple local rules generate complex global behavior, from static to chaotic to computationally universal.</span>
+    <span data-lang="zh">从康威的生命游戏到 Wolfram 的 256 条规则——简单的局部规则如何生成复杂的全局行为，从静态到混沌，再到计算通用性。</span>
+  </p>
+</div>
+
+<hr class="section-divider">
+
+<section>
+  <h2>
+    <span data-lang="en">What Is a Cellular Automaton?</span>
+    <span data-lang="zh">什么是元胞自动机？</span>
+  </h2>
+  <p>
+    <span data-lang="en">Imagine a very long row of light bulbs, each either on or off. Every second, all the bulbs update simultaneously: each one looks only at itself and its two immediate neighbors, follows a fixed rule, and decides whether to be on or off next. That's a 1D cellular automaton (CA).</span>
+    <span data-lang="zh">想象一排很长的灯泡，每个灯泡要么亮着要么熄灭。每一秒，所有灯泡同步更新：每个灯泡只看自己和两侧的邻居，遵循一条固定规则，决定下一秒是亮还是灭。这就是一维元胞自动机（CA）。</span>
+  </p>
+  <p>
+    <span data-lang="en">Extend this to a 2D grid (like a checkerboard) and you get Conway's Game of Life. The key insight is always the same: <strong>only local information, no global coordination</strong> — yet complex, life-like patterns emerge. This makes CAs a natural model for any system where agents respond only to their immediate environment: urban neighborhoods, disease spread, social norms.</span>
+    <span data-lang="zh">将其扩展到二维网格（如棋盘格），就得到了康威生命游戏。核心洞见始终不变：<strong>仅有局部信息，没有全局协调</strong>——但复杂的、类似生命的模式依然涌现。这使得元胞自动机成为任何主体只响应直接环境的系统的自然模型：城市街区、疾病传播、社会规范。</span>
+  </p>
+  <div class="math-note">State(t+1) at cell i = f( State(t) at i−1, &nbsp;State(t) at i, &nbsp;State(t) at i+1 )
+<span style="color:var(--ink-ghost)">  ← only 3 neighbors determine the next state</span></div>
+  <p>
+    <span data-lang="en">For 1D binary CAs, each cell is 0 or 1. The neighborhood of cell <em>i</em> is the triple (left, self, right). There are 2³ = 8 possible such triples (000, 001, 010, …, 111). Each rule assigns a new state (0 or 1) to each triple. Since there are 8 slots, each with 2 choices, there are 2⁸ = <strong>256 possible rules</strong>. Wolfram numbered them 0–255 based on the binary encoding of their output pattern.</span>
+    <span data-lang="zh">对于一维二值元胞自动机，每个格子的值为 0 或 1。格子 <em>i</em> 的邻域是三元组（左邻、自身、右邻）。共有 2³ = 8 种可能的三元组（000, 001, …, 111）。每条规则为每种三元组指定一个新状态（0 或 1）。由于有 8 个槽位，每个各有 2 种选择，共有 2⁸ = <strong>256 条可能规则</strong>。Wolfram 根据输出模式的二进制编码将它们编号为 0–255。</span>
+  </p>
+  <p>
+    <span data-lang="en"><strong>How to decode a rule number:</strong> Write the rule number in binary (8 bits). The 8 bits directly specify the output for each of the 8 input triples, ordered from 111 down to 000. For example, Rule 30 = 00011110 in binary, so: 111→0, 110→0, 101→0, 100→1, 011→1, 010→1, 001→1, 000→0. The rule display below the slider shows you exactly this.</span>
+    <span data-lang="zh"><strong>如何解码规则编号：</strong>将规则编号写成二进制（8 位）。这 8 位直接指定了 8 种输入三元组（从 111 到 000 排序）各自的输出。例如，规则 30 = 00011110（二进制），对应：111→0, 110→0, 101→0, 100→1, 011→1, 010→1, 001→1, 000→0。滑块下方的规则显示框会直观地展示这一对应关系。</span>
+  </p>
+</section>
+
+<hr class="section-divider">
+
+<section>
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="life">
+      <span data-lang="en">Conway's Game of Life (2D)</span>
+      <span data-lang="zh">康威生命游戏（2D）</span>
+    </button>
+    <button class="tab-btn" data-tab="wolfram">
+      <span data-lang="en">Wolfram 1D Rules</span>
+      <span data-lang="zh">Wolfram 一维规则</span>
+    </button>
+  </div>
+
+  <!-- Game of Life tab -->
+  <div class="tab-pane active" id="tab-life">
+    <h3><span data-lang="en">The Rules, Explained</span><span data-lang="zh">规则详解</span></h3>
+    <p>
+      <span data-lang="en">Each cell has exactly 8 neighbors (the Moore neighborhood — up, down, left, right, and all four diagonals). At every step, every cell applies the same four rules simultaneously:</span>
+      <span data-lang="zh">每个格子恰好有 8 个邻居（Moore 邻域——上下左右以及四条对角线）。每一步，所有格子同时应用同样的四条规则：</span>
+    </p>
+    <div class="math-note">
+      <span data-lang="en">
+        1. <strong>Underpopulation:</strong> a live cell with &lt;2 live neighbors <em>dies</em> — like dying of isolation.<br>
+        2. <strong>Survival:</strong> a live cell with 2 or 3 live neighbors <em>survives</em> to the next step.<br>
+        3. <strong>Overcrowding:</strong> a live cell with &gt;3 live neighbors <em>dies</em> — competition for space.<br>
+        4. <strong>Reproduction:</strong> a dead cell with exactly 3 live neighbors <em>comes alive</em> — critical mass for birth.
+      </span>
+      <span data-lang="zh">
+        1. <strong>人口不足：</strong>少于 2 个活邻居的活格子<em>死亡</em>——如同因孤立而消亡。<br>
+        2. <strong>存活：</strong>有 2 或 3 个活邻居的活格子<em>存活</em>到下一步。<br>
+        3. <strong>过度拥挤：</strong>超过 3 个活邻居的活格子<em>死亡</em>——空间竞争过剧。<br>
+        4. <strong>繁殖：</strong>恰好有 3 个活邻居的死格子<em>复活</em>——达到诞生所需的临界质量。
+      </span>
+    </div>
+    <p>
+      <span data-lang="en">Why these particular numbers? Conway spent months testing variants before settling on {2,3}/{3}. The rules sit at a "Goldilocks" threshold — too strict and everything dies, too lenient and everything fills up. This exact balance produces the most intricate, unpredictable long-run dynamics — what Wolfram calls <strong>Class IV behavior</strong>.</span>
+      <span data-lang="zh">为什么是这些特定数字？康威在确定 {2,3}/{3} 之前花了数月时间测试各种变体。这些规则处于"金发女孩"阈值——过于严苛则一切死亡，过于宽松则一切填满。这种精确的平衡产生了最复杂、最不可预测的长期动态——即 Wolfram 所称的<strong>第 IV 类行为</strong>。</span>
+    </p>
+    <p>
+      <span data-lang="en">The emergent behaviors are remarkable. Some patterns are <strong>still lifes</strong> (never change). Others are <strong>oscillators</strong> (cycle with period 2, 3, …). And then there are <strong>gliders</strong> — patterns that actually <em>move</em> across the grid by cycling through a 4-step sequence. In 1982, Conway proved that patterns can be constructed that simulate a universal Turing machine — meaning Life can, in principle, compute anything a computer can.</span>
+      <span data-lang="zh">涌现出的行为令人惊叹。有些模式是<strong>静止生命</strong>（永不改变）；有些是<strong>振荡器</strong>（以周期 2、3……循环）；还有<strong>滑翔机</strong>——通过 4 步循环序列在网格上实际<em>移动</em>的模式。1982 年，Conway 证明了可以构造出能模拟通用图灵机的模式——这意味着从原理上，生命游戏可以计算任何计算机能计算的内容。</span>
+    </p>
+    <p class="hint">
+      <span data-lang="en">Click cells to toggle them alive/dead. Try drawing a glider: a 3-cell row, then one cell above-right of one end, one cell below-right of the other end. Or just hit Random and watch.</span>
+      <span data-lang="zh">点击格子切换生死状态。试画一个滑翔机：三格横排，在一端右上方加一格，另一端右下方加一格。或者直接点击"随机"观察。</span>
+    </p>
+
+    <div class="sim-panel">
+      <div class="sim-canvas-wrap">
+        <canvas id="lifeCanvas" width="480" height="480"></canvas>
+      </div>
+      <div class="sim-btns">
+        <button class="sim-btn run" id="lifeRun"><span data-lang="en">▶ Run</span><span data-lang="zh">▶ 运行</span></button>
+        <button class="sim-btn pause" id="lifePause" disabled><span data-lang="en">⏸ Pause</span><span data-lang="zh">⏸ 暂停</span></button>
+        <button class="sim-btn step" id="lifeStep"><span data-lang="en">Step</span><span data-lang="zh">单步</span></button>
+        <button class="sim-btn reset" id="lifeReset"><span data-lang="en">↺ Random</span><span data-lang="zh">↺ 随机</span></button>
+        <button class="sim-btn clear" id="lifeClear"><span data-lang="en">Clear</span><span data-lang="zh">清空</span></button>
+      </div>
+      <div class="ctrl-row">
+        <span class="ctrl-label" data-lang="en">Speed</span><span class="ctrl-label" data-lang="zh">速度</span>
+        <input type="range" id="lifeSpd" min="1" max="30" value="8">
+        <span class="ctrl-val" id="lifeSpdVal">8</span>
+        <span class="ctrl-label" data-lang="en">fps</span><span class="ctrl-label" data-lang="zh">帧/秒</span>
+      </div>
+      <div class="stat-row">
+        <div class="stat-chip">
+          <span class="slabel" data-lang="en">Generation</span><span class="slabel" data-lang="zh">代数</span>
+          <span class="sval" id="lifeGen">0</span>
+        </div>
+        <div class="stat-chip">
+          <span class="slabel" data-lang="en">Live Cells</span><span class="slabel" data-lang="zh">活细胞</span>
+          <span class="sval" id="lifePop">0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <strong data-lang="en">Wolfram Class IV:</strong><strong data-lang="zh">Wolfram 第 IV 类：</strong>
+      <span data-lang="en"> Life exhibits Class IV behavior — neither periodic (Class II) nor chaotic (Class III), but complex and unpredictable. Patterns neither stabilize nor explode; they evolve indefinitely in interesting ways. This boundary is where computation emerges.</span>
+      <span data-lang="zh"> 生命游戏展示 Wolfram 第 IV 类行为——既非周期性（第 II 类）也非混沌（第 III 类），而是复杂且不可预测的。模式既不稳定也不爆炸，而是无限期地以有趣方式演化。这个边界就是计算出现的地方。</span>
+    </div>
+  </div>
+
+  <!-- Wolfram 1D tab -->
+  <div class="tab-pane" id="tab-wolfram">
+    <h3><span data-lang="en">Reading the Spacetime Diagram</span><span data-lang="zh">阅读时空图</span></h3>
+    <p>
+      <span data-lang="en">The canvas below is a <strong>spacetime diagram</strong>: each row is one time step, drawn top to bottom. You start with a single black cell in the center of the top row (or a random row). Watch how patterns grow downward — some fill neatly, others fragment, others explode into apparent randomness, all from the same tiny seed.</span>
+      <span data-lang="zh">下方的画布是一张<strong>时空图</strong>：每一行代表一个时间步，从上到下绘制。从顶行中心的单个黑色格子（或随机行）开始，观察模式如何向下生长——有些整齐填充，有些碎裂，有些从同一个微小种子爆发成表面随机的图案。</span>
+    </p>
+    <p>
+      <span data-lang="en"><strong>The 4 classes you'll see in action:</strong> Drag the slider and observe. Rule 0 produces a blank canvas immediately (Class I — dies). Rule 4 quickly produces repeating stripes (Class II — periodic). Rule 30 produces an unpredictable, seemingly random pattern (Class III — chaotic) — so unpredictable that Wolfram used it as a random number generator in Mathematica for years. Rule 110 produces complex, irregular patches that neither die nor explode (Class IV — complex). Rule 90 produces a perfect Sierpiński fractal triangle.</span>
+      <span data-lang="zh"><strong>你将亲眼看到四个类别：</strong>拖动滑块观察。规则 0 立即产生空白画布（第 I 类——消亡）；规则 4 迅速产生重复条纹（第 II 类——周期）；规则 30 产生不可预测的、看似随机的模式（第 III 类——混沌）——其不可预测性如此之强，Wolfram 多年来将其用于 Mathematica 的随机数生成器；规则 110 产生既不消亡也不爆炸的复杂不规则斑块（第 IV 类——复杂）；规则 90 产生完美的谢尔宾斯基分形三角形。</span>
+    </p>
+    <p>
+      <span data-lang="en"><strong>Why do social scientists care?</strong> CAs show that Class IV complexity — structured enough to carry information, chaotic enough to be flexible — is the hallmark of systems capable of computation and adaptation. Living cells, ecosystems, and social institutions all seem to inhabit this edge between order and chaos. Wolfram's (controversial) thesis: nature <em>computes</em>, and many natural phenomena are best understood as running programs, not solving equations.</span>
+      <span data-lang="zh"><strong>社会科学家为何关注？</strong>元胞自动机表明，第 IV 类复杂性——足够有序以承载信息，又足够混沌以保持灵活——是能够计算和适应的系统的标志。生物细胞、生态系统和社会制度似乎都居于秩序与混沌的边缘。Wolfram（颇具争议的）论点是：自然在<em>运算</em>，许多自然现象最好被理解为运行中的程序，而非方程的求解。</span>
+    </p>
+
+    <div class="sim-panel">
+      <div class="ctrl-row">
+        <span class="ctrl-label" data-lang="en">Rule #</span><span class="ctrl-label" data-lang="zh">规则编号</span>
+        <input type="range" id="wRule" min="0" max="255" value="30" style="flex:2;">
+        <span class="ctrl-val" id="wRuleVal">30</span>
+      </div>
+      <div id="wRuleDisplay" class="rule-grid"></div>
+      <div class="ctrl-row">
+        <span class="ctrl-label" data-lang="en">Seed</span><span class="ctrl-label" data-lang="zh">种子</span>
+        <select id="wSeed">
+          <option value="center" data-en="Single center cell" data-zh="单个中心细胞">Single center cell</option>
+          <option value="random" data-en="Random row" data-zh="随机行">Random row</option>
+        </select>
+        <button class="sim-btn reset" id="wDraw" style="margin-left:8px;"><span data-lang="en">Draw</span><span data-lang="zh">绘制</span></button>
+      </div>
+      <div class="sim-canvas-wrap">
+        <canvas id="wolframCanvas" width="510" height="400"></canvas>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <strong data-lang="en">Wolfram's 4 classes: </strong><strong data-lang="zh">Wolfram 的四个类别：</strong>
+      <span data-lang="en">Class I — dies out (e.g., Rule 0); Class II — simple repeating (Rule 4); Class III — chaotic (Rule 30); Class IV — complex structures (Rule 110). Wolfram's controversial "Principle of Computational Equivalence" holds that Class IV CAs are maximally complex — equivalent to universal Turing machines.</span>
+      <span data-lang="zh">第 I 类——消亡（如规则 0）；第 II 类——简单重复（规则 4）；第 III 类——混沌（规则 30）；第 IV 类——复杂结构（规则 110）。Wolfram 颇具争议的"计算等价原则"认为，第 IV 类元胞自动机具有最大复杂度——等同于通用图灵机。</span>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/guides/tm-schelling.html">
+    <span class="pn-arrow">←</span>
+    <span>
+      <span class="pn-dir" data-lang="en">Previous</span><span class="pn-dir" data-lang="zh">上一篇</span>
+      <span class="pn-title" data-lang="en">Schelling Segregation</span><span class="pn-title" data-lang="zh">Schelling 隔离模型</span>
+    </span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/guides/tm-sir.html">
+    <span>
+      <span class="pn-dir" data-lang="en">Next</span><span class="pn-dir" data-lang="zh">下一篇</span>
+      <span class="pn-title" data-lang="en">SIR Epidemic Model</span><span class="pn-title" data-lang="zh">SIR 流行病模型</span>
+    </span>
+    <span class="pn-arrow">→</span>
+  </a>
+</div>
+
+<script>
+// ── Tab switching ────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── Conway's Game of Life ────────────────────────────────────────
+const LC = document.getElementById('lifeCanvas');
+const lctx = LC.getContext('2d');
+const LG = 60;
+const LS = LC.width / LG;
+let lGrid = [], lNext = [], lRunning = false, lGen = 0, lRaf = null, lLast = 0;
+
+function lInit(random) {
+  lRunning = false; lGen = 0;
+  document.getElementById('lifeRun').disabled = false;
+  document.getElementById('lifePause').disabled = true;
+  lGrid = Array.from({length:LG}, () => Array(LG).fill(0));
+  lNext = Array.from({length:LG}, () => Array(LG).fill(0));
+  if (random) {
+    for (let r=0;r<LG;r++) for (let c=0;c<LG;c++)
+      lGrid[r][c] = Math.random() < 0.3 ? 1 : 0;
+  }
+  lDraw();
+  document.getElementById('lifeGen').textContent = 0;
+  document.getElementById('lifePop').textContent = lPop();
+}
+
+function lPop() {
+  let n=0; for (let r=0;r<LG;r++) for (let c=0;c<LG;c++) n+=lGrid[r][c]; return n;
+}
+
+function lStep() {
+  for (let r=0;r<LG;r++) for (let c=0;c<LG;c++) {
+    let live=0;
+    for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++) {
+      if (!dr&&!dc) continue;
+      const rr=(r+dr+LG)%LG, cc=(c+dc+LG)%LG;
+      live+=lGrid[rr][cc];
+    }
+    lNext[r][c] = lGrid[r][c] ? (live===2||live===3)?1:0 : live===3?1:0;
+  }
+  [lGrid,lNext]=[lNext,lGrid];
+  lGen++; lDraw();
+  document.getElementById('lifeGen').textContent = lGen;
+  document.getElementById('lifePop').textContent = lPop();
+}
+
+function lDraw() {
+  lctx.fillStyle = '#F9F7F3'; lctx.fillRect(0,0,LC.width,LC.height);
+  lctx.fillStyle = '#B5372A';
+  for (let r=0;r<LG;r++) for (let c=0;c<LG;c++)
+    if (lGrid[r][c]) lctx.fillRect(c*LS+0.5, r*LS+0.5, LS-1, LS-1);
+  lctx.strokeStyle='rgba(212,204,196,0.3)'; lctx.lineWidth=0.3;
+  for (let i=0;i<=LG;i++) {
+    lctx.beginPath(); lctx.moveTo(i*LS,0); lctx.lineTo(i*LS,LC.height); lctx.stroke();
+    lctx.beginPath(); lctx.moveTo(0,i*LS); lctx.lineTo(LC.width,i*LS); lctx.stroke();
+  }
+}
+
+let lDragging = false;
+LC.addEventListener('mousedown', e => { lDragging=true; lToggle(e); });
+LC.addEventListener('mousemove', e => { if(lDragging) lPaint(e); });
+document.addEventListener('mouseup', () => lDragging=false);
+function lToggle(e) {
+  const r=e.offsetY/LS|0, c=e.offsetX/LS|0;
+  if (r>=0&&r<LG&&c>=0&&c<LG) { lGrid[r][c]=lGrid[r][c]?0:1; lDraw(); document.getElementById('lifePop').textContent=lPop(); }
+}
+function lPaint(e) {
+  const r=e.offsetY/LS|0, c=e.offsetX/LS|0;
+  if (r>=0&&r<LG&&c>=0&&c<LG) { lGrid[r][c]=1; lDraw(); document.getElementById('lifePop').textContent=lPop(); }
+}
+
+function lLoop(t) {
+  lRaf = requestAnimationFrame(lLoop);
+  if (!lRunning) return;
+  const fps = +document.getElementById('lifeSpd').value;
+  if (t-lLast > 1000/fps) { lStep(); lLast=t; }
+}
+
+document.getElementById('lifeRun').addEventListener('click', () => {
+  lRunning=true;
+  document.getElementById('lifeRun').disabled=true;
+  document.getElementById('lifePause').disabled=false;
+});
+document.getElementById('lifePause').addEventListener('click', () => {
+  lRunning=false;
+  document.getElementById('lifeRun').disabled=false;
+  document.getElementById('lifePause').disabled=true;
+});
+document.getElementById('lifeStep').addEventListener('click', () => { if(!lRunning) lStep(); });
+document.getElementById('lifeReset').addEventListener('click', () => lInit(true));
+document.getElementById('lifeClear').addEventListener('click', () => lInit(false));
+document.getElementById('lifeSpd').addEventListener('input', e => document.getElementById('lifeSpdVal').textContent = e.target.value);
+
+lInit(true);
+requestAnimationFrame(lLoop);
+
+// ── Wolfram 1D ───────────────────────────────────────────────────
+const WC = document.getElementById('wolframCanvas');
+const wctx = WC.getContext('2d');
+const WW = WC.width, WH = WC.height;
+const WCELL = 5;
+const WCOLS = WW / WCELL | 0;
+const WROWS = WH / WCELL | 0;
+
+function wGetRule(n) {
+  return Array.from({length:8}, (_,i) => (n >> i) & 1);
+}
+
+function wDisplayRule(n) {
+  const rule = wGetRule(n);
+  const div = document.getElementById('wRuleDisplay');
+  div.innerHTML = '';
+  const labels=['111','110','101','100','011','010','001','000'];
+  labels.forEach((lbl,i) => {
+    const idx = 7-i;
+    const cell = document.createElement('div');
+    cell.className='rule-cell';
+    cell.textContent = lbl + ' → ' + rule[idx];
+    cell.style.background = rule[idx] ? '#B5372A' : 'var(--cream)';
+    cell.style.color = rule[idx] ? 'var(--paper)' : 'var(--ink-ghost)';
+    div.appendChild(cell);
+  });
+}
+
+function wDraw() {
+  const ruleN = +document.getElementById('wRule').value;
+  const seed = document.getElementById('wSeed').value;
+  const rule = wGetRule(ruleN);
+  wctx.fillStyle='#F9F7F3'; wctx.fillRect(0,0,WW,WH);
+
+  let row = Array(WCOLS).fill(0);
+  if (seed==='center') row[WCOLS>>1]=1;
+  else for(let i=0;i<WCOLS;i++) row[i]=Math.random()<0.5?1:0;
+
+  for (let r=0;r<WROWS;r++) {
+    for (let c=0;c<WCOLS;c++) {
+      if (row[c]) {
+        wctx.fillStyle = '#B5372A';
+        wctx.fillRect(c*WCELL, r*WCELL, WCELL-0.5, WCELL-0.5);
+      }
+    }
+    const next = Array(WCOLS).fill(0);
+    for (let c=0;c<WCOLS;c++) {
+      const l=row[(c-1+WCOLS)%WCOLS], m=row[c], ri=row[(c+1)%WCOLS];
+      next[c] = rule[l*4+m*2+ri];
+    }
+    row=next;
+  }
+}
+
+document.getElementById('wRule').addEventListener('input', e => {
+  document.getElementById('wRuleVal').textContent = e.target.value;
+  wDisplayRule(+e.target.value);
+  wDraw();
+});
+document.getElementById('wDraw').addEventListener('click', wDraw);
+document.getElementById('wSeed').addEventListener('change', wDraw);
+
+wDisplayRule(30);
+wDraw();
+</script>

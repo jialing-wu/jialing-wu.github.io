@@ -1,0 +1,506 @@
+---
+layout: methods-guide
+title: "SEM with lavaan"
+title_zh: "结构方程模型：lavaan 实战"
+parent_title: "Structural Equation Modeling"
+parent_title_zh: "结构方程模型"
+parent_url: "reg-sem.html"
+bilingual: true
+mathjax: true
+---
+
+<h2 id="sem-overview">
+  <span data-lang="en">SEM: Combining CFA and Path Analysis</span>
+  <span data-lang="zh">SEM：结合CFA和路径分析</span>
+</h2>
+
+<p data-lang="en">
+  Structural Equation Modeling (SEM) is a unified framework that combines two key components:
+</p>
+
+<p data-lang="zh">
+  结构方程模型(SEM)是一个统一框架，结合了两个关键组件：
+</p>
+
+<ul style="margin: 16px 0; padding-left: 24px;">
+  <li>
+    <strong data-lang="en">Measurement Model (CFA):</strong>
+    <strong data-lang="zh">测量模型(CFA)：</strong>
+    <span data-lang="en">How do observed variables (indicators) load on latent constructs (factors)?
+    For example, survey questions measuring "democracy" or "industrialization".</span>
+    <span data-lang="zh">观察变量(指标)如何加载到潜在构念(因子)上？
+    例如，衡量"民主"或"工业化"的调查问题。</span>
+  </li>
+
+  <li style="margin-top: 12px;">
+    <strong data-lang="en">Structural Model (Path Analysis):</strong>
+    <strong data-lang="zh">结构模型(路径分析)：</strong>
+    <span data-lang="en">How do latent variables relate to each other?
+    Direct effects (A → B), indirect effects through mediators (A → M → B), and correlated errors.</span>
+    <span data-lang="zh">潜在变量之间如何相关？
+    直接效应(A → B)、通过中介的间接效应(A → M → B)和相关误差。</span>
+  </li>
+</ul>
+
+<p data-lang="en" style="margin-top: 16px;">
+  <strong>Example Path Diagram (Political Democracy Model):</strong>
+</p>
+
+<p data-lang="zh" style="margin-top: 16px;">
+  <strong>示例路径图(政治民主模型)：</strong>
+</p>
+
+<pre style="background: var(--cream); padding: 16px; border-radius: 6px; margin: 12px 0; font-family: var(--mono); font-size: 12px; line-height: 1.5;">
+                    x1  x2  x3              y1  y2  y3  y4        y5  y6  y7  y8
+                     ↓   ↓   ↓               ↓   ↓   ↓   ↓         ↓   ↓   ↓   ↓
+    [Industrialization 1960]              [Democracy 1960]       [Democracy 1965]
+              ↓                                  ↓                       ↑
+              └──→ [Democracy 1960] ─────────→ [Democracy 1965]
+</pre>
+
+<p data-lang="en">
+  We estimate:
+  (1) How well do x₁, x₂, x₃ measure industrialization?
+  (2) How well do y₁–y₄ measure democracy in 1960?
+  (3) How well do y₅–y₈ measure democracy in 1965?
+  (4) What is the direct effect of industrialization → democracy in 1960?
+  (5) What is the lagged effect of democracy 1960 → democracy 1965?
+</p>
+
+<p data-lang="zh">
+  我们估计：
+  (1) x₁, x₂, x₃测量工业化的程度如何？
+  (2) y₁–y₄测量1960年民主的程度如何？
+  (3) y₅–y₈测量1965年民主的程度如何？
+  (4) 工业化→1960年民主的直接效应是什么？
+  (5) 1960年民主→1965年民主的滞后效应是什么？
+</p>
+
+<hr style="border:none; border-top:1px solid var(--ink-ghost); margin:32px 0;">
+
+<h2 id="sem-cfa">
+  <span data-lang="en">Confirmatory Factor Analysis (CFA) in lavaan</span>
+  <span data-lang="zh">lavaan中的验证性因子分析(CFA)</span>
+</h2>
+
+<p data-lang="en">
+  Start by specifying and fitting the measurement model. This tells us whether our survey items reliably measure the constructs we intend.
+</p>
+
+<p data-lang="zh">
+  首先指定和拟合测量模型。这告诉我们我们的调查项目是否可靠地测量了我们想要的构念。
+</p>
+
+<p data-lang="en" style="margin-top: 16px; font-weight: 500;">
+  <span data-lang="en">Step 1: Load lavaan and Specify the Model</span>
+  <span data-lang="zh">步骤1：加载lavaan并指定模型</span>
+</p>
+
+<pre style="background: var(--cream); padding: 16px; border-radius: 6px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.6; margin: 12px 0;">
+<code>library(lavaan)
+library(semPlot)
+
+# CFA model specification
+model_cfa &lt;- '
+  # Measurement model
+  # Factor 1: Industrialization measured by x1, x2, x3
+  ind60 =~ x1 + x2 + x3
+
+  # Factor 2: Democracy in 1960 measured by y1, y2, y3, y4
+  dem60 =~ y1 + y2 + y3 + y4
+'
+
+# Fit the CFA model
+fit_cfa &lt;- cfa(model_cfa, data = PoliticalDemocracy)
+
+# Summary with fit measures
+summary(fit_cfa, fit.measures = TRUE, standardized = TRUE)</code>
+</pre>
+
+<p data-lang="en" style="margin-top: 16px;">
+  <strong>What the output tells you:</strong>
+</p>
+
+<p data-lang="zh" style="margin-top: 16px;">
+  <strong>输出告诉你什么：</strong>
+</p>
+
+<div class="insight-box">
+  <p data-lang="en">
+    <strong>Factor Loadings (Std.lv = standardized):</strong> If an item's loading is 0.8, that item explains (0.8)² = 64% of the variance in the latent factor.
+    <br><strong>p-values:</strong> Are the loadings significantly different from zero? They should be!
+    <br><strong>Residual Variances:</strong> How much unexplained variance is left in each item after accounting for the latent factor.
+  </p>
+  <p data-lang="zh">
+    <strong>因子负荷(Std.lv = 标准化)：</strong> 如果一个项的负荷是0.8，该项解释了潜在因子方差的(0.8)² = 64%。
+    <br><strong>p值：</strong> 负荷是否显著不同于零？它们应该是！
+    <br><strong>残差方差：</strong> 考虑潜在因子后，每个项目中有多少未解释的方差。
+  </p>
+</div>
+
+<p data-lang="en" style="margin-top: 24px; font-weight: 500;">
+  <span data-lang="en">Step 2: Evaluate Model Fit</span>
+  <span data-lang="zh">步骤2：评估模型拟合</span>
+</p>
+
+<p data-lang="en">
+  lavaan provides many fit indices. Practical cutoffs are:
+</p>
+
+<p data-lang="zh">
+  lavaan提供了许多拟合指数。实际的截断值是：
+</p>
+
+<table style="width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px;">
+  <tr style="background: var(--ink-ghost);">
+    <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--ink);">
+      <span data-lang="en">Index</span>
+      <span data-lang="zh">指数</span>
+    </th>
+    <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--ink);">
+      <span data-lang="en">Good Fit</span>
+      <span data-lang="zh">良好拟合</span>
+    </th>
+    <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--ink);">
+      <span data-lang="en">Interpretation</span>
+      <span data-lang="zh">解释</span>
+    </th>
+  </tr>
+  <tr>
+    <td style="padding: 10px; border-bottom: 1px solid var(--ink-ghost);">CFI (Comparative Fit Index)</td>
+    <td style="padding: 10px; border-bottom: 1px solid var(--ink-ghost);">> 0.95</td>
+    <td style="padding: 10px; border-bottom: 1px solid var(--ink-ghost);"><span data-lang="en">Model explains observed correlations well</span><span data-lang="zh">模型很好地解释了观察到的相关性</span></td>
+  </tr>
+  <tr>
+    <td style="padding: 10px; border-bottom: 1px solid var(--ink-ghost);">RMSEA (Root Mean Sq Error)</td>
+    <td style="padding: 10px; border-bottom: 1px solid var(--ink-ghost);"> < 0.06</td>
+    <td style="padding: 10px; border-bottom: 1px solid var(--ink-ghost);"><span data-lang="en">Low discrepancy between model and data</span><span data-lang="zh">模型与数据之间的差异很小</span></td>
+  </tr>
+  <tr>
+    <td style="padding: 10px; border-bottom: 1px solid var(--ink-ghost);">SRMR (Std Root Mean Sq Residual)</td>
+    <td style="padding: 10px; border-bottom: 1px solid var(--ink-ghost);"> < 0.08</td>
+    <td style="padding: 10px; border-bottom: 1px solid var(--ink-ghost);"><span data-lang="en">Residuals between observed and implied correlations small</span><span data-lang="zh">观察和隐含相关性之间的残差较小</span></td>
+  </tr>
+  <tr>
+    <td style="padding: 10px;">χ² (Chi-square)</td>
+    <td style="padding: 10px;">p > 0.05</td>
+    <td style="padding: 10px;"><span data-lang="en">Model is not significantly worse than saturated; less important with large N</span><span data-lang="zh">模型与饱和模型没有显著不同；对于大N不太重要</span></td>
+  </tr>
+</table>
+
+<p data-lang="en" style="margin-top: 16px;">
+  Extract fit indices with:
+</p>
+
+<p data-lang="zh" style="margin-top: 16px;">
+  提取拟合指数使用：
+</p>
+
+<pre style="background: var(--cream); padding: 16px; border-radius: 6px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.6; margin: 12px 0;">
+<code>fitMeasures(fit_cfa, c("cfi", "rmsea", "srmr", "chisq", "pvalue"))</code>
+</pre>
+
+<hr style="border:none; border-top:1px solid var(--ink-ghost); margin:32px 0;">
+
+<h2 id="sem-full">
+  <span data-lang="en">Full SEM: Measurement + Structural Models</span>
+  <span data-lang="zh">完整SEM：测量+结构模型</span>
+</h2>
+
+<p data-lang="en">
+  Now we add the structural model: relationships between latent variables.
+</p>
+
+<p data-lang="zh">
+  现在我们添加结构模型：潜在变量之间的关系。
+</p>
+
+<pre style="background: var(--cream); padding: 16px; border-radius: 6px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.6; margin: 12px 0;">
+<code>model_sem &lt;- '
+  # ===== Measurement Model =====
+
+  # Industrialization in 1960 (measured by x1, x2, x3)
+  ind60 =~ x1 + x2 + x3
+
+  # Democracy in 1960 (measured by y1, y2, y3, y4)
+  dem60 =~ y1 + y2 + y3 + y4
+
+  # Democracy in 1965 (measured by y5, y6, y7, y8)
+  dem65 =~ y5 + y6 + y7 + y8
+
+  # ===== Structural Model =====
+
+  # Path 1: Effect of industrialization on democracy in 1960
+  dem60 ~ ind60
+
+  # Path 2: Effect of democracy 1960 on democracy 1965 (autoregression)
+  dem65 ~ ind60 + dem60
+'
+
+# Fit the SEM
+fit_sem &lt;- sem(model_sem, data = PoliticalDemocracy)
+
+# Full summary
+summary(fit_sem, fit.measures = TRUE, standardized = TRUE)
+
+# Extract specific estimates
+parameterEstimates(fit_sem)</code>
+</pre>
+
+<p data-lang="en" style="margin-top: 16px;">
+  <strong>Interpreting Structural Coefficients:</strong>
+</p>
+
+<p data-lang="zh" style="margin-top: 16px;">
+  <strong>解释结构系数：</strong>
+</p>
+
+<ul style="margin: 16px 0; padding-left: 24px;">
+  <li>
+    <span data-lang="en"><strong>Unstandardized (Estimate):</strong> The regression coefficient on the original scale.
+    If dem60 ~ ind60 has estimate 2.5, a one-unit increase in industrialization increases democracy 1960 by 2.5 units.</span>
+    <span data-lang="zh"><strong>非标准化(Estimate)：</strong> 原始尺度上的回归系数。
+    如果dem60 ~ ind60的估计是2.5，工业化每增加一个单位，1960年民主就增加2.5个单位。</span>
+  </li>
+
+  <li style="margin-top: 12px;">
+    <span data-lang="en"><strong>Standardized (Std.all):</strong> Effect size on the standard deviation scale.
+    Values close to ±1 indicate strong effects; close to 0 indicate weak effects.
+    Compare standardized coefficients across paths to see which relationships matter most.</span>
+    <span data-lang="zh"><strong>标准化(Std.all)：</strong> 标准差尺度上的效应大小。
+    接近±1的值表示强效应；接近0表示弱效应。
+    比较标准化系数来看哪些关系最重要。</span>
+  </li>
+
+  <li style="margin-top: 12px;">
+    <span data-lang="en"><strong>p-value:</strong> Is the coefficient statistically significant?
+    Typically p < 0.05 indicates statistical significance.</span>
+    <span data-lang="zh"><strong>p值：</strong> 系数在统计上显著吗？
+    通常p < 0.05表示统计显著性。</span>
+  </li>
+</ul>
+
+<div class="insight-box">
+  <p data-lang="en">
+    <strong>Comparing Estimates:</strong> The "Std.all" column standardizes both X and Y.
+    Use this to compare the relative strength of different effects on the same outcome.
+    If dem65 is predicted by ind60 and dem60, and dem60's Std.all is larger,
+    then past democracy is a stronger predictor than industrialization.
+  </p>
+  <p data-lang="zh">
+    <strong>比较估计：</strong> "Std.all"列对X和Y都进行了标准化。
+    使用它来比较同一结果的不同效应的相对强度。
+    如果dem65由ind60和dem60预测，而dem60的Std.all较大，
+    那么过去的民主是比工业化更强的预测因子。
+  </p>
+</div>
+
+<hr style="border:none; border-top:1px solid var(--ink-ghost); margin:32px 0;">
+
+<h2 id="sem-indirect">
+  <span data-lang="en">Mediation and Indirect Effects</span>
+  <span data-lang="zh">中介和间接效应</span>
+</h2>
+
+<p data-lang="en">
+  One of SEM's strengths: directly estimate indirect effects (mediation).
+  Suppose industrialization affects democracy 1960, which in turn affects democracy 1965.
+  The indirect effect is: ind60 → dem60 → dem65.
+</p>
+
+<p data-lang="zh">
+  SEM的优势之一：直接估计间接效应(中介)。
+  假设工业化影响1960年民主，进而影响1965年民主。
+  间接效应是：ind60 → dem60 → dem65。
+</p>
+
+<pre style="background: var(--cream); padding: 16px; border-radius: 6px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.6; margin: 12px 0;">
+<code>model_mediation &lt;- '
+  # Measurement models
+  ind60 =~ x1 + x2 + x3
+  dem60 =~ y1 + y2 + y3 + y4
+  dem65 =~ y5 + y6 + y7 + y8
+
+  # Structural model with named paths
+  dem60 ~ a * ind60        # Path a: ind60 → dem60
+  dem65 ~ b * dem60        # Path b: dem60 → dem65
+  dem65 ~ c_prime * ind60  # Direct effect c'
+
+  # Indirect effect (a * b)
+  indirect := a * b
+
+  # Total effect (c_prime + indirect, or just c)
+  total := c_prime + (a * b)
+'
+
+# Fit with bootstrap for robust SE
+fit_mediation &lt;- sem(
+  model_mediation,
+  data = PoliticalDemocracy,
+  se = "bootstrap",
+  bootstrap = 1000
+)
+
+# Display results with bootstrap CIs
+parameterEstimates(fit_mediation, boot.ci.type = "bca.simple")
+
+# Or use specific test
+monteCarloCI(fit_mediation)</code>
+</pre>
+
+<p data-lang="en" style="margin-top: 16px;">
+  <strong>Bootstrap Confidence Intervals:</strong>
+</p>
+
+<p data-lang="zh" style="margin-top: 16px;">
+  <strong>Bootstrap置信区间：</strong>
+</p>
+
+<ul style="margin: 16px 0; padding-left: 24px;">
+  <li>
+    <span data-lang="en"><strong>Why bootstrap?</strong> Indirect effects don't follow normal distributions, especially in small samples.
+    Bootstrap resamples the data, reestimates the indirect effect, and constructs confidence intervals from the empirical distribution.</span>
+    <span data-lang="zh"><strong>为什么用bootstrap？</strong> 间接效应不遵循正态分布，尤其是在小样本中。
+    Bootstrap重新采样数据，重新估计间接效应，并从经验分布构造置信区间。</span>
+  </li>
+
+  <li style="margin-top: 12px;">
+    <span data-lang="en"><strong>Interpretation:</strong> If the 95% CI does not include zero, the indirect effect is significant at α = 0.05.</span>
+    <span data-lang="zh"><strong>解释：</strong> 如果95%的CI不包括零，则在α = 0.05时间接效应显著。</span>
+  </li>
+</ul>
+
+<hr style="border:none; border-top:1px solid var(--ink-ghost); margin:32px 0;">
+
+<h2 id="sem-fit">
+  <span data-lang="en">Model Fit and Modification</span>
+  <span data-lang="zh">模型拟合和修改</span>
+</h2>
+
+<p data-lang="en">
+  After fitting your SEM, check model fit. If fit is poor, lavaan's modification indices suggest which constraints to relax.
+</p>
+
+<p data-lang="zh">
+  拟合SEM后，检查模型拟合。如果拟合不好，lavaan的修改指数建议哪些约束要放松。
+</p>
+
+<pre style="background: var(--cream); padding: 16px; border-radius: 6px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.6; margin: 12px 0;">
+<code># Check fit measures
+fitMeasures(fit_sem, c("cfi", "rmsea", "srmr"))
+
+# If fit is poor, examine modification indices
+modindices(fit_sem, sort. = TRUE)
+
+# High MI values suggest freeing constraints
+# E.g., if MI for y2 ~~ y3 (covariance of errors) is high,
+# consider adding: y2 ~~ y3 to the model</code>
+</pre>
+
+<div class="insight-box">
+  <p data-lang="en">
+    <strong>When to Modify:</strong> Only relax constraints (add paths, free residual covariances)
+    if there is <strong>theoretical justification</strong>.
+    Purely data-driven modification risks overfitting and poor replication.
+    <br><strong>Best practice:</strong> Use cross-validation or separate hold-out samples to validate modifications.
+  </p>
+  <p data-lang="zh">
+    <strong>何时修改：</strong> 只有在有<strong>理论上的合理性</strong>时才放松约束(添加路径、自由化残差协方差)。
+    纯粹数据驱动的修改有过度拟合和复制不良的风险。
+    <br><strong>最佳做法：</strong> 使用交叉验证或单独的保留样本来验证修改。
+  </p>
+</div>
+
+<p data-lang="en" style="margin-top: 24px;">
+  <strong>Comparing Nested Models:</strong>
+</p>
+
+<p data-lang="zh" style="margin-top: 24px;">
+  <strong>比较嵌套模型：</strong>
+</p>
+
+<pre style="background: var(--cream); padding: 16px; border-radius: 6px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.6; margin: 12px 0;">
+<code># Fit two competing models
+model_restricted &lt;- '
+  ind60 =~ x1 + x2 + x3
+  dem60 =~ y1 + y2 + y3 + y4
+  dem65 =~ y5 + y6 + y7 + y8
+  dem60 ~ ind60
+  dem65 ~ dem60  # No direct ind60 → dem65
+'
+
+model_full &lt;- '
+  ind60 =~ x1 + x2 + x3
+  dem60 =~ y1 + y2 + y3 + y4
+  dem65 =~ y5 + y6 + y7 + y8
+  dem60 ~ ind60
+  dem65 ~ ind60 + dem60  # Include direct effect
+'
+
+fit_restricted &lt;- sem(model_restricted, data = PoliticalDemocracy)
+fit_full &lt;- sem(model_full, data = PoliticalDemocracy)
+
+# Likelihood ratio test (nested models only)
+anova(fit_restricted, fit_full)</code>
+</pre>
+
+<p data-lang="en" style="margin-top: 16px;">
+  The anova() function performs a χ² test. If p < 0.05, the full model fits significantly better.
+  Use AIC or BIC to compare non-nested models.
+</p>
+
+<p data-lang="zh" style="margin-top: 16px;">
+  anova()函数执行χ²检验。如果p < 0.05，完整模型拟合显著更好。
+  使用AIC或BIC来比较非嵌套模型。
+</p>
+
+<hr style="border:none; border-top:1px solid var(--ink-ghost); margin:32px 0;">
+
+<h2 id="sem-workflow">
+  <span data-lang="en">Complete SEM Workflow Summary</span>
+  <span data-lang="zh">完整SEM工作流摘要</span>
+</h2>
+
+<div class="math-note" style="line-height: 2;">
+  <span data-lang="en">
+    1. <strong>Specify</strong> measurement model (factor loadings)
+    <br>2. <strong>Fit</strong> CFA; evaluate factor adequacy
+    <br>3. <strong>Add</strong> structural model (paths between latents)
+    <br>4. <strong>Fit</strong> full SEM
+    <br>5. <strong>Check</strong> fit indices (CFI, RMSEA, SRMR)
+    <br>6. <strong>Interpret</strong> paths; report standardized estimates
+    <br>7. <strong>Test</strong> indirect effects (if relevant)
+    <br>8. <strong>Validate</strong> with cross-validation or separate sample
+  </span>
+  <span data-lang="zh">
+    1. <strong>指定</strong>测量模型(因子负荷)
+    <br>2. <strong>拟合</strong>CFA；评估因子充分性
+    <br>3. <strong>添加</strong>结构模型(潜在变量之间的路径)
+    <br>4. <strong>拟合</strong>完整SEM
+    <br>5. <strong>检查</strong>拟合指数(CFI、RMSEA、SRMR)
+    <br>6. <strong>解释</strong>路径；报告标准化估计
+    <br>7. <strong>测试</strong>间接效应(如相关)
+    <br>8. <strong>验证</strong>交叉验证或单独样本
+  </span>
+</div>
+
+<div class="insight-box">
+  <p data-lang="en">
+    <strong>Key Advantages of lavaan SEM:</strong>
+    <br>• Unified handling of measurement and structural models
+    <br>• Direct estimation of indirect effects with uncertainty
+    <br>• Multiple fit indices for comprehensive assessment
+    <br>• Bootstrap resampling for robust inference
+    <br>• Handles missing data (via maximum likelihood, FIML)
+    <br>• Scales to complex models (multilevel, growth curves, mixture models)
+  </p>
+  <p data-lang="zh">
+    <strong>lavaan SEM的关键优势：</strong>
+    <br>• 统一处理测量和结构模型
+    <br>• 直接估计带有不确定性的间接效应
+    <br>• 多个拟合指数用于全面评估
+    <br>• 用于稳健推断的Bootstrap重新采样
+    <br>• 处理缺失数据(通过最大似然法、FIML)
+    <br>• 扩展到复杂模型(多层、增长曲线、混合模型)
+  </p>
+</div>

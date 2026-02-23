@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TF-IDF Explorer — Research Methods Notebook</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="./guide-style.css">
+<style>
+/* ── Tab interface ───────────────────────────────── */
+.tab-bar{display:flex;gap:0;border-bottom:2px solid var(--parchment);margin-bottom:24px}
+.tab-btn{font-family:var(--sans);font-size:12px;font-weight:500;padding:9px 20px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer;color:var(--ink-ghost);letter-spacing:.04em;transition:color .15s,border-color .15s}
+.tab-btn:hover{color:var(--ink)}
+.tab-btn.active{color:var(--red);border-bottom-color:var(--red);font-weight:600}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* ── Sim panel & textareas ───────────────────────── */
+.sim-panel{background:var(--paper);border:1px solid var(--parchment);border-radius:4px;padding:24px 28px;margin:16px 0}
+.doc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+@media(max-width:760px){.doc-grid{grid-template-columns:1fr}}
+.doc-box{}
+.doc-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.doc-label.d1{color:var(--red)}
+.doc-label.d2{color:var(--gold)}
+.doc-label.d3{color:var(--leather)}
+.doc-box textarea{width:100%;font-family:var(--mono);font-size:11.5px;line-height:1.65;border:1px solid var(--parchment);border-radius:3px;padding:10px 12px;background:var(--cream,#F5F0E8);color:var(--ink);resize:vertical;box-sizing:border-box}
+
+/* ── Compute button ──────────────────────────────── */
+.run-btn{font-family:var(--sans);font-size:12px;font-weight:600;padding:9px 22px;background:var(--red);color:var(--paper);border:none;border-radius:3px;cursor:pointer;letter-spacing:.04em;transition:opacity .15s}
+.run-btn:hover{opacity:.85}
+
+/* ── Results table ───────────────────────────────── */
+.results-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:12.5px;overflow-x:auto;display:block}
+.results-table th{background:var(--ink);color:var(--paper);font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.07em;padding:9px 12px;text-align:right;white-space:nowrap}
+.results-table th.word-col{text-align:left}
+.results-table td{padding:7px 12px;border-bottom:1px solid var(--parchment);color:var(--ink-faded);font-family:var(--mono);text-align:right;white-space:nowrap}
+.results-table td.word-col{font-family:var(--sans);font-size:12.5px;color:var(--ink-soft);text-align:left;font-weight:500}
+.results-table tr:hover td{background:var(--warm,#F7F3EB)}
+.results-table .d1-col{color:var(--red)}
+.results-table .d2-col{color:#8a6a10}
+.results-table .d3-col{color:var(--leather)}
+.val-bar{display:inline-block;height:7px;border-radius:2px;vertical-align:middle;margin-left:4px;opacity:.5}
+
+/* ── Toggle for DTM mode ─────────────────────────── */
+.mode-btns{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.mode-btn{font-family:var(--sans);font-size:11px;font-weight:500;padding:5px 14px;border:1px solid var(--parchment);border-radius:3px;cursor:pointer;background:var(--paper);color:var(--ink-faded);transition:all .15s}
+.mode-btn.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.mode-btn:hover:not(.active){border-color:var(--ink-soft);color:var(--ink)}
+
+/* ── Heatmap ─────────────────────────────────────── */
+.heatmap-wrap{overflow-x:auto;margin:12px 0}
+.heatmap-table{border-collapse:collapse;font-size:12px;min-width:100%}
+.heatmap-table th{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.06em;padding:8px 14px;text-align:left;color:var(--ink-ghost)}
+.heatmap-table th.doc-th{text-align:center;color:var(--ink)}
+.heatmap-table td{padding:6px 14px;border:1px solid var(--parchment);font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);text-align:center;transition:background .15s}
+.heatmap-table td.word-td{font-family:var(--sans);font-size:12px;color:var(--ink-faded);text-align:left;padding:6px 10px}
+
+/* ── Math note / insight ─────────────────────────── */
+.math-note{font-family:var(--mono);font-size:12px;background:var(--parchment);padding:12px 16px;border-radius:3px;margin:10px 0;color:var(--ink-soft)}
+.insight-box{background:var(--cream,#F5F0E8);border-left:3px solid var(--gold);padding:14px 18px;margin:16px 0;border-radius:0 4px 4px 0}
+.insight-box p{font-size:14.5px;line-height:1.7;color:var(--ink-faded);margin:0}
+.insight-box strong{color:var(--leather)}
+
+/* ── Sort indicator ──────────────────────────────── */
+.sort-note{font-family:var(--sans);font-size:11px;color:var(--ink-ghost);margin-bottom:8px;font-style:italic}
+</style>
+</head>
+<body class="zh">
+<div class="guide-layout">
+
+  <!-- TOP BAR -->
+  <div class="guide-topbar">
+    <div class="guide-breadcrumb">
+      <a href="../text-analysis.html" data-lang="en">Text as Data</a>
+      <a href="../text-analysis.html" data-lang="zh">文本分析</a>
+      <span class="sep">/</span>
+      <span data-lang="en">TF-IDF Explorer</span>
+      <span data-lang="zh">TF-IDF 探索器</span>
+    </div>
+    <div class="guide-lang-toggle">
+      <button class="guide-lang-btn active" data-lang="zh" onclick="setLang('zh')">中文</button>
+      <button class="guide-lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="guide-content-wrapper">
+    <div class="guide-content">
+
+      <a href="../text-analysis.html" class="guide-back" data-lang="en">Text as Data</a>
+      <a href="../text-analysis.html" class="guide-back" data-lang="zh">文本分析</a>
+
+      <div class="guide-header">
+        <div class="guide-tag">
+          <span data-lang="en">INTERACTIVE GUIDE · TEXT AS DATA</span>
+          <span data-lang="zh">互动指南 · 文本分析</span>
+        </div>
+        <h1>
+          <span data-lang="en">TF-IDF Explorer</span>
+          <span data-lang="zh">TF-IDF 探索器</span>
+        </h1>
+        <p>
+          <span data-lang="en">Compute TF-IDF scores across documents and visualize the document-term matrix.</span>
+          <span data-lang="zh">计算多文档 TF-IDF 分数，可视化文档-词项矩阵。</span>
+        </p>
+      </div>
+
+      <!-- TAB BAR -->
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="calc" onclick="switchTab('calc')">
+          <span data-lang="en">TF-IDF Calculator</span>
+          <span data-lang="zh">TF-IDF 计算器</span>
+        </button>
+        <button class="tab-btn" data-tab="dtm" onclick="switchTab('dtm')">
+          <span data-lang="en">Document-Term Matrix</span>
+          <span data-lang="zh">文档-词项矩阵</span>
+        </button>
+      </div>
+
+      <!-- TAB 1: CALCULATOR -->
+      <div class="tab-pane active" id="tab-calc">
+        <div class="guide-section">
+          <h2>
+            <span data-lang="en">TF-IDF Calculator</span>
+            <span data-lang="zh">TF-IDF 计算器</span>
+          </h2>
+          <p>
+            <span data-lang="en">Edit the three documents below, then click Compute. TF-IDF rewards words that are frequent in a document but rare across the corpus — these are the words that distinguish each document.</span>
+            <span data-lang="zh">编辑下方三份文档，点击计算。TF-IDF 奖励在单个文档中频繁出现但在整个语料库中少见的词——这些词能区分不同文档。</span>
+          </p>
+
+          <div class="sim-panel">
+            <div class="doc-grid">
+              <div class="doc-box">
+                <div class="doc-label d1" data-lang="en">Document 1 — Healthcare</div>
+                <div class="doc-label d1" data-lang="zh">文档一 — 医疗</div>
+                <textarea id="doc1" rows="6">Congress expanded Medicaid and passed healthcare reform. Insurance coverage for preexisting conditions was guaranteed. The healthcare law reduced uninsured rates significantly across states.</textarea>
+              </div>
+              <div class="doc-box">
+                <div class="doc-label d2" data-lang="en">Document 2 — Immigration</div>
+                <div class="doc-label d2" data-lang="zh">文档二 — 移民</div>
+                <textarea id="doc2" rows="6">The Senate debated immigration reform and border security. Undocumented immigrants sought pathways to citizenship. Border patrol enforcement increased under the new immigration policy.</textarea>
+              </div>
+              <div class="doc-box">
+                <div class="doc-label d3" data-lang="en">Document 3 — Economy</div>
+                <div class="doc-label d3" data-lang="zh">文档三 — 经济</div>
+                <textarea id="doc3" rows="6">Congress passed a tax reform bill cutting corporate taxes. The economy grew as unemployment fell. Federal spending on infrastructure and jobs programs increased in the budget.</textarea>
+              </div>
+            </div>
+            <button class="run-btn" onclick="compute()">
+              <span data-lang="en">▶ Compute TF-IDF</span>
+              <span data-lang="zh">▶ 计算 TF-IDF</span>
+            </button>
+          </div>
+
+          <div id="results-area" style="display:none">
+            <div class="math-note">
+              <span data-lang="en">TF(t,d) = count(t,d) / |d| &nbsp;·&nbsp; IDF(t) = log(N / df(t)) &nbsp;·&nbsp; TF-IDF(t,d) = TF × IDF &nbsp;·&nbsp; Sorted by max TF-IDF across documents</span>
+              <span data-lang="zh">TF(t,d) = count(t,d) / |d| &nbsp;·&nbsp; IDF(t) = log(N / df(t)) &nbsp;·&nbsp; TF-IDF(t,d) = TF × IDF &nbsp;·&nbsp; 按各文档最大 TF-IDF 降序排列</span>
+            </div>
+            <div class="sort-note" data-lang="en">Showing top 20 terms by maximum TF-IDF score. Stopwords removed before computation.</div>
+            <div class="sort-note" data-lang="zh">显示最高 TF-IDF 分数的前 20 个词项。计算前已去除停用词。</div>
+            <div style="overflow-x:auto">
+              <table class="results-table" id="results-table">
+                <thead>
+                  <tr>
+                    <th class="word-col" data-lang="en">Term</th>
+                    <th class="word-col" data-lang="zh">词项</th>
+                    <th data-lang="en">IDF</th>
+                    <th data-lang="zh">IDF</th>
+                    <th class="d1-col" data-lang="en">TF-IDF · Doc1</th>
+                    <th class="d1-col" data-lang="zh">TF-IDF · 文档1</th>
+                    <th class="d2-col" data-lang="en">TF-IDF · Doc2</th>
+                    <th class="d2-col" data-lang="zh">TF-IDF · 文档2</th>
+                    <th class="d3-col" data-lang="en">TF-IDF · Doc3</th>
+                    <th class="d3-col" data-lang="zh">TF-IDF · 文档3</th>
+                  </tr>
+                </thead>
+                <tbody id="results-body"></tbody>
+              </table>
+            </div>
+
+            <div class="insight-box">
+              <p id="insight-text"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: DTM HEATMAP -->
+      <div class="tab-pane" id="tab-dtm">
+        <div class="guide-section">
+          <h2>
+            <span data-lang="en">Document-Term Matrix</span>
+            <span data-lang="zh">文档-词项矩阵</span>
+          </h2>
+          <p>
+            <span data-lang="en">The DTM represents each document as a row and each unique word as a column. Cell values depend on the weighting scheme you choose. Darker cells indicate higher values.</span>
+            <span data-lang="zh">文档-词项矩阵以行代表文档，列代表每个唯一词项。格子的值取决于你选择的权重方案。颜色越深表示值越高。</span>
+          </p>
+
+          <div class="sim-panel">
+            <div class="step-label" data-lang="en" style="font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-ghost);margin-bottom:8px">MATRIX TYPE</div>
+            <div class="step-label" data-lang="zh" style="font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-ghost);margin-bottom:8px">矩阵类型</div>
+            <div class="mode-btns">
+              <button class="mode-btn active" id="mode-count" onclick="setMode('count')">
+                <span data-lang="en">Raw Counts</span>
+                <span data-lang="zh">原始频次</span>
+              </button>
+              <button class="mode-btn" id="mode-tf" onclick="setMode('tf')">
+                <span data-lang="en">Term Frequency (TF)</span>
+                <span data-lang="zh">词频 (TF)</span>
+              </button>
+              <button class="mode-btn" id="mode-tfidf" onclick="setMode('tfidf')">
+                <span data-lang="en">TF-IDF</span>
+                <span data-lang="zh">TF-IDF</span>
+              </button>
+            </div>
+            <div class="heatmap-wrap" id="heatmap-wrap">
+              <p style="font-family:var(--sans);font-size:13px;color:var(--ink-ghost);font-style:italic" data-lang="en">Compute TF-IDF on the Calculator tab first to populate the matrix.</p>
+              <p style="font-family:var(--sans);font-size:13px;color:var(--ink-ghost);font-style:italic" data-lang="zh">请先在计算器标签页计算 TF-IDF，再查看矩阵。</p>
+            </div>
+          </div>
+
+          <div class="math-note">
+            <span data-lang="en">Each row = one document. Each column = one vocabulary term. The DTM is the core data structure for all bag-of-words methods: classification, topic modeling, scaling.</span>
+            <span data-lang="zh">每行代表一份文档，每列代表一个词汇表词项。文档-词项矩阵是所有词袋方法的核心数据结构：分类、主题建模、位置估计。</span>
+          </div>
+
+          <div class="insight-box">
+            <p>
+              <span data-lang="en"><strong>Sparsity:</strong> Real corpora produce extremely sparse DTMs — most documents contain only a tiny fraction of the full vocabulary. A typical political science corpus might have 10,000+ unique terms but each document uses only 100–500, giving sparsity above 95%.</span>
+              <span data-lang="zh"><strong>稀疏性：</strong>实际语料库产生的文档-词项矩阵极度稀疏——大多数文档只包含整个词汇表的极小部分。典型的政治学语料库可能有 10,000+ 个唯一词项，但每份文档只使用 100–500 个，稀疏度超过 95%。</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Language toggle ───────────────────────────────────────
+function setLang(lang) {
+  document.body.className = lang;
+  document.querySelectorAll('.guide-lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+  });
+  localStorage.setItem('preferred-lang', lang);
+}
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('preferred-lang') || 'zh';
+  setLang(saved);
+});
+
+// ── Tab switching ─────────────────────────────────────────
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[data-tab="${id}"]`).classList.add('active');
+  document.getElementById(`tab-${id}`).classList.add('active');
+}
+
+// ── NLP ───────────────────────────────────────────────────
+const STOP = new Set([
+  'a','an','the','is','are','was','were','be','been','being',
+  'have','has','had','do','does','did','will','would','could','should',
+  'to','of','in','for','on','with','at','by','from','but','and','or','not',
+  'as','if','this','these','those','that','it','its','which',
+  'i','you','he','she','we','they','me','him','her','us','them',
+  'my','your','his','our','their','all','each','some','any','also','just',
+  'into','than','then','so','up','out','about','more','over','after','before',
+  'new','under','across','significantly','increased','sought','debated'
+]);
+
+function tokenize(text) {
+  return text.toLowerCase().replace(/[^a-z\s]/g,' ').split(/\s+/).filter(w => w.length > 1 && !STOP.has(w));
+}
+
+// Global state
+let G = null;
+
+function computeTFIDF() {
+  const docs = [
+    document.getElementById('doc1').value,
+    document.getElementById('doc2').value,
+    document.getElementById('doc3').value
+  ];
+  const tokenized = docs.map(tokenize);
+  const N = docs.length;
+
+  // Vocabulary: all unique tokens
+  const vocabSet = new Set(tokenized.flat());
+  const vocab = [...vocabSet].sort();
+
+  // TF: count / length
+  const counts = tokenized.map(tokens => {
+    const c = {};
+    tokens.forEach(w => c[w] = (c[w]||0)+1);
+    return c;
+  });
+  const tf = counts.map((c, di) => {
+    const len = tokenized[di].length || 1;
+    const r = {};
+    Object.entries(c).forEach(([w,v]) => r[w] = v/len);
+    return r;
+  });
+
+  // IDF: log(N / df)
+  const idf = {};
+  vocab.forEach(w => {
+    const df = tokenized.filter(t => t.includes(w)).length;
+    idf[w] = Math.log(N / df);
+  });
+
+  // TF-IDF
+  const tfidf = tf.map(tfDoc => {
+    const r = {};
+    Object.entries(tfDoc).forEach(([w,v]) => r[w] = v * idf[w]);
+    return r;
+  });
+
+  return { vocab, counts, tf, idf, tfidf, N };
+}
+
+function compute() {
+  G = computeTFIDF();
+  const { vocab, idf, tfidf } = G;
+
+  // Sort words by max TF-IDF
+  const sorted = vocab
+    .map(w => ({ w, maxTF: Math.max(...tfidf.map(d => d[w]||0)), idf: idf[w] }))
+    .filter(x => x.idf > 0)  // skip terms in all docs (idf=0)
+    .sort((a,b) => b.maxTF - a.maxTF)
+    .slice(0,20);
+
+  const maxVal = sorted[0] ? sorted[0].maxTF : 1;
+
+  const docLabels_en = ['Doc1','Doc2','Doc3'];
+  const docColors = ['var(--red)','#8a6a10','var(--leather)'];
+
+  const tbody = document.getElementById('results-body');
+  tbody.innerHTML = sorted.map(({w, idf: idfV}) =>
+    `<tr>
+      <td class="word-col" colspan="2">${w}</td>
+      <td colspan="2">${idfV.toFixed(3)}</td>
+      ${tfidf.map((d,i) => {
+        const v = d[w]||0;
+        const bar = v > 0 ? `<span class="val-bar" style="width:${Math.round(v/maxVal*60)}px;background:${docColors[i]}"></span>` : '';
+        return `<td colspan="2">${v>0?v.toFixed(4):'—'}${bar}</td>`;
+      }).join('')}
+    </tr>`
+  ).join('');
+
+  // Generate insight
+  const topWords = [0,1,2].map(di => {
+    const sorted_d = vocab
+      .filter(w => (tfidf[di][w]||0) > 0)
+      .sort((a,b) => (tfidf[di][b]||0)-(tfidf[di][a]||0));
+    return sorted_d.slice(0,3).join(', ');
+  });
+
+  const insightEn = `<strong>Top distinctive terms:</strong> Doc1 → <em>${topWords[0]}</em> · Doc2 → <em>${topWords[1]}</em> · Doc3 → <em>${topWords[2]}</em>. Words appearing in all documents get IDF = 0 and are excluded — they carry no discriminating power.`;
+  const insightZh = `<strong>各文档最具区分性词项：</strong> 文档1 → <em>${topWords[0]}</em> · 文档2 → <em>${topWords[1]}</em> · 文档3 → <em>${topWords[2]}</em>。出现在所有文档中的词 IDF = 0，不具有区分力，已被排除。`;
+
+  document.getElementById('insight-text').innerHTML =
+    `<span data-lang="en">${insightEn}</span><span data-lang="zh">${insightZh}</span>`;
+
+  // Re-apply lang so new elements render correctly
+  setLang(document.body.className || 'zh');
+  document.getElementById('results-area').style.display = 'block';
+
+  // Build heatmap with current mode
+  buildHeatmap(currentMode);
+}
+
+// ── DTM Heatmap ───────────────────────────────────────────
+let currentMode = 'count';
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`mode-${mode}`).classList.add('active');
+  if (G) buildHeatmap(mode);
+}
+
+function buildHeatmap(mode) {
+  if (!G) return;
+  const { vocab, counts, tf, tfidf } = G;
+
+  // Use top 15 words by max value in chosen mode
+  const dataSource = mode === 'count' ? counts :
+                     mode === 'tf'    ? tf    : tfidf;
+
+  const sorted = vocab.sort((a,b) => {
+    const maxA = Math.max(...dataSource.map(d => d[a]||0));
+    const maxB = Math.max(...dataSource.map(d => d[b]||0));
+    return maxB - maxA;
+  }).slice(0,15);
+
+  // Find global max for normalizing color
+  let globalMax = 0;
+  sorted.forEach(w => {
+    dataSource.forEach(d => { globalMax = Math.max(globalMax, d[w]||0); });
+  });
+
+  const docNames_en = ['Doc 1','Doc 2','Doc 3'];
+  const docNames_zh = ['文档1','文档2','文档3'];
+  const cellColors = ['181,55,42', '138,106,16', '139,90,43'];
+
+  const lang = document.body.className || 'zh';
+  const docNames = lang === 'zh' ? docNames_zh : docNames_en;
+  const wordLabel = lang === 'zh' ? '词项' : 'Term';
+
+  let html = `<table class="heatmap-table"><thead><tr>
+    <th>${wordLabel}</th>
+    ${docNames.map(n => `<th class="doc-th">${n}</th>`).join('')}
+  </tr></thead><tbody>`;
+
+  sorted.forEach(w => {
+    html += `<tr><td class="word-td">${w}</td>`;
+    dataSource.forEach((d,i) => {
+      const v = d[w]||0;
+      const intensity = globalMax > 0 ? v/globalMax : 0;
+      const alpha = (intensity * 0.7 + (intensity > 0 ? 0.05 : 0)).toFixed(2);
+      const display = v === 0 ? '—' :
+                      mode === 'count' ? String(Math.round(v * (G.tf[i] ? Object.values(G.tf[i]).reduce((s,x)=>s+x,0) / Object.keys(G.tf[i]).length * 10 : 1))) :
+                      v.toFixed(mode === 'tf' ? 4 : 4);
+      // For count mode, recalculate from raw counts
+      const rawCount = G.counts[i][w]||0;
+      const displayFinal = mode === 'count' ? (rawCount > 0 ? String(rawCount) : '—') : (v > 0 ? v.toFixed(4) : '—');
+      html += `<td style="background:rgba(${cellColors[i]},${alpha})">${displayFinal}</td>`;
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('heatmap-wrap').innerHTML = html;
+}
+</script>
+</body>
+</html>

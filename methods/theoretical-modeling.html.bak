@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theoretical Modeling — Research Methods Notebook</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── Data table ────────────────────────────────────── */
+.paradigm-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14.5px}
+.paradigm-table th{font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);padding:10px 12px;border-bottom:2px solid var(--parchment);text-align:left}
+.paradigm-table td{padding:12px;border-bottom:1px solid rgba(222,212,192,.4);color:var(--ink-faded);line-height:1.6;vertical-align:top}
+.paradigm-table tr:last-child td{border-bottom:none}
+.paradigm-table .para-num{font-family:var(--sans);font-size:11px;font-weight:600;color:var(--red);white-space:nowrap}
+.paradigm-table tr.highlight td{background:rgba(194,153,61,.06)}
+</style>
+</head>
+<body class="zh">
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="sb-brand" href="index.html"><h2>Methods <span>Notebook</span></h2><div class="sb-sub">Jialing Wu</div></a>
+    <div class="sb-cat">Person-Centered Quantitative Methods</div>
+    <a class="sb-link" href="lpa.html"><span class="sb-num">01</span> Latent Profile Analysis</a>
+    <div class="sb-cat">Computational Social Science</div>
+    <div class="sb-subcat">Foundations</div>
+    <a class="sb-link" href="machine-learning.html" style="display:none"><span class="sb-num">01</span> Machine Learning</a>
+    <a class="sb-link" href="llm.html" style="display:none"><span class="sb-num">02</span> LLM &amp; NLP</a>
+    <a class="sb-link" href="text-analysis.html"><span class="sb-num">03</span> Text as Data</a>
+    <a class="sb-link active" href="theoretical-modeling.html"><span class="sb-num">04</span> Theoretical Modeling</a>
+    <div class="sb-cat">Statistics</div>
+    <div class="sb-subcat">Foundations</div>
+    <a class="sb-link" href="empirical-modeling.html"><span class="sb-num">01</span> Empirical Modeling</a>
+    <div class="sb-footer"><a href="https://jialing-wu.github.io">&larr; My Website</a></div>
+  </aside>
+  <div class="sidebar-overlay" id="overlay" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"></div>
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"><span></span></button>
+      <div class="breadcrumb">Computational Social Science<span class="sep">/</span>Foundations<span class="sep">/</span>Theoretical Modeling</div>
+      <div class="topbar-lang">
+        <button class="lang-btn" id="btn-zh" onclick="setLang('zh')">中文</button>
+        <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+    <div class="content method-page">
+
+      <div class="method-header">
+        <h1>Theoretical Modeling of Social Systems</h1>
+        <div class="method-meta">Computational Social Science &middot; Foundations 04</div>
+        <div data-lang="en"><p class="subtitle">Notes from ICPSR 2024 "Theoretical Modeling for the Social and Behavioral Sciences", University of Michigan &middot; <a href="https://ssha.ucmerced.edu/content/dr-paul-smaldino" target="_blank" style="color:var(--red);border-bottom:1px solid var(--red)">Prof. Paul Smaldino</a></p></div>
+        <div data-lang="zh"><p class="subtitle">笔记整理自 ICPSR 2024「Theoretical Modeling for the Social and Behavioral Sciences」, University of Michigan &middot; <a href="https://ssha.ucmerced.edu/content/dr-paul-smaldino" target="_blank" style="color:var(--red);border-bottom:1px solid var(--red)">Prof. Paul Smaldino</a></p></div>
+      </div>
+
+      <div class="intro-cards">
+        <div class="intro-card">
+          <div class="card-label" data-lang="en">What Is This Course?</div>
+          <div class="card-label" data-lang="zh">这门课讲什么？</div>
+          <div data-lang="en"><p>How do you build a formal model of a social system? This course teaches you to translate verbal theories into precise mathematical or computational models — and discover what your assumptions actually imply.</p></div>
+          <div data-lang="zh"><p>如何为社会系统构建形式化模型？本课程教你将口头理论转化为精确的数学或计算模型，并发现你的假设究竟意味着什么。</p></div>
+        </div>
+        <div class="intro-card">
+          <div class="card-label" data-lang="en">Prerequisites</div>
+          <div class="card-label" data-lang="zh">前置知识</div>
+          <div data-lang="en"><p>Basic algebra and probability. No programming required. Curiosity about social complexity is the key prerequisite.</p></div>
+          <div data-lang="zh"><p>基础代数与概率论。无需编程经验。对社会复杂性的好奇心是最重要的前置条件。</p></div>
+        </div>
+        <div class="intro-card">
+          <div class="card-label" data-lang="en">Software &amp; Tools</div>
+          <div class="card-label" data-lang="zh">软件工具</div>
+          <div data-lang="en"><p>NetLogo (visual ABM), Python/Mesa (large-scale), R (analysis). Interactive simulations are embedded in each module below.</p></div>
+          <div data-lang="zh"><p>NetLogo（可视化 ABM）、Python/Mesa（大规模模拟）、R（结果分析）。各模块下方嵌有互动模拟演示。</p></div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="section" id="tm-paradigms">
+        <h2 data-lang="en">Four Paradigms of Theoretical Modeling</h2>
+        <h2 data-lang="zh">理论建模的四种范式</h2>
+        <div data-lang="en"><p>Theoretical models are not all the same. Different paradigms ask different questions and use different tools. Understanding which paradigm fits your research question is the first modeling decision you make.</p></div>
+        <div data-lang="zh"><p>理论模型并非千篇一律。不同的范式提出不同的问题，使用不同的工具。判断哪种范式适合你的研究问题，是建模的第一个决策。</p></div>
+
+        <div data-lang="en">
+          <table class="paradigm-table">
+            <thead><tr><th>Paradigm</th><th>Core Question</th><th>Key Approach</th><th>Classic Example</th></tr></thead>
+            <tbody>
+              <tr><td class="para-num">I. Equation-Based</td><td>What are the equilibria or trajectories?</td><td>ODEs, difference equations, closed-form solutions</td><td>SIR epidemic model</td></tr>
+              <tr><td class="para-num">II. Agent-Based</td><td>What patterns emerge from local rules?</td><td>Simulate each agent; observe collective behavior</td><td>Schelling segregation</td></tr>
+              <tr><td class="para-num">III. Game-Theoretic</td><td>What strategy survives rational or evolutionary pressure?</td><td>Nash equilibrium, replicator dynamics</td><td>Prisoner's Dilemma</td></tr>
+              <tr class="highlight"><td class="para-num">IV. Network</td><td><strong>How does social structure shape what spreads and evolves?</strong></td><td>Graph theory, diffusion, structural effects</td><td>Small-world contagion</td></tr>
+            </tbody>
+          </table>
+          <p>These four paradigms often combine: a game-theoretic payoff structure runs inside an agent-based simulation on a network, with equation-based analysis checking the equilibria. The skill is knowing which lens clarifies your question.</p>
+        </div>
+        <div data-lang="zh">
+          <table class="paradigm-table">
+            <thead><tr><th>范式</th><th>核心问题</th><th>主要方法</th><th>经典例子</th></tr></thead>
+            <tbody>
+              <tr><td class="para-num">I. 方程模型</td><td>均衡或轨迹是什么？</td><td>微分方程、差分方程、闭式解</td><td>SIR 流行病模型</td></tr>
+              <tr><td class="para-num">II. 基于代理</td><td>局部规则会产生什么模式？</td><td>模拟每个代理；观察集体行为</td><td>Schelling 隔离模型</td></tr>
+              <tr><td class="para-num">III. 博弈论</td><td>什么策略能在理性或演化压力下生存？</td><td>纳什均衡、复制者动态</td><td>囚徒困境</td></tr>
+              <tr class="highlight"><td class="para-num">IV. 网络模型</td><td><strong>社会结构如何决定什么在传播和演化？</strong></td><td>图论、扩散、结构效应</td><td>小世界网络传染</td></tr>
+            </tbody>
+          </table>
+          <p>四种范式常常交织使用：博弈论的收益结构运行在网络上的代理模拟中，同时用方程分析检验均衡。关键技能在于知道哪种视角最能阐明你的问题。</p>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="section" id="tm-organization">
+        <h2 data-lang="en">How This Course Is Organized</h2>
+        <h2 data-lang="zh">课程如何组织</h2>
+        <div data-lang="en"><p>Modeling social systems raises four fundamental challenges. We address them through four modules — from building your first model, to strategic interaction, to emergent complexity, to networks and evolution:</p></div>
+        <div data-lang="zh"><p>对社会系统建模涉及四个根本挑战。我们通过四个模块逐一应对——从构建第一个模型，到战略互动，到涌现复杂性，再到网络与演化：</p></div>
+        <div class="modules-overview">
+          <div class="module-card">
+            <h4 data-lang="en">Module 1: Formal Model Building</h4>
+            <h4 data-lang="zh">模块 1：形式化建模基础</h4>
+            <p data-lang="en">Challenge 1: How do we translate verbal theories into precise, falsifiable models? Parts, dynamics, ODD protocol, validation.</p>
+            <p data-lang="zh">挑战 1：如何将口头理论转化为精确、可证伪的模型？组件、动态、ODD 协议、验证。</p>
+          </div>
+          <div class="module-card">
+            <h4 data-lang="en">Module 2: Strategic Interaction</h4>
+            <h4 data-lang="zh">模块 2：战略互动</h4>
+            <p data-lang="en">Challenge 2: When self-interested agents interact, what collective outcomes emerge? Nash equilibrium, evolutionary dynamics, costly signaling.</p>
+            <p data-lang="zh">挑战 2：自利代理互动时，会产生什么集体结果？纳什均衡、演化动态、代价信号。</p>
+          </div>
+          <div class="module-card">
+            <h4 data-lang="en">Module 3: Emergence &amp; Complexity</h4>
+            <h4 data-lang="zh">模块 3：涌现与复杂性</h4>
+            <p data-lang="en">Challenge 3: Simple local rules produce surprising global patterns. Segregation, cellular automata, contagion, opinion dynamics — with interactive simulations.</p>
+            <p data-lang="zh">挑战 3：简单的局部规则产生令人惊讶的全局模式。隔离、元胞自动机、传染、观点动态——配有互动模拟演示。</p>
+          </div>
+          <div class="module-card">
+            <h4 data-lang="en">Module 4: Networks &amp; Cultural Evolution</h4>
+            <h4 data-lang="zh">模块 4：网络与文化演化</h4>
+            <p data-lang="en">Challenge 4: Social structure is not random. How do network topology and evolutionary learning shape what behaviors survive and spread?</p>
+            <p data-lang="zh">挑战 4：社会结构不是随机的。网络拓扑和演化学习如何决定哪些行为得以生存和传播？</p>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- MODULE 1 -->
+      <div class="section" id="tm-module1">
+        <h2 data-lang="en">Module 1: Formal Model Building</h2>
+        <h2 data-lang="zh">模块 1：形式化建模基础</h2>
+        <div class="challenge-overview">
+          <p data-lang="en"><strong>Challenge 1:</strong> Verbal theories are vague. "Inequality breeds resentment which causes conflict" — but at what threshold? How fast? Through what mechanism? A formal model forces precision: every assumption must be written down, every variable defined. The reward is clarity: you can run the model and see exactly what your assumptions imply, often discovering that your theory has unexpected consequences or logical gaps.</p>
+          <p data-lang="zh"><strong>挑战 1：</strong>口头理论是模糊的。"不平等滋生怨恨进而引发冲突"——但在什么门槛？多快？通过什么机制？形式化模型迫使你精确：每一个假设都必须明确写出，每一个变量都必须有定义。回报是清晰：你可以运行模型，精确看到你的假设意味着什么，往往会发现你的理论有意想不到的后果或逻辑漏洞。</p>
+        </div>
+
+        <div class="method-section">
+          <h3 data-lang="en">What Is a Model — and Why Build One?</h3>
+          <h3 data-lang="zh">什么是模型——为什么要建模？</h3>
+          <div class="method-desc" data-lang="en">A model is a deliberate simplification of a system, written down precisely so its logic can be traced. Models are not meant to be realistic — they are meant to be illuminating. The goal is not to capture everything, but to isolate the mechanisms that matter most for your question. Good models are wrong in ways that don't matter and right in ways that do.</div>
+          <div class="method-desc" data-lang="zh">模型是对系统的刻意简化，以精确方式写下，使其逻辑可以追溯。模型不必写实——它们的目的是启发思考。目标不是捕捉一切，而是隔离对你的问题最重要的机制。好的模型在不重要的地方有误差，在重要的地方正确。</div>
+          <div class="method-analogy" data-lang="en">A map is a model of a city. It omits buildings, textures, smells — but it captures what you need for navigation. A map that includes everything is just as useless as no map at all. The same logic applies to theoretical models.</div>
+          <div class="method-analogy" data-lang="zh">地图是城市的模型。它省略了建筑、纹理、气味——但捕捉了导航所需的一切。一张包含所有细节的地图和没有地图一样无用。同样的逻辑适用于理论模型。</div>
+
+          <div class="math-box">
+            <div class="math-box-title"><span data-lang="en">Equation-based vs. agent-based: choosing the right paradigm</span><span data-lang="zh">方程模型 vs. 代理模型：选择合适的范式</span></div>
+            <div class="math-content">
+              <p data-lang="en"><strong>Equation-based models</strong> write equations for how system-level variables change over time. They assume agents are interchangeable and interactions are well-mixed — but they allow clean analytical solutions and fast computation.</p>
+              <p data-lang="zh"><strong>方程模型</strong>写出系统层面变量如何随时间变化的方程。它们假设代理可互换、互动充分混合——但允许清晰的分析解和快速计算。</p>
+              <div class="formula">Continuous time: dX/dt = f(X, Y, parameters)</div>
+              <div class="formula">Discrete time:  Xₜ₊₁ = g(Xₜ, Yₜ, parameters)</div>
+              <p data-lang="en"><strong>Agent-based models (ABM)</strong> simulate each individual separately. Each agent has attributes and follows local rules; collective patterns emerge from simulation. ABMs are necessary when heterogeneity, spatial structure, or local network interactions matter. The trade-off: richer behavior, but no closed-form solution — you learn by running many simulations and analyzing results statistically.</p>
+              <p data-lang="zh"><strong>基于代理的模型（ABM）</strong>分别模拟每个个体。每个代理有属性并遵循局部规则；集体模式从模拟中涌现。当异质性、空间结构或局部网络互动很重要时，ABM 是必要的。权衡：行为更丰富，但没有闭式解——通过运行大量模拟并统计分析结果来学习。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="method-section">
+          <h3 data-lang="en">Building Blocks &amp; the ODD Protocol</h3>
+          <h3 data-lang="zh">模型构建要素与 ODD 协议</h3>
+          <div class="method-desc" data-lang="en">Every model needs four elements: <strong>Parts</strong> (who are the agents? what attributes do they have? what is the environment?), <strong>Initialization</strong> (what is the starting state?), <strong>Dynamics</strong> (what happens each time step, and in what order?), and <strong>Outcomes</strong> (what are you measuring?). The ODD protocol — Overview, Design, Details — is the standard format for documenting agent-based models so that others can replicate them exactly.</div>
+          <div class="method-desc" data-lang="zh">每个模型需要四个要素：<strong>组件</strong>（代理是谁？有哪些属性？环境是什么？）、<strong>初始化</strong>（初始状态是什么？）、<strong>动态</strong>（每个时间步发生什么？顺序如何？）、<strong>结果</strong>（你测量什么？）。ODD 协议——概述、设计、细节——是记录代理模型的标准格式，使他人能够精确重现结果。</div>
+          <div class="method-example" data-lang="en">Schelling model via ODD: Parts — agents on a grid, type (Red/Blue), threshold θ. Initialization — random placement with density d. Dynamics — each step, unhappy agents (same-type neighbor fraction &lt; θ) move to a random empty cell; repeat until stable. Outcome — segregation index S ∈ [0,1].</div>
+          <div class="method-example" data-lang="zh">Schelling 模型的 ODD 描述：组件——网格上的代理，类型（红/蓝），阈值 θ。初始化——以密度 d 随机放置。动态——每步，不满意的代理（同类型邻居比例 &lt; θ）移动到随机空格；重复直到稳定。结果——隔离指数 S ∈ [0,1]。</div>
+
+          <div class="math-box">
+            <div class="math-box-title"><span data-lang="en">The scheduling problem: why the order of actions changes the outcome</span><span data-lang="zh">调度问题：动作顺序如何改变结果</span></div>
+            <div class="math-content">
+              <p data-lang="en"><strong>Synchronous updating:</strong> All agents act simultaneously, using the state at the start of the time step. Like a parliamentary vote — everyone votes at once. The current state is a shared snapshot that all agents read simultaneously.</p>
+              <p data-lang="zh"><strong>同步更新：</strong>所有代理同时行动，使用时间步开始时的状态。像议会投票——所有人同时投票。当前状态是所有代理同时读取的共享快照。</p>
+              <p data-lang="en"><strong>Asynchronous updating:</strong> Agents act one at a time, usually in random order. Each agent sees the updated state left by agents who already acted this step. Like people updating a shared document in real time.</p>
+              <p data-lang="zh"><strong>异步更新：</strong>代理逐一行动，通常随机顺序。每个代理看到本步已行动代理留下的更新状态。像人们实时编辑共享文档。</p>
+              <p data-lang="en"><strong>Why it matters:</strong> In Conway's Game of Life, switching from synchronous to asynchronous updating destroys all classic structures (gliders, oscillators). The same rules with different scheduling produce qualitatively different systems. Scheduling is a modeling assumption — it must be justified, not chosen arbitrarily.</p>
+              <p data-lang="zh"><strong>为什么重要：</strong>在康威生命游戏中，从同步切换到异步更新会破坏所有经典结构（滑翔机、振荡器）。相同规则加不同调度产生定性上不同的系统。调度是建模假设——必须有理由，不能随意选择。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="method-section">
+          <h3 data-lang="en">Validation &amp; Sensitivity Analysis</h3>
+          <h3 data-lang="zh">验证与敏感性分析</h3>
+          <div class="method-desc" data-lang="en">Models are never perfect replicas of reality. Three standards of validation: <strong>Internal validity</strong> — does the model do what you designed it to do? <strong>External validity</strong> — does the model reproduce empirical patterns? <strong>Theoretical validity</strong> — does the model's structure match our best understanding of the mechanism? Sensitivity analysis is essential: vary each parameter over a plausible range and see if qualitative conclusions change. Robust models produce the same pattern across many parameter values; fragile models depend critically on specific values.</div>
+          <div class="method-desc" data-lang="zh">模型从不是现实的完美复制。三个验证标准：<strong>内部效度</strong>——模型是否按你设计的方式运作？<strong>外部效度</strong>——模型是否重现了经验模式？<strong>理论效度</strong>——模型的结构是否符合我们对机制的最佳理解？敏感性分析是必要的：在合理范围内改变每个参数，看定性结论是否改变。稳健模型在许多参数值下产生相同模式；脆弱模型关键依赖特定值。</div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- MODULE 2 -->
+      <div class="section" id="tm-module2">
+        <h2 data-lang="en">Module 2: Strategic Interaction</h2>
+        <h2 data-lang="zh">模块 2：战略互动</h2>
+        <div class="challenge-overview">
+          <p data-lang="en"><strong>Challenge 2:</strong> When self-interested agents interact, what collective outcomes emerge — and are they efficient? Game theory provides the tools: Nash equilibrium identifies stable strategy profiles under rationality; evolutionary game theory shows which strategies spread without rationality, through differential reproduction. The gap between individually rational and collectively optimal is the core puzzle of social science.</p>
+          <p data-lang="zh"><strong>挑战 2：</strong>当自利代理互动时，会产生什么集体结果——它们是有效率的吗？博弈论提供了工具：纳什均衡在理性假设下识别稳定的策略组合；演化博弈论在无需理性的情况下，通过差异繁殖展示哪些策略会传播。个体理性与集体最优之间的差距是社会科学的核心谜题。</p>
+        </div>
+
+        <div class="method-section">
+          <h3 data-lang="en">Nash Equilibrium &amp; Classical Game Theory</h3>
+          <h3 data-lang="zh">纳什均衡与经典博弈论</h3>
+          <div class="method-desc" data-lang="en">A Nash equilibrium is a set of strategies where no player can improve their payoff by unilaterally changing their action, given what everyone else is doing. It is the outcome rational agents are drawn to — not necessarily the best collective outcome. Every finite game has at least one Nash equilibrium (possibly in mixed strategies).</div>
+          <div class="method-desc" data-lang="zh">纳什均衡是一组策略集，在其中任何玩家都无法通过单方面改变自己的行动来提高收益——前提是其他人的行动不变。它是理性代理被吸引向的结果——不一定是最优的集体结果。每个有限博弈至少有一个纳什均衡（可能是混合策略均衡）。</div>
+          <div class="method-analogy" data-lang="en">Two drivers approaching each other both drive on the right. Neither wants to deviate unilaterally — switching to the left while the other stays right causes a crash. Driving-right is stable not because it's mandated, but because deviating alone makes you worse off.</div>
+          <div class="method-analogy" data-lang="zh">两辆车相向而行，都靠右行驶。没有人想单方面偏离——当对方靠右时自己转左会相撞。靠右行驶之所以稳定，不是因为有强制规定，而是因为单独偏离会让自己变得更糟。</div>
+
+          <div class="math-box">
+            <div class="math-box-title"><span data-lang="en">Prisoner's Dilemma: why rationality produces collectively bad outcomes</span><span data-lang="zh">囚徒困境：为什么理性会产生集体糟糕的结果</span></div>
+            <div class="math-content">
+              <p data-lang="en"><strong>The setup.</strong> Two players each choose Cooperate (C) or Defect (D). Payoff matrix (row player's payoff, column player's payoff):</p>
+              <p data-lang="zh"><strong>设定。</strong>两位玩家各自选择合作（C）或背叛（D）。收益矩阵（行玩家收益，列玩家收益）：</p>
+              <div data-lang="en" style="overflow-x:auto;margin:10px 0;">
+                <table style="border-collapse:collapse;font-family:var(--mono);font-size:13px;width:auto;min-width:320px;">
+                  <thead><tr>
+                    <th style="padding:8px 14px;border:1px solid var(--parchment);background:var(--warm);font-family:var(--sans);font-size:11px;letter-spacing:.06em;"></th>
+                    <th style="padding:8px 18px;border:1px solid var(--parchment);background:var(--warm);font-family:var(--sans);font-size:11px;letter-spacing:.06em;">Column: Cooperate</th>
+                    <th style="padding:8px 18px;border:1px solid var(--parchment);background:var(--warm);font-family:var(--sans);font-size:11px;letter-spacing:.06em;">Column: Defect</th>
+                  </tr></thead>
+                  <tbody>
+                    <tr>
+                      <td style="padding:8px 14px;border:1px solid var(--parchment);background:var(--warm);font-family:var(--sans);font-size:11px;font-weight:600;">Row: Cooperate</td>
+                      <td style="padding:10px 18px;border:1px solid var(--parchment);text-align:center;background:rgba(74,124,89,.07);color:#3a7a52;font-weight:700;">3, 3</td>
+                      <td style="padding:10px 18px;border:1px solid var(--parchment);text-align:center;">0, 5</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:8px 14px;border:1px solid var(--parchment);background:var(--warm);font-family:var(--sans);font-size:11px;font-weight:600;">Row: Defect ← dominant</td>
+                      <td style="padding:10px 18px;border:1px solid var(--parchment);text-align:center;">5, 0</td>
+                      <td style="padding:10px 18px;border:1px solid var(--parchment);text-align:center;background:rgba(181,55,42,.07);color:var(--red);font-weight:700;">1, 1 ← Nash eq.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div data-lang="zh" style="overflow-x:auto;margin:10px 0;">
+                <table style="border-collapse:collapse;font-family:var(--mono);font-size:13px;width:auto;min-width:320px;">
+                  <thead><tr>
+                    <th style="padding:8px 14px;border:1px solid var(--parchment);background:var(--warm);font-family:var(--sans);font-size:11px;letter-spacing:.06em;"></th>
+                    <th style="padding:8px 18px;border:1px solid var(--parchment);background:var(--warm);font-family:var(--sans);font-size:11px;letter-spacing:.06em;">列方：合作</th>
+                    <th style="padding:8px 18px;border:1px solid var(--parchment);background:var(--warm);font-family:var(--sans);font-size:11px;letter-spacing:.06em;">列方：背叛</th>
+                  </tr></thead>
+                  <tbody>
+                    <tr>
+                      <td style="padding:8px 14px;border:1px solid var(--parchment);background:var(--warm);font-family:var(--sans);font-size:11px;font-weight:600;">行方：合作</td>
+                      <td style="padding:10px 18px;border:1px solid var(--parchment);text-align:center;background:rgba(74,124,89,.07);color:#3a7a52;font-weight:700;">3, 3</td>
+                      <td style="padding:10px 18px;border:1px solid var(--parchment);text-align:center;">0, 5</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:8px 14px;border:1px solid var(--parchment);background:var(--warm);font-family:var(--sans);font-size:11px;font-weight:600;">行方：背叛 ← 优势策略</td>
+                      <td style="padding:10px 18px;border:1px solid var(--parchment);text-align:center;">5, 0</td>
+                      <td style="padding:10px 18px;border:1px solid var(--parchment);text-align:center;background:rgba(181,55,42,.07);color:var(--red);font-weight:700;">1, 1 ← 纳什均衡</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p data-lang="en"><strong>Why D dominates.</strong> Whatever the other player does, Defecting earns more: if they cooperate, D gets 5 vs C's 3; if they defect, D gets 1 vs C's 0. Defect is a dominant strategy for both. The Nash equilibrium is (D, D) = payoff 1 each. But mutual cooperation (C, C) gives payoff 3 — much better for both. Rationality traps players at an inefficient equilibrium.</p>
+              <p data-lang="zh"><strong>为什么 D 是优势策略。</strong>无论对方怎么做，背叛的收益都更高：如果对方合作，D 得 5 而 C 得 3；如果对方背叛，D 得 1 而 C 得 0。背叛是双方的优势策略。纳什均衡是（D, D）= 各得 1。但相互合作（C, C）各得 3——对双方都好得多。理性将玩家困在低效均衡中。</p>
+              <p data-lang="en"><strong>Escaping the trap — repeated games.</strong> In a one-shot game, D always wins. But in indefinitely repeated games, cooperation can be sustained: if you'll meet again, the threat of future punishment deters defection. Axelrod's computer tournament showed that Tit-for-Tat (cooperate first; copy opponent's last move) wins across hundreds of strategies in repeated play. The key: it is nice (never defects first), retaliatory (punishes defection), forgiving (returns to cooperation after punishment), and clear (easy to understand).</p>
+              <p data-lang="zh"><strong>逃出困境——重复博弈。</strong>在一次性博弈中，D 总是胜出。但在无限期重复博弈中，合作可以维持：如果你还会再见，未来惩罚的威胁会阻止背叛。Axelrod 的计算机竞赛表明，"以牙还牙"（先合作；复制对手上一步行动）在数百种策略的重复博弈中获胜。关键特征：善意（从不首先背叛）、报复性（惩罚背叛）、宽容（惩罚后恢复合作）、清晰（易于理解）。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="method-section">
+          <h3 data-lang="en">Evolutionary Game Theory &amp; Replicator Dynamics</h3>
+          <h3 data-lang="zh">演化博弈论与复制者动态</h3>
+          <div class="method-desc" data-lang="en">Evolutionary game theory replaces rational calculation with differential reproduction: strategies that earn higher payoffs spread in the population, lower-payoff strategies decline. The replicator equation is the core model. An Evolutionarily Stable Strategy (ESS) is one that cannot be invaded by any rare mutant — the evolutionary analog of Nash equilibrium, but reached through population dynamics rather than rational choice.</div>
+          <div class="method-desc" data-lang="zh">演化博弈论以差异繁殖替代理性计算：收益更高的策略在种群中扩散，低收益策略衰退。复制者方程是核心模型。演化稳定策略（ESS）是无法被任何稀有突变体入侵的策略——纳什均衡的演化类比，但通过种群动态而非理性选择达到。</div>
+          <div class="method-analogy" data-lang="en">Hawk-Dove: Hawks always fight for resources; Doves retreat if challenged. In an all-Dove population, a single Hawk does very well (gets everything without cost). Hawks spread — until there are so many Hawks that fighting costs outweigh gains, at which point Doves do better. The ESS is a stable mix of Hawks and Doves — a frequency-dependent equilibrium.</div>
+          <div class="method-analogy" data-lang="zh">鹰鸽博弈：鹰总是为资源而战；鸽遇挑战则退缩。在全是鸽子的种群中，一只鹰表现极佳（无代价获得一切）。鹰扩散——直到鹰足够多，战斗成本超过收益，此时鸽子表现更好。ESS 是鹰和鸽的稳定混合——一个频率依赖的均衡。</div>
+
+          <div class="math-box">
+            <div class="math-box-title"><span data-lang="en">The replicator equation: how strategies spread without rationality</span><span data-lang="zh">复制者方程：策略如何在无需理性的情况下传播</span></div>
+            <div class="math-content">
+              <p data-lang="en">Let xᵢ be the frequency of strategy i in the population, fᵢ its average payoff given the current population mix, and f̄ = Σⱼ xⱼfⱼ the population average payoff. The replicator equation:</p>
+              <p data-lang="zh">设 xᵢ 为策略 i 在种群中的频率，fᵢ 为其在当前种群结构下的平均收益，f̄ = Σⱼ xⱼfⱼ 为种群平均收益。复制者方程：</p>
+              <div class="formula">ẋᵢ = xᵢ · (fᵢ − f̄)</div>
+              <p data-lang="en"><strong>Reading this:</strong> strategy i grows (ẋᵢ > 0) when its payoff exceeds the average (fᵢ > f̄), and shrinks when it underperforms. At equilibrium: either a strategy is eliminated (xᵢ → 0), or all surviving strategies earn equal payoffs. This second case is exactly a Nash equilibrium — but arrived at through Darwinian dynamics, not rationality.</p>
+              <p data-lang="zh"><strong>解读：</strong>当策略 i 的收益超过平均（fᵢ > f̄）时增长，表现不佳时缩减。均衡时：要么策略被淘汰（xᵢ → 0），要么所有存活策略获得相同收益。第二种情况恰好是纳什均衡——但通过达尔文式动态而非理性到达。</p>
+              <p data-lang="en"><strong>ESS condition.</strong> s* is an ESS if for any mutant m ≠ s*, either f(s*, s*) > f(m, s*), or if equal, f(s*, m) > f(m, m). Intuitively: s* must perform better against itself than any mutant does when rare, and if tied when rare, must perform better against the mutant.</p>
+              <p data-lang="zh"><strong>ESS 条件。</strong>s* 是 ESS，当对任意突变体 m ≠ s*，要么 f(s*, s*) > f(m, s*)，或若相等，则 f(s*, m) > f(m, m)。直觉上：s* 必须在面对自身时表现优于任何稀有突变体，若平分秋色，则面对突变体时表现更佳。</p>
+            </div>
+          </div>
+          <p data-lang="en"><a class="sim-link" href="guides/tm-evogame.html">▶ Full guide: Hawk-Dove, cooperation, Axelrod's tournament</a></p>
+          <p data-lang="zh"><a class="sim-link" href="guides/tm-evogame.html">▶ 完整指南：鹰鸽博弈、合作演化、Axelrod 竞赛</a></p>
+        </div>
+
+        <div class="method-section">
+          <h3 data-lang="en">Costly Signaling &amp; Honest Communication</h3>
+          <h3 data-lang="zh">代价信号与诚实通信</h3>
+          <div class="method-desc" data-lang="en">When agents have private information (about quality, ability, or intentions), communication is strategic — senders benefit from appearing better than they are. The only signals that remain honest in equilibrium are those that are prohibitively costly to fake. This is the handicap principle: a signal is credible only if a low-quality sender cannot afford to mimic it.</div>
+          <div class="method-desc" data-lang="zh">当代理拥有私人信息（关于质量、能力或意图）时，通信具有策略性——发信者有动机让自己看起来比实际更好。在均衡中唯一保持诚实的信号，是那些对低质量者代价高得难以假冒的信号。这是残障原理：信号只有在低质量发信者无法承担模仿代价时才可信。</div>
+          <div class="method-example" data-lang="en">Spence's job market signaling: education signals ability not because it creates skills, but because high-ability workers find education less costly to complete. Employers pay a wage premium for education, sustaining the signal — even if education itself is economically wasteful. The equilibrium is a separating equilibrium: high-type workers get education, low-type don't.</div>
+          <div class="method-example" data-lang="zh">Spence 劳动力市场信号：教育信号能力，不是因为它创造技能，而是因为高能力工人完成教育的代价更低。雇主为受教育者支付工资溢价，维持了信号——即使教育本身在经济上是浪费的。均衡是分离均衡：高类型工人接受教育，低类型不接受。</div>
+
+          <div class="math-box">
+            <div class="math-box-title"><span data-lang="en">The separating equilibrium condition: when honest signaling is stable</span><span data-lang="zh">分离均衡条件：诚实信号何时稳定</span></div>
+            <div class="math-content">
+              <p data-lang="en"><strong>Two types of agents.</strong> High-type (H) and low-type (L) agents both want to convince observers they are high-type. Signal s ∈ {0, 1} (e.g., no degree / degree). Cost of signaling: c_H for high-types, c_L for low-types. Benefit from being believed high-type: B. A separating equilibrium (where only H-types signal) exists when:</p>
+              <p data-lang="zh"><strong>两类代理。</strong>高类型（H）和低类型（L）都希望说服观察者自己是高类型。信号 s ∈ {0, 1}（例如：无学位 / 有学位）。发送信号的代价：高类型为 c_H，低类型为 c_L。被认定为高类型的收益：B。分离均衡（只有 H 类型发送信号）存在的条件是：</p>
+              <div class="formula">H-type wants to signal:  B − c_H > 0  ↔  c_H &lt; B</div>
+              <div class="formula">L-type doesn't want to:  B − c_L &lt; 0  ↔  c_L > B</div>
+              <p data-lang="en">Both conditions hold simultaneously when c_H &lt; B &lt; c_L — that is, when the cost of the signal lies between the benefit and the low-type's cost. The signal is <em>differentially costly</em>: prohibitive for low-types, affordable for high-types. This is the handicap principle. If anyone could afford the signal, it would be uninformative (a pooling equilibrium). If even high-types couldn't afford it, no one signals. Only the intermediate case produces honest, informative signaling.</p>
+              <p data-lang="zh">两个条件同时成立的前提是 c_H &lt; B &lt; c_L——即信号的代价介于收益和低类型代价之间。信号具有<em>差异代价</em>：对低类型来说代价高得难以承受，对高类型来说则可以接受。这就是残障原理。如果任何人都能负担该信号，它就不含信息量（混同均衡）。如果连高类型也负担不起，则无人发信号。只有中间情形才能产生诚实、有信息量的信号。</p>
+              <p data-lang="en"><strong>Social science applications:</strong> Peacock tails (costly to grow, costly to maintain — fake fitness impossible), religious rituals (costly participation filters uncommitted members), luxury goods (costly price filters non-rich buyers), academic credentials (differential cost filters types), political demonstrations (costly participation signals genuine commitment).</p>
+              <p data-lang="zh"><strong>社会科学应用：</strong>孔雀尾巴（生长和维护代价高昂，使得假冒高适应度不可能）、宗教仪式（高代价参与筛除不忠诚成员）、奢侈品（高价格筛除非富裕买家）、学术证书（差异代价筛除不同类型）、政治示威（高代价参与信号真实承诺）。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- MODULE 3 -->
+      <div class="section" id="tm-module3">
+        <h2 data-lang="en">Module 3: Emergence &amp; Complexity</h2>
+        <h2 data-lang="zh">模块 3：涌现与复杂性</h2>
+        <div class="challenge-overview">
+          <p data-lang="en"><strong>Challenge 3:</strong> The deepest insight of complexity science: simple rules, applied locally to many interacting agents, can produce global patterns that no single agent intends or foresees. Segregation from mild preferences. Epidemics from random contact. Polarization from selective interaction. Understanding emergence is understanding how macro-level social facts arise from micro-level individual behavior — the central problem of social science.</p>
+          <p data-lang="zh"><strong>挑战 3：</strong>复杂性科学最深刻的洞见：简单的规则，局部作用于众多互动代理，能产生没有任何单一代理意图或预见的全局模式。温和偏好导致的隔离。随机接触引发的流行病。选择性互动产生的极化。理解涌现，就是理解宏观层面的社会事实如何从微观层面的个体行为中产生——社会科学的核心问题。</p>
+        </div>
+
+        <!-- Schelling -->
+        <div class="method-section">
+          <h3 data-lang="en">Schelling Segregation Model</h3>
+          <h3 data-lang="zh">Schelling 隔离模型</h3>
+          <div class="method-desc" data-lang="en">Thomas Schelling's 1969 model is one of the most famous results in social science: even mild preferences for same-type neighbors produce extreme residential segregation. No agent intends to segregate — each only wants at least some similar neighbors — yet the collective result is near-total social separation. Individual intentions and social outcomes can be radically misaligned.</div>
+          <div class="method-desc" data-lang="zh">Thomas Schelling 1969 年的模型是社会科学中最著名的结果之一：即使是温和的同类邻居偏好，也会产生极端的居住隔离。没有代理打算制造隔离——每个人只是想要至少一些相似的邻居——然而集体结果却是近乎彻底的社会分离。个人意图与社会结果可以严重脱节。</div>
+          <div class="method-analogy" data-lang="en">A checkerboard of red and blue agents: each is happy only if at least 30% of their neighbors share their color. Start randomly — roughly half are unhappy and move. After many rounds, dense same-color clusters appear. No one chose segregation, but segregation emerged. The system self-organized into a state no individual selected.</div>
+          <div class="method-analogy" data-lang="zh">想象一个红蓝代理的棋盘：每个代理只需至少 30% 的邻居同色即满意。随机初始化——大约一半代理不满意并移动。经过多轮之后，密集的同色聚集出现了。没有人选择了隔离，但隔离涌现了。系统自我组织到了无人个别选择的状态。</div>
+
+          <div class="math-box">
+            <div class="math-box-title"><span data-lang="en">The threshold rule, cascade dynamics, and the segregation index</span><span data-lang="zh">阈值规则、级联动态与隔离指数</span></div>
+            <div class="math-content">
+              <p data-lang="en"><strong>Agent rule.</strong> Agent i has type τᵢ ∈ {A, B}. Let nᵢ be the number of occupied neighboring cells, sᵢ the number of same-type neighbors. Agent i is satisfied when:</p>
+              <p data-lang="zh"><strong>代理规则。</strong>代理 i 有类型 τᵢ ∈ {A, B}。设 nᵢ 为有代理邻格数，sᵢ 为同类型邻居数。代理 i 满意的条件是：</p>
+              <div class="formula">sᵢ / nᵢ ≥ θ    (similarity threshold)</div>
+              <p data-lang="en">Unsatisfied agents move to a random empty cell. The process repeats until all agents are satisfied or the grid is full.</p>
+              <p data-lang="zh">不满意的代理移动到随机空格。重复此过程直到所有代理满意或网格已满。</p>
+              <p data-lang="en"><strong>Why it cascades.</strong> When an agent moves, it changes the neighborhood composition of both the cell it left and the cell it joined — potentially tipping previously-satisfied agents into dissatisfaction, triggering further moves. This chain reaction is the mechanism of emergence: local perturbations propagate into global reorganization.</p>
+              <p data-lang="zh"><strong>为什么会级联。</strong>当代理移动时，它改变了离开格和加入格的邻域构成——可能使之前满意的代理变得不满意，触发更多移动。这种连锁反应是涌现的机制：局部扰动传播成全局重组。</p>
+              <p data-lang="en"><strong>Key result.</strong> At θ = 0.30 (only 30% same-type neighbors required — a very mild preference), the model typically converges to a segregation index above 0.70. The segregation index is computed as: S = 1 − (fraction of cross-type neighbor pairs) / (expected fraction under random arrangement). S = 0 means perfectly integrated; S = 1 means perfectly segregated.</p>
+              <p data-lang="zh"><strong>关键结果。</strong>在 θ = 0.30（只需 30% 同类型邻居——非常温和的偏好）时，模型通常收敛到隔离指数高于 0.70。隔离指数计算为：S = 1 − (跨类型邻居对比例) / (随机排列下的期望比例)。S = 0 表示完全融合；S = 1 表示完全隔离。</p>
+            </div>
+          </div>
+          <p data-lang="en"><a class="sim-link" href="guides/tm-schelling.html">▶ Interactive Demo: Watch Segregation Emerge</a></p>
+          <p data-lang="zh"><a class="sim-link" href="guides/tm-schelling.html">▶ 互动演示：观察隔离如何涌现</a></p>
+        </div>
+
+        <!-- Cellular Automata -->
+        <div class="method-section">
+          <h3 data-lang="en">Cellular Automata</h3>
+          <h3 data-lang="zh">元胞自动机</h3>
+          <div class="method-desc" data-lang="en">A cellular automaton (CA) is a grid of cells, each in one of a finite set of states. At each time step, every cell updates its state based on its current state and the states of its neighbors, according to a fixed local rule. Despite extreme simplicity, CAs produce extraordinary complexity: stable structures, periodic oscillators, moving patterns, and even universal computation. Conway's Game of Life is Turing-complete — capable of computing anything a computer can compute.</div>
+          <div class="method-desc" data-lang="zh">元胞自动机（CA）是由细胞组成的网格，每个细胞处于有限状态之一。每个时间步，每个细胞根据自身状态及邻居状态按固定局部规则更新。尽管规则极其简单，CA 能产生非凡的复杂性：稳定结构、周期振荡器、移动模式，甚至通用计算。康威生命游戏是图灵完备的——能计算计算机能计算的任何东西。</div>
+          <div class="method-example" data-lang="en">Conway's Game of Life (1970): cells are alive or dead. Four rules: (1) live cell with 2–3 live neighbors survives; (2) dead cell with exactly 3 live neighbors becomes alive; (3) all others die or stay dead. From these twelve words: gliders (patterns that travel), guns (patterns that emit gliders), and self-replicating machines.</div>
+          <div class="method-example" data-lang="zh">康威生命游戏（1970）：细胞生存或死亡。四条规则：(1) 有 2–3 个活邻居的活细胞存活；(2) 恰好有 3 个活邻居的死细胞变活；(3) 其他所有细胞死亡或保持死亡。从这几行规则中涌现：滑翔机（移动的模式）、炮（发射滑翔机的模式）和自我复制机器。</div>
+
+          <div class="math-box">
+            <div class="math-box-title"><span data-lang="en">Wolfram's 1D elementary CA and the four classes of complexity</span><span data-lang="zh">Wolfram 一维初等 CA 与四类复杂性</span></div>
+            <div class="math-content">
+              <p data-lang="en"><strong>Setup.</strong> A one-dimensional row of cells, each 0 or 1. Each cell's next state depends on its own state and the states of its two neighbors — a window of 3 cells. There are 2³ = 8 possible configurations of a 3-cell window, and 2 possible outputs for each, giving 2⁸ = 256 possible rules. Rule N is defined by writing N in binary — the 8 bits specify the output for each of the 8 configurations.</p>
+              <p data-lang="zh"><strong>设定。</strong>一维细胞行，每个细胞为 0 或 1。每个细胞的下一状态取决于自身及两个邻居的状态——一个 3 细胞窗口。3 细胞窗口有 2³ = 8 种可能配置，每种有 2 种可能输出，产生 2⁸ = 256 种可能规则。规则 N 由将 N 写成二进制定义——8 位指定 8 种配置各自的输出。</p>
+              <p data-lang="en"><strong>Wolfram's four classes.</strong> Class I: all cells quickly converge to uniform state (dead or alive). Class II: periodic patterns — stable structures or simple oscillators. Class III: chaotic, pseudo-random behavior (Rule 30 — used in Mathematica's random number generator). Class IV: complex, localized structures that persist and interact (Rule 110, proved Turing-complete by Matthew Cook). The same four classes appear across physical, biological, and social complex systems.</p>
+              <p data-lang="zh"><strong>Wolfram 的四类。</strong>第 I 类：所有细胞迅速收敛到均一状态。第 II 类：周期性模式——稳定结构或简单振荡器。第 III 类：混沌、伪随机行为（规则 30——被用于 Mathematica 的随机数生成器）。第 IV 类：复杂的局部化结构，持续存在并相互作用（规则 110，由 Matthew Cook 证明是图灵完备的）。相同的四类出现在物理、生物和社会复杂系统中。</p>
+            </div>
+          </div>
+          <p data-lang="en"><a class="sim-link" href="guides/tm-ca.html">▶ Interactive Demo: Conway's Life &amp; Wolfram 1D Rules</a></p>
+          <p data-lang="zh"><a class="sim-link" href="guides/tm-ca.html">▶ 互动演示：康威生命游戏与 Wolfram 一维规则</a></p>
+        </div>
+
+        <!-- SIR -->
+        <div class="method-section">
+          <h3 data-lang="en">Contagion &amp; the SIR Model</h3>
+          <h3 data-lang="zh">传染与 SIR 模型</h3>
+          <div class="method-desc" data-lang="en">The SIR model divides a population into Susceptible (can be infected), Infectious (spreading), and Recovered/Removed (immune). Susceptibles who contact infectious individuals become infected at rate β; infectious individuals recover at rate γ. The basic reproduction number R₀ = β/γ determines epidemic fate: R₀ > 1 means the epidemic grows; R₀ &lt; 1 means it dies out. Herd immunity requires 1 − 1/R₀ of the population to be immune.</div>
+          <div class="method-desc" data-lang="zh">SIR 模型将种群分为易感者（可被感染）、感染者（传播中）和康复者/移出者（免疫）。接触感染者的易感者以速率 β 被感染；感染者以速率 γ 康复。基本传染数 R₀ = β/γ 决定流行病命运：R₀ > 1 表示流行病增长；R₀ &lt; 1 表示消退。群体免疫需要 1 − 1/R₀ 的比例人口免疫。</div>
+          <div class="method-example" data-lang="en">COVID-19 (original variant): R₀ ≈ 2.5, meaning each infected person infects 2.5 others on average. Herd immunity threshold: 1 − 1/2.5 = 60%. Delta variant: R₀ ≈ 6, threshold ≈ 83%. Omicron: R₀ ≈ 8–15, threshold ≈ 88–93%. Higher transmissibility requires much higher immunity levels to stop spread.</div>
+          <div class="method-example" data-lang="zh">COVID-19（原始毒株）：R₀ ≈ 2.5，即每个感染者平均感染 2.5 人。群体免疫阈值：1 − 1/2.5 = 60%。Delta 变体：R₀ ≈ 6，阈值 ≈ 83%。Omicron：R₀ ≈ 8–15，阈值 ≈ 88–93%。传播性越强，需要越高的免疫水平来阻止传播。</div>
+
+          <div class="math-box">
+            <div class="math-box-title"><span data-lang="en">SIR equations, R₀, and the epidemic peak</span><span data-lang="zh">SIR 方程、R₀ 与流行病峰值</span></div>
+            <div class="math-content">
+              <p data-lang="en">Let S, I, R be fractions of the population (S + I + R = 1). The three ODEs:</p>
+              <p data-lang="zh">设 S、I、R 为种群比例（S + I + R = 1）。三个微分方程：</p>
+              <div class="formula">dS/dt = −β · S · I</div>
+              <div class="formula">dI/dt =  β · S · I − γ · I  =  I · (βS − γ)</div>
+              <div class="formula">dR/dt =  γ · I</div>
+              <p data-lang="en"><strong>The epidemic threshold.</strong> The epidemic grows when dI/dt > 0, i.e., when βS > γ, i.e., when S > γ/β = 1/R₀. As people recover, S falls. The epidemic peaks when S = 1/R₀ and then declines. Crucially, the epidemic ends before everyone is infected — some susceptibles simply never encounter an infected person before the infectious wave collapses.</p>
+              <p data-lang="zh"><strong>流行病阈值。</strong>流行病在 dI/dt > 0 时增长，即当 βS > γ，即 S > γ/β = 1/R₀ 时。随着人们康复，S 下降。流行病在 S = 1/R₀ 时达峰，然后下降。关键是：流行病在所有人被感染之前就结束了——一些易感者在感染浪潮崩溃之前从未遇到感染者。</p>
+              <p data-lang="en"><strong>Network SIR.</strong> The standard model assumes random mixing (anyone can infect anyone). On real networks, the epidemic dynamics change fundamentally: hubs (high-degree nodes) become superspreaders, clustered communities create firebreaks, and the effective R₀ depends on the degree distribution. Scale-free networks (with heavy-tailed degree distributions) are particularly vulnerable — epidemics spread faster and herd immunity thresholds are lower.</p>
+              <p data-lang="zh"><strong>网络 SIR。</strong>标准模型假设随机混合（任何人都可以感染任何人）。在真实网络中，流行病动态发生根本变化：枢纽（高度节点）成为超级传播者，聚集的社区创造防火带，有效 R₀ 取决于度分布。无标度网络（具有重尾度分布）特别脆弱——流行病传播更快，群体免疫阈值更低。</p>
+            </div>
+          </div>
+          <p data-lang="en"><a class="sim-link" href="guides/tm-sir.html">▶ Interactive Demo: SIR Epidemic Simulator</a></p>
+          <p data-lang="zh"><a class="sim-link" href="guides/tm-sir.html">▶ 互动演示：SIR 流行病模拟器</a></p>
+        </div>
+
+        <!-- Opinion Dynamics -->
+        <div class="method-section">
+          <h3 data-lang="en">Opinion Dynamics &amp; Polarization</h3>
+          <h3 data-lang="zh">观点动态与极化</h3>
+          <div class="method-desc" data-lang="en">Opinion dynamics models ask: how do opinions spread, converge, or polarize through social interaction? The DeGroot model (agents average their neighbors' opinions) always produces consensus in connected networks. The bounded confidence model (agents only interact with those within opinion distance ε) can produce consensus, opinion clusters, or full polarization — depending on tolerance ε. This captures how echo chambers emerge from selective exposure.</div>
+          <div class="method-desc" data-lang="zh">观点动态模型问的是：观点如何通过社会互动传播、收敛或极化？DeGroot 模型（代理对邻居意见取平均）在连通网络中总是产生共识。有界置信模型（代理只与意见距离在 ε 以内的人互动）根据容忍度 ε 的不同可以产生共识、意见集群或完全极化——捕捉了回音室如何从选择性接触中涌现。</div>
+          <div class="method-example" data-lang="en">Deffuant model: two randomly chosen agents interact if |xᵢ − xⱼ| &lt; ε, and converge toward each other by factor μ. Large ε (0.5): all opinions converge to a single consensus. Medium ε (0.2): 2–3 opinion clusters. Small ε (0.05): many isolated opinion islands, no consensus. Real social media may lower effective ε by filtering what content users see.</div>
+          <div class="method-example" data-lang="zh">Deffuant 模型：若 |xᵢ − xⱼ| &lt; ε，随机选取的两个代理互动，以因子 μ 相互靠拢。大 ε（0.5）：所有意见收敛到一个共识。中等 ε（0.2）：2–3 个意见集群。小 ε（0.05）：许多孤立的意见孤岛，无共识。真实社交媒体可能通过过滤用户看到的内容来降低有效 ε。</div>
+
+          <div class="math-box">
+            <div class="math-box-title"><span data-lang="en">DeGroot model and the bounded confidence model compared</span><span data-lang="zh">DeGroot 模型与有界置信模型对比</span></div>
+            <div class="math-content">
+              <p data-lang="en"><strong>DeGroot model (1974).</strong> Each agent i has opinion xᵢ ∈ [0,1]. At each discrete step:</p>
+              <p data-lang="zh"><strong>DeGroot 模型（1974）。</strong>每个代理 i 有意见 xᵢ ∈ [0,1]。每个离散步骤：</p>
+              <div class="formula">xᵢ(t+1) = Σⱼ wᵢⱼ · xⱼ(t)    where Σⱼ wᵢⱼ = 1</div>
+              <p data-lang="en">In matrix form: x(t+1) = W·x(t). If the network is strongly connected and aperiodic, x(t) converges to a fixed point x* where every agent holds the same opinion. The consensus is a weighted average of initial opinions, with weights proportional to each agent's eigenvector centrality — more central agents influence the consensus more.</p>
+              <p data-lang="zh">矩阵形式：x(t+1) = W·x(t)。如果网络是强连通且非周期的，x(t) 收敛到所有代理持有相同意见的不动点 x*。共识是初始意见的加权平均，权重与每个代理的特征向量中心性成正比——更中心的代理对共识影响更大。</p>
+              <p data-lang="en"><strong>Bounded confidence (Deffuant, 2000).</strong> Two randomly chosen agents i, j interact only if |xᵢ − xⱼ| &lt; ε (confidence bound). If they interact:</p>
+              <p data-lang="zh"><strong>有界置信模型（Deffuant，2000）。</strong>随机选取的代理 i、j 只有在 |xᵢ − xⱼ| &lt; ε（置信界限）时才互动。若互动：</p>
+              <div class="formula">xᵢ ← xᵢ + μ(xⱼ − xᵢ)    xⱼ ← xⱼ + μ(xᵢ − xⱼ)</div>
+              <p data-lang="en">The parameter μ ∈ (0, 0.5] controls the speed of convergence (μ = 0.5 means they meet exactly in the middle). The qualitative outcome depends entirely on ε: large ε → one cluster (consensus); small ε → many clusters (polarization). This sharp transition from consensus to polarization is a hallmark of complex systems: a small parameter change produces a qualitatively different macroscopic outcome.</p>
+              <p data-lang="zh">参数 μ ∈ (0, 0.5] 控制收敛速度（μ = 0.5 表示双方恰好在中点相遇）。定性结果完全取决于 ε：大 ε → 一个集群（共识）；小 ε → 多个集群（极化）。这种从共识到极化的急剧转变是复杂系统的标志：小的参数变化产生定性上不同的宏观结果。</p>
+            </div>
+          </div>
+          <p data-lang="en"><a class="sim-link" href="guides/tm-opinions.html">▶ Interactive Demo: Opinion Dynamics &amp; Echo Chambers</a></p>
+          <p data-lang="zh"><a class="sim-link" href="guides/tm-opinions.html">▶ 互动演示：观点动态与回音室</a></p>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- MODULE 4 -->
+      <div class="section" id="tm-module4">
+        <h2 data-lang="en">Module 4: Networks &amp; Cultural Evolution</h2>
+        <h2 data-lang="zh">模块 4：网络与文化演化</h2>
+        <div class="challenge-overview">
+          <p data-lang="en"><strong>Challenge 4:</strong> Social interactions are not random — they are structured by who knows whom, who trusts whom, and who is close to whom. Network topology shapes what spreads and how fast. Simultaneously, social learning determines which behaviors are acquired and retained. The two forces interact: what topology agents are embedded in determines what they can learn from whom.</p>
+          <p data-lang="zh"><strong>挑战 4：</strong>社会互动不是随机的——它们由谁认识谁、谁信任谁、谁与谁相近来构建。网络拓扑决定了什么在传播以及传播的速度。同时，社会学习决定了哪些行为被习得和保留。两种力量相互作用：代理嵌入的拓扑结构决定了他们能从谁那里学到什么。</p>
+        </div>
+
+        <div class="method-section">
+          <h3 data-lang="en">Network Fundamentals</h3>
+          <h3 data-lang="zh">网络基础</h3>
+          <div class="method-desc" data-lang="en">A network consists of nodes (agents) and edges (relationships). Key measures: <strong>degree</strong> (number of connections), <strong>clustering coefficient</strong> (fraction of a node's neighbors who are also connected to each other), <strong>average path length</strong> (average number of steps between any two nodes), and <strong>centrality</strong> (various measures of a node's importance). Two benchmark models capture real-world network structures: small-world and scale-free.</div>
+          <div class="method-desc" data-lang="zh">网络由节点（代理）和边（关系）构成。关键度量：<strong>度</strong>（连接数量）、<strong>聚类系数</strong>（节点的邻居中也相互连接的比例）、<strong>平均路径长度</strong>（任意两节点之间的平均步数）和<strong>中心性</strong>（节点重要性的各种度量）。两个基准模型捕捉了真实世界的网络结构：小世界网络和无标度网络。</div>
+
+          <div class="math-box">
+            <div class="math-box-title"><span data-lang="en">Small-world and scale-free: the two network archetypes</span><span data-lang="zh">小世界与无标度：两种网络原型</span></div>
+            <div class="math-content">
+              <p data-lang="en"><strong>Small-world networks (Watts &amp; Strogatz, 1998).</strong> Start with a regular ring lattice where each node connects to its k nearest neighbors. Randomly rewire each edge with probability p. Even small p creates long-range shortcuts that dramatically reduce average path length while preserving high local clustering. The result matches real social networks: high local density ("my friends know each other") and short global paths ("six degrees of separation").</p>
+              <p data-lang="zh"><strong>小世界网络（Watts &amp; Strogatz，1998）。</strong>从规则环形网格开始，每个节点与最近的 k 个邻居相连。以概率 p 随机重连每条边。即使 p 很小，长程捷径也会显著缩短平均路径长度，同时保持高局部聚类系数。结果与真实社交网络相符：高局部密度（"我的朋友互相认识"）和短全局路径（"六度分隔"）。</p>
+              <p data-lang="en"><strong>Scale-free networks (Barabási &amp; Albert, 1999).</strong> Grow the network by adding nodes one at a time. Each new node attaches to m existing nodes with probability proportional to their current degree — "preferential attachment" (rich-get-richer). This produces a power-law degree distribution P(k) ∝ k⁻ᵞ with γ ≈ 3. Most nodes have few connections; a few "hubs" have enormous numbers. Scale-free networks are robust to random node failures but fragile to targeted attacks on hubs — a key vulnerability in infrastructure networks.</p>
+              <p data-lang="zh"><strong>无标度网络（Barabási &amp; Albert，1999）。</strong>通过逐一添加节点来生长网络。每个新节点以与当前度数成比例的概率连接到 m 个现有节点——"优先连接"（富者愈富）。这产生幂律度分布 P(k) ∝ k⁻ᵞ，γ ≈ 3。大多数节点连接很少；少数"枢纽"有大量连接。无标度网络对随机节点故障具有鲁棒性，但对针对枢纽的定向攻击脆弱——基础设施网络的关键漏洞。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="method-section">
+          <h3 data-lang="en">Social Learning &amp; Cultural Evolution</h3>
+          <h3 data-lang="zh">社会学习与文化演化</h3>
+          <div class="method-desc" data-lang="en">Cultural evolution applies evolutionary logic to the transmission of behaviors, beliefs, and practices across agents and generations. The units of selection are behaviors, not genes. Social learning is the transmission mechanism: agents observe others and selectively copy. The critical question is <em>who</em> they copy from — unbiased copying (random model), conformity bias (copy the majority), prestige bias (copy successful individuals), or content bias (copy what resonates regardless of source).</div>
+          <div class="method-desc" data-lang="zh">文化演化将演化逻辑应用于行为、信念和实践在代理和世代间的传递。被选择的单位不是基因而是行为。社会学习是传递机制：代理观察他人并选择性复制。关键问题是他们从<em>谁</em>那里复制——无偏复制（随机模型）、从众偏差（复制多数人）、声望偏差（复制成功者）或内容偏差（不管来源，复制与自己产生共鸣的内容）。</div>
+          <div class="method-analogy" data-lang="en">Cultural drift: even without selection pressure, cultural variants change frequency over time through random copying errors (mutation) and sampling. The smaller the population transmitting a culture, the faster it drifts — explaining why isolated communities develop distinctive practices. Islands of population transmit culture like islands of biology: the smaller the island, the faster it diverges from the mainland.</div>
+          <div class="method-analogy" data-lang="zh">文化漂变：即使没有选择压力，文化变体也通过随机复制错误（突变）和采样随时间改变频率。传递文化的种群越小，漂离越快——解释了为什么孤立社区发展出独特习俗。种群的孤岛传递文化就像生物学的孤岛：岛越小，与大陆的分化越快。</div>
+
+          <div class="math-box">
+            <div class="math-box-title"><span data-lang="en">Conformity bias: why majority rules slow down innovation</span><span data-lang="zh">从众偏差：为什么多数规则会减缓创新</span></div>
+            <div class="math-content">
+              <p data-lang="en"><strong>Model.</strong> Consider two cultural variants A and B. Let p = frequency of A. Under <em>unbiased copying</em> (copy a random individual): an agent adopts A with probability p. Variant frequencies are stable — no selection pressure.</p>
+              <p data-lang="zh"><strong>模型。</strong>考虑两种文化变体 A 和 B。设 p = A 的频率。在<em>无偏复制</em>（复制随机个体）下：代理以概率 p 采纳 A。变体频率稳定——无选择压力。</p>
+              <p data-lang="en">Under <em>conformity bias</em> (copy the majority with extra probability): agent adopts A with probability p + D·p(1−p)(2p−1), where D > 0 is the strength of conformity. The extra term p(1−p)(2p−1) is always positive when p > 0.5 and negative when p &lt; 0.5.</p>
+              <p data-lang="zh">在<em>从众偏差</em>（以额外概率复制多数）下：代理以概率 p + D·p(1−p)(2p−1) 采纳 A，其中 D > 0 是从众强度。额外项 p(1−p)(2p−1) 在 p > 0.5 时总是正的，在 p &lt; 0.5 时为负。</p>
+              <div class="formula">p(t+1) = p(t) + D · p(1−p)(2p−1)   (conformity bias dynamics)</div>
+              <p data-lang="en"><strong>Consequence for innovation.</strong> Any innovation starts as a rare variant (p small, below 0.5). Conformity bias <em>actively pushes against</em> rare variants — the term is negative when p &lt; 0.5. A new, superior behavior must cross the 50% threshold before conformity bias starts working in its favor. This explains cultural conservatism: even clearly better innovations spread slowly in populations with strong conformity norms.</p>
+              <p data-lang="zh"><strong>对创新的影响。</strong>任何创新都作为稀有变体开始（p 小，低于 0.5）。从众偏差<em>主动对抗</em>稀有变体——当 p &lt; 0.5 时，该项为负。一种新的、更好的行为必须越过 50% 门槛，从众偏差才开始对其有利。这解释了文化保守主义：即使明显更好的创新，在具有强从众规范的种群中也传播缓慢。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- RESOURCES -->
+      <div class="section resources-section" id="tm-resources">
+        <h2 data-lang="en">Resources</h2>
+        <h2 data-lang="zh">资源</h2>
+
+        <h3 data-lang="en">Key References</h3>
+        <h3 data-lang="zh">关键参考</h3>
+        <ul class="resource-list">
+          <li>Smaldino, P. E. (2023). <em>Modeling Social Behavior: Mathematical and Agent-Based Models of Social Dynamics and Cultural Evolution</em>. Princeton University Press.</li>
+          <li>Axelrod, R. (1984). <em>The Evolution of Cooperation</em>. Basic Books.</li>
+          <li>Schelling, T. C. (1978). <em>Micromotives and Macrobehavior</em>. Norton.</li>
+          <li>Watts, D. J., &amp; Strogatz, S. H. (1998). Collective dynamics of 'small-world' networks. <em>Nature, 393</em>, 440–442.</li>
+          <li>Boyd, R., &amp; Richerson, P. J. (1985). <em>Culture and the Evolutionary Process</em>. University of Chicago Press.</li>
+          <li>Nowak, M. A. (2006). <em>Evolutionary Dynamics</em>. Harvard University Press.</li>
+        </ul>
+
+        <h3 data-lang="en">Deep Dives &amp; Labs</h3>
+        <h3 data-lang="zh">深入指南与实验室</h3>
+        <ul class="resource-list" data-lang="en">
+          <li><a class="sim-link" href="guides/tm-schelling.html">▶ Schelling Segregation Model</a> — Drag the threshold slider and watch segregation emerge in real time</li>
+          <li><a class="sim-link" href="guides/tm-ca.html">▶ Cellular Automata</a> — Conway's Game of Life + Wolfram 1D rules explorer</li>
+          <li><a class="sim-link" href="guides/tm-sir.html">▶ SIR Epidemic Model</a> — Adjust β and γ; watch the S, I, R curves and R₀</li>
+          <li><a class="sim-link" href="guides/tm-opinions.html">▶ Opinion Dynamics</a> — DeGroot averaging vs. bounded confidence; watch polarization form</li>
+        </ul>
+        <ul class="resource-list" data-lang="zh">
+          <li><a class="sim-link" href="guides/tm-schelling.html">▶ Schelling 隔离模型</a> — 拖动阈值滑块，实时观察隔离的涌现</li>
+          <li><a class="sim-link" href="guides/tm-ca.html">▶ 元胞自动机</a> — 康威生命游戏 + Wolfram 一维规则探索器</li>
+          <li><a class="sim-link" href="guides/tm-sir.html">▶ SIR 流行病模型</a> — 调整 β 和 γ；观察 S、I、R 曲线与 R₀</li>
+          <li><a class="sim-link" href="guides/tm-opinions.html">▶ 观点动态</a> — DeGroot 平均 vs. 有界置信；观察极化形成</li>
+        </ul>
+
+        <h3 data-lang="en">Related Pages</h3>
+        <h3 data-lang="zh">相关页面</h3>
+        <ul class="resource-list" data-lang="en">
+          <li><a class="sim-link" href="guides/tm-evogame.html">▶ Evolutionary Game Theory Guide</a> — Hawk-Dove, cooperation, Axelrod's tournament, ESS conditions</li>
+          <li><a href="empirical-modeling.html">Empirical Modeling →</a> — How to test theoretical models with data</li>
+        </ul>
+        <ul class="resource-list" data-lang="zh">
+          <li><a class="sim-link" href="guides/tm-evogame.html">▶ 演化博弈论指南</a> — 鹰鸽博弈、合作演化、Axelrod 竞赛、ESS 条件</li>
+          <li><a href="empirical-modeling.html">经验建模 →</a> — 如何用数据检验理论模型</li>
+        </ul>
+      </div>
+
+      <hr class="section-divider">
+
+            <div class="page-nav">
+        <a href="text-analysis.html">
+          <div class="nav-label">&larr; Previous</div>
+          <div class="nav-title">Text as Data</div>
+        </a>
+        <a class="next" href="empirical-modeling.html">
+          <div class="nav-label">Next &rarr;</div>
+          <div class="nav-title">Empirical Modeling</div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function setLang(lang) {
+  document.body.className = lang;
+  document.getElementById('btn-en').style.fontWeight = (lang === 'en') ? '600' : '400';
+  document.getElementById('btn-zh').style.fontWeight = (lang === 'zh') ? '600' : '400';
+  document.getElementById('btn-en').style.color = (lang === 'en') ? 'var(--red)' : 'var(--ink-faded)';
+  document.getElementById('btn-zh').style.color = (lang === 'zh') ? 'var(--red)' : 'var(--ink-faded)';
+  localStorage.setItem('preferred-lang', lang);
+}
+window.addEventListener('load', function() {
+  const saved = localStorage.getItem('preferred-lang') || 'zh';
+  setLang(saved);
+});
+
+// ── Right-side TOC (auto-detects h2 + h3 headings) ───────
+(function buildPageTOC() {
+  const content = document.querySelector('.content');
+  const mainEl  = document.querySelector('.main');
+  if (!content || !mainEl) return;
+
+  // Walk EN headings; pair with their ZH sibling
+  const items = [];
+  let autoId = 0;
+  content.querySelectorAll('h2[data-lang="en"], h3[data-lang="en"]').forEach(hEn => {
+    const zhSib = hEn.nextElementSibling;
+    const enText = hEn.textContent.trim();
+    const zhText = (zhSib && zhSib.dataset && zhSib.dataset.lang === 'zh')
+                   ? zhSib.textContent.trim() : enText;
+    const isH3  = hEn.tagName === 'H3';
+
+    // Anchor: for h2 use the .section parent; for h3 use .method-section parent
+    const anchorEl = isH3
+      ? (hEn.closest('.method-section') || hEn.parentElement)
+      : (hEn.closest('.section')        || hEn.parentElement);
+
+    if (!anchorEl.id) anchorEl.id = 'toc-auto-' + (autoId++);
+    items.push({ id: anchorEl.id, en: enText, zh: zhText, isH3 });
+  });
+
+  // Build nav element
+  const nav = document.createElement('nav');
+  nav.className = 'page-toc';
+  const header = document.createElement('div');
+  header.className = 'toc-header';
+  header.textContent = 'Contents';
+  nav.appendChild(header);
+
+  const links = {};
+  items.forEach(({ id, en, zh, isH3 }) => {
+    const a = document.createElement('a');
+    a.href = '#' + id;
+    a.dataset.en = en; a.dataset.zh = zh;
+    a.textContent = en;
+    if (isH3) a.classList.add('toc-sub');
+    links[id] = a;
+    nav.appendChild(a);
+  });
+  mainEl.appendChild(nav);
+
+  // Scroll-spy
+  let current = null;
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        if (current && links[current]) links[current].classList.remove('active');
+        current = e.target.id;
+        if (links[current]) links[current].classList.add('active');
+      }
+    });
+  }, { rootMargin: '-8% 0px -68% 0px' });
+  items.forEach(({ id }) => { const el = document.getElementById(id); if (el) obs.observe(el); });
+
+  // Language sync
+  function tocSetLang(lang) {
+    header.textContent = lang === 'zh' ? '目录' : 'Contents';
+    items.forEach(({ id, en, zh }) => { if (links[id]) links[id].textContent = lang === 'zh' ? zh : en; });
+  }
+  const _orig = window.setLang;
+  window.setLang = function(lang) { _orig(lang); tocSetLang(lang); };
+  tocSetLang(localStorage.getItem('preferred-lang') || 'zh');
+})();
+</script>
+</body>
+</html>

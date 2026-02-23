@@ -1,0 +1,370 @@
+---
+layout: methods-guide
+title: "Audit Studies & Racial Disparities"
+title_zh: "审计实验与种族差异研究"
+parent_title: "Race, Ethnicity & Causal Inference"
+parent_title_zh: "种族、民族与因果推断"
+parent_url: "reg-race.html"
+bilingual: true
+mathjax: true
+---
+
+<h2 id="audit-concept"><span data-lang="en">What Is an Audit Study?</span><span data-lang="zh">什么是审计实验？</span></h2>
+
+<p data-lang="en">An audit study is a field experiment where researchers send matched pairs of applications or inquiries that differ only in a signal associated with race, ethnicity, or other protected characteristics. By randomly varying this signal while holding everything else constant, the researcher can measure causal discrimination: the pure effect of the race signal on treatment (callbacks, offers, prices, etc.).</p>
+
+<p data-lang="zh">审计实验是一种现场实验，研究人员发送经过匹配的申请或查询对，只在与种族、民族或其他受保护特征相关的信号上不同。通过在保持所有其他条件不变的情况下随机改变此信号，研究人员可以衡量因果歧视：种族信号对处理（回电、录用、价格等）的纯粹影响。</p>
+
+<div class="insight-box">
+  <p data-lang="en"><strong>Classic Study:</strong> Bertrand & Mullainathan (2004) in Econometrica sent over 5,000 resume pairs to job openings in Boston and Chicago. Resumes were identical except for the applicant's first name (e.g., "Emily Walsh" vs "Aisha Keisha"). African American names received 50% fewer callbacks than white-sounding names. This is a powerful and direct measure of discrimination in hiring.</p>
+  <p data-lang="zh"><strong>经典研究：</strong>Bertrand & Mullainathan (2004)在Econometrica上向波士顿和芝加哥的5000多份工作申请发送了简历对。除了申请人的名字（例如"Emily Walsh"与"Aisha Keisha"）外，简历完全相同。非洲裔美国人名字收到的回电比白人名字少50%。这是对招聘中歧视的有力而直接的衡量。</p>
+</div>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Core Advantages</span><span data-lang="zh">核心优势</span></h3>
+
+<p data-lang="en"><strong>High Internal Validity:</strong> Audit studies approximate randomized controlled trials (RCTs) in the field. The race signal is randomly assigned, everything else is held constant by design. This is much stronger than observational studies that rely on statistical controls.</p>
+
+<p data-lang="zh"><strong>高内部有效性：</strong>审计实验接近于现场随机对照试验。种族信号是随机分配的，其他所有内容由设计保持不变。这远强于依赖统计控制的观察性研究。</p>
+
+<p data-lang="en"><strong>No Confounding:</strong> With observational data, minorities may have lower job offer rates due to education, experience, or social networks (confounds). Here, confounds are held constant by construction.</p>
+
+<p data-lang="zh"><strong>无混淆：</strong>在观察性数据中，少数族裔可能因教育、经验或社交网络（混淆）而获得更低的工作录用率。这里，混淆因素由设计保持不变。</p>
+
+<p data-lang="en"><strong>Field Realism:</strong> Unlike lab experiments, audit studies measure discrimination in real market decisions by real employers/landlords/vendors.</p>
+
+<p data-lang="zh"><strong>现场现实性：</strong>与实验室实验不同，审计实验衡量真实雇主、房东、卖家的真实市场决定中的歧视。</p>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Key Limitations</span><span data-lang="zh">主要限制</span></h3>
+
+<p data-lang="en"><strong>External Validity / LATE:</strong> You measure the effect of race on marginal applicants—those who might plausibly have either signal. Discrimination against clearly unqualified applicants may be lower because of floor effects. Results may not generalize to other occupations, regions, or time periods.</p>
+
+<p data-lang="zh"><strong>外部有效性 / LATE：</strong>您衡量的是种族对边际申请者的影响——那些可能具有任何信号的人。对明显不合格申请者的歧视可能因为地板效应而较低。结果可能不适用于其他职业、地区或时期。</p>
+
+<p data-lang="en"><strong>Meaning of "Race" Signal:</strong> A name like "Jamal" might trigger discrimination based on perceived race, but also perceived class, religion, or cultural origin. The causal mechanism is ambiguous (VanderWeele & Robinson 2014).</p>
+
+<p data-lang="zh"><strong>"种族"信号的含义：</strong>名字如"Jamal"可能会基于感知种族、感知阶级、宗教或文化起源而引发歧视。因果机制模糊（VanderWeele & Robinson 2014）。</p>
+
+<p data-lang="en"><strong>Hawthorne Effects:</strong> If an employer suspects they're being tested for discrimination (e.g., if the study is known), behavior may change.</p>
+
+<p data-lang="zh"><strong>霍桑效应：</strong>如果雇主怀疑他们正在接受歧视测试（例如，如果研究为人所知），行为可能会改变。</p>
+
+<h2 id="audit-design"><span data-lang="en">Design Principles for Audit Studies</span><span data-lang="zh">审计研究的设计原则</span></h2>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">1. Signal Manipulation: The Treatment</span><span data-lang="zh">1. 信号操纵：处理</span></h3>
+
+<p data-lang="en">The "treatment" in an audit study is the manipulated race signal. This can take several forms:</p>
+
+<p data-lang="zh">审计实验中的"处理"是操纵的种族信号。这可以采取多种形式：</p>
+
+<ul style="margin: 15px 0;">
+  <li data-lang="en"><strong>Names in resumes/applications:</strong> Most common. Paired names are chosen to be equally common/credible for their respective racial groups, but clearly distinctive (e.g., Greg vs Jamal). Risk: names also signal SES and other attributes.</li>
+  <li data-lang="zh"><strong>简历/申请中的名字：</strong>最常见。配对名字被选择为各自种族群体同样常见/可信，但明显不同（例如Greg vs Jamal）。风险：名字也传达社会经济地位和其他属性。</li>
+
+  <li data-lang="en"><strong>Photos:</strong> Manipulate appearance directly. Used in job interviews (candidates with/without photos), online marketplaces, dating apps. Risk: photos signal age, attractiveness, other traits beyond race.</li>
+  <li data-lang="zh"><strong>照片：</strong>直接操纵外观。用于求职面试（有/没有照片的候选人）、在线市场、约会应用。风险：照片传达年龄、吸引力和超越种族的其他特征。</li>
+
+  <li data-lang="en"><strong>Speech/Dialect:</strong> Phone calls or video interviews with actors speaking in different dialects. Used to audit housing discrimination. Risk: dialect also signals class, region, education.</li>
+  <li data-lang="zh"><strong>言语/方言：</strong>用不同方言说话的演员进行电话或视频采访。用于审计住房歧视。风险：方言也传达阶级、地区、教育。</li>
+
+  <li data-lang="en"><strong>Explicit identity statement:</strong> Message says "I am a [race] applicant." Less common because artificial, but cleanest causal interpretation.</li>
+  <li data-lang="zh"><strong>明确的身份陈述：</strong>消息说"我是一名[种族]申请者"。较少见因为人工的，但因果解释最清晰。</li>
+</ul>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">2. Matched Pair Design</span><span data-lang="zh">2. 匹配对设计</span></h3>
+
+<p data-lang="en">The matched pair is the unit of randomization. For each job opening (or landlord, vendor), researchers send two applications that are identical except for the race signal. This within-pair comparison isolates the causal effect.</p>
+
+<p data-lang="zh">匹配对是随机化单位。对于每个工作机会（或房东、卖家），研究人员发送两个申请，除了种族信号外完全相同。这种对内比较隔离因果效应。</p>
+
+<p data-lang="en"><strong>Example:</strong> To audit housing discrimination, send two emails to the same landlord:</p>
+
+<p data-lang="zh"><strong>例子：</strong>要审计住房歧视，向同一房东发送两封电子邮件：</p>
+
+<ul style="margin: 15px 0;">
+  <li data-lang="en">Email 1: "Hi, I'm interested in the 2-bedroom apartment. I'm a quiet professional with a stable job. Regards, Brad Johnson"</li>
+  <li data-lang="zh">电子邮件1："嗨，我对2卧室公寓感兴趣。我是一个安静的专业人士，有稳定的工作。此致敬礼，Brad Johnson"</li>
+
+  <li data-lang="en">Email 2: Identical except signature: "Regards, Jamal Washington"</li>
+  <li data-lang="zh">电子邮件2：除了签名之外相同："此致敬礼，Jamal Washington"</li>
+</ul>
+
+<p data-lang="en">Random assignment: flip a coin to decide which name goes to Email 1 and which to Email 2. Track whether each email receives a response.</p>
+
+<p data-lang="zh">随机分配：投硬币决定哪个名字进入电子邮件1，哪个进入电子邮件2。跟踪每封电子邮件是否收到回复。</p>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">3. Randomization Protocol</span><span data-lang="zh">3. 随机化协议</span></h3>
+
+<p data-lang="en">Randomization happens at the matched pair level, not at the applicant level. This matters: if you have applicants A and B, and A applies to 10 jobs while B applies to 5, and you flip a coin each time, you're not guaranteed balanced treatment across pairs.</p>
+
+<p data-lang="zh">随机化发生在匹配对级别，而不是申请者级别。这很重要：如果您有申请者A和B，A申请10个工作而B申请5个，并且您每次都投硬币，您不能保证各对间的平衡处理。</p>
+
+<p data-lang="en"><strong>Best practice:</strong> Pre-randomize all pairs. Assign each pair of applications a random treatment before sending. This ensures equal exposure of each name signal.</p>
+
+<p data-lang="zh"><strong>最佳实践：</strong>预随机化所有对。在发送前为每对申请分配一个随机处理。这确保了每个名字信号的相等接触。</p>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">4. Sample Size Calculation</span><span data-lang="zh">4. 样本量计算</span></h3>
+
+<p data-lang="en">Power analysis is critical. The outcome (callback) is usually binary and sometimes rare. If callbacks are only 20% of all applications, and discrimination reduces them by 30%, you need large numbers to detect this.</p>
+
+<p data-lang="zh">功效分析至关重要。结果（回电）通常是二元的，有时很少见。如果回电只占所有申请的20%，歧视将其减少30%，您需要大量数据来检测这种情况。</p>
+
+<p data-lang="en">Rule of thumb: you need ~500-1000 pairs for robust estimates of hiring discrimination effects (~5-10% relative differences). More pairs = more stable estimates, but more cost.</p>
+
+<p data-lang="zh">经验法则：您需要约500-1000对来获得招聘歧视影响的稳健估计（约5-10%相对差异）。更多对=更稳定的估计，但成本更高。</p>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">5. Outcomes to Measure</span><span data-lang="zh">5. 要测量的结果</span></h3>
+
+<p data-lang="en">Primary outcomes in audit studies:</p>
+
+<p data-lang="zh">审计实验的主要结果：</p>
+
+<ul style="margin: 15px 0;">
+  <li data-lang="en"><strong>Callback (yes/no):</strong> Binary indicator of any positive response (email, phone call, interview offer). Most common, easiest to measure objectively.</li>
+  <li data-lang="zh"><strong>回电（是/否）：</strong>任何积极回应（电子邮件、电话、面试邀请）的二元指标。最常见，最容易客观测量。</li>
+
+  <li data-lang="en"><strong>Interview offer (yes/no):</strong> Stricter threshold. Only counts formal interview invitation. Rarer, requires larger sample.</li>
+  <li data-lang="zh"><strong>面试邀请（是/否）：</strong>更严格的门槛。仅计算正式面试邀请。较少见，需要更大的样本。</li>
+
+  <li data-lang="en"><strong>Job offer (yes/no):</strong> Only offers made. Even rarer. Usually requires further experiments (call-backs, in-person audits).</li>
+  <li data-lang="zh"><strong>工作录用（是/否）：</strong>仅录用。更少见。通常需要进一步的实验（回电、亲身审计）。</li>
+
+  <li data-lang="en"><strong>Wage/price offered:</strong> For correspondence studies in rental/sales markets. Continuous outcome. More sensitive to discrimination in magnitude, not just access.</li>
+  <li data-lang="zh"><strong>提供的工资/价格：</strong>对于租赁/销售市场的通信研究。连续结果。对歧视的大小更敏感，不仅是获取。</li>
+
+  <li data-lang="en"><strong>Response speed:</strong> Time to callback. Indirect measure of enthusiasm/priority.</li>
+  <li data-lang="zh"><strong>响应速度：</strong>回电时间。热情/优先级的间接衡量。</li>
+</ul>
+
+<h2 id="audit-analysis"><span data-lang="en">Statistical Analysis of Audit Studies</span><span data-lang="zh">审计实验的统计分析</span></h2>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Simple Comparison of Proportions</span><span data-lang="zh">比例的简单比较</span></h3>
+
+<p data-lang="en">The most transparent starting point: what fraction of applications got callbacks for each treatment group?</p>
+
+<p data-lang="zh">最透明的起点：每个处理组有多少申请获得了回电？</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en">library(tidyverse)
+
+# Load audit data
+# Structure: one row per application
+# Variables: callback (0/1), race_signal (white/black), job_id, field
+audit_data <- read.csv("audit_applications.csv")
+
+# Simple callback rates by race
+mean_callback <- audit_data |>
+  group_by(race_signal) |>
+  summarise(
+    callback_rate = mean(callback),
+    n = n(),
+    se = sqrt(callback_rate * (1 - callback_rate) / n),
+    ci_lower = callback_rate - 1.96 * se,
+    ci_upper = callback_rate + 1.96 * se
+  )
+
+print(mean_callback)
+# Output might look like:
+# race_signal  callback_rate    n        se  ci_lower ci_upper
+# white              0.096    2500  0.0061    0.084    0.108
+# black              0.064    2500  0.0050    0.054    0.074
+#
+# Interpretation: White applicants got 9.6% callbacks, Black got 6.4%.
+# Difference: 3.2 percentage points, or a 33% relative reduction.</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">OLS Regression with Pair Fixed Effects</span><span data-lang="zh">配对固定效应的OLS回归</span></h3>
+
+<p data-lang="en">If some jobs are much more responsive than others (some fields get 50% callbacks, others get 2%), controlling for job/pair fixed effects reduces noise and improves precision of the treatment effect.</p>
+
+<p data-lang="zh">如果某些工作的响应性远高于其他工作（某些领域获得50%的回电，其他则获得2%），控制工作/对固定效应会减少噪声并改进处理效应的精度。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en"># Create binary treatment: 1 if black signal, 0 if white
+audit_data$is_black <- as.numeric(audit_data$race_signal == "black")
+
+# OLS with pair/job fixed effects
+# This treats the matched pair as the unit: each pair is a fixed effect
+fit_fe <- lm(callback ~ is_black + factor(pair_id),
+             data = audit_data)
+
+summary(fit_fe)
+# Coefficient on is_black: the average treatment effect within pairs
+# Interpretation: Being assigned the Black signal reduces callback prob by X ppts
+
+# Robust standard errors for clustering
+library(lmtest)
+library(sandwich)
+coeftest(fit_fe, vcov = vcovCL(fit_fe, cluster = ~pair_id))</code>
+</pre>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Mixed-Effects / Hierarchical Models</span><span data-lang="zh">混合效应/层级模型</span></h3>
+
+<p data-lang="en">Audit data have a hierarchy: applications within matched pairs within employers/jobs. Mixed-effects models account for this clustering naturally, and can be more efficient than fixed effects.</p>
+
+<p data-lang="zh">审计数据有层级结构：应用在配对对内，配对对在雇主/工作内。混合效应模型自然地说明这种聚类，可能比固定效应更有效。</p>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en">library(lme4)
+
+# Logistic mixed model (more appropriate for binary callback)
+# Random intercept for each job/employer
+fit_mixed <- glmer(callback ~ is_black + (1 | employer_id),
+                   data = audit_data,
+                   family = binomial)
+
+summary(fit_mixed)
+
+# Extract fixed effect (treatment effect) on log-odds scale
+beta_black <- fixef(fit_mixed)["is_black"]
+
+# Convert to probability scale for easier interpretation
+# For a typical employer (intercept), what's the marginal effect?
+# (Note: this requires specifying a baseline probability, nonlinear!)
+
+# Conditional on mean intercept (e^0 = 1)
+baseline_odds <- 1
+prob_white <- exp(fixef(fit_mixed)["(Intercept)"]) /
+              (1 + exp(fixef(fit_mixed)["(Intercept)"]))
+prob_black <- exp(fixef(fit_mixed)["(Intercept)"] + beta_black) /
+              (1 + exp(fixef(fit_mixed)["(Intercept)"] + beta_black))
+
+marginal_effect <- prob_black - prob_white
+print(paste("Marginal effect on callback probability:",
+            round(marginal_effect, 4)))</code>
+</pre>
+
+<h2 id="audit-decomp"><span data-lang="en">Oaxaca-Blinder Decomposition</span><span data-lang="zh">Oaxaca-Blinder分解</span></h2>
+
+<p data-lang="en">When you have both audit data and observational data, the Oaxaca-Blinder decomposition separates discrimination (unexplained difference) from productivity differences (explained by observable X's).</p>
+
+<p data-lang="zh">当您同时拥有审计数据和观察性数据时，Oaxaca-Blinder分解将歧视（无法解释的差异）与生产力差异（由可观察的X解释）分开。</p>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">The Framework</span><span data-lang="zh">框架</span></h3>
+
+<p data-lang="en">Suppose you measure outcomes (wage, offer rate, etc.) for two groups A and B. Let:</p>
+
+<p data-lang="zh">假设您测量两组A和B的结果（工资、录用率等）。设：</p>
+
+<div class="math-note">
+  <p data-lang="en">Ȳ<sub>A</sub> = mean outcome for group A</p>
+  <p data-lang="en">Ȳ<sub>B</sub> = mean outcome for group B</p>
+  <p data-lang="en">X̄<sub>A</sub> = mean characteristics (education, experience, etc.) for group A</p>
+  <p data-lang="en">β̂<sub>A</sub> = regression coefficients (returns to characteristics) for group A</p>
+  <p data-lang="en">β̂<sub>B</sub> = regression coefficients for group B</p>
+</div>
+
+<p data-lang="en">The Oaxaca-Blinder decomposition writes the gap as:</p>
+
+<p data-lang="zh">Oaxaca-Blinder分解将差距写成：</p>
+
+<div class="math-note">
+  <p style="text-align: center; font-size: 1.1em; margin: 15px 0;">
+    Ȳ<sub>A</sub> − Ȳ<sub>B</sub> = (X̄<sub>A</sub> − X̄<sub>B</sub>)'β̂<sub>B</sub> + X̄<sub>B</sub>'(β̂<sub>A</sub> − β̂<sub>B</sub>)
+  </p>
+  <p data-lang="en">First term: "endowment effect" (explained gap). Groups have different observable characteristics.</p>
+  <p data-lang="zh">第一项："禀赋效应"（解释的差距）。群体具有不同的可观察特征。</p>
+
+  <p data-lang="en">Second term: "coefficient effect" (unexplained/discrimination). Groups get different returns to their characteristics.</p>
+  <p data-lang="zh">第二项："系数效应"（无法解释/歧视）。群体对其特征获得不同的回报。</p>
+</div>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Example: Wage Gap Decomposition</span><span data-lang="zh">例子：工资差距分解</span></h3>
+
+<pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
+<code data-lang="en">library(oaxaca)
+
+# Assume cps_data has: wage (log), education (yrs), experience (yrs),
+#                      black (0/1 indicator)
+
+# Oaxaca decomposition
+decomp <- oaxaca(log_wage ~ education + experience | black,
+                  data = cps_data)
+
+summary(decomp)
+
+# Interpretation:
+# Total wage gap: 0.21 (21 log points = ~19% wage gap when exponentiated)
+# Explained (endowment effect): 0.08 (education/exp differences account for 8%)
+# Unexplained (discrimination): 0.13 (13% cannot be explained by observables)
+
+# Visualize
+plot(decomp)
+
+# Detailed breakdown
+decomp$overall
+decomp$endowments
+decomp$coefficients</code>
+</pre>
+
+<div class="insight-box">
+  <p data-lang="en"><strong>Interpretation Caution:</strong> The "unexplained" portion is NOT necessarily discrimination. It could reflect unmeasured differences in quality, networks, discrimination, or other factors. The advantage of combining this with an audit study is that the audit measures pure discrimination (holding quality constant), while the decomposition shows the overall gap and how much is accounted for by observables.</p>
+  <p data-lang="zh"><strong>解释警告：</strong>"解释的"部分不一定是歧视。它可能反映质量、网络、歧视或其他因素的未测量差异。将其与审计实验相结合的优势在于，审计衡量纯歧视（保持质量恒定），而分解显示总体差距以及有多少由可观察项解释。</p>
+</div>
+
+<h2 id="audit-critique"><span data-lang="en">Debates, Limitations & Extensions</span><span data-lang="zh">争议、限制与扩展</span></h2>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Correspondence vs In-Person Audits</span><span data-lang="zh">通信审计 vs 面对面审计</span></h3>
+
+<p data-lang="en"><strong>Correspondence studies:</strong> Send written applications (resumes, emails, rental inquiries). Cheap, scalable, minimal Hawthorne effect. Examples: Bertrand & Mullainathan (2004) on hiring, Quillian et al. (2019) on housing.</p>
+
+<p data-lang="zh"><strong>通信研究：</strong>发送书面申请（简历、电子邮件、租赁查询）。便宜、可扩展、最小的霍桑效应。例子：Bertrand & Mullainathan (2004)关于招聘，Quillian et al. (2019)关于住房。</p>
+
+<p data-lang="en"><strong>In-person audits:</strong> Actors (matched on race) apply in person or via phone. More expensive but captures face-to-face discrimination dynamics. Examples: Pager (2003) on hiring discrimination with criminal records, Carpusor & Loges (2006) on housing.</p>
+
+<p data-lang="zh"><strong>面对面审计：</strong>演员（按种族匹配）亲自申请或通过电话申请。更昂贵但捕捉面对面歧视动态。例子：Pager (2003)关于有犯罪记录的招聘歧视，Carpusor & Loges (2006)关于住房。</p>
+
+<p data-lang="en"><strong>Trade-off:</strong> Correspondence studies are cleaner (no confounding by appearance, accent, demeanor) but miss in-person discrimination. In-person audits are realistic but harder to control.</p>
+
+<p data-lang="zh"><strong>权衡：</strong>通信研究更清晰（没有外表、口音、举止的混淆），但错过了面对面歧视。面对面审计更逼真但更难控制。</p>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">The Meaning of "Race" as a Causal Variable</span><span data-lang="zh">"种族"作为因果变量的含义</span></h3>
+
+<p data-lang="en">VanderWeele & Robinson (2014) argue that "race" in audit studies is ambiguous: a name like "Jamal" or a photograph may trigger discrimination based on perceived race, but also perceived class, nativity, cultural background, or religion. The causal effect is on the bundle of inferences triggered by the signal, not on race per se.</p>
+
+<p data-lang="zh">VanderWeele & Robinson (2014)认为审计实验中的"种族"是模糊的：名字如"Jamal"或照片可能会基于感知种族、感知阶级、出生地、文化背景或宗教而引发歧视。因果效应是针对信号触发的推论束，而不是种族本身。</p>
+
+<p data-lang="en"><strong>Implication:</strong> Be careful about naming your treatment effect. Say "effect of name signal" or "perceived race/ethnicity" rather than assuming you've isolated the causal effect of race alone.</p>
+
+<p data-lang="zh"><strong>含义：</strong>小心命名处理效应。说"名字信号的效应"或"感知种族/民族"，而不是假设您已隔离种族本身的因果效应。</p>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Intersectionality: Race × Gender × Class</span><span data-lang="zh">交叉性：种族×性别×阶级</span></h3>
+
+<p data-lang="en">Audit studies often manipulate one signal at a time (just race). But discrimination operates at intersections. A 2×2 design varying both race and gender can show whether discrimination patterns differ by gender.</p>
+
+<p data-lang="zh">审计实验通常一次操纵一个信号（仅种族）。但歧视在交叉点运作。一个变化种族和性别的2×2设计可以显示歧视模式是否因性别而异。</p>
+
+<p data-lang="en"><strong>Example:</strong> Do employers discriminate against Black women more than Black men? More than white women? A 2×2 experiment reveals this.</p>
+
+<p data-lang="zh"><strong>例子：</strong>雇主是否对黑人女性的歧视多于黑人男性？多于白人女性？一个2×2实验揭示了这一点。</p>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Mundane vs Discriminatory Motives</span><span data-lang="zh">平凡 vs 歧视性动机</span></h3>
+
+<p data-lang="en">If an employer receives 100 applications for a position, they may respond slowly or not at all to some applications for reasons having nothing to do with discrimination (forgetfulness, high volume, system errors). How do we distinguish active discrimination from passive negligence?</p>
+
+<p data-lang="zh">如果雇主收到一个职位的100份申请，他们可能因与歧视无关的原因而缓慢或根本不回应某些申请（健忘、高量、系统错误）。我们如何区分积极歧视与被动疏忽？</p>
+
+<p data-lang="en">This is a frontier question in audit research. Some suggest using speed of response as an outcome (differential neglect), or following up on non-responses to measure active rejection.</p>
+
+<p data-lang="zh">这是审计研究的前沿问题。有些人建议使用响应速度作为结果（差异化忽视），或跟踪非回应以测量积极拒绝。</p>
+
+<h3 style="margin-top: 20px;"><span data-lang="en">Policy Implications</span><span data-lang="zh">政策含义</span></h3>
+
+<p data-lang="en">Audit studies have influenced policy in hiring and housing:</p>
+
+<p data-lang="zh">审计实验已影响招聘和住房政策：</p>
+
+<ul style="margin: 15px 0;">
+  <li data-lang="en"><strong>Blind resume reviews:</strong> Some organizations now redact names from resumes before screening, inspired by audit evidence of name discrimination.</li>
+  <li data-lang="zh"><strong>盲名简历审查：</strong>受名字歧视审计证据的启发，一些组织现在在筛选前从简历中删除名字。</li>
+
+  <li data-lang="en"><strong>Implicit bias training:</strong> Criticized as ineffective, but audit studies document that discrimination persists despite good intentions, motivating interventions.</li>
+  <li data-lang="zh"><strong>隐性偏见培训：</strong>因无效而受到批评，但审计实验记录了尽管意图良好，歧视仍然存在，促进了干预。</li>
+
+  <li data-lang="en"><strong>Structural interventions:</strong> Audit evidence suggests individual-level bias training may be less effective than structural changes (standardized hiring rubrics, removing human judgment, algorithmic auditing).</li>
+  <li data-lang="zh"><strong>结构性干预：</strong>审计证据表明个人级别的偏见培训可能不如结构性变化有效（标准化招聘标准、消除人为判断、算法审计）。</li>
+</ul>
+
+<div class="insight-box">
+  <p data-lang="en"><strong>Key Takeaway:</strong> Audit studies provide unambiguous causal evidence of discrimination. When combined with decomposition analysis of observational data, they help pinpoint where discrimination occurs (screening vs hiring vs wage-setting). This evidence has driven real policy changes in hiring and fair housing enforcement.</p>
+  <p data-lang="zh"><strong>关键要点：</strong>审计实验提供了歧视的明确因果证据。与观察性数据分解分析相结合时，它们帮助精确定位歧视发生的地方（筛选vs招聘vs工资设定）。这一证据推动了招聘和公平住房执法的真实政策变化。</p>
+</div>

@@ -1,0 +1,16 @@
+<div class="topbar">
+  <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"><span></span></button>
+  <div class="breadcrumb">
+    {% if page.breadcrumb %}
+      {{ page.breadcrumb }}<span class="sep">/</span> {{ page.title }}
+    {% else %}
+      <a href="/methods/index.html">首页</a>
+    {% endif %}
+  </div>
+  {% if page.bilingual %}
+  <div class="topbar-lang">
+    <button class="lang-btn" id="btn-zh" onclick="setLang('zh')">中文</button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+  {% endif %}
+</div>

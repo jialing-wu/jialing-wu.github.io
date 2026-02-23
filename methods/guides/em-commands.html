@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang="en">Stata/R Command Reference | Empirical Modeling</title>
+    <title data-lang="zh">Stata/R 命令参考 | 经验建模</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="guide-style.css">
+</head>
+
+<body class="zh">
+    <div class="guide-layout">
+        <div class="guide-topbar">
+            <div class="guide-breadcrumb">
+                <a href="../empirical-modeling.html" data-lang="en">Empirical Modeling</a>
+                <a href="../empirical-modeling.html" data-lang="zh">经验建模</a>
+                <span class="sep">/</span>
+                <span data-lang="en">Stata/R Command Reference</span>
+                <span data-lang="zh">Stata/R 命令参考</span>
+            </div>
+            <div class="guide-lang-toggle">
+                <button class="guide-lang-btn active" data-lang="zh">中文</button>
+                <button class="guide-lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+
+        <div class="guide-content-wrapper">
+            <div class="guide-content">
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="en">Back to Empirical Modeling</a>
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="zh">返回经验建模</a>
+
+                <div class="guide-header">
+                    <div class="guide-tag">
+                        <span data-lang="en">ZERO-BASE FRIENDLY · FROM FIRST PRINCIPLES</span>
+                        <span data-lang="zh">零基础友好 · 从首原理</span>
+                    </div>
+                    <h1>
+                        <span data-lang="en">Stata/R Command Reference</span>
+                        <span data-lang="zh">Stata/R 命令参考</span>
+                    </h1>
+                    <p>
+                        <span data-lang="en">Syntax and implementation examples for all estimation methods covered in the course.</span>
+                        <span data-lang="zh">课程中涵盖的所有估计方法的语法和实现示例。</span>
+                    </p>
+                </div>
+
+                <section id="ols-gls">
+                <h2><span data-lang="en">OLS & GLS Regression</span><span data-lang="zh">普通最小平方法 & 廣義最小平方法</span></h2>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">Basic OLS Regression</span><span data-lang="zh">基本OLS迴歸</span></div>
+                    <div class="command-code">reg y x1 x2 x3</div>
+                    <p class="command-description">
+                        <span data-lang="en">Estimates an ordinary least squares model with outcome variable <code>y</code> and predictors <code>x1</code>, <code>x2</code>, <code>x3</code>. Provides coefficient estimates, standard errors, t-statistics, p-values, and R-squared.</span>
+                        <span data-lang="zh">用結果變量 <code>y</code> 和預測變量 <code>x1</code>、<code>x2</code>、<code>x3</code> 估計普通最小平方法模型。提供係數估計、標準差、t統計量、p值和R平方。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Cross-sectional data, no heteroscedasticity concerns</span>
+                        <span data-lang="zh">何時：截面數據，無異方差問題</span>
+                    </div>
+                    <div class="command-tips">
+                        <span data-lang="en">Interpretation: Each coefficient represents the change in <code>y</code> for a one-unit increase in the predictor, holding others constant.</span>
+                        <span data-lang="zh">解釋：每個係數表示在保持其他變量不變的情況下，預測變量增加一個單位時 <code>y</code> 的變化。</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">OLS Regression</span><span data-lang="zh">OLS迴歸</span></div>
+                    <div class="command-code">lm(y ~ x1 + x2 + x3, data = df)
+summary(model)</div>
+                    <p class="command-description">
+                        <span data-lang="en">Base R function for OLS regression. The <code>lm()</code> function estimates the model, and <code>summary()</code> displays detailed results including coefficients, standard errors, and p-values.</span>
+                        <span data-lang="zh">R的基本OLS迴歸函數。<code>lm()</code>函數估計模型，<code>summary()</code>顯示詳細結果，包括係數、標準差和p值。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Standard linear regression with OLS estimator</span>
+                        <span data-lang="zh">何時：使用OLS估計器的標準線性迴歸</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">Generalized Linear Model (GLS)</span><span data-lang="zh">廣義線性模型 (GLS)</span></div>
+                    <div class="command-code">library(nlme)
+gls(y ~ x1 + x2, data = df,
+    weights = varFixed(~x1),
+    correlation = corAR1())</div>
+                    <p class="command-description">
+                        <span data-lang="en">The <code>gls()</code> function from the <code>nlme</code> package allows specification of heteroscedasticity structures, autocorrelation, and weights. Useful for accounts for non-constant variance and correlated errors.</span>
+                        <span data-lang="zh"><code>nlme</code>包中的<code>gls()</code>函數允許指定異方差結構、自相關和權重。適用於考慮非恆定方差和相關誤差的情況。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Heteroscedastic errors or correlated errors in cross-sectional data</span>
+                        <span data-lang="zh">何時：截面數據中存在異方差誤差或相關誤差</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Robust Standard Errors -->
+            <section id="robustness">
+                <h2><span data-lang="en">Robust Standard Errors</span><span data-lang="zh">穩健標準差</span></h2>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">Robust SEs (Heteroscedasticity-Consistent)</span><span data-lang="zh">穩健標準差（異方差一致）</span></div>
+                    <div class="command-code">reg y x1 x2 x3, robust</div>
+                    <p class="command-description">
+                        <span data-lang="en">Uses Huber-White robust standard errors (HC1) that are consistent under heteroscedasticity of unknown form. Does not assume constant error variance.</span>
+                        <span data-lang="zh">使用Huber-White穩健標準差（HC1），在任意異方差下都是一致的。不假設恆定的誤差方差。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Heteroscedasticity present, no specific structure known</span>
+                        <span data-lang="zh">何時：存在異方差，未知具體結構</span>
+                    </div>
+                    <div class="command-tips">
+                        <span data-lang="en">Default for applied work. Typically produces larger SEs and narrower confidence intervals than homoscedastic SEs.</span>
+                        <span data-lang="zh">應用工作的默認選擇。通常比同方差標準差產生更大的SE和更窄的置信區間。</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">Cluster-Robust SEs</span><span data-lang="zh">聚類穩健標準差</span></div>
+                    <div class="command-code">reg y x1 x2 x3, vce(cluster clustervar)</div>
+                    <p class="command-description">
+                        <span data-lang="en">Allows for arbitrary correlation within clusters (e.g., students within schools). Corrects standard errors for within-cluster correlation while assuming independence across clusters.</span>
+                        <span data-lang="zh">允許群集內任意相關（如學校內的學生）。修正標準差以考慮群集內相關，同時假設群集間獨立。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Data has nested structure (multilevel, hierarchical) with correlated errors within groups</span>
+                        <span data-lang="zh">何時：數據具有嵌套結構（多層次），群組內誤差相關</span>
+                    </div>
+                    <div class="command-tips">
+                        <span data-lang="en">Number of clusters should be ≥30 for asymptotic approximation to be reliable. Small number of clusters requires wild bootstrap correction.</span>
+                        <span data-lang="zh">群集數應≥30，漸近近似才可靠。群集數少則需要野生自舉修正。</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">Heteroscedasticity-Consistent SEs</span><span data-lang="zh">異方差一致標準差</span></div>
+                    <div class="command-code">library(sandwich)
+library(lmtest)
+model <- lm(y ~ x1 + x2, data = df)
+coeftest(model, vcov = vcovHC(model, type = "HC1"))</div>
+                    <p class="command-description">
+                        <span data-lang="en">The <code>sandwich</code> package provides <code>vcovHC()</code> for HC (heteroscedasticity-consistent) variance-covariance matrices. Use <code>coeftest()</code> from <code>lmtest</code> to display results with robust SEs.</span>
+                        <span data-lang="zh"><code>sandwich</code>包提供<code>vcovHC()</code>用於HC方差-協方差矩陣。使用<code>lmtest</code>中的<code>coeftest()</code>顯示穩健SE結果。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Testing heteroscedasticity-robust inference for OLS estimates</span>
+                        <span data-lang="zh">何時：對OLS估計進行異方差穩健推論測試</span>
+                    </div>
+                    <div class="example-box">
+                        <span data-lang="en"><code>type = "HC1"</code> (default), <code>"HC2"</code>, <code>"HC3"</code> offer different small-sample corrections</span>
+                        <span data-lang="zh"><code>type = "HC1"</code>（默認）、<code>"HC2"</code>、<code>"HC3"</code>提供不同的小樣本修正</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">Cluster-Robust SEs</span><span data-lang="zh">聚類穩健標準差</span></div>
+                    <div class="command-code">library(lmtest)
+library(sandwich)
+coeftest(model, vcov = vcovCL(model,
+                              cluster = df$cluster_id))</div>
+                    <p class="command-description">
+                        <span data-lang="en">The <code>vcovCL()</code> function from <code>sandwich</code> calculates cluster-robust variance estimates. Useful for data with hierarchical structure where observations within clusters are correlated.</span>
+                        <span data-lang="zh"><code>sandwich</code>中的<code>vcovCL()</code>函數計算聚類穩健方差估計。用於具有層級結構且群組內觀測值相關的數據。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Multilevel data, repeated measures, or panel data with clustering</span>
+                        <span data-lang="zh">何時：多層次數據、重複測量或具有聚類的面板數據</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Panel Data Models -->
+            <section id="panel">
+                <h2><span data-lang="en">Panel Data Models</span><span data-lang="zh">面板數據模型</span></h2>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">Fixed Effects (Within) Estimator</span><span data-lang="zh">固定效應（組內）估計器</span></div>
+                    <div class="command-code">xtreg y x1 x2, fe</div>
+                    <p class="command-description">
+                        <span data-lang="en">Fixed effects estimator removes time-invariant unobserved heterogeneity by including unit-specific intercepts (fixed effects). Eliminates between-unit variation and focuses on within-unit changes.</span>
+                        <span data-lang="zh">固定效應估計器通過包括單位特定截距（固定效應）來消除時間不變的未觀察異質性。消除單位間變異，專注於單位內變化。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Endogeneity due to time-invariant omitted variables; causality interest within units over time</span>
+                        <span data-lang="zh">何時：由時間不變的遺漏變量造成的內生性；關注單位內隨時間的因果性</span>
+                    </div>
+                    <div class="command-tips">
+                        <span data-lang="en">Time-invariant predictors are dropped from the model. Use <code>xtreg y x1 x2, fe i(unit) t(time)</code> to check validity and display results clearly.</span>
+                        <span data-lang="zh">時間不變的預測變量從模型中刪除。使用<code>xtreg y x1 x2, fe i(unit) t(time)</code>檢查有效性並清楚顯示結果。</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">Random Effects (GLS) Estimator</span><span data-lang="zh">隨機效應（GLS）估計器</span></div>
+                    <div class="command-code">xtreg y x1 x2, re</div>
+                    <p class="command-description">
+                        <span data-lang="en">Random effects estimator assumes unobserved unit effects are uncorrelated with predictors. Uses GLS to account for the error structure. More efficient than FE when assumption holds.</span>
+                        <span data-lang="zh">隨機效應估計器假設未觀察的單位效應與預測變量不相關。使用GLS考慮誤差結構。當假設成立時比FE更有效。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Unit effects uncorrelated with predictors; time-invariant predictors are of interest; efficiency concern</span>
+                        <span data-lang="zh">何時：單位效應與預測變量無關；關心時間不變預測變量；效率問題</span>
+                    </div>
+                    <div class="command-tips">
+                        <span data-lang="en">Run Hausman test to compare FE vs RE: <code>est store fixed_model</code>, then <code>xtreg ... re</code>, then <code>hausman fixed_model</code>. If p &lt; 0.05, reject RE assumption.</span>
+                        <span data-lang="zh">運行Hausman測試比較FE vs RE：<code>est store fixed_model</code>，然後<code>xtreg ... re</code>，然後<code>hausman fixed_model</code>。若p &lt; 0.05，拒絕RE假設。</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">Fixed Effects Model (plm)</span><span data-lang="zh">固定效應模型 (plm)</span></div>
+                    <div class="command-code">library(plm)
+model_fe <- plm(y ~ x1 + x2, data = df,
+                 index = c("id", "year"),
+                 model = "within")</div>
+                    <p class="command-description">
+                        <span data-lang="en">The <code>plm</code> (panel linear model) package provides <code>plm()</code> for panel data estimation. <code>model = "within"</code> specifies fixed effects. Automatically handles the panel structure.</span>
+                        <span data-lang="zh"><code>plm</code>（面板線性模型）包提供<code>plm()</code>用於面板數據估計。<code>model = "within"</code>指定固定效應。自動處理面板結構。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Panel data with unit and time structure; within-unit estimation</span>
+                        <span data-lang="zh">何時：具有單位和時間結構的面板數據；單位內估計</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">Random Effects Model (plm)</span><span data-lang="zh">隨機效應模型 (plm)</span></div>
+                    <div class="command-code">library(plm)
+model_re <- plm(y ~ x1 + x2, data = df,
+                 index = c("id", "year"),
+                 model = "random")</div>
+                    <p class="command-description">
+                        <span data-lang="en">Fixed effects estimator using <code>plm</code> with <code>model = "random"</code>. Assumes unit effects are random and uncorrelated with predictors. More efficient than FE under this assumption.</span>
+                        <span data-lang="zh">使用<code>plm</code>的隨機效應估計器，<code>model = "random"</code>。假設單位效應是隨機的且與預測變量無關。在此假設下比FE更有效。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Efficiency desired and unobserved effects assumption is credible</span>
+                        <span data-lang="zh">何時：需要效率且未觀察效應假設是可信的</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">Multilevel/Mixed Effects Model (lme4)</span><span data-lang="zh">多層次/混合效應模型 (lme4)</span></div>
+                    <div class="command-code">library(lme4)
+model <- lmer(y ~ x1 + x2 + (1 | group),
+              data = df)
+summary(model)</div>
+                    <p class="command-description">
+                        <span data-lang="en">The <code>lme4</code> package provides <code>lmer()</code> for mixed-effects models. <code>(1 | group)</code> specifies random intercepts by group. Flexible for complex hierarchical structures.</span>
+                        <span data-lang="zh"><code>lme4</code>包提供<code>lmer()</code>用於混合效應模型。<code>(1 | group)</code>指定按組別的隨機截距。靈活應對複雜層級結構。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Multilevel data (nested), random slopes, or complex correlation structures</span>
+                        <span data-lang="zh">何時：多層次數據（嵌套）、隨機斜率或複雜相關結構</span>
+                    </div>
+                    <div class="example-box">
+                        <span data-lang="en">Random slopes: <code>(x1 | group)</code>; Multiple grouping levels: <code>(1 | school/class)</code></span>
+                        <span data-lang="zh">隨機斜率：<code>(x1 | group)</code>；多個分組級別：<code>(1 | school/class)</code></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Discrete Choice Models -->
+            <section id="discrete">
+                <h2><span data-lang="en">Discrete Choice Models</span><span data-lang="zh">離散選擇模型</span></h2>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">Logit Model</span><span data-lang="zh">Logit模型</span></div>
+                    <div class="command-code">logit y x1 x2 x3</div>
+                    <p class="command-description">
+                        <span data-lang="en">Estimates a logit model for binary outcomes (0/1). Uses maximum likelihood. Results show log-odds; interpret with caution or convert to marginal effects.</span>
+                        <span data-lang="zh">為二元結果（0/1）估計logit模型。使用最大概然法。結果顯示對數勢比；謹慎解釋或轉換為邊際效應。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Binary outcome variable (e.g., yes/no, employed/unemployed, default/no-default)</span>
+                        <span data-lang="zh">何時：二元結果變量（如是/否、受僱/失業、違約/未違約）</span>
+                    </div>
+                    <div class="command-tips">
+                        <span data-lang="en">Coefficients are log-odds ratios. Use <code>logit y x1 x2, or</code> to display odds ratios directly. For predictions: <code>predict prob_y</code> after logit. Calculate marginal effects with <code>margins</code>.</span>
+                        <span data-lang="zh">係數是對數勢比。使用<code>logit y x1 x2, or</code>直接顯示勢比。對於預測：在logit後使用<code>predict prob_y</code>。使用<code>margins</code>計算邊際效應。</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">Probit Model</span><span data-lang="zh">Probit模型</span></div>
+                    <div class="command-code">probit y x1 x2 x3</div>
+                    <p class="command-description">
+                        <span data-lang="en">Probit model using standard normal CDF instead of logistic function. Similar to logit but with different functional form. Results in similar predictions for typical cases.</span>
+                        <span data-lang="zh">使用標準常態CDF而非邏輯函數的Probit模型。與logit類似但函數形式不同。通常情況下預測結果相似。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Binary outcome; theory suggests normal error distribution; comparing with logit for robustness</span>
+                        <span data-lang="zh">何時：二元結果；理論表明常態誤差分佈；與logit比較以檢驗穩健性</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">Logit/Probit Model</span><span data-lang="zh">Logit/Probit模型</span></div>
+                    <div class="command-code">library(AER)  # or base R
+model <- glm(y ~ x1 + x2 + x3,
+             family = binomial(link = "logit"),
+             data = df)
+summary(model)</div>
+                    <p class="command-description">
+                        <span data-lang="en"><code>glm()</code> (generalized linear model) with <code>family = binomial(link = "logit")</code> for logit. Use <code>link = "probit"</code> for probit. Displays coefficients and their significance.</span>
+                        <span data-lang="zh"><code>glm()</code>（廣義線性模型）與<code>family = binomial(link = "logit")</code>用於logit。使用<code>link = "probit"</code>進行probit。顯示係數及其顯著性。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Binary outcome; standard logit/probit estimation</span>
+                        <span data-lang="zh">何時：二元結果；標準logit/probit估計</span>
+                    </div>
+                    <div class="example-box">
+                        <span data-lang="en">Predictions: <code>predict(model, type = "response")</code> gives probabilities. Marginal effects: use <code>margins</code> package.</span>
+                        <span data-lang="zh">預測：<code>predict(model, type = "response")</code>給出概率。邊際效應：使用<code>margins</code>包。</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">Marginal Effects</span><span data-lang="zh">邊際效應</span></div>
+                    <div class="command-code">logit y x1 x2 x3
+margins, dydx(*) atmeans</div>
+                    <p class="command-description">
+                        <span data-lang="en">After logit/probit, <code>margins</code> calculates marginal effects at the mean (MEM). <code>dydx(*)</code> gives effect of each variable on predicted probability.</span>
+                        <span data-lang="zh">在logit/probit之後，<code>margins</code>計算平均邊際效應（MEM）。<code>dydx(*)</code>給出每個變量對預測概率的效應。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Interpreting discrete choice model results; reporting policy impacts in probability terms</span>
+                        <span data-lang="zh">何時：解釋離散選擇模型結果；用概率項報告政策影響</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Endogeneity & IV -->
+            <section id="endogeneity">
+                <h2><span data-lang="en">Endogeneity & Instrumental Variables</span><span data-lang="zh">內生性與工具變量</span></h2>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">2SLS (Two-Stage Least Squares)</span><span data-lang="zh">2SLS（兩階段最小平方法）</span></div>
+                    <div class="command-code">ivregress 2sls y (x1 = z1 z2) x2 x3</div>
+                    <p class="command-description">
+                        <span data-lang="en">Estimates 2SLS: <code>x1</code> is endogenous and instrumented by <code>z1</code>, <code>z2</code> (excluded instruments). <code>x2</code>, <code>x3</code> are exogenous. Stage 1 predicts <code>x1</code> from instruments; Stage 2 regresses <code>y</code> on predicted <code>x1</code>.</span>
+                        <span data-lang="zh">估計2SLS：<code>x1</code>內生且由<code>z1</code>、<code>z2</code>（排除工具）工具化。<code>x2</code>、<code>x3</code>是外生的。第一階段從工具預測<code>x1</code>；第二階段在預測<code>x1</code>上迴歸<code>y</code>。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Endogeneity (reverse causality, omitted variable bias, measurement error) and valid instruments exist</span>
+                        <span data-lang="zh">何時：存在內生性（反向因果、遺漏變量偏差、測量誤差）且存在有效工具</span>
+                    </div>
+                    <div class="command-tips">
+                        <span data-lang="en">Test instrument strength: <code>estat firststage</code>. If F-stat &lt; 10, weak instruments. Run overidentification test: <code>estat overid</code>. Interpret results carefully; weak instruments bias 2SLS toward OLS bias.</span>
+                        <span data-lang="zh">測試工具強度：<code>estat firststage</code>。若F統計量 &lt; 10，工具較弱。運行過度識別測試：<code>estat overid</code>。仔細解釋結果；弱工具使2SLS偏向OLS偏差。</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">2SLS with AER Package</span><span data-lang="zh">AER包的2SLS</span></div>
+                    <div class="command-code">library(AER)
+model_iv <- ivreg(y ~ x1 + x2 |
+                   z1 + z2 + x2,
+                   data = df)
+summary(model_iv)</div>
+                    <p class="command-description">
+                        <span data-lang="en">The <code>AER</code> package's <code>ivreg()</code> implements 2SLS. Formula: <code>y ~ endogenous_vars + exogenous_vars | instruments + exogenous_vars</code>. Left side of | lists instruments.</span>
+                        <span data-lang="zh"><code>AER</code>包的<code>ivreg()</code>實現2SLS。公式：<code>y ~ 內生變量 + 外生變量 | 工具 + 外生變量</code>。|左側列出工具。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: 2SLS estimation in R with standard toolkit</span>
+                        <span data-lang="zh">何時：使用R標準工具包進行2SLS估計</span>
+                    </div>
+                    <div class="example-box">
+                        <span data-lang="en">Test weak instruments: <code>summary(model_iv, diagnostics = TRUE)</code>. Includes first-stage F-stat and overidentification test.</span>
+                        <span data-lang="zh">測試弱工具：<code>summary(model_iv, diagnostics = TRUE)</code>。包括第一階段F統計量和過度識別測試。</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">GMM (Generalized Method of Moments)</span><span data-lang="zh">GMM（廣義矩估計）</span></div>
+                    <div class="command-code">gmm (y - {b0} - {b1}*x1 - {b2}*x2),
+    instruments(z1 z2 x2) onestep</div>
+                    <p class="command-description">
+                        <span data-lang="en"><code>gmm</code> command for nonlinear models or dynamic panels. <code>instruments()</code> specifies moment conditions. Flexible for complex endogeneity structures.</span>
+                        <span data-lang="zh"><code>gmm</code>命令用於非線性模型或動態面板。<code>instruments()</code>指定矩條件。對複雜內生性結構靈活。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Nonlinear models with endogeneity; dynamic panel models (Arellano-Bond)</span>
+                        <span data-lang="zh">何時：具有內生性的非線性模型；動態面板模型（Arellano-Bond）</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">Weak Instrument Testing</span><span data-lang="zh">弱工具測試</span></div>
+                    <div class="command-code">library(AER)
+first_stage <- lm(x1 ~ z1 + z2 + x2, data = df)
+f_stat <- summary(first_stage)$fstatistic[1]
+# Weak if F < 10</div>
+                    <p class="command-description">
+                        <span data-lang="en">Manually calculate first-stage F-statistic to test instrument strength. F-stat &lt; 10 indicates weak instruments; results may be unreliable or biased toward OLS.</span>
+                        <span data-lang="zh">手動計算第一階段F統計量以測試工具強度。F統計量 &lt; 10表示工具較弱；結果可能不可靠或偏向OLS。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Assessing IV validity and instrument strength before inference</span>
+                        <span data-lang="zh">何時：在推論前評估IV有效性和工具強度</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Time Series -->
+            <section id="timeseries">
+                <h2><span data-lang="en">Time Series Models</span><span data-lang="zh">時間序列模型</span></h2>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">VAR (Vector Autoregression)</span><span data-lang="zh">VAR（向量自迴歸）</span></div>
+                    <div class="command-code">var y1 y2 y3, lags(2)</div>
+                    <p class="command-description">
+                        <span data-lang="en">Estimates a VAR model with 2 lags for a system of 3 variables. Each variable's current value depends on past values of all variables. Useful for analyzing dynamic interdependencies.</span>
+                        <span data-lang="zh">為3個變量的系統估計2階滯後的VAR模型。每個變量的當前值取決於所有變量的過去值。用於分析動態相互依賴。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Multiple time series with feedback; impulse response analysis; forecasting system</span>
+                        <span data-lang="zh">何時：具有反饋的多個時間序列；衝動反應分析；系統預測</span>
+                    </div>
+                    <div class="command-tips">
+                        <span data-lang="en">Check lag order with <code>varsoc</code> before VAR. Examine impulse responses: <code>irf create myirf</code>, <code>irf plot</code>. Test for cointegration if variables are I(1).</span>
+                        <span data-lang="zh">在VAR前用<code>varsoc</code>檢查滯後階數。檢查衝動反應：<code>irf create myirf</code>、<code>irf plot</code>。如果變量是I(1)，測試協整。</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">ARIMA (AutoRegressive Integrated Moving Average)</span><span data-lang="zh">ARIMA（自迴歸綜合移動平均）</span></div>
+                    <div class="command-code">library(forecast)
+auto_model <- auto.arima(ts_data,
+                         seasonal = FALSE)
+summary(auto_model)</div>
+                    <p class="command-description">
+                        <span data-lang="en"><code>auto.arima()</code> automatically selects ARIMA order (p,d,q) by comparing information criteria. Handles differencing and seasonality. Simpler alternative to manual order selection.</span>
+                        <span data-lang="zh"><code>auto.arima()</code>通過比較信息準則自動選擇ARIMA階數(p,d,q)。處理差分和季節性。比手動階數選擇更簡單。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Single time series forecasting; stationarity concerns; seasonal patterns</span>
+                        <span data-lang="zh">何時：單時間序列預測；平穩性問題；季節模式</span>
+                    </div>
+                    <div class="example-box">
+                        <span data-lang="en">Manual specification: <code>arima(y, order = c(1, 1, 1))</code> for ARIMA(1,1,1). Forecast: <code>forecast(model, h = 12)</code> for 12-period ahead.</span>
+                        <span data-lang="zh">手動規範：<code>arima(y, order = c(1, 1, 1))</code>用於ARIMA(1,1,1)。預測：<code>forecast(model, h = 12)</code>提前12期。</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">VAR (Vector Autoregression)</span><span data-lang="zh">VAR（向量自迴歸）</span></div>
+                    <div class="command-code">library(vars)
+var_model <- VAR(data_matrix, p = 2,
+                 type = "const")
+summary(var_model)</div>
+                    <p class="command-description">
+                        <span data-lang="en">The <code>vars</code> package provides <code>VAR()</code> for multivariate time series. <code>p = 2</code> specifies 2 lags. Returns coefficient estimates for each equation. Allows impulse response and Granger causality analysis.</span>
+                        <span data-lang="zh"><code>vars</code>包提供<code>VAR()</code>用於多變量時間序列。<code>p = 2</code>指定2階滯後。返回每個方程的係數估計。允許衝動反應和Granger因果分析。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Multivariate time series analysis; structural relationships; forecasting multiple variables</span>
+                        <span data-lang="zh">何時：多變量時間序列分析；結構關係；多變量預測</span>
+                    </div>
+                    <div class="example-box">
+                        <span data-lang="en">Impulse response: <code>irf(var_model, impulse = "x1", response = "y")</code>. Granger causality: <code>causality(var_model, cause = "x1")</code>.</span>
+                        <span data-lang="zh">衝動反應：<code>irf(var_model, impulse = "x1", response = "y")</code>。Granger因果：<code>causality(var_model, cause = "x1")</code>。</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">Unit Root Test (ADF)</span><span data-lang="zh">單位根測試（ADF）</span></div>
+                    <div class="command-code">dfuller y, lags(4) trend</div>
+                    <p class="command-description">
+                        <span data-lang="en">Augmented Dickey-Fuller test for unit roots. Null hypothesis: unit root (series is I(1)). If p-value &lt; 0.05, reject null and conclude series is stationary.</span>
+                        <span data-lang="zh">增強Dickey-Fuller單位根測試。零假設：單位根（序列是I(1)）。若p值 &lt; 0.05，拒絕零假設並結論序列是平穩的。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Time series analysis; before VAR/cointegration; checking stationarity assumption</span>
+                        <span data-lang="zh">何時：時間序列分析；在VAR/協整前；檢查平穩性假設</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">Unit Root Test (ADF)</span><span data-lang="zh">單位根測試（ADF）</span></div>
+                    <div class="command-code">library(tseries)
+adf.test(y)
+# p-value < 0.05 suggests stationarity</div>
+                    <p class="command-description">
+                        <span data-lang="en"><code>adf.test()</code> from the <code>tseries</code> package performs Augmented Dickey-Fuller test. Returns test statistic and p-value for stationarity assessment.</span>
+                        <span data-lang="zh"><code>tseries</code>包的<code>adf.test()</code>進行增強Dickey-Fuller測試。返回測試統計量和p值用於平穩性評估。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Assessing stationarity before time series modeling</span>
+                        <span data-lang="zh">何時：時間序列建模前評估平穩性</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Spatial Models -->
+            <section id="spatial">
+                <h2><span data-lang="en">Spatial Models</span><span data-lang="zh">空間模型</span></h2>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">Spatial OLS with Moran's I Test</span><span data-lang="zh">空間OLS與Moran's I測試</span></div>
+                    <div class="command-code">spreg y x1 x2, id(id) model(ols) moran</div>
+                    <p class="command-description">
+                        <span data-lang="en">Spatial regression with <code>model(ols)</code> and Moran's I test for spatial autocorrelation. <code>id()</code> specifies cross-section identifier. Tests null of no spatial autocorrelation in residuals.</span>
+                        <span data-lang="zh">空間迴歸，<code>model(ols)</code>和Moran's I空間自相關測試。<code>id()</code>指定截面標識符。測試殘差中無空間自相關的零假設。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Geographic/spatial data; testing for spatial autocorrelation; cross-sectional analysis with location</span>
+                        <span data-lang="zh">何時：地理/空間數據；測試空間自相關；具有位置的截面分析</span>
+                    </div>
+                    <div class="command-tips">
+                        <span data-lang="en">If Moran's I p-value &lt; 0.05, spatial autocorrelation is significant. Consider spatial lag or spatial error model. Define spatial weights matrix first (e.g., queen contiguity).</span>
+                        <span data-lang="zh">若Moran's I p值 &lt; 0.05，空間自相關顯著。考慮空間滯後或空間誤差模型。先定義空間權重矩陣（如皇后鄰接）。</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">Spatial Lag Model (SAR)</span><span data-lang="zh">空間滯後模型（SAR）</span></div>
+                    <div class="command-code">spreg y x1 x2, id(id) model(lag) weights(W)</div>
+                    <p class="command-description">
+                        <span data-lang="en">Spatial autoregressive (lag) model: outcome depends on neighboring outcomes plus predictors. <code>weights(W)</code> specifies spatial weights. Accounts for spatial interdependence.</span>
+                        <span data-lang="zh">空間自迴歸（滯後）模型：結果取決於鄰近結果加預測變量。<code>weights(W)</code>指定空間權重。考慮空間相互依賴。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Outcome variable is spatially correlated; peer effects; spatial spillovers</span>
+                        <span data-lang="zh">何時：結果變量空間相關；同伴效應；空間溢出</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label stata">Stata</div>
+                    <div class="command-label"><span data-lang="en">Spatial Error Model (SEM)</span><span data-lang="zh">空間誤差模型（SEM）</span></div>
+                    <div class="command-code">spreg y x1 x2, id(id) model(error) weights(W)</div>
+                    <p class="command-description">
+                        <span data-lang="en">Spatial error model: errors are spatially autocorrelated. <code>model(error)</code> specifies the spatial error structure. Omitted variables or measurement error may cause spatial error autocorrelation.</span>
+                        <span data-lang="zh">空間誤差模型：誤差空間自相關。<code>model(error)</code>指定空間誤差結構。遺漏變量或測量誤差可能導致空間誤差自相關。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Spatial autocorrelation in errors (residuals); omitted spatial variables</span>
+                        <span data-lang="zh">何時：誤差的空間自相關（殘差）；遺漏空間變量</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">Spatial LAG Model (spdep)</span><span data-lang="zh">空間滯後模型（spdep）</span></div>
+                    <div class="command-code">library(spdep)
+model_sar <- lagsarlm(y ~ x1 + x2,
+                      data = df,
+                      listw = W)
+summary(model_sar)</div>
+                    <p class="command-description">
+                        <span data-lang="en">The <code>spdep</code> package provides <code>lagsarlm()</code> for spatial lag model. <code>listw</code> is a weights object (created with <code>nb2listw()</code> or similar). Estimates SAR model via ML.</span>
+                        <span data-lang="zh"><code>spdep</code>包提供<code>lagsarlm()</code>用於空間滯後模型。<code>listw</code>是權重對象（使用<code>nb2listw()</code>等創建）。通過ML估計SAR模型。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Spatial lag model in R; accounting for spatial autocorrelation in outcome</span>
+                        <span data-lang="zh">何時：R中的空間滯後模型；考慮結果的空間自相關</span>
+                    </div>
+                    <div class="example-box">
+                        <span data-lang="en">Spatial error model: <code>errorsarlm(y ~ x1 + x2, data = df, listw = W)</code>. Create weights: <code>W <- nb2listw(knearneigh(coordinates(df), k = 5))</code>.</span>
+                        <span data-lang="zh">空間誤差模型：<code>errorsarlm(y ~ x1 + x2, data = df, listw = W)</code>。創建權重：<code>W <- nb2listw(knearneigh(coordinates(df), k = 5))</code>。</span>
+                    </div>
+                </div>
+
+                <div class="command-group">
+                    <div class="software-label r">R</div>
+                    <div class="command-label"><span data-lang="en">Moran's I Test (spdep)</span><span data-lang="zh">Moran's I測試（spdep）</span></div>
+                    <div class="command-code">library(spdep)
+moran_test <- moran.test(y, listw = W)
+moran_test</div>
+                    <p class="command-description">
+                        <span data-lang="en"><code>moran.test()</code> tests for spatial autocorrelation. Null: no spatial autocorrelation. If p &lt; 0.05, significant spatial autocorrelation detected in the variable.</span>
+                        <span data-lang="zh"><code>moran.test()</code>測試空間自相關。零假設：無空間自相關。若p &lt; 0.05，在變量中檢測到顯著空間自相關。</span>
+                    </p>
+                    <div class="command-when">
+                        <span data-lang="en">When: Assessing spatial autocorrelation before modeling; diagnostic testing</span>
+                        <span data-lang="zh">何時：建模前評估空間自相關；診斷測試</span>
+                    </div>
+                </div>
+            </section>
+
+            <footer>
+                <p><span data-lang="en">Commands Reference · Empirical Modeling · Generated 2025</span><span data-lang="zh">命令參考 · 實證建模 · 生成於2025年</span></p>
+            </footer>
+
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langBtns = document.querySelectorAll('.guide-lang-btn');
+        // Exclude buttons from content elements
+        const enElements = document.querySelectorAll('.guide-content [data-lang="en"], .guide-breadcrumb [data-lang="en"], a.guide-back[data-lang="en"], .guide-header [data-lang="en"], .guide-tag [data-lang="en"]');
+        const zhElements = document.querySelectorAll('.guide-content [data-lang="zh"], .guide-breadcrumb [data-lang="zh"], a.guide-back[data-lang="zh"], .guide-header [data-lang="zh"], .guide-tag [data-lang="zh"]');
+        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        setLanguage(savedLang);
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                localStorage.setItem('preferred-lang', lang);
+                setLanguage(lang);
+            });
+        });
+        function setLanguage(lang) {
+            langBtns.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('.guide-lang-btn[data-lang="' + lang + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            if (lang === 'en') {
+                enElements.forEach(el => { el.style.display = ''; });
+                zhElements.forEach(el => { el.style.display = 'none'; });
+                document.body.className = 'en';
+            } else {
+                enElements.forEach(el => { el.style.display = 'none'; });
+                zhElements.forEach(el => { el.style.display = ''; });
+                document.body.className = 'zh';
+            }
+        }
+    });
+    </script>
+
+</body>
+</html>

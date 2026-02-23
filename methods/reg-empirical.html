@@ -1,0 +1,350 @@
+---
+layout: methods-course
+title: "Empirical Modeling"
+breadcrumb: "Statistics"
+bilingual: true
+prev:
+  url: reg-multilevel.html
+  title: "Multilevel Models"
+next:
+  url: reg-bayes.html
+  title: "Bayesian Modeling"
+---
+
+<style>
+.problem-index{margin:0 0 8px;padding:16px 20px;border:1px solid var(--parchment);border-radius:4px;background:var(--warm)}
+.problem-index-title{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.problem-index a{display:block;font-size:14.5px;line-height:2;color:var(--ink-faded);text-decoration:none;transition:color .2s}
+.problem-index a:hover{color:var(--red)}
+.problem-index a .pi-arrow{font-family:var(--sans);font-size:11px;color:var(--gold);margin-left:6px}
+</style>
+
+<!-- HEADER -->
+<div class="method-header">
+  <h1>Empirical Modeling of Social Science Theory</h1>
+  <div class="method-meta">Statistics &middot; Advanced 10</div>
+</div>
+
+<!-- INTRO CARDS -->
+<div class="intro-cards">
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">What Is This?</div>
+    <div class="card-label" data-lang="zh">这一页讲什么？</div>
+    <div data-lang="en"><p>Causal inference asks whether X affects Y. Empirical modeling asks: given that X affects Y, how exactly? Under what conditions? Through what mechanism? Over what time horizon? This page covers the toolkit for matching statistical models to theoretical arguments.</p></div>
+    <div data-lang="zh"><p>因果推断问 X 是否影响 Y。经验建模问：既然 X 影响 Y，具体是怎么影响的？在什么条件下？通过什么机制？在什么时间尺度上？本页介绍将统计模型与理论论证相匹配的工具包。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Prerequisites</div>
+    <div class="card-label" data-lang="zh">前置知识</div>
+    <div data-lang="en"><p>Regression Analysis. Causal Inference. Time Series helpful.</p></div>
+    <div data-lang="zh"><p>回归分析。因果推断。了解时间序列会有帮助。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Software &amp; Tools</div>
+    <div class="card-label" data-lang="zh">软件工具</div>
+    <div data-lang="en"><p>R (lm, vars, spatialreg) or Stata (reg, var, spreg).</p></div>
+    <div data-lang="zh"><p>R（lm、vars、spatialreg）或 Stata（reg、var、spreg）。</p></div>
+  </div>
+</div>
+
+<!-- PROBLEM INDEX -->
+<div class="problem-index">
+  <div class="problem-index-title" data-lang="en">What problem are you facing?</div>
+  <div class="problem-index-title" data-lang="zh">你遇到了什么问题？</div>
+  <a href="#em-s1" data-lang="en">My theory says the effect of X on Y depends on Z — how do I model that? <span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#em-s1" data-lang="zh">我的理论说 X 对 Y 的效果取决于 Z——怎么建模？<span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#em-s2" data-lang="en">My observations are spatially correlated <span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#em-s2" data-lang="zh">我的观测在空间上相关<span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#em-s3" data-lang="en">X and Y may be mutually causing each other <span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#em-s3" data-lang="zh">X 和 Y 可能互相影响<span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#em-s4" data-lang="en">I want to estimate long-run dynamic effects <span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#em-s4" data-lang="zh">我想估计长期动态效应<span class="pi-arrow">&rarr; &sect;4</span></a>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 1 -->
+<div class="section" id="em-s1">
+  <h2 data-lang="en">Moderation and Interaction Effects</h2>
+  <h2 data-lang="zh">调节效应与交互项</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Your theory says the causal pathway isn't simply X → Y, but rather: "the effect of X on Y depends on the level of Z." Weather affects crop yield differently depending on water availability. Institutional context shapes how economic conditions influence electoral outcomes. How do you build this conditionality into a regression?</p>
+    <p data-lang="zh"><strong>问题：</strong>你的理论说因果通路不是简单的 X → Y，而是"X 对 Y 的效果取决于 Z 的水平"。天气对农产量的影响取决于水的可用性。制度背景决定了经济条件如何影响选举结果。你怎样在回归中建立这种条件性？</p>
+  </div>
+
+  <!-- Subsection 1: Moderation vs. Mediation -->
+  <div class="method-section">
+    <h3 data-lang="en">Moderation vs. Mediation</h3>
+    <h3 data-lang="zh">调节与中介</h3>
+    <p class="method-desc" data-lang="en">A critical distinction guides your modeling choice. <strong>Moderation</strong> (your interest here) asks: under what conditions does X affect Y? The moderator Z changes the strength or direction of the X→Y relationship. <strong>Mediation</strong> asks: through what mechanism does X affect Y? The mediator M is an intermediate variable on the causal chain: X → M → Y. They answer different questions and require different models.</p>
+    <p class="method-desc" data-lang="zh"><strong>调节</strong>（这里的重点）问：在什么条件下 X 影响 Y？调节变量 Z 改变 X→Y 关系的强度或方向。<strong>中介</strong>问：X 通过什么机制影响 Y？中介变量 M 是因果链上的中间变量：X → M → Y。它们回答不同的问题，需要不同的模型。</p>
+    <div class="method-analogy" data-lang="en">Sunlight affects plant growth differently depending on water availability. If you water the plant, sunlight has a big effect (high growth). If you don't water it, sunlight barely matters (both wither). Water is a moderator—it modulates how sunlight influences growth.</div>
+    <div class="method-analogy" data-lang="zh">阳光对植物生长的影响取决于水的可用性。如果你给植物浇水，阳光有很大的影响（高生长）。如果你不浇水，阳光几乎无关紧要（都会枯萎）。水是调节变量——它调节阳光如何影响生长。</div>
+  </div>
+
+  <!-- Subsection 2: Interaction Terms -->
+  <div class="method-section">
+    <h3 data-lang="en">Interaction Terms: The X*Z Product</h3>
+    <h3 data-lang="zh">交互项：X*Z 乘积</h3>
+    <p class="method-desc" data-lang="en">To model moderation, you include an <strong>interaction term</strong>: the product of X and Z. Your model becomes: Y = β₀ + β₁X + β₂Z + β₃(X×Z) + ε. The coefficient β₃ is the key: it tells you how much the effect of X on Y changes when Z increases by one unit. The marginal effect of X on Y is no longer constant—it equals β₁ + β₃Z, which depends on the value of Z.</p>
+    <p class="method-desc" data-lang="zh">要建模调节效应，你包含一个<strong>交互项</strong>：X 和 Z 的乘积。你的模型变为：Y = β₀ + β₁X + β₂Z + β₃(X×Z) + ε。系数 β₃ 是关键：它告诉你当 Z 增加一个单位时，X 对 Y 的效果变化了多少。X 对 Y 的边际效应不再恒定——它等于 β₁ + β₃Z，这取决于 Z 的值。</p>
+    <div class="method-analogy" data-lang="en">Imagine predicting student test scores from study hours (X) and classroom quality (Z). Without interaction: each hour of study adds the same points, regardless of room quality. With interaction: the payoff from studying is higher in good classrooms (where you can actually focus) than in terrible ones.</div>
+    <div class="method-analogy" data-lang="zh">想象从学习时数 (X) 和教室质量 (Z) 预测学生考试成绩。没有交互项：无论房间质量如何，每小时学习增加相同的分数。有交互项：在好教室里学习的回报（你能专注）比在糟糕的教室里高。</div>
+    <div class="method-when" data-lang="en"><strong>When to use:</strong> Your theory explicitly predicts that one variable's effect depends on another. <strong>When NOT to use:</strong> Fishing for significant interactions in data (multiple testing, overfitting). Including interaction terms without theoretical justification is a red flag for p-hacking.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用：</strong>你的理论明确预测一个变量的效果取决于另一个变量。<strong>何时不用：</strong>在数据中搜寻显著的交互项（多重检验、过度拟合）。没有理论依据就包括交互项是 p-hacking 的危险信号。</div>
+    <div class="method-example" data-lang="en"><strong>Political science example:</strong> Brambor, Clark & Golder (2006) study how economic conditions (X) affect government support. But the effect depends on whether there is unified or divided government (Z). With unified government, bad economics tanks support sharply. With divided government, the public blames individual parties, not the system. The interaction reveals this conditional relationship.</div>
+    <div class="method-example" data-lang="zh"><strong>政治科学例子：</strong>Brambor、Clark & Golder (2006) 研究经济条件 (X) 如何影响政府支持度。但效果取决于是统一政府还是分裂政府 (Z)。统一政府下，经济差导致支持度急剧下降。分裂政府下，公众指责各个政党，而不是整个系统。交互项揭示这种条件关系。</div>
+  </div>
+
+  <!-- Subsection 3: Main Effects Interpretation Problem -->
+  <div class="method-section">
+    <h3 data-lang="en">Why Main Effects Are Uninterpretable When Interaction Is Present</h3>
+    <h3 data-lang="zh">为什么存在交互项时主效应难以解释</h3>
+    <p class="method-desc" data-lang="en">When you include Y = β₀ + β₁X + β₂Z + β₃(X×Z) + ε, <strong>do not</strong> interpret β₁ as "the effect of X." Why? β₁ is the effect of X <em>when Z=0</em>. If Z=0 is outside your data's range (or nonsensical), this coefficient tells you nothing about real-world effects. Similarly, β₂ is the effect of Z only when X=0. The marginal effect of X depends on the value of Z; the marginal effect of Z depends on the value of X. You must compute effects at representative values of the moderator.</p>
+    <p class="method-desc" data-lang="zh">当你包含 Y = β₀ + β₁X + β₂Z + β₃(X×Z) + ε 时，<strong>不要</strong>将 β₁ 解释为"X 的效果"。为什么？β₁ 是当 Z=0 时 X 的效果。如果 Z=0 在你的数据范围之外（或没有意义），这个系数对真实世界的影响一无所知。同样，β₂ 仅在 X=0 时是 Z 的效果。X 的边际效应取决于 Z 的值；Z 的边际效应取决于 X 的值。你必须在调节变量的代表性值处计算效应。</p>
+    <div class="method-analogy" data-lang="en">Telling a researcher "the effect of sunlight is β₁" when water availability is your moderator is like saying "the effect of raising the thermostat is 2 degrees" without knowing whether the heating is on. The effect only makes sense in context.</div>
+    <div class="method-analogy" data-lang="zh">当水的可用性是调节变量时，对研究者说"阳光的效果是 β₁"就像说"提高恒温器的效果是 2 度"而不知道供热是否打开。效果只有在特定背景下才有意义。</div>
+  </div>
+
+  <!-- Subsection 4: Marginal Effects at Representative Values -->
+  <div class="method-section">
+    <h3 data-lang="en">Reporting: Marginal Effects at Representative Values</h3>
+    <h3 data-lang="zh">报告：代表性值处的边际效应</h3>
+    <p class="method-desc" data-lang="en">Instead of reporting the table of raw coefficients (which are uninterpretable), calculate the effect of X on Y at <em>specific values of Z</em>. Standard practice: evaluate at the mean of Z, one standard deviation above the mean, and one standard deviation below. Compute the predicted change in Y for a one-unit change in X at each Z value. Present this in a table or plot with Z on the horizontal axis and the X effect on the vertical. This makes the conditional relationship crystal clear.</p>
+    <p class="method-desc" data-lang="zh">与其报告原始系数表（不可解释），不如计算<em>特定 Z 值</em>处 X 对 Y 的效果。标准做法：在 Z 的平均值、高于平均值一个标准差和低于平均值一个标准差处评估。对于每个 Z 值，计算 X 单位变化时 Y 的预测变化。在表格或图表中呈现，Z 在水平轴上，X 效应在垂直轴上。这使条件关系晶莹剔透。</p>
+    <div class="method-example" data-lang="en">Economic conditions → government support interaction. Report: "When institutional power is fragmented (Z low), a 1-point rise in economic satisfaction increases government support by 0.8 points. When unified (Z high), the same improvement increases support by 2.3 points." This makes the moderation mechanism visible.</div>
+    <div class="method-example" data-lang="zh">经济条件 → 政府支持交互作用。报告："当机构权力分散时（Z 低），经济满足度上升 1 点，政府支持增加 0.8 点。统一时（Z 高），同样的改善增加 2.3 点支持度。"这使调节机制显而易见。</div>
+  </div>
+
+  <!-- Subsection 5: Three-Way Interactions -->
+  <div class="method-section">
+    <h3 data-lang="en">Three-Way Interactions (Usually a Mistake)</h3>
+    <h3 data-lang="zh">三元交互项（通常是错误）</h3>
+    <p class="method-desc" data-lang="en">You can include X×Z×W (the effect of X depends on both Z and W). These are almost never justified in social science. Why? (1) Interpretation becomes Byzantine: you need to compute effects at <em>pairs</em> of Z and W values, creating confusing 3D surfaces. (2) Power drops sharply—you're estimating many more parameters from the same data. (3) Fishing for three-way interactions screams p-hacking to experienced readers. Unless your theory <em>explicitly</em> predicts a three-way moderation, avoid it.</p>
+    <p class="method-desc" data-lang="zh">你可以包含 X×Z×W（X 的效果同时取决于 Z 和 W）。在社会科学中几乎从不合理。为什么？(1) 解释变得复杂：你需要在 Z 和 W 值对处计算效应，创建令人困惑的 3D 曲面。(2) 统计功效大幅下降——从相同数据估计更多参数。(3) 寻找三元交互项对有经验的读者来说尖叫 p-hacking。除非你的理论<em>明确</em>预测三元调节，否则避免它。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 2 -->
+<div class="section" id="em-s2">
+  <h2 data-lang="en">Spatial Dependence and Spatial Econometrics</h2>
+  <h2 data-lang="zh">空间依赖与空间计量</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Your data has a geographic structure. Observations from neighboring regions (neighboring countries, neighboring electoral districts, neighboring schools) are correlated with each other. OLS assumes independence—the fifth Gauss-Markov assumption. When this fails, your standard errors are wrong, confidence intervals are misleading, and coefficient estimates become inefficient. How do you account for spatial clustering?</p>
+    <p data-lang="zh"><strong>问题：</strong>你的数据有地理结构。相邻地区（相邻国家、相邻选区、相邻学校）的观测值互相关联。OLS 假设独立性——高斯-马尔可夫第五个假设。当这失败时，你的标准误是错误的，置信区间具有误导性，系数估计变得无效率。你怎样解释空间集聚？</p>
+  </div>
+
+  <!-- Subsection 1: Why Spatial Dependence Violates OLS -->
+  <div class="method-section">
+    <h3 data-lang="en">Why Spatial Dependence Violates OLS Assumptions</h3>
+    <h3 data-lang="zh">为什么空间依赖违反 OLS 假设</h3>
+    <p class="method-desc" data-lang="en">OLS requires Cov(u_i, u_j) = 0 for i ≠ j (no autocorrelation). But when your data has geography, neighbors are not independent. If a region's unobserved factors are favorable, neighboring regions likely share some of those factors. This means their residuals are correlated. The consequence: your standard errors shrink artificially. You <em>think</em> you're more precise than you are, leading to too-narrow confidence intervals and false positives.</p>
+    <p class="method-desc" data-lang="zh">OLS 要求 Cov(u_i, u_j) = 0，i ≠ j（无自相关）。但当你的数据有地理结构时，邻近区域不独立。如果一个地区的未观测因素是有利的，相邻地区可能共享其中一些因素。这意味着它们的残差相关。后果：你的标准误人为地缩小。你<em>认为</em>自己比实际更精确，导致过于狭窄的置信区间和假阳性。</p>
+    <div class="method-analogy" data-lang="en">Suppose you want to understand what determines neighborhood house prices. You have 1000 observations from one city block. Each house IS affected by its own factors, but also by prices of houses next door. If you treat each as independent, you're massively underestimating your uncertainty. Your "1000 observations" aren't really 1000 independent data points—more like 10 independent blocks with 100 measurements each.</div>
+    <div class="method-analogy" data-lang="zh">假设你想了解什么决定邻域房价。你从一条城市街道有 1000 个观测值。每栋房子受自身因素影响，也受隔壁房子的价格影响。如果你视每一个为独立的，你在大幅低估不确定性。你的"1000 个观测值"不是真正的 1000 个独立数据点——更像 10 个独立街区，每个有 100 个测量。</div>
+  </div>
+
+  <!-- Subsection 2: Spatial Weight Matrix -->
+  <div class="method-section">
+    <h3 data-lang="en">The Spatial Weight Matrix W</h3>
+    <h3 data-lang="zh">空间权重矩阵 W</h3>
+    <p class="method-desc" data-lang="en">To model spatial dependence, you must define which regions are "neighbors." This is encoded in a matrix W where each row sums to one. The entry W_ij tells you how strongly region i is influenced by region j. Two common approaches: (1) <strong>Contiguity:</strong> W_ij = 1/number_of_neighbors if i and j share a border, 0 otherwise. Queen contiguity includes diagonal neighbors; rook contiguity only orthogonal. (2) <strong>Distance-based:</strong> W_ij = 1 / distance_ij, decaying with distance. Your choice of W shapes the entire analysis—use theory or exploratory analysis to justify it.</p>
+    <p class="method-desc" data-lang="zh">要建模空间依赖，你必须定义哪些地区是"邻近的"。这编码在矩阵 W 中，其中每行总和为 1。条目 W_ij 告诉你地区 i 受地区 j 影响的强度。两种常见方法：(1) <strong>邻接性：</strong>如果 i 和 j 共享边界，W_ij = 1/邻近数量，否则 0。皇后邻接包括对角邻近；车邻接仅正交。(2) <strong>基于距离：</strong>W_ij = 1 / 距离_ij，随距离衰减。你选择的 W 塑造整个分析——使用理论或探索性分析来证明。</p>
+    <div class="method-analogy" data-lang="en">A weight matrix is like defining "who influences whom" in a social network. If you only care about direct trading partners between countries, they have high weight; distant partners have zero weight. The weights codify your theory of spatial interaction.</div>
+    <div class="method-analogy" data-lang="zh">权重矩阵就像在社交网络中定义"谁影响谁"。如果你只关心国家间的直接贸易伙伴，他们有高权重；远方伙伴有零权重。权重编码你的空间互动理论。</div>
+  </div>
+
+  <!-- Subsection 3: Spatial Lag vs. Spatial Error -->
+  <div class="method-section">
+    <h3 data-lang="en">Spatial Lag Model vs. Spatial Error Model</h3>
+    <h3 data-lang="zh">空间滞后模型与空间误差模型</h3>
+    <p class="method-desc" data-lang="en">Two competing approaches differ fundamentally in their interpretation. The <strong>Spatial Lag Model</strong> treats neighboring outcomes as causal: Y_i = β₀ + β₁X_i + ρ(W×Y) + ε, where ρ(W×Y) is the weighted average of neighbors' Y values. This says: "your outcome depends on your characteristics AND your neighbors' outcomes." Requires theory: do neighbors' outcomes actually influence you? The <strong>Spatial Error Model</strong> treats spatial correlation as nuisance: Y_i = β₀ + β₁X_i + u_i, where u_i = λ(W×u) + ε. This says: "spatial correlation exists in unobservables, not because neighbors directly influence you, but because you share unmeasured factors." Use theory to choose: is spatial dependence a substantive mechanism or a statistical artifact?</p>
+    <p class="method-desc" data-lang="zh">两种竞争方法在解释上有根本差异。<strong>空间滞后模型</strong>将邻近结果视为因果关系：Y_i = β₀ + β₁X_i + ρ(W×Y) + ε，其中 ρ(W×Y) 是邻近区域 Y 值的加权平均。这说："你的结果取决于你的特征和邻近区域的结果。"需要理论：邻近区域的结果真的影响你吗？<strong>空间误差模型</strong>将空间相关性视为烦扰：Y_i = β₀ + β₁X_i + u_i，其中 u_i = λ(W×u) + ε。这说："空间相关性存在于未观测因素中，不是因为邻近区域直接影响你，而是因为你共享未测量因素。"使用理论来选择：空间依赖是实质机制还是统计假项？</p>
+    <div class="method-analogy" data-lang="en">Policy diffusion: Do states adopt welfare policies because neighboring states have already adopted them (spatial lag—a behavioral mechanism)? Or do states in the same region face similar economic pressures, leading to correlated unobservables (spatial error—statistical confounding)? Answering this determines your model choice.</div>
+    <div class="method-analogy" data-lang="zh">政策扩散：州是否因相邻州已采纳福利政策而采纳（空间滞后——行为机制）？还是同一地区的州面临相似的经济压力，导致相关的未观测变量（空间误差——统计混淆）？回答这个问题确定你的模型选择。</div>
+    <div class="method-example" data-lang="en"><strong>Political science example:</strong> Studying welfare policy adoption across U.S. states. A spatial lag model asks: do states copy neighbors? Coefficient estimates the extent of "policy yardstick competition." High ρ means strong diffusion effects. A spatial error model acknowledges that states face similar circumstances (regional recessions, federal mandates) without claiming direct imitation.</div>
+    <div class="method-example" data-lang="zh"><strong>政治科学例子：</strong>研究美国各州福利政策采纳情况。空间滞后模型问：州是否仿效邻近州？系数估计"政策标尺竞争"的程度。高 ρ 表示强扩散效应。空间误差模型承认州面临相似情形（地区衰退、联邦授权），不声称直接模仿。</div>
+  </div>
+
+  <!-- Subsection 4: Choosing the Right Model -->
+  <div class="method-section">
+    <h3 data-lang="en">Choosing Between Them: LM Tests</h3>
+    <h3 data-lang="zh">选择：LM 检验</h3>
+    <p class="method-desc" data-lang="en">When theory doesn't clearly decide, use Lagrange Multiplier (LM) tests. Fit OLS first, then test: does the residual exhibit spatial correlation (spatial error model preferred)? Or is there evidence of omitted spatial lag (spatial lag model preferred)? The tests have different power and assumptions, so expert practice involves fitting both models and comparing fit (AIC/BIC) alongside theory. Increasingly, researchers fit the spatial Durbin model, which includes both WY and WX terms, giving maximum flexibility while avoiding premature model choice.</p>
+    <p class="method-desc" data-lang="zh">当理论不清楚时，使用拉格朗日乘数 (LM) 检验。先拟合 OLS，然后检验：残差是否表现出空间相关（倾向空间误差模型）？或有证据表明遗漏空间滞后（倾向空间滞后模型）？这些检验有不同的功效和假设，所以专业做法涉及拟合两个模型并比较拟合度 (AIC/BIC) 以及理论。越来越多研究者拟合空间 Durbin 模型，同时包括 WY 和 WX 项，提供最大灵活性同时避免过早的模型选择。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 3 -->
+<div class="section" id="em-s3">
+  <h2 data-lang="en">Simultaneity and Systems of Equations</h2>
+  <h2 data-lang="zh">联立性与联立方程组</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> The cause-and-effect arrows point both ways. Does economic growth cause democracy, or does democracy cause growth? Does central bank independence improve inflation control, or do countries with low inflation choose independence? In OLS, X → Y and Y → X create endogeneity bias: your coefficient estimates neither direction reliably. You need a method that breaks the circularity by using external information (instruments) to identify which causal arrow matters.</p>
+    <p data-lang="zh"><strong>问题：</strong>因果箭头双向指向。经济增长导致民主，还是民主导致增长？央行独立性改善通胀控制，还是低通胀国家选择独立？在 OLS 中，X → Y 和 Y → X 造成内生性偏差：你的系数估计都不能可靠地估计任何方向。你需要一种使用外部信息（工具变量）来识别哪个因果箭头重要的方法来破坏循环。</p>
+  </div>
+
+  <!-- Subsection 1: The Simultaneity Problem -->
+  <div class="method-section">
+    <h3 data-lang="en">The Simultaneity Problem and Identification</h3>
+    <h3 data-lang="zh">同时性问题与识别</h3>
+    <p class="method-desc" data-lang="en">Suppose you model: Y = β₁X + u and simultaneously X = γ₁Y + v (both X and Y cause each other). With both equations active, you violate exogeneity: E[u|X] ≠ 0 because X is correlated with Y, which is correlated with u. OLS estimates will be biased in an unpredictable direction—sometimes upward, sometimes downward—depending on the relative strength of the two causal links. Classical example: supply and demand. Price (X) is determined by both quantity demanded and quantity supplied, which both depend on price. A simple regression of quantity on price conflates two very different economic relationships.</p>
+    <p class="method-desc" data-lang="zh">假设你建模：Y = β₁X + u 且同时 X = γ₁Y + v（X 和 Y 互相影响）。两个方程都活跃时，你违反外生性：E[u|X] ≠ 0 因为 X 与 Y 相关，Y 与 u 相关。OLS 估计将在不可预测的方向有偏差——有时向上，有时向下——取决于两条因果链接的相对强度。经典例子：供给与需求。价格 (X) 由需求量和供应量决定，两者都取决于价格。将数量简单回归到价格将混淆两个非常不同的经济关系。</p>
+    <div class="method-analogy" data-lang="en">A chicken-and-egg problem. Does economic growth cause democracy to emerge, or does democracy enable growth? Running a simple regression treats them as if one cleanly predicts the other, when really they're locked in mutual causation. Your estimate captures neither causal direction faithfully.</div>
+    <div class="method-analogy" data-lang="zh">鸡蛋和鸡的问题。经济增长导致民主出现，还是民主使增长成为可能？运行简单回归将它们视为一个清晰预测另一个，而实际上它们陷入相互因果。你的估计都不能忠实地捕捉任何因果方向。</div>
+  </div>
+
+  <!-- Subsection 2: Two-Stage Least Squares (2SLS) -->
+  <div class="method-section">
+    <h3 data-lang="en">Two-Stage Least Squares (2SLS): Using Instruments</h3>
+    <h3 data-lang="zh">两阶段最小二乘法 (2SLS)：使用工具变量</h3>
+    <p class="method-desc" data-lang="en">2SLS breaks the simultaneity by introducing an <strong>instrument</strong> Z: a variable that affects X but does not directly affect Y (except through X). The logic: use Z to predict X, creating a "clean" version of X free from its reverse causality with Y. Then use this clean X in your original regression. <strong>Stage 1:</strong> Regress X on Z: X̂ = π₀ + π₁Z. This gives predicted X, denoted X̂. <strong>Stage 2:</strong> Regress Y on the predicted X̂: Y = β₀ + β₁X̂. The coefficient β̂₁ is now unbiased because X̂ is exogenous (it depends only on Z, not on Y).</p>
+    <p class="method-desc" data-lang="zh">2SLS 通过引入<strong>工具变量</strong> Z 来破坏同时性：一个影响 X 但不直接影响 Y 的变量（除通过 X）。逻辑：用 Z 预测 X，创建一个没有与 Y 反向因果的 X 的"干净"版本。然后在原始回归中使用这个干净的 X。<strong>第一阶段：</strong>将 X 回归到 Z：X̂ = π₀ + π₁Z。这给出预测的 X，记为 X̂。<strong>第二阶段：</strong>将 Y 回归到预测的 X̂：Y = β₀ + β₁X̂。系数 β̂₁ 现在无偏因为 X̂ 是外生的（它仅取决于 Z，不取决于 Y）。</p>
+    <div class="method-analogy" data-lang="en">Imagine you want to know if more TV causes children to be aggressive. But aggressive kids might watch more TV (reverse causation). Use a random assignment of channels to neighborhoods as an instrument. Neighborhoods with more channel options get more TV (first stage). Use this variation in TV to estimate aggressiveness (second stage), avoiding simultaneity.</div>
+    <div class="method-analogy" data-lang="zh">想象你想知道更多电视是否导致儿童攻击性。但攻击性强的孩子可能看更多电视（反向因果）。使用渠道随机分配到社区作为工具变量。有更多渠道选项的社区获得更多电视（第一阶段）。使用这种电视变异来估计攻击性（第二阶段），避免同时性。</div>
+    <div class="method-when" data-lang="en"><strong>When to use:</strong> Theory clearly identifies bidirectional causality, and you have a valid instrument. <strong>When NOT to use:</strong> You lack a good instrument (weak instrument → biased estimates). Fishing for instruments is a major red flag—experts will check instrument validity.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用：</strong>理论清楚识别双向因果，且你有有效工具变量。<strong>何时不用：</strong>你缺乏好的工具变量（弱工具 → 有偏估计）。搜寻工具变量是重大危险信号——专家将检查工具有效性。</div>
+  </div>
+
+  <!-- Subsection 3: What Makes a Good Instrument -->
+  <div class="method-section">
+    <h3 data-lang="en">What Makes a Good Instrument: Relevance and Exclusion Restriction</h3>
+    <h3 data-lang="zh">什么使工具变量好：相关性与排他限制</h3>
+    <p class="method-desc" data-lang="en">Two conditions define an instrument. <strong>Relevance:</strong> Z must be correlated with X (the endogenous variable). Without this, Z gives no information about X, and your first-stage regression is useless. Test: is the first-stage F-statistic > 10? If not, your instrument is weak. <strong>Exclusion Restriction:</strong> Z must not affect Y except through X. Formally, E[Y|Z,X] = E[Y|X]—conditioning on X, Z provides no new information about Y. This is the hardest condition to defend because it's not testable (you can never directly observe whether the exclusion restriction holds). Defense relies on theory and institutional knowledge. An instrument that satisfies both is said to be "valid."</p>
+    <p class="method-desc" data-lang="zh">两个条件定义工具变量。<strong>相关性：</strong>Z 必须与 X（内生变量）相关。没有这个，Z 对 X 没有信息，你的第一阶段回归无用。检验：第一阶段 F 统计量 > 10 吗？如果不是，你的工具很弱。<strong>排他限制：</strong>Z 不必直接影响 Y 除通过 X。形式上，E[Y|Z,X] = E[Y|X]——条件在 X，Z 对 Y 没有新信息。这是最难为理由的条件因为它不可检验（你永远不能直接观察排他限制是否成立）。为理由依赖理论和机构知识。满足两者的工具说是"有效的"。</p>
+    <div class="method-example" data-lang="en"><strong>Political science example:</strong> Acemoglu, Johnson & Robinson (2001) on institutions and prosperity. They ask: do good institutions cause prosperity, or do rich countries build better institutions? They use settler mortality rates (an instrument): high mortality meant colonizers established extractive institutions; low mortality meant they settled and built inclusive institutions. Settler mortality affects institutions (relevance) but should not directly affect modern prosperity except through institutions (exclusion restriction). This instrument unlocks identification.</div>
+    <div class="method-example" data-lang="zh"><strong>政治科学例子：</strong>Acemoglu、Johnson & Robinson (2001) 关于制度与繁荣。他们问：良好制度导致繁荣，还是富裕国家建立更好制度？他们使用定居者死亡率（工具变量）：高死亡率意味着殖民者建立掠取制度；低死亡率意味着他们定居并建立包容制度。定居者死亡率影响制度（相关性）但不应直接影响现代繁荣除通过制度（排他限制）。这个工具变量解锁识别。</div>
+  </div>
+
+  <!-- Subsection 4: Systems of Equations -->
+  <div class="method-section">
+    <h3 data-lang="en">Systems of Equations: SUR and 3SLS</h3>
+    <h3 data-lang="zh">联立方程组：SUR 与 3SLS</h3>
+    <p class="method-desc" data-lang="en">When you have multiple equations, each with its own outcome and predictors, two approaches emerge. <strong>Seemingly Unrelated Regressions (SUR):</strong> Fit each equation separately by OLS, but account for correlation in errors across equations. Useful when equations share unobserved factors but variables don't directly overlap. <strong>Three-Stage Least Squares (3SLS):</strong> Extends 2SLS to a system context. Stage 1: instrument all endogenous variables. Stage 2: estimate each equation using instrumented values. Stage 3: account for cross-equation error correlation. Use 3SLS when you have simultaneity AND you want to exploit cross-equation information to improve precision.</p>
+    <p class="method-desc" data-lang="zh">当你有多个方程，每个有自己的结果和预测因子，两种方法浮现。<strong>貌似不相关回归 (SUR)：</strong>分别通过 OLS 拟合每个方程，但说明跨方程误差的相关性。当方程共享未观测因素但变量不直接重叠时有用。<strong>三阶段最小二乘法 (3SLS)：</strong>将 2SLS 扩展到系统背景。阶段 1：所有内生变量工具化。阶段 2：使用工具化值估计每个方程。阶段 3：说明跨方程误差相关性。当你有同时性并且想利用跨方程信息来改进精度时使用 3SLS。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 4 -->
+<div class="section" id="em-s4">
+  <h2 data-lang="en">Dynamic Models: Error Correction and Impulse Response</h2>
+  <h2 data-lang="zh">动态模型：误差修正与脉冲响应</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Your research question is inherently dynamic: "How do wages adjust when a shock hits the labor market?" "What happens to inflation over the next 12 months after a central bank rate hike?" "If a country's governance deteriorates, when and how much do capital flows change?" Static regression answers "on average," but your question is "over time." You need models that distinguish short-run adjustment from long-run equilibrium.</p>
+    <p data-lang="zh"><strong>问题：</strong>你的研究问题本质上是动态的："当冲击击中劳动力市场时，工资如何调整？" "央行加息后未来 12 个月通胀会发生什么？" "如果一个国家治理恶化，资本流动何时以及在什么程度上改变？"静态回归回答"平均而言"，但你的问题是"随时间"。你需要区分短期调整和长期均衡的模型。</p>
+  </div>
+
+  <!-- Subsection 1: Lagged Dependent Variables and Partial Adjustment -->
+  <div class="method-section">
+    <h3 data-lang="en">Lagged Dependent Variables and Partial Adjustment</h3>
+    <h3 data-lang="zh">滞后因变量与部分调整</h3>
+    <p class="method-desc" data-lang="en">The simplest dynamic model includes the lagged outcome: Y_t = β₀ + β₁X_t + ρY_{t-1} + ε_t. Interpretation: Y today depends on today's X AND yesterday's Y. The coefficient ρ measures <strong>persistence</strong>—how much last period's value "sticks around." When 0 < ρ < 1, the system exhibits partial adjustment: a shock to X doesn't instantly move Y to its new equilibrium; instead, Y creeps toward equilibrium gradually. The long-run multiplier (total effect of a permanent change in X) equals β₁/(1 - ρ). If ρ = 0.8 and β₁ = 0.5, a permanent one-unit increase in X increases Y by 0.5 immediately, then continues adjusting, ultimately reaching 0.5/(1-0.8) = 2.5 units higher.</p>
+    <p class="method-desc" data-lang="zh">最简单的动态模型包括滞后结果：Y_t = β₀ + β₁X_t + ρY_{t-1} + ε_t。解释：今天的 Y 取决于今天的 X 和昨天的 Y。系数 ρ 衡量<strong>持久性</strong>——上期值有多少"留下来"。当 0 < ρ < 1 时，系统表现出部分调整：X 的冲击不会立即将 Y 移动到新均衡；相反，Y 逐渐向均衡爬升。长期乘数（X 永久变化的总效应）等于 β₁/(1 - ρ)。如果 ρ = 0.8 且 β₁ = 0.5，X 永久单位增加立即增加 Y 0.5，然后继续调整，最终达到 0.5/(1-0.8) = 2.5 单位更高。</p>
+    <div class="method-analogy" data-lang="en">A thermostat doesn't instantly reach its target temperature; it adjusts gradually. If you set it to 72°F, the room temperature rises in the direction of 72°F, but at each moment it's only partway there. A lagged dependent variable models this creeping adjustment to equilibrium.</div>
+    <div class="method-analogy" data-lang="zh">恒温器不会立即达到目标温度；它逐渐调整。如果你设置为 72°F，室温向 72°F 方向上升，但每一刻它只是部分到达。滞后因变量建模这种向均衡的逐渐调整。</div>
+    <div class="method-when" data-lang="en"><strong>When to use:</strong> Your theory predicts that outcomes adjust gradually (habit formation, menu costs, political constraints). <strong>When NOT to use:</strong> If you include a lagged dependent variable, the error term cannot be serially correlated (standard OLS confidence intervals break). This is hard to guarantee in practice and requires testing.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用：</strong>你的理论预测结果逐渐调整（习惯形成、菜单成本、政治制约）。<strong>何时不用：</strong>如果你包括滞后因变量，误差项不能自相关（标准 OLS 置信区间断裂）。在实践中很难保证并需要测试。</div>
+  </div>
+
+  <!-- Subsection 2: Cointegration and Error Correction Models -->
+  <div class="method-section">
+    <h3 data-lang="en">Cointegration and Error Correction Models (ECM)</h3>
+    <h3 data-lang="zh">协整与误差修正模型 (ECM)</h3>
+    <p class="method-desc" data-lang="en">When two variables are both I(1) (integrated of order 1: trending, non-stationary), they can still be linked by a long-run equilibrium relationship. They "cointegrate" if their linear combination is stationary. The error correction model captures this: Δ Y_t = α(Y_{t-1} - β₀ - β₁X_{t-1}) + other short-run terms. Read this as: "today's change in Y is driven partly by how far below equilibrium Y was yesterday" (the error correction term). The speed of adjustment α tells you how quickly the system corrects deviations from equilibrium. Econometric bonus: ECM avoids spurious regression (the curse of non-stationary variables) while preserving the long-run economic relationship.</p>
+    <p class="method-desc" data-lang="zh">当两个变量都是 I(1)（一阶积分：趋势、非平稳）时，它们仍然可以由长期均衡关系连接。如果它们的线性组合是平稳的，它们"协整"。误差修正模型捕捉这个：Δ Y_t = α(Y_{t-1} - β₀ - β₁X_{t-1}) + 其他短期项。读作："今天 Y 的变化部分由昨天 Y 偏离均衡多远驱动"（误差修正项）。调整速度 α 告诉你系统多快纠正均衡偏差。计量经济学好处：ECM 避免虚假回归（非平稳变量的诅咒）同时保留长期经济关系。</p>
+    <div class="method-analogy" data-lang="en">Long-run price parity between countries (exchange rates keep goods prices aligned). But short-term shocks cause temporary deviations. An ECM models: prices drift apart (short-run), but market forces gradually restore parity (error correction). If exchange rates overshoot, interest differentials pull them back.</div>
+    <div class="method-analogy" data-lang="zh">国家间的长期价格平价（汇率保持商品价格一致）。但短期冲击造成临时偏差。ECM 建模：价格漂离（短期），但市场力量逐渐恢复平价（误差修正）。如果汇率超调，利率差将其拉回。</div>
+  </div>
+
+  <!-- Subsection 3: Vector Autoregression and Impulse Response -->
+  <div class="method-section">
+    <h3 data-lang="en">Vector Autoregression (VAR) and Impulse Response Functions</h3>
+    <h3 data-lang="zh">向量自回归 (VAR) 与脉冲响应函数</h3>
+    <p class="method-desc" data-lang="en">When you want to track how a shock to one variable propagates through a system of multiple variables, VAR is your tool. Each variable is regressed on its own lags and lags of all other variables. For example, a two-variable VAR: Y_t = c₁ + a₁₁Y_{t-1} + a₁₂Z_{t-1} + ε₁_t and Z_t = c₂ + a₂₁Y_{t-1} + a₂₂Z_{t-1} + ε₂_t. Once estimated, an <strong>impulse response function</strong> simulates: if Z gets a one-time shock ε₂ = 1, how do Y and Z respond over the next 10 periods? The output is a graph showing the path of both variables. This directly answers policy questions: "if the central bank raises rates by 1%, what happens to inflation and unemployment over the next year?"</p>
+    <p class="method-desc" data-lang="zh">当你想追踪一个变量的冲击如何在多变量系统中传播时，VAR 是你的工具。每个变量回归到自身滞后和所有其他变量的滞后。例如，一个两变量 VAR：Y_t = c₁ + a₁₁Y_{t-1} + a₁₂Z_{t-1} + ε₁_t 且 Z_t = c₂ + a₂₁Y_{t-1} + a₂₂Z_{t-1} + ε₂_t。一旦估计，<strong>脉冲响应函数</strong>模拟：如果 Z 得到一次冲击 ε₂ = 1，Y 和 Z 在接下来 10 期如何反应？输出是显示两个变量路径的图。这直接回答政策问题："如果央行加息 1%，未来一年通胀和失业会发生什么？"</p>
+    <div class="method-analogy" data-lang="en">Drop a stone in a pond. VAR traces the ripples: how high does the wave get at point 1 meter away? 2 meters? How long until the wave dissipates? Political application: if a scandal hits a government, how does it affect approval, polarization, and turnout over the next months?</div>
+    <div class="method-analogy" data-lang="zh">在池塘中扔石头。VAR 追踪波纹：在 1 米远的地方波有多高？2 米？波需要多长时间消散？政治应用：如果丑闻击中政府，它如何影响未来几个月的支持率、极化和投票率？</div>
+    <div class="method-example" data-lang="en"><strong>Macroeconomic example:</strong> A central bank interest rate shock. VAR(4) with inflation, unemployment, and fed rate. Impulse response: after a 1% rate hike, inflation drops gradually (max impact in 6-8 months), unemployment rises sharply (with a lag), and the economy eventually stabilizes. The dynamic path reveals transmission mechanisms and timing.</div>
+    <div class="method-example" data-lang="zh"><strong>宏观经济例子：</strong>央行利率冲击。VAR(4) 与通胀、失业和联邦利率。脉冲响应：1% 加息后，通胀逐渐下降（6-8 个月最大影响），失业急剧上升（有滞后），经济最终稳定。动态路径揭示传导机制和时间。</div>
+  </div>
+
+  <!-- Subsection 4: Dynamic Multipliers -->
+  <div class="method-section">
+    <h3 data-lang="en">Dynamic Multipliers: Short-Run vs. Long-Run Effects</h3>
+    <h3 data-lang="zh">动态乘数：短期与长期效应</h3>
+    <p class="method-desc" data-lang="en">The "multiplier" in Keynesian economics means: a $1 injection into the economy creates X dollars of total output (as it circulates). More broadly, a dynamic multiplier measures the cumulative effect of an X change over many periods. If Y_t = 0.3X_t + 0.2X_{t-1} + 0.1X_{t-2} + ..., the dynamic multiplier sequence is {0.3, 0.5, 0.6, ...} (short-run: 0.3; after 2 periods: cumulative 0.5; eventually approaching long-run total). Policies that work by changing expectations (like inflation credibility) may have large long-run multipliers but zero or negative short-run effects—critical for proper policy evaluation.</p>
+    <p class="method-desc" data-lang="zh">"乘数"在凯恩斯经济学中意思是：向经济注入 $1 创建 X 美元总产出（当它流通）。更广泛地，动态乘数衡量 X 变化在许多期间的累积效应。如果 Y_t = 0.3X_t + 0.2X_{t-1} + 0.1X_{t-2} + ...，动态乘数序列是 {0.3, 0.5, 0.6, ...}（短期：0.3；2 期后：累积 0.5；最终接近长期总数）。通过改变预期的政策（如通胀可信度）可能有大长期乘数但零或负短期效应——对于适当政策评估至关重要。</p>
+    <div class="method-analogy" data-lang="en">Announcing budget cuts tomorrow has zero immediate effect on inflation. But if credible (the public believes the government is serious), expectations shift today, inflation falls now (long-run effect achieved quickly). Miss this dynamic distinction and you'll misevaluate policy.</div>
+    <div class="method-analogy" data-lang="zh">宣布明天削减预算对通胀有零立即效果。但如果可信（公众相信政府认真），预期今天转移，通胀现在下降（长期效应快速实现）。错过这个动态区别，你将误评政策。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+<!-- GUIDES -->
+<div class="section" id="em-guides">
+  <h2 data-lang="en">Guides</h2>
+  <h2 data-lang="zh">配套指南</h2>
+  <div class="m-list">
+    <a class="m-card" href="/methods/guides/reg-emp-interact.html">
+      <div class="m-num">▶</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Interaction Effects & Marginal Effects</div>
+        <div class="m-title" data-lang="zh">交互效应与边际效应</div>
+        <div class="m-desc" data-lang="en">Interactive marginal effects plots and R code with margins, marginaleffects, and ggplot2.</div>
+        <div class="m-desc" data-lang="zh">边际效应交互图，含 margins、marginaleffects 及 ggplot2 R 代码。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<hr class="section-divider">
+<!-- RESOURCES -->
+<div class="section" id="em-resources">
+  <h2 data-lang="en">Resources</h2>
+  <h2 data-lang="zh">资源</h2>
+  <div class="method-section">
+    <p class="method-desc" data-lang="en"><strong>Brambor, T., Clark, W. M., & Golder, M. (2006).</strong> Understanding Interaction Models: Improving Empirical Analyses. <em>Political Analysis</em>, 14(1), 63-82. — Essential guide to interpreting moderation effects; required reading before publishing interaction results.</p>
+    <p class="method-desc" data-lang="zh"><strong>Brambor、Clark 和 Golder（2006）。</strong>理解交互模型：改进经验分析。<em>政治分析</em>, 14(1), 63-82。——解释调节效应的必要指南；发表交互结果前的必读。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Anselin, L. (2010).</strong> Thirty years of spatial econometrics. <em>Papers in Regional Science</em>, 89(1), 3-25. — Comprehensive historical overview of spatial methods; settles the spatial lag vs. error debate theoretically.</p>
+    <p class="method-desc" data-lang="zh"><strong>Anselin（2010）。</strong>空间计量三十年。<em>区域科学论文</em>, 89(1), 3-25。——空间方法的全面历史概览；在理论上解决空间滞后与误差的辩论。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Acemoglu, D., Johnson, S., & Robinson, J. A. (2001).</strong> The Colonial Origins of Comparative Development: An Empirical Investigation. <em>American Economic Review</em>, 91(5), 1369-1401. — Exemplar of 2SLS with settler mortality as instrument; study for identification logic.</p>
+    <p class="method-desc" data-lang="zh"><strong>Acemoglu、Johnson 和 Robinson（2001）。</strong>比较发展的殖民地起源：实证研究。<em>美国经济评论</em>, 91(5), 1369-1401。——以定居者死亡率为工具变量的 2SLS 示例；识别逻辑的研究。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Granger, C. W. J., & Newbold, P. (1974).</strong> Spurious Regressions in Econometrics. <em>Journal of Econometrics</em>, 2(2), 111-120. — Why non-stationary time series require special treatment; foundational for understanding cointegration.</p>
+    <p class="method-desc" data-lang="zh"><strong>Granger 和 Newbold（1974）。</strong>计量经济学中的虚假回归。<em>计量经济学杂志</em>, 2(2), 111-120。——非平稳时间序列为何需要特殊处理；理解协整的基础。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Wooldridge, J. M. (2019).</strong> <em>Introductory Econometrics: A Modern Approach</em> (7th ed.). Springer. — Chapters 8-9 cover 2SLS and dynamic models with clarity; see Chapter 15 for time series subtleties.</p>
+    <p class="method-desc" data-lang="zh"><strong>Wooldridge（2019）。</strong><em>计量经济学入门：现代方法</em>（第7版）。施普林格。——第8-9章清楚地涵盖2SLS和动态模型；参见第15章以了解时间序列的微妙之处。</p>
+
+    <p class="method-desc" data-lang="en"><strong>R packages:</strong> <code>spatialreg</code> (spatial models), <code>AER</code> (2SLS, ivreg()), <code>vars</code> (VAR/impulse response), <code>urca</code> (cointegration testing).</p>
+    <p class="method-desc" data-lang="zh"><strong>R 包：</strong><code>spatialreg</code>（空间模型）、<code>AER</code>（2SLS、ivreg()）、<code>vars</code>（VAR/脉冲响应）、<code>urca</code>（协整检验）。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Stata:</strong> <code>spreg</code> (spatial regression), <code>ivreg2</code> (2SLS with diagnostics), <code>var</code> (vector autoregression).</p>
+    <p class="method-desc" data-lang="zh"><strong>Stata：</strong><code>spreg</code>（空间回归）、<code>ivreg2</code>（带诊断的2SLS）、<code>var</code>（向量自回归）。</p>
+  </div>
+</div>
+
+<!-- PAGE NAV -->
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/reg-multilevel.html">
+    <span class="pn-arrow">&larr;</span>
+    <span><span class="pn-title">Multilevel Models</span></span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/reg-bayes.html">
+    <span><span class="pn-title">Bayesian Modeling</span></span>
+    <span class="pn-arrow">&rarr;</span>
+  </a>
+</div>

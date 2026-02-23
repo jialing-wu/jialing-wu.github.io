@@ -1,48 +1,95 @@
----
-layout: methods-home
-title: "研究方法笔记本"
-bilingual: true
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jialing Wu</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Jialing Wu — Ph.D. student in Engineering Education at The Ohio State University. Research in pre-college engineering, AI in K-12, and computational social science.">
+<meta property="og:title" content="Jialing Wu — Engineering Education Researcher">
+<meta property="og:description" content="Jialing Wu — Ph.D. student in Engineering Education at The Ohio State University. Research in pre-college engineering, AI in K-12, and computational social science.">
+<meta property="og:image" content="https://jialing-wu.github.io/assets/images/photo.jpg">
+<meta property="og:type" content="website">
+</head>
+<body>
 
-<div class="idx-header">
-  <h1 data-lang="zh">研究方法笔记本</h1>
-  <h1 data-lang="en">Research Methods Notebook</h1>
+<nav id="nav"><div class="nav-inner">
+  <a class="nav-brand" href="index.html">Jialing Wu</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Bio</a></li>
+    <li><a href="background.html">Background</a></li>
+    <li><a href="publications.html">Publications</a></li>
+    <li><a href="teaching.html">Teaching</a></li>
+    <li><a href="projects.html">Projects</a></li>
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="methods/index.html">Methods Notebook</a></li>
+  </ul>
+<button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('open');this.previousElementSibling.classList.toggle('open')"><span></span></button></div></nav>
 
-  <div data-lang="zh">
-    <p>研究生阶段最常见的困境之一：遇到研究问题，不知道该用什么方法。学校的课程要么浅尝辄止，要么只深入某一个方向——很难建立起横跨统计与计算社会科学的方法视野。这个 AI 协助整理的笔记，希望能提供一个初步的参考框架。学习主题部分来自 <a class="idx-link" href="https://www.icpsr.umich.edu/web/pages/sumprog/" target="_blank">ICPSR Summer Program</a> 和<a class="idx-link" href="https://sicss.io/" target="_blank">计算社会科学暑期学院（SICSS）</a>。</p>
-    <p class="idx-highlight">每个方法大类包含两个部分：<strong>基础（Foundation）</strong>以「遇到什么情况、应该用什么方法」为导向，介绍各类方法的适用场景和核心概念；<strong>运用（Sample）</strong>提供方法简介，并搭配真实论文案例，看研究者怎么实际用这些方法。</p>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-greeting">Hello, I'm —</div>
+    <h1>Jialing <em>Wu</em></h1>
+    <p class="hero-bio">I am a Ph.D. student in Engineering Education (minor in Computer Science & Engineering, AI track) at The Ohio State University, advised by Dr. Adam Carberry. Before entering academia, I spent five years as a consultant in education sector, recruiting for international schools and K-12 organizations — work that gave me a front-row view of <span style="color:var(--red)">who gets access to quality education and who gets left behind</span>. That question brought me to research.</p>
+    <p class="hero-bio" style="margin-top:12px">My research focuses on pre-college engineering education, AI policy in K-12, and international engineering education. I draw on computational social science methods — including NLP, GIS, network analysis, and LLM-based approaches — alongside mixed-methods designs. I am currently a Graduate Research Assistant on the NSF-funded e4usa+FIRST project. <span style="color:var(--red)">I believe technology should serve as a bridge, not a barrier, to educational opportunity.</span></p>
+    <div class="hero-actions">
+      <a href="assets/docs/Jialing_Wu_202602.pdf" class="btn-main" target="_blank">Download CV</a>
+      <a href="https://scholar.google.com/citations?user=1qK9_vUAAAAJ&hl=en&oi=ao" class="btn-link" target="_blank">Google Scholar ↗</a>
+      <a href="https://www.linkedin.com/in/jialingwueducation/" class="btn-link" target="_blank">LinkedIn ↗</a>
+    </div>
   </div>
-
-  <div data-lang="en">
-    <p>One of the most common frustrations in grad school: you have a research question but don't know which method fits. Courses tend to either skim the surface or go deep on just one approach — rarely giving you a broad map. These AI-assisted notes aim to fill that gap, drawing partly on <a class="idx-link" href="https://www.icpsr.umich.edu/web/pages/sumprog/" target="_blank">ICPSR Summer Program</a> and <a class="idx-link" href="https://sicss.io/" target="_blank">the Summer Institute in Computational Social Science (SICSS)</a>.</p>
-    <p class="idx-highlight">Each method category has two parts: <strong>Foundation</strong> — oriented around "what situation calls for this method"; and <strong>Sample</strong> — a brief overview paired with real paper examples.</p>
+  <div class="hero-photo">
+    <div class="photo-frame">
+      <div class="photo-img"><img src="assets/images/photo.jpg" alt="Jialing Wu" style="width:100%;height:100%;object-fit:cover"></div>
+      <div class="photo-label" style="font-family:var(--hand);font-size:15px;letter-spacing:0;text-transform:none;color:var(--ink-faded);padding-top:12px">Be humble, be confident.</div>
+    </div>
+    <!-- EDUCATION under photo -->
+    <div style="margin-top:20px">
+      <div style="font-family:var(--sans);font-size:9px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:12px">Education</div>
+      <div style="margin-bottom:10px"><div style="font-family:var(--display);font-size:15px;font-weight:500;color:var(--ink);line-height:1.3">The Ohio State University</div><div style="font-family:var(--sans);font-size:10px;color:var(--ink-ghost)">Ph.D. Engineering Education · 2024–2028</div></div>
+      <div style="margin-bottom:10px"><div style="font-family:var(--display);font-size:15px;font-weight:500;color:var(--ink);line-height:1.3">Vanderbilt University</div><div style="font-family:var(--sans);font-size:10px;color:var(--ink-ghost)">M.Ed. Intl. Education Policy · 2022–2024</div></div>
+      <div><div style="font-family:var(--display);font-size:15px;font-weight:500;color:var(--ink);line-height:1.3">Shanghai University</div><div style="font-family:var(--sans);font-size:10px;color:var(--ink-ghost)">B.E. Mechanical Engineering · 2013–2017</div></div>
+    </div>
   </div>
+</section>
 
-  <p class="author-line">Jialing Wu &nbsp;·&nbsp; <span class="author-title">Ph.D. Student, The Ohio State University &nbsp;·&nbsp; Feb 2026</span></p>
-</div>
-
-<div class="page-nav">
-  <a class="pn-link pn-prev" href="https://jialing-wu.github.io" target="_blank">
-    <span class="pn-arrow">←</span>
-    <span>
-      <span class="pn-title" data-lang="zh">我的个人网站</span>
-      <span class="pn-title" data-lang="en">My Website</span>
-    </span>
-  </a>
-  <a class="pn-link pn-next" href="/methods/overview.html">
-    <span>
-      <span class="pn-title" data-lang="zh">浏览课程</span>
-      <span class="pn-title" data-lang="en">Browse Courses</span>
-    </span>
-    <span class="pn-arrow">→</span>
-  </a>
-</div>
-
-<div class="news-block">
-  <div class="news-label">News</div>
-  <div class="news-item">
-    <span class="news-date">Feb 23, 2026</span>
-    <span data-lang="zh">网站正式上线。</span>
-    <span data-lang="en">Site launched.</span>
+<!-- RESEARCH -->
+<section class="wrap sect fade">
+  <div class="section-label">Research</div>
+  <div class="r-grid">
+    <div class="r-cell"><h3>For Researchers</h3><p>Applying computational social science methods — NLP, GIS, network analysis, and LLM-based approaches — to engineering and STEM education research.</p><div class="r-tag">→ methods</div></div>
+    <div class="r-cell"><h3>For Faculty</h3><p>Studying how educators implement pre-college engineering curricula, and exploring ways to integrate AI into equitable teaching practices.</p><div class="r-tag">→ practice</div></div>
+    <div class="r-cell"><h3>For Students</h3><p>Examining student experiences in engineering education — centering equity and access — with the goal of making AI learning meaningful for all, not just CS majors.</p><div class="r-tag">→ access</div></div>
   </div>
-</div>
+</section>
+
+<!-- NEWS -->
+<section class="news"><div class="news-inner fade">
+  <div class="news-label">Latest News</div>
+  <div class="news-row"><div class="news-dt">Jun 2026</div><div class="news-dd"><strong>Four papers at ASEE</strong> — bipartite network analysis, person-centered methods, SCCT survey validation, and social media-based topic & emotion analysis.</div></div>
+  <div class="news-row"><div class="news-dt">Apr 2026</div><div class="news-dd">Papers at <strong>AERA</strong> (AI attitudes in higher education) & <strong>CIES</strong> (GIS-based high school accessibility).</div></div>
+  <div class="news-row"><div class="news-dt">Oct 2025</div><div class="news-dd">Paper at <strong>IEEE FIE</strong> — early-career engineering faculty experiences using social cognitive theory.</div></div>
+  <div class="news-row"><div class="news-dt">2025</div><div class="news-dd">🏆 <strong>Best Division Paper (2nd)</strong>, ASEE Pre-College Engineering Education Division — TGNC students in pre-college engineering.</div></div>
+</div></section>
+
+<footer>
+  <div class="foot-l">© 2026 Jialing Wu</div>
+  <div class="foot-r">
+    <a href="https://scholar.google.com/citations?user=1qK9_vUAAAAJ&hl=en&oi=ao" target="_blank">Scholar</a>
+    <a href="https://www.linkedin.com/in/jialingwueducation/" target="_blank">LinkedIn</a>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40));
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:.1});
+document.querySelectorAll('.fade').forEach(el=>obs.observe(el));
+const b=document.querySelector('.btt');window.addEventListener('scroll',()=>{if(b)b.classList.toggle('show',window.scrollY>300)});
+</script>
+<button class="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Foundations for Machine Learning | Machine Learning</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Base Styles -->
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Guide Styles -->
+    <link rel="stylesheet" href="guide-style.css">
+
+    <!-- MathJax for Mathematics -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="zh">
+    <div class="guide-layout">
+        <!-- Topbar -->
+        <div class="guide-topbar">
+            <div class="guide-breadcrumb">
+                <a href="../machine-learning.html" data-lang="en">Machine Learning</a>
+                <a href="../machine-learning.html" data-lang="zh">机器学习</a>
+                <span class="sep">/</span>
+                <span data-lang="en">Math Foundations for Machine Learning</span>
+                <span data-lang="zh">机器学习数学基础</span>
+            </div>
+            <div class="guide-lang-toggle">
+                <button class="guide-lang-btn active" data-lang="zh">中文</button>
+                <button class="guide-lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="guide-content-wrapper">
+            <div class="guide-content">
+                <!-- Back link -->
+                <a href="../machine-learning.html" class="guide-back" data-lang="en">Back to Machine Learning</a>
+                <a href="../machine-learning.html" class="guide-back" data-lang="zh">返回机器学习</a>
+
+                <!-- Page header -->
+                <div class="guide-header">
+                    <div class="guide-tag">
+                        <span data-lang="en">MATHEMATICAL REFERENCE · MACHINE LEARNING</span>
+                        <span data-lang="zh">数学参考 · 机器学习</span>
+                    </div>
+                    <h1>
+                        <span data-lang="en">Math Foundations for Machine Learning</span>
+                        <span data-lang="zh">机器学习数学基础</span>
+                    </h1>
+                    <p>
+                        <span data-lang="en">Essential mathematical concepts and tools used throughout machine learning algorithms</span>
+                        <span data-lang="zh">机器学习算法中使用的必要数学概念和工具</span>
+                    </p>
+                </div>
+
+                <!-- Section 1: Linear Algebra -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">1. Linear Algebra</span>
+                        <span data-lang="zh">1. 线性代数</span>
+                    </h2>
+
+                    <h3>
+                        <span data-lang="en">Vectors & Matrices</span>
+                        <span data-lang="zh">向量与矩阵</span>
+                    </h3>
+
+                    <p data-lang="en">
+                        Data in machine learning is represented as vectors and matrices. A single image of size 28×28 pixels is flattened into a <span class="highlight-key">784-dimensional vector</span>. A dataset with <span class="highlight-key">n samples</span> and <span class="highlight-key">d features</span> forms an <span class="highlight-key">n×d matrix X</span>.
+                    </p>
+                    <p data-lang="zh">
+                        机器学习中的数据表示为向量和矩阵。一个 28×28 像素的单个图像被展平成一个 <span class="highlight-key">784 维向量</span>。具有 <span class="highlight-key">n 个样本</span>和 <span class="highlight-key">d 个特征</span>的数据集形成一个 <span class="highlight-key">n×d 矩阵 X</span>。
+                    </p>
+
+                    <div class="definition-box">
+                        <div class="definition-title">
+                            <span data-lang="en">Dot Product & Linear Transformation</span>
+                            <span data-lang="zh">点积与线性变换</span>
+                        </div>
+                        <div class="math-box">
+$$u \cdot v = u^T v = \sum_{i=1}^{d} u_i v_i$$
+$$Ax = \text{linear transformation of } x$$
+                        </div>
+                    </div>
+
+                    <p data-lang="en">
+                        The <span class="highlight-key">dot product</span> measures similarity: if two vectors point in the same direction, their dot product is large. <span class="highlight-key">Matrix multiplication Ax</span> applies a linear transformation. For neural networks, matrix multiplication is the fundamental operation: <span class="highlight-key">h = W x + b</span> computes the next layer from the current one.
+                    </p>
+                    <p data-lang="zh">
+                        <span class="highlight-key">点积</span>衡量相似性：如果两个向量指向同一方向，它们的点积很大。<span class="highlight-key">矩阵乘法 Ax</span> 应用线性变换。对于神经网络，矩阵乘法是基本操作：<span class="highlight-key">h = W x + b</span> 从当前层计算下一层。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Matrix Inverse & Solving Linear Systems</span>
+                        <span data-lang="zh">矩阵逆与线性方程组求解</span>
+                    </h3>
+
+                    <p data-lang="en">
+                        Many machine learning problems reduce to solving <span class="highlight-key">Ax = b</span>. The solution is <span class="highlight-key">x = A⁻¹b</span> if the matrix is invertible. The <span class="highlight-key">Normal Equation</span> for linear regression derives from solving a system of equations.
+                    </p>
+                    <p data-lang="zh">
+                        许多机器学习问题可以化为求解 <span class="highlight-key">Ax = b</span>。如果矩阵可逆，解为 <span class="highlight-key">x = A⁻¹b</span>。线性回归的 <span class="highlight-key">正规方程</span>来自求解方程组。
+                    </p>
+
+                    <div class="math-box">
+$$\theta^* = (X^T X)^{-1} X^T y$$
+                    </div>
+
+                    <p data-lang="en">
+                        This closed-form solution minimizes squared error. However, computing the inverse costs <span class="highlight-key">O(d³)</span> operations, which is impractical for high-dimensional data. This is why we use <span class="highlight-key">gradient descent</span> instead. The inverse also requires <span class="highlight-key">X^TX to be positive definite</span>, which is guaranteed for full-rank X.
+                    </p>
+                    <p data-lang="zh">
+                        此闭式解最小化平方误差。然而，计算逆耗费 <span class="highlight-key">O(d³)</span> 次操作，这对高维数据不实际。这就是为什么我们改用 <span class="highlight-key">梯度下降</span>。逆还要求 <span class="highlight-key">X^TX 是正定的</span>，这对满秩的 X 得到保证。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Eigendecomposition</span>
+                        <span data-lang="zh">特征值分解</span>
+                    </h3>
+
+                    <div class="math-box">
+$$A v = \lambda v$$
+                    </div>
+
+                    <p data-lang="en">
+                        An <span class="highlight-key">eigenvector v</span> of matrix A points in a direction that is only scaled by the matrix, not rotated. The <span class="highlight-key">eigenvalue λ</span> is the scaling factor. Geometrically, eigenvectors are the "directions of maximum effect" of a linear transformation. In <span class="highlight-key">PCA (Principal Component Analysis)</span>, eigenvectors of the covariance matrix point along directions of maximum variance in the data.
+                    </p>
+                    <p data-lang="zh">
+                        矩阵 A 的 <span class="highlight-key">特征向量 v</span> 指向一个仅被矩阵缩放而不旋转的方向。<span class="highlight-key">特征值 λ</span> 是缩放因子。几何上，特征向量是线性变换的"最大效果方向"。在 <span class="highlight-key">PCA（主成分分析）</span>中，协方差矩阵的特征向量指向数据中方差最大的方向。
+                    </p>
+
+                    <div class="definition-box">
+                        <div class="definition-title">
+                            <span data-lang="en">PCA Connection</span>
+                            <span data-lang="zh">PCA 连接</span>
+                        </div>
+                        <div class="math-box">
+$$C = \frac{1}{n} X^T X \quad \text{(covariance matrix)}$$
+$$\text{Eigenvalues of } C = \text{variance along each principal component}$$
+                        </div>
+                    </div>
+
+                    <h3>
+                        <span data-lang="en">Singular Value Decomposition (SVD)</span>
+                        <span data-lang="zh">奇异值分解（SVD）</span>
+                    </h3>
+
+                    <div class="math-box">
+$$A = U \Sigma V^T$$
+                    </div>
+
+                    <p data-lang="en">
+                        <span class="highlight-key">SVD</span> is one of the most powerful decompositions in linear algebra. Every matrix can be decomposed into <span class="highlight-key">U (left singular vectors), Σ (singular values), and V (right singular vectors)</span>. SVD is related to eigendecomposition: the columns of V are eigenvectors of A^TA, and singular values are their corresponding eigenvalues. SVD is used for <span class="highlight-key">PCA, pseudoinverse computation, low-rank approximation, and dimensionality reduction</span>.
+                    </p>
+                    <p data-lang="zh">
+                        <span class="highlight-key">SVD</span> 是线性代数中最强大的分解之一。每个矩阵都可以分解为 <span class="highlight-key">U（左奇异向量）、Σ（奇异值）和 V（右奇异向量）</span>。SVD 与特征值分解相关：V 的列是 A^TA 的特征向量，奇异值是对应的特征值。SVD 用于 <span class="highlight-key">PCA、伪逆计算、低秩近似和降维</span>。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Vector Norms</span>
+                        <span data-lang="zh">向量范数</span>
+                    </h3>
+
+                    <div class="math-box">
+$$||x||_1 = \sum_{i=1}^{d} |x_i| \quad \text{(L1 norm)}$$
+$$||x||_2 = \sqrt{\sum_{i=1}^{d} x_i^2} \quad \text{(L2 norm)}$$
+                    </div>
+
+                    <p data-lang="en">
+                        <span class="highlight-key">Norms</span> measure the magnitude of a vector. The <span class="highlight-key">L1 norm</span> sums absolute values (Manhattan distance), while the <span class="highlight-key">L2 norm</span> is the Euclidean distance. These norms are fundamental to regularization: <span class="highlight-key">Lasso regression uses L1 regularization (λ||w||₁)</span> to encourage sparsity, while <span class="highlight-key">Ridge regression uses L2 (λ||w||₂²)</span> to keep weights small.
+                    </p>
+                    <p data-lang="zh">
+                        <span class="highlight-key">范数</span>衡量向量的大小。<span class="highlight-key">L1 范数</span>对绝对值求和（曼哈顿距离），而 <span class="highlight-key">L2 范数</span>是欧几里得距离。这些范数对正则化至关重要：<span class="highlight-key">Lasso 回归使用 L1 正则化 (λ||w||₁)</span> 鼓励稀疏性，而 <span class="highlight-key">Ridge 回归使用 L2 (λ||w||₂²)</span> 保持权重较小。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Positive Definite Matrices</span>
+                        <span data-lang="zh">正定矩阵</span>
+                    </h3>
+
+                    <div class="math-box">
+$$x^T A x > 0 \quad \text{for all } x \neq 0$$
+                    </div>
+
+                    <p data-lang="en">
+                        A matrix is <span class="highlight-key">positive definite</span> if this inequality holds. Positive definiteness has deep connections to optimization: if the Hessian is positive definite, the loss function is <span class="highlight-key">strictly convex</span>, guaranteeing a <span class="highlight-key">unique global minimum</span>. Covariance matrices are always positive semi-definite by definition.
+                    </p>
+                    <p data-lang="zh">
+                        如果不等式成立，矩阵 <span class="highlight-key">正定</span>。正定性与优化有深层联系：如果 Hessian 是正定的，损失函数 <span class="highlight-key">严格凸</span>，保证 <span class="highlight-key">唯一全局最小值</span>。协方差矩阵根据定义总是半正定的。
+                    </p>
+                </div>
+
+                <!-- Section 2: Probability & Statistics -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">2. Probability & Statistics</span>
+                        <span data-lang="zh">2. 概率与统计</span>
+                    </h2>
+
+                    <h3>
+                        <span data-lang="en">Bayes' Theorem</span>
+                        <span data-lang="zh">贝叶斯定理</span>
+                    </h3>
+
+                    <div class="math-box">
+$$P(\theta | D) = \frac{P(D | \theta) P(\theta)}{P(D)}$$
+                    </div>
+
+                    <p data-lang="en">
+                        Bayes' theorem is the foundation of Bayesian machine learning. <span class="highlight-key">P(θ|D) is the posterior</span>, <span class="highlight-key">P(D|θ) is the likelihood</span>, <span class="highlight-key">P(θ) is the prior</span>, and <span class="highlight-key">P(D) is the evidence</span>. Example: in a spam filter, we compute P(spam|email) from P(email|spam) and our prior belief about spam prevalence.
+                    </p>
+                    <p data-lang="zh">
+                        贝叶斯定理是贝叶斯机器学习的基础。<span class="highlight-key">P(θ|D) 是后验</span>，<span class="highlight-key">P(D|θ) 是似然</span>，<span class="highlight-key">P(θ) 是先验</span>，<span class="highlight-key">P(D) 是证据</span>。例如：在垃圾邮件过滤器中，我们从 P(email|spam) 和关于垃圾邮件流行率的先验信念计算 P(spam|email)。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Maximum Likelihood Estimation (MLE)</span>
+                        <span data-lang="zh">最大似然估计（MLE）</span>
+                    </h3>
+
+                    <div class="math-box">
+$$\theta_{\text{MLE}} = \arg\max_{\theta} \prod_{i=1}^{n} P(x_i | \theta) = \arg\max_{\theta} \sum_{i=1}^{n} \log P(x_i | \theta)$$
+                    </div>
+
+                    <p data-lang="en">
+                        MLE finds parameters that make the observed data most likely. The <span class="highlight-key">log trick</span> is crucial for numerical stability. <span class="highlight-key">Gaussian noise → MSE loss</span>, <span class="highlight-key">Bernoulli distribution → Cross-Entropy loss</span>. MLE is the foundation of many classical ML algorithms.
+                    </p>
+                    <p data-lang="zh">
+                        MLE 寻找使观察数据最有可能的参数。<span class="highlight-key">对数技巧</span>对数值稳定性至关重要。<span class="highlight-key">高斯噪声 → MSE 损失</span>，<span class="highlight-key">伯努利分布 → 交叉熵损失</span>。MLE 是许多经典 ML 算法的基础。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Key Probability Distributions</span>
+                        <span data-lang="zh">关键概率分布</span>
+                    </h3>
+
+                    <div class="definition-box">
+                        <div class="definition-title">
+                            <span data-lang="en">Gaussian Distribution</span>
+                            <span data-lang="zh">高斯分布</span>
+                        </div>
+                        <div class="math-box">
+$$N(\mu, \sigma^2) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$$
+                        </div>
+                    </div>
+
+                    <p data-lang="en">
+                        The Gaussian is the most important distribution in ML. Gaussians appear in linear regression (assuming Gaussian noise), neural network initialization, and as assumptions underlying many algorithms.
+                    </p>
+                    <p data-lang="zh">
+                        高斯是 ML 中最重要的分布。高斯无处不在：在线性回归中、在神经网络初始化中，以及作为许多算法的基础假设。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">KL Divergence</span>
+                        <span data-lang="zh">KL 散度</span>
+                    </h3>
+
+                    <div class="math-box">
+$$D_{\text{KL}}(P || Q) = \sum_{x} P(x) \log \frac{P(x)}{Q(x)} \geq 0$$
+                    </div>
+
+                    <p data-lang="en">
+                        <span class="highlight-key">KL divergence</span> measures how one distribution differs from another. <span class="highlight-key">Minimizing cross-entropy is equivalent to minimizing KL divergence from the true distribution</span>. This is why cross-entropy is used as a loss function for classification.
+                    </p>
+                    <p data-lang="zh">
+                        <span class="highlight-key">KL 散度</span>衡量一个分布与另一个分布的差异。<span class="highlight-key">最小化交叉熵等价于最小化与真实分布的 KL 散度</span>。这就是为什么交叉熵被用作分类的损失函数。
+                    </p>
+                </div>
+
+                <!-- Section 3: Optimization -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">3. Optimization Theory</span>
+                        <span data-lang="zh">3. 优化理论</span>
+                    </h2>
+
+                    <h3>
+                        <span data-lang="en">Gradient Descent</span>
+                        <span data-lang="zh">梯度下降</span>
+                    </h3>
+
+                    <div class="math-box">
+$$\nabla f = \left[\frac{\partial f}{\partial \theta_1}, \ldots, \frac{\partial f}{\partial \theta_d}\right]^T$$
+$$\theta \leftarrow \theta - \alpha \nabla f \quad \text{(gradient descent update)}$$
+                    </div>
+
+                    <p data-lang="en">
+                        The <span class="highlight-key">gradient ∇f</span> points in the direction of steepest ascent. Gradient descent moves opposite to the gradient with step size α (learning rate). This is the workhorse of modern machine learning.
+                    </p>
+                    <p data-lang="zh">
+                        <span class="highlight-key">梯度 ∇f</span> 指向最陡峭上升的方向。梯度下降沿着梯度的反方向移动，步长为 α（学习率）。这是现代机器学习的主力。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Hessian Matrix & Curvature</span>
+                        <span data-lang="zh">Hessian 矩阵与曲率</span>
+                    </h3>
+
+                    <div class="math-box">
+$$H_{ij} = \frac{\partial^2 f}{\partial \theta_i \partial \theta_j} \quad \text{(Hessian matrix)}$$
+$$\theta \leftarrow \theta - H^{-1} \nabla f \quad \text{(Newton's method)}$$
+                    </div>
+
+                    <p data-lang="en">
+                        The <span class="highlight-key">Hessian</span> describes the curvature of the loss surface. <span class="highlight-key">Newton's method</span> achieves <span class="highlight-key">quadratic convergence O(1/t²)</span>, but computing the Hessian costs O(d³).
+                    </p>
+                    <p data-lang="zh">
+                        <span class="highlight-key">Hessian</span> 描述损失表面的曲率。<span class="highlight-key">牛顿法</span>实现 <span class="highlight-key">二次收敛 O(1/t²)</span>，但计算 Hessian 耗费 O(d³)。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Convexity</span>
+                        <span data-lang="zh">凸性</span>
+                    </h3>
+
+                    <div class="math-box">
+$$f(\lambda x + (1-\lambda) y) \leq \lambda f(x) + (1-\lambda) f(y) \quad \text{for } \lambda \in [0,1]$$
+                    </div>
+
+                    <p data-lang="en">
+                        A function is <span class="highlight-key">convex</span> if the line segment between any two points lies above the function. For convex functions, any local minimum is a global minimum. <span class="highlight-key">Linear regression and logistic regression are convex</span>. <span class="highlight-key">Neural networks are non-convex</span>.
+                    </p>
+                    <p data-lang="zh">
+                        如果函数上任意两点之间的线段位于函数上方，函数是 <span class="highlight-key">凸的</span>。<span class="highlight-key">线性回归和逻辑回归是凸的</span>。<span class="highlight-key">神经网络是非凸的</span>。
+                    </p>
+                </div>
+
+                <!-- Back link at bottom -->
+                <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--parchment); text-align: center;">
+                    <a href="../machine-learning.html" class="guide-back" data-lang="en">Back to Machine Learning</a>
+                    <a href="../machine-learning.html" class="guide-back" data-lang="zh">返回机器学习</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langBtns = document.querySelectorAll('.guide-lang-btn');
+        const enElements = document.querySelectorAll('[data-lang="en"]');
+        const zhElements = document.querySelectorAll('[data-lang="zh"]');
+        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        setLanguage(savedLang);
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                localStorage.setItem('preferred-lang', lang);
+                setLanguage(lang);
+            });
+        });
+        function setLanguage(lang) {
+            langBtns.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('.guide-lang-btn[data-lang="' + lang + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            enElements.forEach(el => { el.style.display = lang === 'en' ? '' : 'none'; });
+            zhElements.forEach(el => { el.style.display = lang === 'zh' ? '' : 'none'; });
+            document.body.className = lang;
+        }
+    });
+    </script>
+
+</body>
+</html>

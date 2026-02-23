@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resources — Jialing Wu</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Jialing Wu — Useful links and resources for the engineering education community.">
+<meta property="og:title" content="Resources — Jialing Wu">
+<meta property="og:description" content="Jialing Wu — Useful links and resources for the engineering education community.">
+<meta property="og:image" content="https://jialing-wu.github.io/assets/images/photo.jpg">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<nav id="nav"><div class="nav-inner">
+  <a class="nav-brand" href="index.html">Jialing Wu</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Bio</a></li>
+    <li><a href="background.html">Background</a></li>
+    <li><a href="publications.html">Publications</a></li>
+    <li><a href="teaching.html">Teaching</a></li>
+    <li><a href="projects.html">Projects</a></li>
+    <li><a href="resources.html" class="active">Resources</a></li>
+    <li><a href="methods/index.html">Methods Notebook</a></li>
+  </ul>
+<button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('open');this.previousElementSibling.classList.toggle('open')"><span></span></button></div></nav>
+
+<div class="pg-head"><h1>Resources</h1><p>Useful links for the engineering education community.</p></div>
+
+<section class="wrap" style="padding-bottom:64px">
+  <div class="res-grid">
+    <a href="https://sites.google.com/view/thelabatosueed/" class="res-card" target="_blank"><img class="res-thumb" src="assets/images/res-thelab.jpg" alt="THE² Lab"><div class="res-body"><h3>THE² Lab</h3><p>At THE² Lab, we believe engineering education should be creative, inclusive, and meaningful for everyone. We explore new ways of teaching and learning that go beyond traditional classrooms, working hand-in-hand with students, teachers, and communities.</p></div></a>
+    <a href="http://engineeringeducationlist.pbworks.com/w/page/27578912/Engineering%20Education%20Community%20Resource" class="res-card" target="_blank"><img class="res-thumb" src="assets/images/res-wiki.jpg" alt="Engineering Education Community Wiki"><div class="res-body"><h3>Engineering Education Community Wiki</h3><p>Links to programs, centers, researchers, societies, publication venues, etc., intended to help in the exploration of engineering and STEM education.</p></div></a>
+    <a href="https://open.spotify.com/show/19uoLNNJZh0GQMs87zs9l5" class="res-card" target="_blank"><img class="res-thumb" src="assets/images/res-talks.jpg" alt="Engineering Education Theory Talks"><div class="res-body"><h3>Engineering Education Theory Talks</h3><p>Supporting early-career engineering education researchers and students to understand theories and practices through good conversations with brilliant researchers worldwide.</p></div></a>
+    <a href="https://eed.osu.edu/engineering-education-phd-program" class="res-card" target="_blank"><img class="res-thumb" src="assets/images/res-osu.jpg" alt="OSU Engineering Education PhD Program"><div class="res-body"><h3>OSU Engineering Education PhD Program</h3><p>Home to diverse, exceptional graduate students who are pursuing groundbreaking research with our graduate faculty in many areas.</p></div></a>
+    <a href="https://sites.google.com/view/eed-tool-kit/home" class="res-card" target="_blank"><img class="res-thumb" src="assets/images/res-toolkit.jpg" alt="Engineering Education Tool Kits"><div class="res-body"><h3>Engineering Education Tool Kits</h3><p>A quick-access toolbox for key concepts, frameworks, and methodologies in engineering education research.</p><span style="font-family:var(--sans);font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-top:6px;display:inline-block">Under Construction</span></div></a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-l">© 2026 Jialing Wu</div>
+  <div class="foot-r">
+    <a href="https://scholar.google.com/citations?user=1qK9_vUAAAAJ&hl=en&oi=ao" target="_blank">Scholar</a>
+    <a href="https://www.linkedin.com/in/jialingwueducation/" target="_blank">LinkedIn</a>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40));
+const b=document.querySelector('.btt');window.addEventListener('scroll',()=>{if(b)b.classList.toggle('show',window.scrollY>300)});
+</script>
+<button class="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+</body>
+</html>

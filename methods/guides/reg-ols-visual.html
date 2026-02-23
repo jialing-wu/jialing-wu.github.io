@@ -1,0 +1,521 @@
+---
+layout: methods-guide
+title: "OLS Regression: Interactive Playground"
+title_zh: "OLS 回归互动演示"
+parent_title: "Regression Analysis"
+parent_title_zh: "回归分析"
+parent_url: "reg-ols.html"
+bilingual: true
+---
+
+<div class="method-header">
+  <span data-lang="en">INTERACTIVE SIMULATION · GUIDE 2</span>
+  <span data-lang="zh">互动模拟 · 指南二</span>
+</div>
+
+<h1 data-lang="en">OLS Regression: Interactive Playground</h1>
+<h1 data-lang="zh">OLS 回归互动演示</h1>
+
+<p class="method-subtitle">
+  <span data-lang="en">Click to add data points. Watch how OLS minimizes the sum of squared residuals.</span>
+  <span data-lang="zh">点击添加数据点。观察 OLS 如何最小化平方残差的和。</span>
+</p>
+
+<section class="content-section">
+  <h2>
+    <span data-lang="en">What Does OLS Do?</span>
+    <span data-lang="zh">OLS 做什么？</span>
+  </h2>
+
+  <p data-lang="en">
+    Ordinary Least Squares (OLS) regression finds the line that best fits your data by minimizing the sum of squared residuals. A <strong>residual</strong> is the vertical distance from a data point to the fitted line. By squaring residuals, OLS penalizes large deviations more heavily than small ones.
+  </p>
+  <p data-lang="zh">
+    普通最小二乘法（OLS）回归通过最小化平方残差的和来找到最适合你数据的线。<strong>残差</strong>是从数据点到拟合线的垂直距离。通过对残差平方，OLS 对大的偏差施加比小偏差更重的惩罚。
+  </p>
+
+  <div class="math-note">
+    <strong data-lang="en">The OLS Objective:</strong>
+    <strong data-lang="zh">OLS 目标：</strong>
+    <br>Minimize: RSS = Σ(yᵢ - ŷᵢ)²
+    <br>where yᵢ are observed values and ŷᵢ = β₀ + β₁xᵢ are fitted values.
+    <br><br><strong data-lang="en">The Solution:</strong>
+    <strong data-lang="zh">解决方案：</strong>
+    <br>β₁ = Σ(xᵢ - x̄)(yᵢ - ȳ) / Σ(xᵢ - x̄)²
+    <br>β₀ = ȳ - β₁x̄
+  </div>
+
+  <div class="insight-box">
+    <strong data-lang="en">Why Squares?</strong>
+    <strong data-lang="zh">为什么要平方？</strong>
+    <p data-lang="en">You might ask: why not minimize the sum of absolute residuals (|yᵢ - ŷᵢ|)? The answer: squaring makes the problem mathematically tractable (we can take derivatives and solve), and it heavily penalizes outliers. A residual of 10 contributes 100 to RSS, while a residual of 1 contributes only 1. This gives the fitted line a strong incentive to "chase" extreme points.</p>
+    <p data-lang="zh">你可能会问：为什么不最小化绝对残差的和（|yᵢ - ŷᵢ|）？答案是：平方使问题在数学上易于处理（我们可以取导数并求解），并且它重度惩罚异常值。残差为 10 对 RSS 的贡献是 100，而残差为 1 仅贡献 1。这给拟合线一个强大的激励来"追逐"极端点。</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <h2>
+    <span data-lang="en">Interactive OLS Playground</span>
+    <span data-lang="zh">互动 OLS 演示场</span>
+  </h2>
+
+  <p data-lang="en">
+    Use the canvas below to add, remove, and manipulate data points. The red line shows the OLS fit, and gray dashed lines show residuals. Try adding an outlier to see how one extreme point can pull the entire line.
+  </p>
+  <p data-lang="zh">
+    使用下面的画布来添加、删除和操纵数据点。红线显示 OLS 拟合，灰色虚线显示残差。尝试添加异常值以查看一个极端点如何拉动整条线。
+  </p>
+
+  <div style="background: var(--parchment); border: 2px solid var(--leather); border-radius: 8px; padding: 1rem; margin: 1.5rem 0; text-align: center;">
+    <canvas id="canvas" width="600" height="450" style="border: 1px solid var(--sand); display: block; margin: 0 auto; background: var(--paper); cursor: crosshair;"></canvas>
+    <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--ink-faded);">
+      <span data-lang="en">Click to add points • Click a point to remove it • Use buttons below to generate data</span>
+      <span data-lang="zh">点击添加点 • 点击一个点来删除它 • 使用下面的按钮生成数据</span>
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin: 1.5rem 0;">
+    <button class="sim-btn" id="addRandomBtn" style="background: var(--gold); color: var(--ink); border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
+      <span data-lang="en">Add Random Data</span>
+      <span data-lang="zh">添加随机数据</span>
+    </button>
+    <button class="sim-btn" id="addOutlierBtn" style="background: var(--red); color: var(--paper); border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
+      <span data-lang="en">Add Outlier</span>
+      <span data-lang="zh">添加异常值</span>
+    </button>
+    <button class="sim-btn" id="clearBtn" style="background: var(--ink-faded); color: var(--paper); border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
+      <span data-lang="en">Clear All</span>
+      <span data-lang="zh">清除全部</span>
+    </button>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">Points (n)</span><span data-lang="zh">点数(n)</span></div>
+      <div class="sval" id="nPoints">0</div>
+    </div>
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">Intercept (β₀)</span><span data-lang="zh">截距(β₀)</span></div>
+      <div class="sval" id="intercept">—</div>
+    </div>
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">Slope (β₁)</span><span data-lang="zh">斜率(β₁)</span></div>
+      <div class="sval" id="slope">—</div>
+    </div>
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">R²</span><span data-lang="zh">R²</span></div>
+      <div class="sval" id="rsq">—</div>
+    </div>
+    <div class="stat-chip">
+      <div class="slabel"><span data-lang="en">RSS</span><span data-lang="zh">RSS</span></div>
+      <div class="sval" id="rss">—</div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <strong data-lang="en">Experiment:</strong>
+    <strong data-lang="zh">实验：</strong>
+    <p data-lang="en">
+      Start with a few points in a nice linear pattern. Click "Add Random Data" to see a denser cloud. Now click "Add Outlier" and watch the line shift dramatically to accommodate that one extreme point. This demonstrates why <strong>outliers matter</strong> in regression and why diagnostics are crucial before trusting your results.
+    </p>
+    <p data-lang="zh">
+      从一些点开始，形成一个很好的线性模式。点击"添加随机数据"以查看更密集的云。现在点击"添加异常值"并观察线条急剧移动以适应那个极端点。这说明了为什么<strong>异常值很重要</strong>在回归中，以及为什么诊断在相信你的结果之前是至关重要的。
+    </p>
+  </div>
+</section>
+
+<section class="content-section">
+  <h2>
+    <span data-lang="en">How to Read OLS Output</span>
+    <span data-lang="zh">如何阅读 OLS 输出</span>
+  </h2>
+
+  <p data-lang="en">
+    When you run <code>lm(y ~ x, data = df)</code> in R and call <code>summary()</code>, you get output like this:
+  </p>
+  <p data-lang="zh">
+    当你在 R 中运行 <code>lm(y ~ x, data = df)</code> 并调用 <code>summary()</code> 时，你会得到这样的输出：
+  </p>
+
+  <pre style="background: var(--parchment); border: 1px solid var(--sand); padding: 1.5rem; border-radius: 4px; font-family: var(--mono); font-size: 0.85rem; overflow-x: auto; color: var(--ink);">
+Call:
+lm(formula = y ~ x, data = df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-15.234  -3.821   0.456   4.102  18.923 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   5.234      2.103   2.487   0.0158 *  
+x             0.892      0.034  26.235   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.234 on 98 degrees of freedom
+Multiple R-squared:  0.8755,	Adjusted R-squared:  0.8742 
+F-statistic: 688.3 on 1 and 98 DF,  p-value: < 2.2e-16
+  </pre>
+
+  <p data-lang="en">
+    <strong>Breaking it down:</strong>
+  </p>
+  <p data-lang="zh">
+    <strong>分解：</strong>
+  </p>
+
+  <ul>
+    <li data-lang="en"><strong>Estimate:</strong> The point estimate for each coefficient. β₀ = 5.234, β₁ = 0.892. These are the intercept and slope.</li>
+    <li data-lang="zh"><strong>估计值：</strong>每个系数的点估计。β₀ = 5.234，β₁ = 0.892。这些是截距和斜率。</li>
+    
+    <li data-lang="en"><strong>Std. Error:</strong> Standard error of each coefficient. Smaller is better — it means we're confident about that estimate.</li>
+    <li data-lang="zh"><strong>标准误：</strong>每个系数的标准误。越小越好——这意味着我们对该估计很有信心。</li>
+    
+    <li data-lang="en"><strong>t value:</strong> The test statistic. t = Estimate / Std. Error. Larger absolute values suggest the coefficient is significantly different from zero.</li>
+    <li data-lang="zh"><strong>t 值：</strong>检验统计量。t = 估计值 / 标准误。较大的绝对值表明系数与零显著不同。</li>
+    
+    <li data-lang="en"><strong>Pr(>|t|):</strong> The p-value. Probability of observing this t-value (or more extreme) if the true coefficient were zero. Small p-values (< 0.05) indicate statistical significance.</li>
+    <li data-lang="zh"><strong>Pr(>|t|)：</strong>p 值。如果真实系数为零，观察到这个 t 值（或更极端的）的概率。小 p 值（< 0.05）表示统计显著性。</li>
+    
+    <li data-lang="en"><strong>R²:</strong> The proportion of variance in y explained by x. Here, 87.55% of variance is explained. Range: 0 to 1.</li>
+    <li data-lang="zh"><strong>R²：</strong>y 中由 x 解释的方差的比例。这里，87.55% 的方差被解释。范围：0 到 1。</li>
+    
+    <li data-lang="en"><strong>F-statistic:</strong> Tests whether <em>any</em> of the predictors are significant. For simple regression, F = t². Here, p < 0.0001, so the model is highly significant.</li>
+    <li data-lang="zh"><strong>F 统计量：</strong>测试<em>任何</em>预测因子是否显著。对于简单回归，F = t²。这里，p < 0.0001，所以模型高度显著。</li>
+  </ul>
+
+  <div class="insight-box">
+    <strong data-lang="en">Key Insight:</strong>
+    <strong data-lang="zh">关键见解：</strong>
+    <p data-lang="en">
+      OLS is just arithmetic—it finds the line that minimizes RSS. But the p-values and confidence intervals rely on the assumption that errors are normally distributed (or approximately so, given the CLT with large samples). This is why checking residuals for normality and homoscedasticity is essential before interpreting your regression results.
+    </p>
+    <p data-lang="zh">
+      OLS 只是算术——它找到最小化 RSS 的线。但是 p 值和置信区间依赖于错误正态分布的假设（或者在给定大样本 CLT 的情况下近似如此）。这就是为什么在解释回归结果之前检查残差的正态性和同方差性是必需的。
+    </p>
+  </div>
+</section>
+
+<section class="content-section">
+  <h2>
+    <span data-lang="en">OLS Assumptions & Gauss-Markov Theorem</span>
+    <span data-lang="zh">OLS 假设与 Gauss-Markov 定理</span>
+  </h2>
+
+  <p data-lang="en">
+    For OLS to be a <strong>BLUE</strong> (Best Linear Unbiased Estimator), we need:
+  </p>
+  <p data-lang="zh">
+    为了使 OLS 成为<strong>BLUE</strong>（最佳线性无偏估计器），我们需要：
+  </p>
+
+  <ol>
+    <li data-lang="en"><strong>Linearity:</strong> The relationship between x and y is linear.</li>
+    <li data-lang="zh"><strong>线性性：</strong>x 和 y 之间的关系是线性的。</li>
+    
+    <li data-lang="en"><strong>Independence:</strong> Observations are independent (no time-series or clustered data).</li>
+    <li data-lang="zh"><strong>独立性：</strong>观测值是独立的（没有时间序列或聚类数据）。</li>
+    
+    <li data-lang="en"><strong>Homoscedasticity:</strong> Residuals have constant variance (not fanning out).</li>
+    <li data-lang="zh"><strong>同方差性：</strong>残差有恒定的方差（不会扩大）。</li>
+    
+    <li data-lang="en"><strong>No Perfect Multicollinearity:</strong> Predictors are not perfectly correlated with each other.</li>
+    <li data-lang="zh"><strong>无完全多重共线性：</strong>预测因子彼此不是完全相关的。</li>
+  </ol>
+
+  <p data-lang="en">
+    If these assumptions hold, the Gauss-Markov theorem guarantees that OLS is the best linear unbiased estimator—no other linear estimator will have lower variance. For inference (p-values, confidence intervals), we additionally need approximately normal errors (or rely on the CLT with large samples).
+  </p>
+  <p data-lang="zh">
+    如果这些假设成立，Gauss-Markov 定理保证 OLS 是最佳线性无偏估计器——没有其他线性估计器会有更低的方差。为了进行推断（p 值、置信区间），我们还需要大约正态分布的误差（或在大样本下依靠中心极限定理）。
+  </p>
+</section>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+let points = [];
+const pointRadius = 5;
+const padding = 40;
+
+function drawCanvas() {
+  ctx.fillStyle = 'var(--paper)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw axes
+  ctx.strokeStyle = 'var(--ink)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(padding, canvas.height - padding);
+  ctx.lineTo(canvas.width - padding, canvas.height - padding);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(padding, padding);
+  ctx.lineTo(padding, canvas.height - padding);
+  ctx.stroke();
+  
+  // Draw axis labels
+  ctx.fillStyle = 'var(--ink)';
+  ctx.font = '12px var(--sans)';
+  ctx.textAlign = 'center';
+  ctx.fillText('0', padding - 10, canvas.height - padding + 15);
+  ctx.fillText('100', canvas.width - padding, canvas.height - padding + 15);
+  ctx.textAlign = 'right';
+  ctx.fillText('100', padding - 10, padding - 5);
+  ctx.fillText('0', padding - 10, canvas.height - padding + 5);
+  
+  // Draw grid
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 10; i++) {
+    let x = padding + (canvas.width - 2 * padding) * i / 10;
+    let y = canvas.height - padding - (canvas.height - 2 * padding) * i / 10;
+    
+    ctx.beginPath();
+    ctx.moveTo(x, canvas.height - padding);
+    ctx.lineTo(x, canvas.height - padding + 5);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(padding, y);
+    ctx.lineTo(padding - 5, y);
+    ctx.stroke();
+  }
+  
+  // Draw points
+  ctx.fillStyle = 'rgb(100, 150, 200)';
+  ctx.strokeStyle = 'rgb(50, 100, 150)';
+  ctx.lineWidth = 2;
+  for (let p of points) {
+    ctx.beginPath();
+    ctx.arc(p.px, p.py, pointRadius, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+  }
+  
+  // Draw OLS line and residuals
+  if (points.length >= 2) {
+    let { beta0, beta1, rss, rsq } = computeOLS();
+    
+    // Draw residuals (gray dashed lines)
+    ctx.strokeStyle = 'rgba(128, 128, 128, 0.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    for (let p of points) {
+      let x = (p.px - padding) / (canvas.width - 2 * padding) * 100;
+      let yFitted = beta0 + beta1 * x;
+      let pyFitted = canvas.height - padding - (yFitted / 100) * (canvas.height - 2 * padding);
+      
+      ctx.beginPath();
+      ctx.moveTo(p.px, p.py);
+      ctx.lineTo(p.px, pyFitted);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    
+    // Draw OLS line (red)
+    ctx.strokeStyle = 'var(--red)';
+    ctx.lineWidth = 2.5;
+    let x1 = 0, y1 = beta0;
+    let x2 = 100, y2 = beta0 + beta1 * 100;
+    let px1 = padding + (x1 / 100) * (canvas.width - 2 * padding);
+    let py1 = canvas.height - padding - (y1 / 100) * (canvas.height - 2 * padding);
+    let px2 = padding + (x2 / 100) * (canvas.width - 2 * padding);
+    let py2 = canvas.height - padding - (y2 / 100) * (canvas.height - 2 * padding);
+    
+    ctx.beginPath();
+    ctx.moveTo(Math.max(padding, px1), Math.min(canvas.height - padding, Math.max(padding, py1)));
+    ctx.lineTo(Math.min(canvas.width - padding, px2), Math.min(canvas.height - padding, Math.max(padding, py2)));
+    ctx.stroke();
+    
+    // Update stats
+    document.getElementById('nPoints').textContent = points.length;
+    document.getElementById('intercept').textContent = beta0.toFixed(2);
+    document.getElementById('slope').textContent = beta1.toFixed(2);
+    document.getElementById('rsq').textContent = rsq.toFixed(3);
+    document.getElementById('rss').textContent = rss.toFixed(1);
+  } else {
+    document.getElementById('nPoints').textContent = points.length;
+    document.getElementById('intercept').textContent = '—';
+    document.getElementById('slope').textContent = '—';
+    document.getElementById('rsq').textContent = '—';
+    document.getElementById('rss').textContent = '—';
+  }
+}
+
+function computeOLS() {
+  if (points.length < 2) return { beta0: 0, beta1: 0, rss: 0, rsq: 0 };
+  
+  let xVals = points.map(p => (p.px - padding) / (canvas.width - 2 * padding) * 100);
+  let yVals = points.map(p => (canvas.height - padding - p.py) / (canvas.height - 2 * padding) * 100);
+  
+  let n = points.length;
+  let xMean = xVals.reduce((a, b) => a + b) / n;
+  let yMean = yVals.reduce((a, b) => a + b) / n;
+  
+  let numerator = 0, denominator = 0;
+  for (let i = 0; i < n; i++) {
+    numerator += (xVals[i] - xMean) * (yVals[i] - yMean);
+    denominator += (xVals[i] - xMean) ** 2;
+  }
+  
+  let beta1 = denominator === 0 ? 0 : numerator / denominator;
+  let beta0 = yMean - beta1 * xMean;
+  
+  let rss = 0, tss = 0;
+  for (let i = 0; i < n; i++) {
+    let yFitted = beta0 + beta1 * xVals[i];
+    rss += (yVals[i] - yFitted) ** 2;
+    tss += (yVals[i] - yMean) ** 2;
+  }
+  
+  let rsq = tss === 0 ? 0 : 1 - (rss / tss);
+  
+  return { beta0, beta1, rss, rsq };
+}
+
+canvas.addEventListener('click', (e) => {
+  let rect = canvas.getBoundingClientRect();
+  let px = e.clientX - rect.left;
+  let py = e.clientY - rect.top;
+  
+  // Check if clicking on existing point
+  let clickedIndex = -1;
+  for (let i = 0; i < points.length; i++) {
+    if (Math.hypot(px - points[i].px, py - points[i].py) < pointRadius + 5) {
+      clickedIndex = i;
+      break;
+    }
+  }
+  
+  if (clickedIndex >= 0) {
+    points.splice(clickedIndex, 1);
+  } else if (px > padding && px < canvas.width - padding && py > padding && py < canvas.height - padding) {
+    points.push({ px, py });
+  }
+  
+  drawCanvas();
+});
+
+document.getElementById('addRandomBtn').addEventListener('click', () => {
+  for (let i = 0; i < 20; i++) {
+    let x = Math.random() * (canvas.width - 2 * padding) + padding;
+    let baseY = canvas.height - padding - (x - padding) / (canvas.width - 2 * padding) * 60;
+    let noise = (Math.random() - 0.5) * 40;
+    let y = baseY + noise;
+    
+    if (y > padding && y < canvas.height - padding) {
+      points.push({ px: x, py: y });
+    }
+  }
+  drawCanvas();
+});
+
+document.getElementById('addOutlierBtn').addEventListener('click', () => {
+  let px = Math.random() * (canvas.width - 2 * padding) + padding;
+  let py = Math.random() * (canvas.height - 2 * padding) + padding;
+  points.push({ px, py });
+  drawCanvas();
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  points = [];
+  drawCanvas();
+});
+
+drawCanvas();
+</script>
+
+<style>
+.sim-btn {
+  font-family: var(--sans);
+  font-size: 1rem;
+}
+
+.stat-chip {
+  background: var(--parchment);
+  border: 2px solid var(--gold);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.slabel {
+  font-size: 0.85rem;
+  color: var(--ink-faded);
+  margin-bottom: 0.5rem;
+}
+
+.sval {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--ink);
+  font-family: var(--mono);
+}
+
+.insight-box {
+  background: var(--cream);
+  border-left: 4px solid var(--gold);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+}
+
+.insight-box strong {
+  color: var(--red);
+}
+
+.math-note {
+  background: var(--parchment);
+  border: 1px solid var(--sand);
+  border-radius: 4px;
+  padding: 1.5rem;
+  font-family: var(--mono);
+  margin: 1.5rem 0;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.method-header {
+  text-align: center;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  color: var(--red);
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.method-subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--ink-faded);
+  margin: 1rem 0 2rem;
+  font-style: italic;
+}
+
+.content-section {
+  margin: 3rem 0;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--sand);
+}
+
+.content-section:last-child {
+  border-bottom: none;
+}
+
+code {
+  background: var(--parchment);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: var(--mono);
+  color: var(--ink);
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+</style>

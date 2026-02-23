@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang="en">GLS, WLS &amp; Robust Standard Errors | Empirical Modeling</title>
+    <title data-lang="zh">GLS、WLS 与稳健标准误 | 经验建模</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="guide-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="zh">
+    <div class="guide-layout">
+        <div class="guide-topbar">
+            <div class="guide-breadcrumb">
+                <a href="../empirical-modeling.html" data-lang="en">Empirical Modeling</a>
+                <a href="../empirical-modeling.html" data-lang="zh">经验建模</a>
+                <span class="sep">/</span>
+                <span data-lang="en">GLS, WLS & Robust Standard Errors</span>
+                <span data-lang="zh">GLS、WLS 与稳健标准误</span>
+            </div>
+            <div class="guide-lang-toggle">
+                <button class="guide-lang-btn active" data-lang="zh">中文</button>
+                <button class="guide-lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+
+        <div class="guide-content-wrapper">
+            <div class="guide-content">
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="en">Back to Empirical Modeling</a>
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="zh">返回经验建模</a>
+
+                <div class="guide-header">
+                    <div class="guide-tag">
+                        <span data-lang="en">ZERO-BASE FRIENDLY · FROM FIRST PRINCIPLES</span>
+                        <span data-lang="zh">零基础友好 · 从首原理</span>
+                    </div>
+                    <h1>
+                        <span data-lang="en">GLS, WLS & Robust Standard Errors</span>
+                        <span data-lang="zh">GLS、WLS 与稳健标准误</span>
+                    </h1>
+                    <p>
+                        <span data-lang="en">When errors misbehave — weighted least squares, feasible GLS, and heteroskedasticity-robust inference.</span>
+                        <span data-lang="zh">当误差不服从假设时——加权最小二乘法、可行 GLS 和异方差稳健推断。</span>
+                    </p>
+                </div>
+
+                <div class="guide-section">
+                <h2 data-lang="en">1. Why OLS Sometimes Isn't Enough: The "Equal Treatment" Problem</h2>
+                <h2 data-lang="zh">1. 为什么OLS有时不够用：「平等对待」问题</h2>
+
+                <p data-lang="en">
+                    Ordinary Least Squares (OLS) treats all data points equally. It finds a line that minimizes the sum of squared errors for every observation—whether that observation is rock-solid or shaky. But in real life, some measurements are more trustworthy than others.
+                </p>
+                <p data-lang="zh">
+                    普通最小二乘法（OLS）对所有数据点一视同仁。它找到一条线，使每个观察值的平方误差和最小——无论该观察值是否可靠。但在现实中，某些测量比其他测量更值得信任。
+                </p>
+
+                <div class="guide-info">
+                    <strong data-lang="en">Example: Monthly income survey</strong>
+                    <strong data-lang="zh">示例：月收入调查</strong>
+                    <p data-lang="en">
+                        You're surveying people about their income. A CEO's income report is from detailed financial records (very reliable). A student's income estimate is a rough guess (less reliable). Should you treat these reports equally when fitting your regression? Probably not.
+                    </p>
+                    <p data-lang="zh">
+                        你在调查人们的收入。一位首席执行官的收入报告来自详细的财务记录（非常可靠）。一个学生的收入估计是一个粗略的猜测（可靠性较低）。在拟合回归时，你应该平等对待这两份报告吗？可能不应该。
+                    </p>
+                </div>
+
+                <p data-lang="en">
+                    This is where <strong>weighted regression</strong> and <strong>Generalized Least Squares (GLS)</strong> come in. They say: "Give more weight to the reliable observations, less weight to the shaky ones."
+                </p>
+                <p data-lang="zh">
+                    这就是<strong>加权回归</strong>和<strong>广义最小二乘法（GLS）</strong>的用武之地。它们说：「给可靠的观察赋予更多权重，给不可靠的观察赋予较少权重。」
+                </p>
+            </div>
+
+            <!-- Section 2: What is variance? -->
+            <div class="guide-section">
+                <h2 data-lang="en">2. What Is Variance? Starting from Scratch</h2>
+                <h2 data-lang="zh">2. 什么是方差？从零开始</h2>
+
+                <p data-lang="en">
+                    Before we can talk about giving weight to observations, we need to understand <strong>variance</strong>. It's a measure of how spread out data is.
+                </p>
+                <p data-lang="zh">
+                    在我们谈论给观察赋予权重之前，我们需要理解<strong>方差</strong>。它是一个衡量数据有多分散的指标。
+                </p>
+
+                <h4 data-lang="en">A simple example: Two classes take a test</h4>
+                <h4 data-lang="zh">一个简单的例子：两个班级参加考试</h4>
+
+                <p data-lang="en">
+                    <strong>Class A:</strong> Scores are 95, 96, 97 (almost all the same)
+                </p>
+                <p data-lang="en">
+                    <strong>Class B:</strong> Scores are 50, 80, 150 (very different)
+                </p>
+
+                <p data-lang="zh">
+                    <strong>A班：</strong> 分数是 95, 96, 97（几乎相同）
+                </p>
+                <p data-lang="zh">
+                    <strong>B班：</strong> 分数是 50, 80, 150（差异很大）
+                </p>
+
+                <p data-lang="en">
+                    Both classes have an average (mean) of around 96. But Class A is consistent—low variance. Class B is all over the place—high variance. If you had to pick one score as your best guess for the next test, Class A's prediction would be more reliable.
+                </p>
+                <p data-lang="zh">
+                    两个班级的平均值都在96左右。但A班很一致——方差低。B班差异很大——方差高。如果你必须选择一个分数作为下一次考试的最佳猜测，A班的预测会更可靠。
+                </p>
+
+                <div class="definition-box">
+                    <strong data-lang="en">Variance (σ²)</strong>
+                    <strong data-lang="zh">方差（σ²）</strong>
+                    <p data-lang="en">
+                        Variance is the average of squared deviations from the mean. If \(\mu\) is the mean and we have \(n\) values \(x_1, x_2, \ldots, x_n\), then:
+                    </p>
+                    <p data-lang="zh">
+                        方差是与平均值的平方偏差的平均值。如果 \(\mu\) 是平均值，我们有 \(n\) 个值 \(x_1, x_2, \ldots, x_n\)，那么：
+                    </p>
+                    <div class="math-display">
+                        $$\sigma^2 = \frac{1}{n} \sum_{i=1}^{n} (x_i - \mu)^2$$
+                    </div>
+                    <p data-lang="en">
+                        Large variance = numbers are spread out = unreliable. Small variance = numbers are clustered = reliable.
+                    </p>
+                    <p data-lang="zh">
+                        大方差 = 数字分散 = 不可靠。小方差 = 数字集中 = 可靠。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Section 3: Heteroscedasticity -->
+            <div class="guide-section">
+                <h2 data-lang="en">3. Heteroscedasticity: When Variance Isn't Constant</h2>
+                <h2 data-lang="zh">3. 异方差性：当方差不恒定时</h2>
+
+                <p data-lang="en">
+                    In OLS, we assume all errors have the same variance. But in many real datasets, this isn't true. The variance changes depending on the value of \(X\).
+                </p>
+                <p data-lang="zh">
+                    在OLS中，我们假设所有误差都具有相同的方差。但在许多真实数据集中，这是不成立的。方差会根据 \(X\) 的值而改变。
+                </p>
+
+                <div class="guide-info">
+                    <strong data-lang="en">Example: Predicting household savings</strong>
+                    <strong data-lang="zh">示例：预测家庭储蓄</strong>
+                    <p data-lang="en">
+                        Imagine you're predicting how much a household saves based on income. A household earning $30,000 per year probably saves between $500-$1,500 (some variation, but limited). A household earning $500,000 per year might save anywhere from $50,000 to $200,000 (much more variation). Higher incomes have higher variance in savings behavior.
+                    </p>
+                    <p data-lang="zh">
+                        想象你根据收入预测一个家庭的储蓄额。年收入为30,000美元的家庭可能储蓄500-1,500美元（有些变化，但有限）。年收入500,000美元的家庭可能储蓄50,000到200,000美元（变化大得多）。更高的收入在储蓄行为中有更高的方差。
+                    </p>
+                </div>
+
+                <h4 data-lang="en">What it looks like visually</h4>
+                <h4 data-lang="zh">视觉上的样子</h4>
+
+                <p data-lang="en">
+                    If you plot residuals (errors) against predicted values:
+                </p>
+                <p data-lang="zh">
+                    如果你绘制残差（误差）与预测值的图表：
+                </p>
+
+                <ul data-lang="en">
+                    <li><strong>Homoscedasticity (good):</strong> Residuals scattered randomly around zero, same spread everywhere. A horizontal band.</li>
+                    <li><strong>Heteroscedasticity (problem):</strong> Residuals form a "fan" shape—wider on one side, narrower on the other.</li>
+                </ul>
+                <ul data-lang="zh">
+                    <li><strong>同方差性（好的）：</strong> 残差随机分散在零周围，各处的分布相同。一条水平带。</li>
+                    <li><strong>异方差性（问题）：</strong> 残差形成「扇形」——一边更宽，另一边更窄。</li>
+                </ul>
+
+                <div class="definition-box">
+                    <strong data-lang="en">Heteroscedasticity</strong>
+                    <strong data-lang="zh">异方差性</strong>
+                    <p data-lang="en">
+                        When the variance of errors changes with the level of the explanatory variable \(X\). Instead of one constant \(\sigma^2\), we have different variances: \(\sigma_1^2, \sigma_2^2, \ldots, \sigma_n^2\).
+                    </p>
+                    <p data-lang="zh">
+                        当误差的方差随解释变量 \(X\) 的水平而改变时。我们不再有一个恒定的 \(\sigma^2\)，而是有不同的方差：\(\sigma_1^2, \sigma_2^2, \ldots, \sigma_n^2\)。
+                    </p>
+                </div>
+
+                <p data-lang="en">
+                    <strong>Why does this matter?</strong> Because OLS assumes constant variance. When this assumption is violated, OLS still gives you a line, but:
+                </p>
+                <p data-lang="zh">
+                    <strong>为什么这很重要？</strong> 因为OLS假设方差恒定。当这个假设被违反时，OLS仍然给你一条线，但是：
+                </p>
+
+                <ul data-lang="en">
+                    <li>The line puts equal weight on all observations (even unreliable ones)</li>
+                    <li>Your standard errors are wrong → confidence intervals are wrong</li>
+                    <li>You're ignoring information you have about reliability</li>
+                </ul>
+                <ul data-lang="zh">
+                    <li>这条线对所有观察给予相等的权重（即使是不可靠的观察）</li>
+                    <li>你的标准误差是错误的 → 置信区间是错误的</li>
+                    <li>你忽略了你拥有的关于可靠性的信息</li>
+                </ul>
+            </div>
+
+            <!-- Section 4: The weighting idea -->
+            <div class="guide-section">
+                <h2 data-lang="en">4. The Weighting Idea: Trust the Reliable, Doubt the Shaky</h2>
+                <h2 data-lang="zh">4. 加权的想法：信任可靠的，怀疑不稳定的</h2>
+
+                <p data-lang="en">
+                    The solution is simple in principle: <strong>assign a weight to each observation</strong>. Observations with low variance (reliable) get high weight. Observations with high variance (shaky) get low weight.
+                </p>
+                <p data-lang="zh">
+                    解决方案在原则上很简单：<strong>为每个观察分配一个权重</strong>。具有低方差（可靠）的观察获得高权重。具有高方差（不稳定）的观察获得低权重。
+                </p>
+
+                <h4 data-lang="en">Weighted average analogy</h4>
+                <h4 data-lang="zh">加权平均类比</h4>
+
+                <p data-lang="en">
+                    Imagine you're grading students' work, and you want to compute their final grade. You have:
+                </p>
+                <p data-lang="zh">
+                    想象你在给学生的作业评分，你想计算他们的最终成绩。你有：
+                </p>
+
+                <ul data-lang="en">
+                    <li>Homework (shows the student really understands the material): Weight = 50%</li>
+                    <li>Quiz (quick check): Weight = 30%</li>
+                    <li>Final exam (could be luck or nerves): Weight = 20%</li>
+                </ul>
+                <ul data-lang="zh">
+                    <li>家庭作业（显示学生真正理解材料）：权重 = 50%</li>
+                    <li>小测验（快速检查）：权重 = 30%</li>
+                    <li>期末考试（可能是运气或紧张）：权重 = 20%</li>
+                </ul>
+
+                <p data-lang="en">
+                    Your final grade is a <strong>weighted average</strong>:
+                </p>
+                <p data-lang="zh">
+                    你的最终成绩是一个<strong>加权平均</strong>：
+                </p>
+
+                <div class="math-display">
+                    $$\text{Grade} = 0.50 \times \text{HW} + 0.30 \times \text{Quiz} + 0.20 \times \text{Exam}$$
+                </div>
+
+                <p data-lang="en">
+                    You're giving more influence to homework (which you trust more) and less influence to the exam (which is noisier). The same idea applies to regression: weight reliable observations more.
+                </p>
+                <p data-lang="zh">
+                    你给家庭作业（你更信任的）更多的影响力，给考试（更嘈杂）更少的影响力。同样的想法适用于回归：给可靠的观察更多权重。
+                </p>
+
+                <div class="guide-finding">
+                    <strong data-lang="en">Key insight:</strong> If observation \(i\) has variance \(\sigma_i^2\), we should weight it proportionally to \(1/\sigma_i^2\). Low variance → high weight. High variance → low weight.
+                    <br><strong data-lang="zh">关键洞察：</strong> 如果观察 \(i\) 的方差为 \(\sigma_i^2\)，我们应该按 \(1/\sigma_i^2\) 的比例为其加权。低方差 → 高权重。高方差 → 低权重。
+                </div>
+            </div>
+
+            <!-- Section 5: WLS -->
+            <div class="guide-section">
+                <h2 data-lang="en">5. Weighted Least Squares (WLS): The Math</h2>
+                <h2 data-lang="zh">5. 加权最小二乘法（WLS）：数学</h2>
+
+                <p data-lang="en">
+                    Now let's write down the math. In OLS, we minimize the sum of squared errors:
+                </p>
+                <p data-lang="zh">
+                    现在让我们写下数学。在OLS中，我们最小化平方误差的和：
+                </p>
+
+                <div class="math-display">
+                    $$\text{OLS: minimize } \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$
+                </div>
+
+                <p data-lang="en">
+                    In WLS, we minimize a <strong>weighted</strong> sum of squared errors:
+                </p>
+                <p data-lang="zh">
+                    在WLS中，我们最小化<strong>加权</strong>的平方误差和：
+                </p>
+
+                <div class="math-display">
+                    $$\text{WLS: minimize } \sum_{i=1}^{n} w_i (y_i - \hat{y}_i)^2$$
+                </div>
+
+                <p data-lang="en">
+                    Where:
+                </p>
+                <p data-lang="zh">
+                    其中：
+                </p>
+
+                <ul data-lang="en">
+                    <li>\(w_i\) = weight for observation \(i\). Higher weight = more influence on the fit.</li>
+                    <li>\(y_i\) = actual value of the outcome for observation \(i\)</li>
+                    <li>\(\hat{y}_i\) = predicted value: \(\hat{y}_i = \beta_0 + \beta_1 x_{i,1} + \beta_2 x_{i,2} + \cdots\)</li>
+                    <li>\((y_i - \hat{y}_i)\) = error for observation \(i\) (how far off the prediction is)</li>
+                </ul>
+                <ul data-lang="zh">
+                    <li>\(w_i\) = 观察 \(i\) 的权重。权重越高 = 对拟合的影响越大。</li>
+                    <li>\(y_i\) = 观察 \(i\) 的结果实际值</li>
+                    <li>\(\hat{y}_i\) = 预测值：\(\hat{y}_i = \beta_0 + \beta_1 x_{i,1} + \beta_2 x_{i,2} + \cdots\)</li>
+                    <li>\((y_i - \hat{y}_i)\) = 观察 \(i\) 的误差（预测的偏离程度）</li>
+                </ul>
+
+                <h4 data-lang="en">The weight formula</h4>
+                <h4 data-lang="zh">权重公式</h4>
+
+                <p data-lang="en">
+                    We set the weight to be <strong>inversely proportional to the variance</strong>:
+                </p>
+                <p data-lang="zh">
+                    我们将权重设置为<strong>与方差成反比</strong>：
+                </p>
+
+                <div class="math-display">
+                    $$w_i = \frac{1}{\sigma_i^2}$$
+                </div>
+
+                <p data-lang="en">
+                    This makes intuitive sense:
+                </p>
+                <p data-lang="zh">
+                    这在直观上是有意义的：
+                </p>
+
+                <ul data-lang="en">
+                    <li>If \(\sigma_i^2\) is small (low variance, reliable), then \(w_i\) is large (high weight)</li>
+                    <li>If \(\sigma_i^2\) is large (high variance, unreliable), then \(w_i\) is small (low weight)</li>
+                </ul>
+                <ul data-lang="zh">
+                    <li>如果 \(\sigma_i^2\) 很小（低方差，可靠），那么 \(w_i\) 很大（高权重）</li>
+                    <li>如果 \(\sigma_i^2\) 很大（高方差，不可靠），那么 \(w_i\) 很小（低权重）</li>
+                </ul>
+
+                <h4 data-lang="en">Finding the optimal weights (the solution)</h4>
+                <h4 data-lang="zh">找到最优权重（解决方案）</h4>
+
+                <p data-lang="en">
+                    To minimize the weighted sum of squared errors, we take derivatives and set them to zero. The result is:
+                </p>
+                <p data-lang="zh">
+                    为了最小化加权平方误差和，我们求导数并将其设为零。结果是：
+                </p>
+
+                <div class="math-display">
+                    $$\hat{\beta}_{\text{WLS}} = (X^T W X)^{-1} X^T W y$$
+                </div>
+
+                <p data-lang="en">
+                    Where:
+                </p>
+                <p data-lang="zh">
+                    其中：
+                </p>
+
+                <ul data-lang="en">
+                    <li>\(X\) = design matrix (the \(X\) values, with a column of 1's for the intercept)</li>
+                    <li>\(y\) = vector of outcomes (the \(y\) values)</li>
+                    <li>\(W\) = diagonal matrix of weights. On the diagonal: \(w_1, w_2, \ldots, w_n\). Off-diagonal: zeros.</li>
+                    <li>\(X^T\) = transpose of \(X\)</li>
+                    <li>\((X^T W X)^{-1}\) = inverse of the matrix \(X^T W X\)</li>
+                </ul>
+                <ul data-lang="zh">
+                    <li>\(X\) = 设计矩阵（\(X\) 值，截距的1列）</li>
+                    <li>\(y\) = 结果向量（\(y\) 值）</li>
+                    <li>\(W\) = 权重的对角矩阵。对角线上：\(w_1, w_2, \ldots, w_n\)。非对角线：零。</li>
+                    <li>\(X^T\) = \(X\) 的转置</li>
+                    <li>\((X^T W X)^{-1}\) = 矩阵 \(X^T W X\) 的逆</li>
+                </ul>
+
+                <h4 data-lang="en">What is a diagonal matrix W?</h4>
+                <h4 data-lang="zh">对角矩阵W是什么？</h4>
+
+                <p data-lang="en">
+                    If you have 3 observations with weights \(w_1 = 5, w_2 = 2, w_3 = 8\), the matrix looks like:
+                </p>
+                <p data-lang="zh">
+                    如果你有3个观察，权重为 \(w_1 = 5, w_2 = 2, w_3 = 8\)，矩阵看起来像：
+                </p>
+
+                <div class="math-display">
+                    $$W = \begin{pmatrix} 5 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 8 \end{pmatrix}$$
+                </div>
+
+                <p data-lang="en">
+                    Only the diagonal has non-zero values. This is a "diagonal matrix"—simple to work with.
+                </p>
+                <p data-lang="zh">
+                    只有对角线有非零值。这是一个「对角矩阵」——易于处理。
+                </p>
+
+                <div class="guide-info">
+                    <strong data-lang="en">Simple example</strong>
+                    <strong data-lang="zh">简单例子</strong>
+                    <p data-lang="en">
+                        Suppose you have:
+                    </p>
+                    <p data-lang="zh">
+                        假设你有：
+                    </p>
+                    <ul data-lang="en">
+                        <li>Observation 1: \(x_1 = 2, y_1 = 4\), variance \(\sigma_1^2 = 0.5\), so \(w_1 = 1/0.5 = 2\)</li>
+                        <li>Observation 2: \(x_2 = 4, y_2 = 6\), variance \(\sigma_2^2 = 2.0\), so \(w_2 = 1/2.0 = 0.5\)</li>
+                    </ul>
+                    <ul data-lang="zh">
+                        <li>观察1：\(x_1 = 2, y_1 = 4\)，方差 \(\sigma_1^2 = 0.5\)，所以 \(w_1 = 1/0.5 = 2\)</li>
+                        <li>观察2：\(x_2 = 4, y_2 = 6\)，方差 \(\sigma_2^2 = 2.0\)，所以 \(w_2 = 1/2.0 = 0.5\)</li>
+                    </ul>
+                    <p data-lang="en">
+                        Observation 1 is more reliable (lower variance), so it gets weight 2. Observation 2 is noisier, so it gets weight 0.5. When we fit the WLS regression, the line will be pulled more toward Observation 1.
+                    </p>
+                    <p data-lang="zh">
+                        观察1更可靠（方差较低），所以权重为2。观察2更嘈杂，所以权重为0.5。当我们拟合WLS回归时，这条线会被更多地拉向观察1。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Section 6: From WLS to GLS -->
+            <div class="guide-section">
+                <h2 data-lang="en">6. From WLS to GLS: Handling Correlated Errors</h2>
+                <h2 data-lang="zh">6. 从WLS到GLS：处理相关误差</h2>
+
+                <p data-lang="en">
+                    WLS handles the case where variance changes across observations. But what if the errors are <strong>correlated</strong> with each other? For example, in time-series data: if you overestimate in one year, you might also overestimate the next year.
+                </p>
+                <p data-lang="zh">
+                    WLS处理方差在观察间变化的情况。但如果误差<strong>彼此相关</strong>怎么办？例如，在时间序列数据中：如果你在某一年高估，你可能在下一年也会高估。
+                </p>
+
+                <div class="guide-info">
+                    <strong data-lang="en">Example: Quarterly sales forecasting</strong>
+                    <strong data-lang="zh">示例：季度销售预测</strong>
+                    <p data-lang="en">
+                        You're forecasting quarterly sales. Your model systematically underpredicts Q1 (winter is harsher than expected), which means Q1 errors are positive. This might spill over: Q2's actual sales depend on Q1's economic conditions, so Q1 and Q2 errors tend to be correlated.
+                    </p>
+                    <p data-lang="zh">
+                        你在预测季度销售。你的模型系统性地低估Q1（冬季比预期更严酷），这意味着Q1的误差为正。这可能会溢出：Q2的实际销售取决于Q1的经济条件，所以Q1和Q2的误差倾向于相关联。
+                    </p>
+                </div>
+
+                <h4 data-lang="en">The variance-covariance matrix Σ (Sigma)</h4>
+                <h4 data-lang="zh">方差-协方差矩阵Σ（西格玛）</h4>
+
+                <p data-lang="en">
+                    In WLS, we only cared about the variance of each error. In GLS, we care about the full <strong>variance-covariance matrix</strong>, which captures both variance and correlation.
+                </p>
+                <p data-lang="zh">
+                    在WLS中，我们只关心每个误差的方差。在GLS中，我们关心完整的<strong>方差-协方差矩阵</strong>，它捕捉方差和相关性。
+                </p>
+
+                <p data-lang="en">
+                    Think of it as a "relationship table" for errors. For 3 observations:
+                </p>
+                <p data-lang="zh">
+                    把它想象成误差的"关系表"。对于3个观察：
+                </p>
+
+                <div class="math-display">
+                    $$\Sigma = \begin{pmatrix}
+                    \sigma_1^2 & \text{cov}(e_1, e_2) & \text{cov}(e_1, e_3) \\
+                    \text{cov}(e_2, e_1) & \sigma_2^2 & \text{cov}(e_2, e_3) \\
+                    \text{cov}(e_3, e_1) & \text{cov}(e_3, e_2) & \sigma_3^2
+                    \end{pmatrix}$$
+                </div>
+
+                <p data-lang="en">
+                    Where:
+                </p>
+                <p data-lang="zh">
+                    其中：
+                </p>
+
+                <ul data-lang="en">
+                    <li><strong>Diagonal elements</strong> \(\sigma_i^2\) = variance of error for observation \(i\)</li>
+                    <li><strong>Off-diagonal elements</strong> \(\text{cov}(e_i, e_j)\) = covariance between errors of observations \(i\) and \(j\)</li>
+                    <li>If errors are independent, off-diagonal elements are 0 (we're back to WLS)</li>
+                    <li>If errors are correlated, off-diagonal elements are non-zero</li>
+                </ul>
+                <ul data-lang="zh">
+                    <li><strong>对角线元素</strong> \(\sigma_i^2\) = 观察 \(i\) 的误差方差</li>
+                    <li><strong>非对角线元素</strong> \(\text{cov}(e_i, e_j)\) = 观察 \(i\) 和 \(j\) 的误差之间的协方差</li>
+                    <li>如果误差独立，非对角线元素为0（我们回到WLS）</li>
+                    <li>如果误差相关，非对角线元素非零</li>
+                </ul>
+
+                <h4 data-lang="en">The GLS formula</h4>
+                <h4 data-lang="zh">GLS公式</h4>
+
+                <p data-lang="en">
+                    The GLS estimator is a natural extension of WLS:
+                </p>
+                <p data-lang="zh">
+                    GLS估计器是WLS的自然扩展：
+                </p>
+
+                <div class="math-display">
+                    $$\hat{\beta}_{\text{GLS}} = (X^T \Sigma^{-1} X)^{-1} X^T \Sigma^{-1} y$$
+                </div>
+
+                <p data-lang="en">
+                    Compared to WLS, we've replaced:
+                </p>
+                <p data-lang="zh">
+                    与WLS相比，我们已经替换：
+                </p>
+
+                <ul data-lang="en">
+                    <li>\(W\) (just the variances) with \(\Sigma^{-1}\) (all variances and correlations)</li>
+                    <li>\(\Sigma^{-1}\) = inverse of the variance-covariance matrix</li>
+                </ul>
+                <ul data-lang="zh">
+                    <li>\(W\)（仅方差）用 \(\Sigma^{-1}\)（所有方差和相关性）</li>
+                    <li>\(\Sigma^{-1}\) = 方差-协方差矩阵的逆</li>
+                </ul>
+
+                <h4 data-lang="en">Breaking down the formula</h4>
+                <h4 data-lang="zh">分解公式</h4>
+
+                <ul data-lang="en">
+                    <li><strong>\(X\)</strong> = design matrix (your \(X\) values)</li>
+                    <li><strong>\(y\)</strong> = outcome vector (your \(y\) values)</li>
+                    <li><strong>\(\Sigma\)</strong> = variance-covariance matrix of errors (captures both variance and correlation)</li>
+                    <li><strong>\(\Sigma^{-1}\)</strong> = inverse of \(\Sigma\) (used to "weight" the observations)</li>
+                    <li><strong>\(X^T\)</strong> = transpose of \(X\)</li>
+                    <li><strong>\((X^T \Sigma^{-1} X)^{-1}\)</strong> = inverse of the product (this is the main computation)</li>
+                </ul>
+                <ul data-lang="zh">
+                    <li><strong>\(X\)</strong> = 设计矩阵（你的 \(X\) 值）</li>
+                    <li><strong>\(y\)</strong> = 结果向量（你的 \(y\) 值）</li>
+                    <li><strong>\(\Sigma\)</strong> = 误差的方差-协方差矩阵（捕捉方差和相关性）</li>
+                    <li><strong>\(\Sigma^{-1}\)</strong> = \(\Sigma\) 的逆（用于「加权」观察）</li>
+                    <li><strong>\(X^T\)</strong> = \(X\) 的转置</li>
+                    <li><strong>\((X^T \Sigma^{-1} X)^{-1}\)</strong> = 乘积的逆（这是主要计算）</li>
+                </ul>
+
+                <div class="guide-finding">
+                    <strong data-lang="en">Key insight:</strong> GLS uses the full covariance structure to adjust for both heteroscedasticity (different variances) and autocorrelation (correlated errors). WLS is just the special case where \(\Sigma\) is diagonal (no correlations).
+                    <br><strong data-lang="zh">关键洞察：</strong> GLS使用完整的协方差结构来调整异方差性（不同的方差）和自相关性（相关误差）。WLS只是\(\Sigma\)为对角线的特殊情况（没有相关性）。
+                </div>
+            </div>
+
+            <!-- Section 7: FGLS -->
+            <div class="guide-section">
+                <h2 data-lang="en">7. FGLS (Feasible GLS): When You Don't Know Σ</h2>
+                <h2 data-lang="zh">7. FGLS（可行的GLS）：当你不知道Σ时</h2>
+
+                <p data-lang="en">
+                    Here's a practical problem: to use GLS, you need to know \(\Sigma\) (the variance-covariance matrix of errors). But in real life, you don't know it. You only have the data.
+                </p>
+                <p data-lang="zh">
+                    这是一个实际问题：要使用GLS，你需要知道 \(\Sigma\)（误差的方差-协方差矩阵）。但在现实生活中，你不知道它。你只有数据。
+                </p>
+
+                <div class="guide-info">
+                    <strong data-lang="en">The chicken-and-egg problem</strong>
+                    <strong data-lang="zh">先有鸡还是先有蛋的问题</strong>
+                    <p data-lang="en">
+                        To find \(\Sigma\), you need the errors \(e_i = y_i - \hat{y}_i\). But to get \(\hat{y}_i\), you need the regression coefficients \(\beta\). And to get \(\beta\), you need to know \(\Sigma\) (to do GLS). Circular!
+                    </p>
+                    <p data-lang="zh">
+                        要找到 \(\Sigma\)，你需要误差 \(e_i = y_i - \hat{y}_i\)。但要得到 \(\hat{y}_i\)，你需要回归系数 \(\beta\)。要得到 \(\beta\)，你需要知道 \(\Sigma\)（做GLS）。循环！
+                    </p>
+                </div>
+
+                <p data-lang="en">
+                    The solution: <strong>Feasible GLS (FGLS)</strong>. Do it in two steps:
+                </p>
+                <p data-lang="zh">
+                    解决方案：<strong>可行的GLS（FGLS）</strong>。分两步进行：
+                </p>
+
+                <h4 data-lang="en">Step 1: Run OLS to get initial estimates</h4>
+                <h4 data-lang="zh">步骤1：运行OLS以获得初始估计</h4>
+
+                <p data-lang="en">
+                    Start with standard OLS:
+                </p>
+                <p data-lang="zh">
+                    从标准OLS开始：
+                </p>
+
+                <div class="math-display">
+                    $$\hat{\beta}_{\text{OLS}} = (X^T X)^{-1} X^T y$$
+                </div>
+
+                <p data-lang="en">
+                    Use this to compute initial predicted values and errors:
+                </p>
+                <p data-lang="zh">
+                    使用这个来计算初始预测值和误差：
+                </p>
+
+                <div class="math-display">
+                    $$\hat{e}_i = y_i - \hat{y}_i = y_i - (X\hat{\beta}_{\text{OLS}})_i$$
+                </div>
+
+                <h4 data-lang="en">Step 2: Estimate Σ and then do GLS</h4>
+                <h4 data-lang="zh">步骤2：估计Σ，然后进行GLS</h4>
+
+                <p data-lang="en">
+                    Use the residuals from Step 1 to estimate \(\Sigma\). A simple approach:
+                </p>
+                <p data-lang="zh">
+                    使用步骤1的残差来估计 \(\Sigma\)。一个简单的方法：
+                </p>
+
+                <ul data-lang="en">
+                    <li>Diagonal elements: \(\hat{\sigma}_i^2 = \hat{e}_i^2\) (or smooth this somehow)</li>
+                    <li>Off-diagonal elements: estimated from residual correlations</li>
+                </ul>
+                <ul data-lang="zh">
+                    <li>对角线元素：\(\hat{\sigma}_i^2 = \hat{e}_i^2\)（或以某种方式平滑这个）</li>
+                    <li>非对角线元素：从残差相关性估计</li>
+                </ul>
+
+                <p data-lang="en">
+                    Then use the GLS formula with your estimated \(\hat{\Sigma}\):
+                </p>
+                <p data-lang="zh">
+                    然后使用你估计的 \(\hat{\Sigma}\) 使用GLS公式：
+                </p>
+
+                <div class="math-display">
+                    $$\hat{\beta}_{\text{FGLS}} = (X^T \hat{\Sigma}^{-1} X)^{-1} X^T \hat{\Sigma}^{-1} y$$
+                </div>
+
+                <p data-lang="en">
+                    Optionally, you can iterate: use \(\hat{\beta}_{\text{FGLS}}\) to get new residuals, re-estimate \(\hat{\Sigma}\), and redo GLS. But usually one iteration is enough.
+                </p>
+                <p data-lang="zh">
+                    可选地，你可以迭代：使用 \(\hat{\beta}_{\text{FGLS}}\) 来获得新的残差，重新估计 \(\hat{\Sigma}\)，然后重做GLS。但通常一次迭代就足够了。
+                </p>
+
+                <div class="guide-info">
+                    <strong data-lang="en">Why it works</strong>
+                    <strong data-lang="zh">为什么它有效</strong>
+                    <p data-lang="en">
+                        OLS isn't perfect when \(\Sigma\) is non-diagonal, but it's unbiased. Your residuals from OLS are close to the true errors. So your estimate of \(\Sigma\) is reasonable. Then GLS gives you a better estimator (though sometimes the improvement is small in finite samples).
+                    </p>
+                    <p data-lang="zh">
+                        当 \(\Sigma\) 非对角线时OLS不完美，但它是无偏的。你从OLS的残差接近真实误差。所以你对 \(\Sigma\) 的估计是合理的。然后GLS给你一个更好的估计器（尽管有时在有限样本中改进很小）。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Section 8: Robust standard errors -->
+            <div class="guide-section">
+                <h2 data-lang="en">8. Robust Standard Errors: An Easier Path</h2>
+                <h2 data-lang="zh">8. 稳健标准误差：更简单的路径</h2>
+
+                <p data-lang="en">
+                    Here's the thing: fitting WLS or GLS requires you to estimate \(\Sigma\) correctly. If you get it wrong, your estimators can be worse than OLS. There's a simpler alternative that's become very popular: <strong>don't fix the model, fix the standard errors</strong>.
+                </p>
+                <p data-lang="zh">
+                    这就是问题所在：拟合WLS或GLS需要你正确估计 \(\Sigma\)。如果你搞错了，你的估计器可能比OLS更差。有一个更简单的替代方案已经变得非常流行：<strong>不要修复模型，修复标准误差</strong>。
+                </p>
+
+                <h4 data-lang="en">The idea: Use OLS, but fix the standard errors</h4>
+                <h4 data-lang="zh">想法：使用OLS，但修复标准误差</h4>
+
+                <p data-lang="en">
+                    OLS gives you the right regression line (under mild conditions), but when there's heteroscedasticity, the standard errors are wrong. The solution:
+                </p>
+                <p data-lang="zh">
+                    OLS给你正确的回归线（在温和的条件下），但当存在异方差性时，标准误差是错误的。解决方案：
+                </p>
+
+                <ol data-lang="en">
+                    <li>Run standard OLS regression (as you normally would)</li>
+                    <li>Compute residuals: \(\hat{e}_i = y_i - \hat{y}_i\)</li>
+                    <li>Use a special formula for standard errors that doesn't assume constant variance (like Huber-White)</li>
+                </ol>
+                <ol data-lang="zh">
+                    <li>运行标准OLS回归（如正常那样）</li>
+                    <li>计算残差：\(\hat{e}_i = y_i - \hat{y}_i\)</li>
+                    <li>使用不假设恒定方差的标准误差特殊公式（如Huber-White）</li>
+                </ol>
+
+                <p data-lang="en">
+                    Your regression coefficients don't change. Only the standard errors (confidence intervals, p-values) get adjusted.
+                </p>
+                <p data-lang="zh">
+                    你的回归系数不改变。只有标准误差（置信区间、p值）得到调整。
+                </p>
+
+                <h4 data-lang="en">The Huber-White "sandwich" estimator</h4>
+                <h4 data-lang="zh">Huber-White「三明治」估计器</h4>
+
+                <p data-lang="en">
+                    The standard formula for the variance-covariance matrix of OLS estimates is:
+                </p>
+                <p data-lang="zh">
+                    OLS估计方差-协方差矩阵的标准公式是：
+                </p>
+
+                <div class="math-display">
+                    $$\text{Var}(\hat{\beta}_{\text{OLS}}) = \sigma^2 (X^T X)^{-1}$$
+                </div>
+
+                <p data-lang="en">
+                    This assumes constant variance \(\sigma^2\). The Huber-White robust estimator doesn't:
+                </p>
+                <p data-lang="zh">
+                    这假设恒定方差 \(\sigma^2\)。Huber-White稳健估计器不这样做：
+                </p>
+
+                <div class="math-display">
+                    $$\text{Var}_{\text{HC}}(\hat{\beta}_{\text{OLS}}) = (X^T X)^{-1} \left( \sum_{i=1}^{n} \hat{e}_i^2 x_i x_i^T \right) (X^T X)^{-1}$$
+                </div>
+
+                <p data-lang="en">
+                    Where:
+                </p>
+                <p data-lang="zh">
+                    其中：
+                </p>
+
+                <ul data-lang="en">
+                    <li>\(\hat{e}_i\) = residual for observation \(i\)</li>
+                    <li>\(x_i\) = row of \(X\) for observation \(i\) (all the \(X\) values for that observation)</li>
+                    <li>\(x_i x_i^T\) = outer product (multiply row by its transpose)</li>
+                </ul>
+                <ul data-lang="zh">
+                    <li>\(\hat{e}_i\) = 观察 \(i\) 的残差</li>
+                    <li>\(x_i\) = 观察 \(i\) 的 \(X\) 行（该观察的所有 \(X\) 值）</li>
+                    <li>\(x_i x_i^T\) = 外积（将行乘以其转置）</li>
+                </ul>
+
+                <p data-lang="en">
+                    The intuition: instead of assuming all errors have variance \(\sigma^2\), each residual is squared (\(\hat{e}_i^2\)) and used as its own variance estimate. Observations with large residuals contribute more to the standard errors.
+                </p>
+                <p data-lang="zh">
+                    直观：不是假设所有误差都有方差 \(\sigma^2\)，而是每个残差被平方（\(\hat{e}_i^2\)）并用作其自己的方差估计。具有大残差的观察对标准误差贡献更多。
+                </p>
+
+                <p data-lang="en">
+                    It's called a "sandwich" because the formula has the structure: bread · meat · bread, i.e., \((X^T X)^{-1}\) · stuff · \((X^T X)^{-1}\).
+                </p>
+                <p data-lang="zh">
+                    它被称为「三明治」，因为公式具有结构：面包·肉·面包，即 \((X^T X)^{-1}\) · 东西 · \((X^T X)^{-1}\)。
+                </p>
+
+                <div class="guide-finding">
+                    <strong data-lang="en">Why robust SEs are practical:</strong>
+                    <br data-lang="en">You don't have to specify the exact form of heteroscedasticity. You run OLS (simple, always works), and let robust SEs handle the uncertainty. Modern software (R, Python, Stata) makes this a one-line fix.
+                    <br><strong data-lang="zh">为什么稳健SE很实用：</strong>
+                    <br data-lang="zh">你不必指定异方差性的确切形式。你运行OLS（简单，总是有效），让稳健SE处理不确定性。现代软件（R、Python、Stata）使这成为一行修复。
+                </div>
+            </div>
+
+            <!-- Section 9: Decision tree -->
+            <div class="guide-section">
+                <h2 data-lang="en">9. When to Use What: A Decision Guide</h2>
+                <h2 data-lang="zh">9. 何时使用什么：决策指南</h2>
+
+                <p data-lang="en">
+                    You now know four tools: OLS, WLS, GLS/FGLS, and robust standard errors. How do you choose?
+                </p>
+                <p data-lang="zh">
+                    你现在知道四个工具：OLS、WLS、GLS/FGLS和稳健标准误差。你如何选择？
+                </p>
+
+                <h4 data-lang="en">Decision flowchart</h4>
+                <h4 data-lang="zh">决策流程图</h4>
+
+                <div class="guide-info">
+                    <p data-lang="en">
+                        <strong>1. Do you suspect heteroscedasticity (non-constant variance)?</strong>
+                    </p>
+                    <p data-lang="zh">
+                        <strong>1. 你怀疑异方差性（非恒定方差）吗？</strong>
+                    </p>
+                    <ul data-lang="en">
+                        <li><strong>No:</strong> Use standard OLS. You're done.</li>
+                        <li><strong>Yes:</strong> Go to question 2.</li>
+                    </ul>
+                    <ul data-lang="zh">
+                        <li><strong>否：</strong> 使用标准OLS。完成。</li>
+                        <li><strong>是：</strong> 转到问题2。</li>
+                    </ul>
+
+                    <p data-lang="en">
+                        <strong>2. Do you know (or can you reasonably guess) the form of heteroscedasticity?</strong>
+                    </p>
+                    <p data-lang="zh">
+                        <strong>2. 你知道（或能合理猜测）异方差性的形式吗？</strong>
+                    </p>
+                    <ul data-lang="en">
+                        <li><strong>Yes (e.g., variance is proportional to X):</strong> Consider WLS. Specify weights \(w_i = 1/\sigma_i^2\) based on your understanding. This gives you a more efficient estimator (lower variance).</li>
+                        <li><strong>No:</strong> Go to question 3.</li>
+                    </ul>
+                    <ul data-lang="zh">
+                        <li><strong>是（例如，方差与X成正比）：</strong> 考虑WLS。根据你的理解指定权重 \(w_i = 1/\sigma_i^2\)。这给你一个更有效的估计器（更低的方差）。</li>
+                        <li><strong>否：</strong> 转到问题3。</li>
+                    </ul>
+
+                    <p data-lang="en">
+                        <strong>3. Is your data time-series or panel (observations clustered over time)?</strong>
+                    </p>
+                    <p data-lang="zh">
+                        <strong>3. 你的数据是时间序列或面板数据（观察按时间聚集）吗？</strong>
+                    </p>
+                    <ul data-lang="en">
+                        <li><strong>Yes:</strong> You likely have autocorrelated errors. Use FGLS or Newey-West robust SEs (a variant that handles autocorrelation).</li>
+                        <li><strong>No:</strong> Go to question 4.</li>
+                    </ul>
+                    <ul data-lang="zh">
+                        <li><strong>是：</strong> 你可能有自相关误差。使用FGLS或Newey-West稳健SE（处理自相关的变体）。</li>
+                        <li><strong>否：</strong> 转到问题4。</li>
+                    </ul>
+
+                    <p data-lang="en">
+                        <strong>4. Quick and practical?</strong>
+                    </p>
+                    <p data-lang="zh">
+                        <strong>4. 快速和实用？</strong>
+                    </p>
+                    <ul data-lang="en">
+                        <li><strong>Yes:</strong> Use <strong>robust standard errors (Huber-White)</strong>. Run OLS normally, ask your software for "robust" or "HC" standard errors. Easy and works well in most situations.</li>
+                        <li><strong>No, I want maximum efficiency:</strong> Use FGLS to estimate the covariance structure and do GLS.</li>
+                    </ul>
+                    <ul data-lang="zh">
+                        <li><strong>是：</strong> 使用<strong>稳健标准误差（Huber-White）</strong>。正常运行OLS，要求你的软件提供「稳健」或「HC」标准误差。简单且在大多数情况下有效。</li>
+                        <li><strong>否，我想要最大效率：</strong> 使用FGLS估计协方差结构并进行GLS。</li>
+                    </ul>
+                </div>
+
+                <h4 data-lang="en">Quick summary table</h4>
+                <h4 data-lang="zh">快速总结表</h4>
+
+                <table class="guide-table">
+                    <tr>
+                        <th data-lang="en">Situation</th>
+                        <th data-lang="zh">情况</th>
+                        <th data-lang="en">Best choice</th>
+                        <th data-lang="zh">最佳选择</th>
+                        <th data-lang="en">Why</th>
+                        <th data-lang="zh">为什么</th>
+                    </tr>
+                    <tr>
+                        <td data-lang="en">Constant variance, no autocorrelation</td>
+                        <td data-lang="zh">恒定方差，无自相关</td>
+                        <td data-lang="en">OLS</td>
+                        <td data-lang="zh">OLS</td>
+                        <td data-lang="en">Assumptions satisfied</td>
+                        <td data-lang="zh">假设满足</td>
+                    </tr>
+                    <tr>
+                        <td data-lang="en">Known form of heteroscedasticity</td>
+                        <td data-lang="zh">已知异方差形式</td>
+                        <td data-lang="en">WLS</td>
+                        <td data-lang="zh">WLS</td>
+                        <td data-lang="en">Most efficient</td>
+                        <td data-lang="zh">最有效</td>
+                    </tr>
+                    <tr>
+                        <td data-lang="en">Unknown heteroscedasticity + cross-sectional</td>
+                        <td data-lang="zh">未知异方差 + 横截面</td>
+                        <td data-lang="en">OLS + robust SE</td>
+                        <td data-lang="zh">OLS + 稳健SE</td>
+                        <td data-lang="en">Simplest, still valid</td>
+                        <td data-lang="zh">最简单，仍然有效</td>
+                    </tr>
+                    <tr>
+                        <td data-lang="en">Time-series with autocorrelation</td>
+                        <td data-lang="zh">具有自相关的时间序列</td>
+                        <td data-lang="en">FGLS or Newey-West</td>
+                        <td data-lang="zh">FGLS或Newey-West</td>
+                        <td data-lang="en">Handles correlation</td>
+                        <td data-lang="zh">处理相关性</td>
+                    </tr>
+                </table>
+
+                <div class="guide-finding">
+                    <strong data-lang="en">In practice:</strong> Most applied researchers use robust standard errors because they're easy and work in a wide range of situations. WLS is useful when you have domain knowledge about variance. FGLS is used when you suspect autocorrelation or want to squeeze out extra efficiency.
+                    <br><strong data-lang="zh">实际上：</strong> 大多数应用研究人员使用稳健标准误差，因为它们很容易且在各种情况下都有效。当你对方差有领域知识时，WLS很有用。当你怀疑自相关或想要挤出额外效率时，使用FGLS。
+                </div>
+            </div>
+
+            <!-- Recap -->
+            <div class="guide-section">
+                <h2 data-lang="en">Recap: The Big Picture</h2>
+                <h2 data-lang="zh">总结：全景</h2>
+
+                <ul data-lang="en">
+                    <li><strong>OLS</strong> treats all observations equally. It works great when errors have constant variance and aren't correlated.</li>
+                    <li><strong>Heteroscedasticity</strong> means variance changes with \(X\). Some observations are noisier than others.</li>
+                    <li><strong>WLS</strong> weights observations inversely by their variance: \(w_i = 1/\sigma_i^2\). Use when you know the variance structure.</li>
+                    <li><strong>GLS</strong> extends WLS to handle autocorrelated errors by using the full variance-covariance matrix \(\Sigma\).</li>
+                    <li><strong>FGLS</strong> is the practical version: estimate \(\Sigma\) from OLS residuals, then do GLS.</li>
+                    <li><strong>Robust standard errors</strong> fix the SE calculation without changing the model. Easy, practical, and recommended.</li>
+                    <li><strong>Choice depends on your situation:</strong> Known heteroscedasticity → WLS. Unknown but present → robust SEs. Time-series with autocorrelation → FGLS/Newey-West.</li>
+                </ul>
+                <ul data-lang="zh">
+                    <li><strong>OLS</strong> 平等对待所有观察。当误差具有恒定方差且不相关时，它的效果很好。</li>
+                    <li><strong>异方差性</strong> 意味着方差随 \(X\) 变化。某些观察比其他观察更嘈杂。</li>
+                    <li><strong>WLS</strong> 通过方差反向加权观察：\(w_i = 1/\sigma_i^2\)。当你知道方差结构时使用。</li>
+                    <li><strong>GLS</strong> 扩展WLS以通过使用完整方差-协方差矩阵 \(\Sigma\) 来处理自相关误差。</li>
+                    <li><strong>FGLS</strong> 是实用版本：从OLS残差估计 \(\Sigma\)，然后进行GLS。</li>
+                    <li><strong>稳健标准误差</strong> 修复SE计算而不改变模型。简单、实用且推荐。</li>
+                    <li><strong>选择取决于你的情况：</strong> 已知异方差 → WLS。未知但存在 → 稳健SE。具有自相关的时间序列 → FGLS/Newey-West。</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Language toggle script -->
+
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langBtns = document.querySelectorAll('.guide-lang-btn');
+        // Exclude buttons from content elements
+        const enElements = document.querySelectorAll('.guide-content [data-lang="en"], .guide-breadcrumb [data-lang="en"], a.guide-back[data-lang="en"], .guide-header [data-lang="en"], .guide-tag [data-lang="en"]');
+        const zhElements = document.querySelectorAll('.guide-content [data-lang="zh"], .guide-breadcrumb [data-lang="zh"], a.guide-back[data-lang="zh"], .guide-header [data-lang="zh"], .guide-tag [data-lang="zh"]');
+        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        setLanguage(savedLang);
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                localStorage.setItem('preferred-lang', lang);
+                setLanguage(lang);
+            });
+        });
+        function setLanguage(lang) {
+            langBtns.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('.guide-lang-btn[data-lang="' + lang + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            if (lang === 'en') {
+                enElements.forEach(el => { el.style.display = ''; });
+                zhElements.forEach(el => { el.style.display = 'none'; });
+                document.body.className = 'en';
+            } else {
+                enElements.forEach(el => { el.style.display = 'none'; });
+                zhElements.forEach(el => { el.style.display = ''; });
+                document.body.className = 'zh';
+            }
+        }
+    });
+    </script>
+
+</body>
+</html>

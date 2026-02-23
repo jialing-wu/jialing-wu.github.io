@@ -1,0 +1,665 @@
+---
+layout: methods-guide
+title: "Evolutionary Game Theory"
+title_zh: "演化博弈论"
+parent_title: "Theoretical Modeling"
+parent_title_zh: "理论建模"
+parent_url: "theoretical-modeling.html"
+bilingual: true
+---
+
+<style>
+.tab-bar{display:flex;gap:0;border-bottom:2px solid var(--parchment);margin-bottom:20px;}
+.tab-btn{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.04em;padding:9px 20px;border:none;background:none;cursor:pointer;color:var(--ink-ghost);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;}
+.tab-btn.active{color:var(--red);border-bottom-color:var(--red);}
+.tab-pane{display:none;} .tab-pane.active{display:block;}
+.sim-panel{background:var(--paper);border:1px solid var(--parchment);border-radius:4px;padding:24px 28px;margin:16px 0;}
+canvas{display:block;border:1px solid var(--parchment);border-radius:3px;}
+.ctrl-group{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.ctrl-label{font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-ghost);display:flex;justify-content:space-between;}
+.ctrl-val{font-family:var(--mono);color:var(--red);font-weight:500;}
+input[type=range]{width:100%;accent-color:var(--red);}
+.sim-btns{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap;}
+.sim-btn{font-family:var(--sans);font-size:12px;font-weight:600;padding:7px 18px;border:none;border-radius:3px;cursor:pointer;letter-spacing:.03em;transition:background .2s;}
+.sim-btn.run{background:var(--red);color:var(--paper);}
+.sim-btn.run:hover{background:var(--leather);}
+.sim-btn.pause{background:var(--gold);color:var(--paper);}
+.sim-btn.reset{background:transparent;border:1px solid var(--parchment);color:var(--ink-ghost);}
+.sim-btn:disabled{opacity:.4;cursor:not-allowed;}
+.math-note{font-family:var(--mono);font-size:12px;background:var(--parchment);padding:12px 16px;border-radius:3px;margin:10px 0;color:var(--ink);line-height:1.9;}
+.insight-box{background:var(--cream);border-left:3px solid var(--gold);padding:14px 18px;margin:14px 0;font-family:var(--serif);font-size:14px;line-height:1.6;color:var(--ink);}
+.stat-row{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap;}
+.stat-chip{flex:1;min-width:90px;background:var(--cream);border:1px solid var(--parchment);border-radius:3px;padding:8px 12px;text-align:center;}
+.stat-chip .slabel{font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-ghost);display:block;margin-bottom:3px;}
+.stat-chip .sval{font-family:var(--mono);font-size:15px;color:var(--ink);}
+/* payoff table */
+.pd-table{border-collapse:collapse;font-family:var(--sans);font-size:13px;margin:12px 0;}
+.pd-table th,.pd-table td{border:1px solid var(--parchment);padding:9px 16px;text-align:center;}
+.pd-table th{background:var(--cream);font-weight:600;letter-spacing:.04em;color:var(--ink-ghost);}
+.pd-table td{color:var(--ink);}
+/* bar chart */
+.bar-chart{display:flex;flex-direction:column;gap:6px;margin:12px 0;}
+.bar-row{display:flex;align-items:center;gap:8px;}
+.bar-label{font-family:var(--sans);font-size:11px;width:120px;text-align:right;color:var(--ink);}
+.bar-track{flex:1;height:20px;background:var(--parchment);border-radius:3px;overflow:hidden;position:relative;}
+.bar-fill{height:100%;border-radius:3px;transition:width 0.4s ease;}
+.bar-val{font-family:var(--mono);font-size:11px;min-width:50px;color:var(--ink-ghost);}
+.two-col{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;}
+.hint{font-family:var(--sans);font-size:11px;color:var(--ink-ghost);margin:6px 0;}
+.strategy-legend{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;}
+.strat-badge{font-family:var(--sans);font-size:11px;font-weight:600;padding:3px 9px;border-radius:10px;color:var(--paper);}
+</style>
+
+<div class="method-header">
+  <div class="method-meta">
+    <span data-lang="en">INTERACTIVE SIMULATION · MODULE 2</span>
+    <span data-lang="zh">互动模拟 · 模块二</span>
+  </div>
+  <h1>
+    <span data-lang="en">Evolutionary Game Theory</span>
+    <span data-lang="zh">演化博弈论</span>
+  </h1>
+  <p>
+    <span data-lang="en">Hawk-Dove, ESS, and the evolution of cooperation — why nature and society both converge on mixed strategies, and how selfish agents can sustain mutual cooperation through repeated interaction.</span>
+    <span data-lang="zh">鹰鸽博弈、演化稳定策略（ESS）与合作的演化——为何自然与社会都趋向混合策略，以及自私主体如何通过反复互动维持相互合作。</span>
+  </p>
+</div>
+
+<hr class="section-divider">
+
+<section>
+  <h2>
+    <span data-lang="en">From Nash to Evolution: A Key Shift</span>
+    <span data-lang="zh">从纳什均衡到演化：一个关键转变</span>
+  </h2>
+  <p>
+    <span data-lang="en">Classical game theory assumes <em>rational agents</em> who choose strategies to maximize utility. Evolutionary game theory (EGT), developed by John Maynard Smith and George Price in the 1970s, makes a different bet: forget rationality — instead, successful strategies <em>reproduce</em>. Agents with higher payoffs leave more descendants, and the population gradually shifts toward better-performing strategies.</span>
+    <span data-lang="zh">经典博弈论假设<em>理性主体</em>选择策略以最大化效用。由 John Maynard Smith 和 George Price 于 1970 年代发展的演化博弈论（EGT）做出了不同的假设：忘掉理性——转而让成功策略<em>繁殖</em>。获益更高的主体留下更多后代，种群逐渐向表现更优的策略转变。</span>
+  </p>
+  <p>
+    <span data-lang="en">This shift has two implications. First, it makes EGT applicable even when agents aren't rational — animals, bacteria, social norms all evolve without calculating anything. Second, EGT introduces a new solution concept: the <strong>Evolutionarily Stable Strategy (ESS)</strong>, which is stronger than a Nash equilibrium. A Nash equilibrium just says "no one wants to deviate." An ESS says "if a rare mutant tries a different strategy, natural selection will eliminate it." ESS is about robustness against invasion.</span>
+    <span data-lang="zh">这一转变有两个含义。第一，它使 EGT 即使在主体并非理性的情况下也适用——动物、细菌、社会规范都在不进行任何计算的情况下演化。第二，EGT 引入了一个新的求解概念：<strong>演化稳定策略（ESS）</strong>，它比纳什均衡更强。纳什均衡只是说"没有人想偏离"。ESS 则说"如果一个罕见突变体尝试不同策略，自然选择将消灭它"。ESS 关注的是对入侵的稳健性。</span>
+  </p>
+  <p>
+    <span data-lang="en">The central equation driving everything is the <strong>replicator dynamic</strong>:</span>
+    <span data-lang="zh">驱动一切的核心方程是<strong>复制者动态</strong>：</span>
+  </p>
+  <div class="math-note">ẋ_i = x_i · [ f_i(x) − f̄(x) ]
+
+<span style="color:var(--ink-ghost)">x_i  = current frequency of strategy i (fraction of population)
+f_i  = average payoff of strategy i (given current population mix)
+f̄   = population average payoff = Σ_j x_j · f_j
+ẋ_i  = rate of change of strategy i's frequency</span></div>
+  <p>
+    <span data-lang="en">In plain language: a strategy grows faster when it's doing better than average, and shrinks when it's doing worse. No one needs to choose — it just happens through differential reproduction. The result is that the population converges to a fixed point where all surviving strategies earn exactly the average payoff (otherwise some would keep growing).</span>
+    <span data-lang="zh">用简单语言说：当一种策略表现优于平均水平时，它增长更快；当表现低于平均时，它缩减。不需要任何人做选择——通过差异化繁殖自然发生。结果是种群收敛到所有存活策略获得恰好等于平均回报的不动点（否则某些策略会持续增长）。</span>
+  </p>
+</section>
+
+<hr class="section-divider">
+
+<section>
+  <h2>
+    <span data-lang="en">The Hawk-Dove Game, Step by Step</span>
+    <span data-lang="zh">鹰鸽博弈逐步解析</span>
+  </h2>
+  <p>
+    <span data-lang="en">Two animals compete for a resource worth V (e.g., food, territory). Each can play <strong>Hawk</strong> (fight aggressively, never retreat) or <strong>Dove</strong> (display, retreat immediately if opponent escalates). The cost of fighting is C (injury risk). This simple setup generates the cleanest intuition for why mixed strategies exist in nature.</span>
+    <span data-lang="zh">两只动物竞争价值为 V 的资源（如食物、领地）。每只可以选择<strong>鹰</strong>（攻击性战斗，从不退让）或<strong>鸽</strong>（展示，若对方升级则立即退让）。战斗成本为 C（受伤风险）。这个简单的设置为混合策略在自然界中存在提供了最清晰的直觉。</span>
+  </p>
+  <p>
+    <span data-lang="en"><strong>The payoff matrix:</strong> When a Hawk meets a Dove, the Hawk wins the resource (V) and the Dove leaves with nothing (0). When two Doves meet, they display for a while and eventually split the resource equally (V/2 each), with no cost. When two Hawks meet, they fight: both have a 50% chance of winning — but win means gaining V while losing means taking the full cost C. On average: (V−C)/2.</span>
+    <span data-lang="zh"><strong>支付矩阵：</strong>鹰遇到鸽时，鹰获得资源（V），鸽空手而归（0）。两只鸽相遇时，它们展示一段时间后平分资源（各得 V/2），没有代价。两只鹰相遇时，它们搏斗：各有 50% 的赢得概率——但赢得意味着获得 V，输掉意味着承受全部代价 C。平均收益：(V−C)/2。</span>
+  </p>
+
+  <!-- Payoff matrix - bilingual tables -->
+  <div data-lang="en">
+    <table class="pd-table">
+      <thead>
+        <tr><th></th><th>vs. Hawk</th><th>vs. Dove</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;background:var(--cream);">Hawk</td>
+          <td style="background:rgba(181,55,42,.06);">(V−C)/2</td>
+          <td style="background:rgba(74,124,89,.06);">V</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;background:var(--cream);">Dove</td>
+          <td>0</td>
+          <td style="background:rgba(74,124,89,.06);">V/2</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="hint">Row player's payoff shown. Columns represent opponent's strategy.</p>
+  </div>
+  <div data-lang="zh">
+    <table class="pd-table">
+      <thead>
+        <tr><th></th><th>对手：鹰</th><th>对手：鸽</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;background:var(--cream);">鹰</td>
+          <td style="background:rgba(181,55,42,.06);">(V−C)/2</td>
+          <td style="background:rgba(74,124,89,.06);">V</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;background:var(--cream);">鸽</td>
+          <td>0</td>
+          <td style="background:rgba(74,124,89,.06);">V/2</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="hint">显示行方玩家的收益。列表示对手策略。</p>
+  </div>
+
+  <h3><span data-lang="en">Finding the ESS</span><span data-lang="zh">求解 ESS</span></h3>
+  <p>
+    <span data-lang="en"><strong>Case 1: V &gt; C (resource worth more than fighting costs).</strong> Hawk always wins against Dove (V &gt; V/2 = Dove's best). And Hawk vs. Hawk gives (V−C)/2 &gt; 0 since V &gt; C. So Hawk is a pure strategy ESS — an all-Hawk population cannot be invaded by Doves.</span>
+    <span data-lang="zh"><strong>情形 1：V &gt; C（资源价值超过战斗代价）。</strong>鹰对鸽总是胜利（V &gt; V/2）。鹰对鹰得 (V−C)/2 &gt; 0（因为 V &gt; C）。因此鹰是纯策略 ESS——全鹰种群无法被鸽入侵。</span>
+  </p>
+  <p>
+    <span data-lang="en"><strong>Case 2: V &lt; C (fighting is dangerous — this is the interesting case).</strong> A pure Hawk population is <em>not</em> stable: each Hawk earns (V−C)/2 &lt; 0. A rare Dove can invade and do better (0 &gt; (V−C)/2). But pure Dove is also not stable: a rare Hawk earns V against Doves, which is more than the Dove's V/2. So neither extreme is stable. The ESS is a <strong>mixed strategy</strong> — a specific ratio of Hawks to Doves.</span>
+    <span data-lang="zh"><strong>情形 2：V &lt; C（战斗危险——这是有趣的情形）。</strong>纯鹰种群<em>不</em>稳定：每只鹰获得 (V−C)/2 &lt; 0。罕见的鸽可以入侵并表现更好（0 &gt; (V−C)/2）。但纯鸽种群也不稳定：罕见的鹰面对鸽可获 V，超过鸽的 V/2。因此两种极端都不稳定。ESS 是一个<strong>混合策略</strong>——特定的鹰鸽比例。</span>
+  </p>
+  <p>
+    <span data-lang="en">To find the ESS frequency p* of Hawk, we set E(Hawk) = E(Dove) — at the equilibrium, both strategies must earn the same payoff, or selection would push the population further:</span>
+    <span data-lang="zh">为求解鹰的 ESS 频率 p*，令 E(鹰) = E(鸽)——在均衡处，两种策略必须获得相同收益，否则选择会继续推动种群偏移：</span>
+  </p>
+  <div class="math-note">E(Hawk)  = p·(V−C)/2 + (1−p)·V
+E(Dove)  = p·0 + (1−p)·V/2
+
+Set E(Hawk) = E(Dove) and solve for p:
+→  p* = V/C
+
+<span style="color:var(--ink-ghost)">Interpretation: if V=4, C=10 → 40% Hawks in equilibrium.
+As fighting gets more costly (↑C), fewer Hawks can be sustained.</span></div>
+  <p>
+    <span data-lang="en">This p* = V/C has a beautiful social science interpretation. <strong>The fraction of aggressive competitors in a population is proportional to the value of what's being contested, and inversely proportional to the cost of fighting for it.</strong> In human societies: higher stakes contests (top jobs, political power) attract more aggressive competition; higher costs (legal penalties, social stigma, physical danger) reduce it. The model predicts that societies calibrate aggression levels automatically, not through central planning.</span>
+    <span data-lang="zh">p* = V/C 具有美丽的社会科学诠释。<strong>种群中攻击性竞争者的比例与争夺资源的价值成正比，与战斗代价成反比。</strong>在人类社会中：高风险竞争（顶级职位、政治权力）吸引更多攻击性竞争；更高代价（法律处罚、社会污名、身体危险）则减少它。该模型预测，社会自动校准攻击性水平，而非通过中央规划。</span>
+  </p>
+</section>
+
+<hr class="section-divider">
+
+<section>
+  <h2>
+    <span data-lang="en">The Evolution of Cooperation: Axelrod's Tournament</span>
+    <span data-lang="zh">合作的演化：Axelrod 的竞赛</span>
+  </h2>
+  <p>
+    <span data-lang="en">A deeper puzzle than Hawk-Dove: why does cooperation exist at all? In a one-shot Prisoner's Dilemma, defection always dominates — rational agents should always defect, yet we observe cooperation everywhere in nature and society. The resolution lies in <em>iteration</em>.</span>
+    <span data-lang="zh">比鹰鸽博弈更深层的谜题：合作为何存在？在一次性囚徒困境中，背叛总是占优策略——理性主体应总是背叛，然而我们在自然与社会中随处可见合作。解决方案在于<em>重复</em>。</span>
+  </p>
+  <p>
+    <span data-lang="en">In 1980, political scientist Robert Axelrod ran a computer tournament. He invited game theorists, economists, biologists, and psychologists to submit strategies for an <em>iterated</em> Prisoner's Dilemma (IPD) — the same two players playing 200 rounds. Every strategy played every other strategy, and total scores were tallied. The winning strategy, submitted by mathematician Anatol Rapoport, was startlingly simple: <strong>Tit-for-Tat</strong> (TFT). Start by cooperating. From then on, do whatever your opponent did last round.</span>
+    <span data-lang="zh">1980 年，政治科学家 Robert Axelrod 组织了一次计算机竞赛。他邀请博弈论学家、经济学家、生物学家和心理学家提交<em>重复</em>囚徒困境（IPD）策略——同样两个玩家进行 200 轮博弈。每个策略与其他所有策略对战，汇总总分。由数学家 Anatol Rapoport 提交的获胜策略出人意料地简单：<strong>以牙还牙</strong>（TFT）。首轮合作，此后每轮重复对手上一轮的行为。</span>
+  </p>
+  <p>
+    <span data-lang="en">TFT won despite never scoring more points than its opponent in any individual match. Its power lies in four properties Axelrod identified: it is <strong>nice</strong> (never defects first), <strong>retaliating</strong> (immediately punishes defection), <strong>forgiving</strong> (returns to cooperation once the opponent cooperates again), and <strong>clear</strong> (simple enough that opponents quickly learn what to expect). These four properties together resist exploitation while enabling cooperation.</span>
+    <span data-lang="zh">TFT 获胜，尽管在任何单场比赛中它的得分都不超过对手。其力量在于 Axelrod 识别出的四个特性：它是<strong>友善的</strong>（从不首先背叛）、<strong>报复性的</strong>（立即惩罚背叛）、<strong>宽容的</strong>（对手一旦恢复合作即返回合作）、<strong>清晰的</strong>（足够简单，对手能迅速了解其预期行为）。这四个特性共同抵抗剥削，同时促成合作。</span>
+  </p>
+  <div class="math-note"><span data-lang="en">IPD payoff matrix (standard):
+       Cooperate   Defect
+Cooperate:  3, 3       0, 5
+Defect:     5, 0       1, 1
+
+T > R > P > S  (Temptation > Reward > Punishment > Sucker)
+Condition for cooperation to be stable: R > (T+S)/2
+→ Mutual cooperation beats alternating exploitation</span><span data-lang="zh">重复囚徒困境支付矩阵（标准版）：
+       合作       背叛
+合作：   3, 3       0, 5
+背叛：   5, 0       1, 1
+
+T > R > P > S  （诱惑 > 奖励 > 惩罚 > 受害）
+合作稳定的条件：R > (T+S)/2
+→ 互相合作优于交替剥削</span></div>
+  <p>
+    <span data-lang="en">In the simulation below, you can run a round-robin tournament of six strategies and observe how they score against each other. Notice that TFT never "beats" any individual opponent — it just avoids mutually destructive outcomes. Its strength is systemic, not bilateral.</span>
+    <span data-lang="zh">在下方的模拟中，你可以运行六种策略的循环赛，观察它们相互对战的得分情况。注意 TFT 从未"击败"任何单个对手——它只是避免相互毁灭性的结果。它的优势是系统性的，而非双边的。</span>
+  </p>
+</section>
+
+<hr class="section-divider">
+
+<section>
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="hawkdove">
+      <span data-lang="en">Hawk-Dove Population Dynamics</span>
+      <span data-lang="zh">鹰鸽种群动态</span>
+    </button>
+    <button class="tab-btn" data-tab="ipd">
+      <span data-lang="en">IPD Strategy Tournament</span>
+      <span data-lang="zh">重复囚徒困境策略竞赛</span>
+    </button>
+  </div>
+
+  <!-- Hawk-Dove tab -->
+  <div class="tab-pane active" id="tab-hawkdove">
+    <p>
+      <span data-lang="en">This simulation uses the <strong>replicator dynamic</strong> to evolve a population of Hawks and Doves. At each step, each strategy's frequency grows or shrinks proportionally to how its average payoff compares to the population mean. The dashed horizontal line shows the ESS equilibrium p* = V/C. Try dragging V and C and watch where the system stabilizes.</span>
+      <span data-lang="zh">此模拟使用<strong>复制者动态</strong>演化鹰鸽种群。每步，每种策略的频率根据其平均收益与种群均值的比较成比例增减。虚线显示 ESS 均衡 p* = V/C。尝试拖动 V 和 C 滑块，观察系统在哪里稳定。</span>
+    </p>
+    <p class="hint">
+      <span data-lang="en">Try: V=6, C=10 → ESS = 60% Hawk. Then set V=10, C=4 → Hawk is pure ESS (p*>1, everyone becomes Hawk).</span>
+      <span data-lang="zh">试试：V=6, C=10 → ESS = 60% 鹰。然后设 V=10, C=4 → 鹰是纯 ESS（p*&gt;1，所有人变为鹰）。</span>
+    </p>
+
+    <div class="sim-panel">
+      <div class="two-col">
+        <div style="flex:2;min-width:280px;">
+          <canvas id="hdCanvas" width="420" height="260"></canvas>
+          <p class="hint" style="text-align:center">
+            <span data-lang="en">— Hawk frequency &nbsp;&nbsp; - - - ESS equilibrium (V/C)</span>
+            <span data-lang="zh">— 鹰的频率 &nbsp;&nbsp; - - - ESS 均衡 (V/C)</span>
+          </p>
+        </div>
+        <div style="flex:1;min-width:180px;">
+          <div class="stat-row" style="flex-direction:column;">
+            <div class="stat-chip">
+              <span class="slabel" data-lang="en">Hawk Freq.</span><span class="slabel" data-lang="zh">鹰的频率</span>
+              <span class="sval" id="hdHawkFreq">—</span>
+            </div>
+            <div class="stat-chip">
+              <span class="slabel" data-lang="en">ESS (V/C)</span><span class="slabel" data-lang="zh">ESS (V/C)</span>
+              <span class="sval" id="hdESS">—</span>
+            </div>
+            <div class="stat-chip">
+              <span class="slabel" data-lang="en">Avg Payoff</span><span class="slabel" data-lang="zh">平均收益</span>
+              <span class="sval" id="hdAvgPay">—</span>
+            </div>
+            <div class="stat-chip">
+              <span class="slabel">T</span>
+              <span class="sval" id="hdT">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sim-btns">
+        <button class="sim-btn run" id="hdRun"><span data-lang="en">▶ Run</span><span data-lang="zh">▶ 运行</span></button>
+        <button class="sim-btn pause" id="hdPause" disabled><span data-lang="en">⏸ Pause</span><span data-lang="zh">⏸ 暂停</span></button>
+        <button class="sim-btn reset" id="hdReset"><span data-lang="en">↺ Reset</span><span data-lang="zh">↺ 重置</span></button>
+      </div>
+
+      <div class="ctrl-group">
+        <div class="ctrl-label">
+          <span data-lang="en">V — Resource value</span><span data-lang="zh">V — 资源价值</span>
+          <span class="ctrl-val" id="hdVVal">6</span>
+        </div>
+        <input type="range" id="hdV" min="1" max="20" value="6" step="1">
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label">
+          <span data-lang="en">C — Cost of fighting</span><span data-lang="zh">C — 战斗代价</span>
+          <span class="ctrl-val" id="hdCVal">10</span>
+        </div>
+        <input type="range" id="hdC" min="1" max="20" value="10" step="1">
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label">
+          <span data-lang="en">Initial Hawk frequency</span><span data-lang="zh">初始鹰的频率</span>
+          <span class="ctrl-val" id="hdP0Val">0.50</span>
+        </div>
+        <input type="range" id="hdP0" min="0.01" max="0.99" value="0.5" step="0.01">
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <strong data-lang="en">Why p* = V/C? </strong><strong data-lang="zh">为什么 p* = V/C？</strong>
+      <span data-lang="en"> At equilibrium, every individual should be indifferent between playing Hawk and Dove — otherwise selection would push everyone toward the better strategy and the equilibrium would shift. Setting E(Hawk) = E(Dove) yields p* = V/C. This is also why real animal contests scale with resource value: territorial birds fight harder for better territories, but avoid costly fights over marginal resources. HR departments, legal systems, and political institutions serve in part to artificially raise C — making escalation less attractive and nudging populations toward the Dove-equivalent equilibrium.</span>
+      <span data-lang="zh"> 在均衡处，每个个体应该对选择鹰或鸽漠然——否则选择会将所有人推向更优策略，均衡会发生偏移。令 E(鹰) = E(鸽) 可得 p* = V/C。这也是为什么真实动物竞争与资源价值成比例：领地鸟类为更好的领地更激烈地战斗，但避免为边际资源进行代价高昂的战斗。人力资源部门、法律系统和政治制度在一定程度上人为提高 C——使升级变得不那么吸引人，将种群推向鸽派均衡。</span>
+    </div>
+  </div>
+
+  <!-- IPD Tournament tab -->
+  <div class="tab-pane" id="tab-ipd">
+    <p>
+      <span data-lang="en">Each strategy below plays every other strategy (and itself) in a round-robin tournament of many rounds. The bar chart shows total score. Run the tournament multiple times to see how variance affects results — note that TFT almost always finishes near the top despite never "winning" any single match outright.</span>
+      <span data-lang="zh">以下每种策略在多轮循环赛中与其他所有策略（包括自身）对战。柱状图显示总分。多次运行竞赛，观察随机性如何影响结果——注意 TFT 几乎总是名列前茅，尽管它从未在任何单场比赛中明确"获胜"。</span>
+    </p>
+
+    <div class="strategy-legend" id="stratLegend"></div>
+
+    <div class="sim-panel">
+      <div class="bar-chart" id="ipdBars"></div>
+
+      <div class="sim-btns">
+        <button class="sim-btn run" id="ipdRun"><span data-lang="en">▶ Run Tournament</span><span data-lang="zh">▶ 运行竞赛</span></button>
+        <button class="sim-btn reset" id="ipdReset"><span data-lang="en">↺ Reset</span><span data-lang="zh">↺ 重置</span></button>
+      </div>
+
+      <div class="ctrl-group">
+        <div class="ctrl-label">
+          <span data-lang="en">Rounds per match</span><span data-lang="zh">每场对决回合数</span>
+          <span class="ctrl-val" id="ipdRVal">100</span>
+        </div>
+        <input type="range" id="ipdRounds" min="20" max="500" value="100" step="10">
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label">
+          <span data-lang="en">Noise (prob. of accidental defect)</span><span data-lang="zh">噪声（意外背叛概率）</span>
+          <span class="ctrl-val" id="ipdNoiseVal">0.00</span>
+        </div>
+        <input type="range" id="ipdNoise" min="0" max="0.15" value="0" step="0.01">
+      </div>
+
+      <div class="stat-row" style="margin-top:16px;" id="ipdStats"></div>
+    </div>
+
+    <div class="insight-box">
+      <strong data-lang="en">When noise breaks TFT: </strong><strong data-lang="zh">噪声破坏 TFT 时：</strong>
+      <span data-lang="en"> Add noise (accidental defection) and TFT becomes fragile — one mistake triggers mutual retaliation cycles that never end. In noisy environments, a more forgiving strategy called <strong>Generous TFT</strong> (occasionally cooperates after being defected against) or <strong>Win-Stay-Lose-Shift</strong> (repeat if outcome was good; switch if bad) outperforms pure TFT. The noise slider lets you explore this breakdown. This lesson translates directly to diplomacy: formal reconciliation protocols and "incident forgiveness" mechanisms are precisely the adaptive response to a world where signals are noisy.</span>
+      <span data-lang="zh"> 加入噪声（意外背叛）后，TFT 变得脆弱——一个错误触发永无止境的相互报复循环。在嘈杂环境中，一种更宽容的策略——<strong>慷慨 TFT</strong>（在被背叛后偶尔合作）或<strong>赢则守、输则换</strong>（结果好则重复；结果坏则改变）——优于纯 TFT。噪声滑块让你探索这种崩溃。这一教训直接应用于外交：正式和解协议和"事故原谅"机制正是对信号嘈杂世界的适应性回应。</span>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/guides/tm-opinions.html">
+    <span class="pn-arrow">←</span>
+    <span>
+      <span class="pn-dir" data-lang="en">Previous</span><span class="pn-dir" data-lang="zh">上一篇</span>
+      <span class="pn-title" data-lang="en">Opinion Dynamics</span><span class="pn-title" data-lang="zh">观点动态</span>
+    </span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/guides/tm-replicator-proof.html">
+    <span>
+      <span class="pn-dir" data-lang="en">Next</span><span class="pn-dir" data-lang="zh">下一篇</span>
+      <span class="pn-title" data-lang="en">Replicator Dynamics</span><span class="pn-title" data-lang="zh">复制者动态</span>
+    </span>
+    <span class="pn-arrow">→</span>
+  </a>
+</div>
+
+<script>
+// ── Tab switching ────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ══════════════════════════════════════════
+// HAWK-DOVE REPLICATOR DYNAMICS
+// ══════════════════════════════════════════
+const HDC = document.getElementById('hdCanvas');
+const hdctx = HDC.getContext('2d');
+let hdRunning = false, hdRaf = null, hdLast = 0;
+let hdT = 0, hdP = 0.5, hdHistory = [];
+
+function hdParams() {
+  return {
+    V: +document.getElementById('hdV').value,
+    C: +document.getElementById('hdC').value,
+    p0: +document.getElementById('hdP0').value
+  };
+}
+
+function hdPayoffs(p, V, C) {
+  const fH = p * (V - C) / 2 + (1 - p) * V;
+  const fD = p * 0 + (1 - p) * V / 2;
+  const fAvg = p * fH + (1 - p) * fD;
+  return { fH, fD, fAvg };
+}
+
+function hdStep() {
+  const { V, C } = hdParams();
+  const { fH, fD, fAvg } = hdPayoffs(hdP, V, C);
+  // Replicator dynamic: dp/dt = p*(fH - fAvg)
+  const dt = 0.05;
+  hdP = hdP + dt * hdP * (fH - fAvg);
+  hdP = Math.max(0.001, Math.min(0.999, hdP));
+  hdT++;
+  hdHistory.push(hdP);
+  if (hdHistory.length > 300) hdHistory.shift();
+  hdUpdateStats(V, C, fAvg);
+  hdDraw();
+}
+
+function hdUpdateStats(V, C, fAvg) {
+  document.getElementById('hdHawkFreq').textContent = hdP.toFixed(3);
+  const ess = Math.min(1, V / C);
+  document.getElementById('hdESS').textContent = ess.toFixed(3);
+  document.getElementById('hdAvgPay').textContent = fAvg.toFixed(3);
+  document.getElementById('hdT').textContent = hdT;
+}
+
+function hdDraw() {
+  const W = HDC.width, H = HDC.height;
+  const pad = { t: 20, r: 20, b: 30, l: 45 };
+  hdctx.fillStyle = '#F9F7F3';
+  hdctx.fillRect(0, 0, W, H);
+
+  const { V, C } = hdParams();
+  const ess = Math.min(1, V / C);
+  const plotW = W - pad.l - pad.r;
+  const plotH = H - pad.t - pad.b;
+
+  // axes
+  hdctx.strokeStyle = 'rgba(180,170,160,0.5)';
+  hdctx.lineWidth = 1;
+  hdctx.beginPath(); hdctx.moveTo(pad.l, pad.t); hdctx.lineTo(pad.l, pad.t + plotH); hdctx.stroke();
+  hdctx.beginPath(); hdctx.moveTo(pad.l, pad.t + plotH); hdctx.lineTo(pad.l + plotW, pad.t + plotH); hdctx.stroke();
+
+  // y-axis labels
+  hdctx.font = '10px IBM Plex Mono, monospace';
+  hdctx.fillStyle = 'rgba(100,90,80,0.7)';
+  hdctx.textAlign = 'right';
+  [0, 0.25, 0.5, 0.75, 1.0].forEach(v => {
+    const y = pad.t + plotH * (1 - v);
+    hdctx.fillText(v.toFixed(2), pad.l - 6, y + 3);
+    hdctx.strokeStyle = 'rgba(200,190,180,0.25)';
+    hdctx.beginPath(); hdctx.moveTo(pad.l, y); hdctx.lineTo(pad.l + plotW, y); hdctx.stroke();
+  });
+  hdctx.textAlign = 'left';
+  hdctx.fillStyle = 'rgba(100,90,80,0.7)';
+  hdctx.save();
+  hdctx.translate(12, pad.t + plotH / 2);
+  hdctx.rotate(-Math.PI / 2);
+  hdctx.fillText('Hawk frequency', 0, 0);
+  hdctx.restore();
+
+  // ESS dashed line
+  const essY = pad.t + plotH * (1 - ess);
+  hdctx.strokeStyle = 'rgba(181,55,42,0.4)';
+  hdctx.lineWidth = 1.5;
+  hdctx.setLineDash([6, 4]);
+  hdctx.beginPath();
+  hdctx.moveTo(pad.l, essY);
+  hdctx.lineTo(pad.l + plotW, essY);
+  hdctx.stroke();
+  hdctx.setLineDash([]);
+
+  // history line
+  if (hdHistory.length > 1) {
+    hdctx.strokeStyle = '#B5372A';
+    hdctx.lineWidth = 2;
+    hdctx.beginPath();
+    hdHistory.forEach((v, i) => {
+      const x = pad.l + (i / Math.max(hdHistory.length - 1, 1)) * plotW;
+      const y = pad.t + plotH * (1 - v);
+      if (i === 0) hdctx.moveTo(x, y);
+      else hdctx.lineTo(x, y);
+    });
+    hdctx.stroke();
+  }
+
+  // current dot
+  const curX = pad.l + plotW;
+  const curY = pad.t + plotH * (1 - hdP);
+  hdctx.beginPath();
+  hdctx.arc(curX, curY, 4, 0, Math.PI * 2);
+  hdctx.fillStyle = '#B5372A';
+  hdctx.fill();
+}
+
+function hdInit() {
+  hdRunning = false;
+  document.getElementById('hdRun').disabled = false;
+  document.getElementById('hdPause').disabled = true;
+  const { p0, V, C } = hdParams();
+  hdP = p0;
+  hdT = 0;
+  hdHistory = [hdP];
+  const { fAvg } = hdPayoffs(hdP, V, C);
+  hdUpdateStats(V, C, fAvg);
+  hdDraw();
+}
+
+function hdLoop(t) {
+  hdRaf = requestAnimationFrame(hdLoop);
+  if (!hdRunning) return;
+  if (t - hdLast > 40) { hdStep(); hdLast = t; }
+}
+
+document.getElementById('hdRun').addEventListener('click', () => {
+  hdRunning = true;
+  document.getElementById('hdRun').disabled = true;
+  document.getElementById('hdPause').disabled = false;
+});
+document.getElementById('hdPause').addEventListener('click', () => {
+  hdRunning = false;
+  document.getElementById('hdRun').disabled = false;
+  document.getElementById('hdPause').disabled = true;
+});
+document.getElementById('hdReset').addEventListener('click', hdInit);
+['hdV', 'hdC', 'hdP0'].forEach(id => {
+  const map = { hdV: 'hdVVal', hdC: 'hdCVal', hdP0: 'hdP0Val' };
+  document.getElementById(id).addEventListener('input', e => {
+    document.getElementById(map[id]).textContent = (+e.target.value).toFixed(id === 'hdP0' ? 2 : 0);
+    hdInit();
+  });
+});
+
+hdInit();
+requestAnimationFrame(hdLoop);
+
+// ══════════════════════════════════════════
+// IPD TOURNAMENT
+// ══════════════════════════════════════════
+const STRATS = [
+  { id: 'tft',       nameEn: 'Tit-for-Tat',       nameZh: '以牙还牙',       color: '#4A7C59' },
+  { id: 'allc',      nameEn: 'Always Cooperate',   nameZh: '永远合作',       color: '#5B8DB8' },
+  { id: 'alld',      nameEn: 'Always Defect',      nameZh: '永远背叛',       color: '#B5372A' },
+  { id: 'grudger',   nameEn: 'Grudger',            nameZh: '记仇者',         color: '#8B6914' },
+  { id: 'random',    nameEn: 'Random',             nameZh: '随机',           color: '#7A6FA0' },
+  { id: 'wsls',      nameEn: 'Win-Stay-Lose-Shift',nameZh: '赢则守输则换',   color: '#C07836' }
+];
+
+// Strategy functions — return true for cooperate, false for defect
+function ipdDecide(id, history, myLast, oppLast, noise) {
+  const noisy = (move) => Math.random() < noise ? !move : move;
+  switch (id) {
+    case 'tft':     return noisy(history.length === 0 ? true : oppLast);
+    case 'allc':    return noisy(true);
+    case 'alld':    return false; // defect always — noise irrelevant, defect is defect
+    case 'grudger': return noisy(history.every(h => h.oppC));
+    case 'random':  return noisy(Math.random() < 0.5);
+    case 'wsls': {
+      if (history.length === 0) return noisy(true);
+      const lastPay = history[history.length - 1].myPay;
+      return noisy(lastPay >= 3); // good outcome (R=3 or T=5 never happens for cooperator here)
+    }
+  }
+}
+
+// Payoff lookup
+function ipdPayoff(c1, c2) {
+  if ( c1 &&  c2) return [3, 3];
+  if ( c1 && !c2) return [0, 5];
+  if (!c1 &&  c2) return [5, 0];
+  return [1, 1];
+}
+
+function runMatch(id1, id2, rounds, noise) {
+  let hist1 = [], hist2 = [];
+  let score1 = 0, score2 = 0;
+  let c1 = true, c2 = true; // last moves (dummy init)
+  for (let r = 0; r < rounds; r++) {
+    const m1 = ipdDecide(id1, hist1, c1, c2, noise);
+    const m2 = ipdDecide(id2, hist2, c2, c1, noise);
+    const [p1, p2] = ipdPayoff(m1, m2);
+    hist1.push({ myC: m1, oppC: m2, myPay: p1 });
+    hist2.push({ myC: m2, oppC: m1, myPay: p2 });
+    score1 += p1; score2 += p2;
+    c1 = m1; c2 = m2;
+  }
+  return [score1, score2];
+}
+
+function runTournament() {
+  const rounds = +document.getElementById('ipdRounds').value;
+  const noise = +document.getElementById('ipdNoise').value;
+  const totalScores = {};
+  STRATS.forEach(s => totalScores[s.id] = 0);
+
+  STRATS.forEach((s1, i) => {
+    STRATS.forEach((s2, j) => {
+      const [sc1, sc2] = runMatch(s1.id, s2.id, rounds, noise);
+      totalScores[s1.id] += sc1;
+      totalScores[s2.id] += sc2;
+    });
+  });
+  return totalScores;
+}
+
+function renderBars(scores) {
+  const maxScore = Math.max(...Object.values(scores));
+  const sorted = [...STRATS].sort((a, b) => scores[b.id] - scores[a.id]);
+  const lang = document.body.classList.contains('zh') ? 'zh' : 'en';
+  const container = document.getElementById('ipdBars');
+  container.innerHTML = '';
+  sorted.forEach(s => {
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    const name = lang === 'zh' ? s.nameZh : s.nameEn;
+    row.innerHTML = `
+      <span class="bar-label" style="color:${s.color};font-weight:600">${name}</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${(scores[s.id]/maxScore*100).toFixed(1)}%;background:${s.color};opacity:0.8;"></div>
+      </div>
+      <span class="bar-val">${scores[s.id].toFixed(0)}</span>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function buildLegend() {
+  const lang = document.body.classList.contains('zh') ? 'zh' : 'en';
+  const container = document.getElementById('stratLegend');
+  container.innerHTML = '';
+  STRATS.forEach(s => {
+    const badge = document.createElement('span');
+    badge.className = 'strat-badge';
+    badge.style.background = s.color;
+    badge.textContent = lang === 'zh' ? s.nameZh : s.nameEn;
+    container.appendChild(badge);
+  });
+}
+
+let lastScores = null;
+document.getElementById('ipdRun').addEventListener('click', () => {
+  lastScores = runTournament();
+  renderBars(lastScores);
+});
+document.getElementById('ipdReset').addEventListener('click', () => {
+  lastScores = null;
+  document.getElementById('ipdBars').innerHTML = '';
+  document.getElementById('ipdStats').innerHTML = '';
+});
+['ipdRounds', 'ipdNoise'].forEach(id => {
+  const map = { ipdRounds: 'ipdRVal', ipdNoise: 'ipdNoiseVal' };
+  document.getElementById(id).addEventListener('input', e => {
+    document.getElementById(map[id]).textContent = (+e.target.value).toFixed(id === 'ipdNoise' ? 2 : 0);
+  });
+});
+
+buildLegend();
+</script>

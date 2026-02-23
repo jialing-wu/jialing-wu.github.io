@@ -1,0 +1,490 @@
+---
+layout: methods-guide
+title: "Time Series Decomposition & ARIMA"
+title_zh: "时间序列分解与 ARIMA"
+parent_title: "Time Series Analysis"
+parent_title_zh: "时间序列分析"
+parent_url: "reg-timeseries.html"
+bilingual: true
+mathjax: true
+---
+
+<div class="guide-content">
+
+  <!-- ===== SECTION 1: Why Time Series is Special ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">1. What Makes Time Series Special?</h2>
+    <h2 data-lang="zh">1. 时间序列有什么特殊之处？</h2>
+
+    <p data-lang="en">
+      In typical regression, we assume observations are independent. In time series, today's value
+      depends on yesterday's, and yesterday's on the day before. This <strong>autocorrelation</strong>
+      violates OLS assumptions and requires special methods.
+    </p>
+    <p data-lang="zh">
+      在典型回归中，我们假设观测是独立的。在时间序列中，今天的值取决于昨天的，昨天的取决于前天的。
+      这种<strong>自相关性</strong>违反了OLS假设，需要特殊方法。
+    </p>
+
+    <h3 data-lang="en">Three Components of Time Series</h3>
+    <h3 data-lang="zh">时间序列的三个组成部分</h3>
+
+    <ul>
+      <li data-lang="en">
+        <strong>Trend:</strong> Long-term direction (increasing, decreasing, or flat).
+      </li>
+      <li data-lang="zh">
+        <strong>趋势：</strong>长期方向（增加、减少或平坦）。
+      </li>
+      <li data-lang="en">
+        <strong>Seasonality:</strong> Regular, repeating patterns (quarterly sales, daily traffic, monthly weather).
+      </li>
+      <li data-lang="zh">
+        <strong>季节性：</strong>规律性的重复模式（季度销售、日均流量、月份天气）。
+      </li>
+      <li data-lang="en">
+        <strong>Noise (Irregular):</strong> Random fluctuations after removing trend and seasonality.
+      </li>
+      <li data-lang="zh">
+        <strong>噪声（不规则）：</strong>移除趋势和季节性后的随机波动。
+      </li>
+    </ul>
+
+    <p data-lang="en">
+      <strong>Analogy:</strong> Weather has a seasonal cycle (summer hot, winter cold), a long-term climate trend
+      (warming), and day-to-day randomness.
+    </p>
+    <p data-lang="zh">
+      <strong>类比：</strong>天气有季节周期（夏天炎热，冬天寒冷）、长期气候趋势（变暖）和日常随机性。
+    </p>
+  </section>
+
+  <!-- ===== SECTION 2: Decomposition Visualizer ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">2. Interactive Time Series Decomposition</h2>
+    <h2 data-lang="zh">2. 交互式时间序列分解</h2>
+
+    <p data-lang="en">
+      Adjust the sliders to see how trend, seasonality, and noise combine to create observed data.
+      This is the first step in time series analysis — understand the components before modeling.
+    </p>
+    <p data-lang="zh">
+      调整滑块以查看趋势、季节性和噪声如何结合以创建观测数据。这是时间序列分析的第一步——在建模前理解组成部分。
+    </p>
+
+    <div style="margin: 2rem 0; padding: 1rem; background: var(--parchment); border-radius: 0.5rem;">
+      <div class="ctrl-group">
+        <label class="ctrl-label">
+          <span data-lang="en">Trend Strength:</span>
+          <span data-lang="zh">趋势强度：</span>
+          <input type="range" id="trend-slider" min="0" max="1" step="0.1" value="0.3"
+                 style="width: 200px;">
+          <span id="trend-value">0.3</span>
+        </label>
+      </div>
+
+      <div class="ctrl-group">
+        <label class="ctrl-label">
+          <span data-lang="en">Seasonal Amplitude:</span>
+          <span data-lang="zh">季节振幅：</span>
+          <input type="range" id="seasonal-slider" min="0" max="1" step="0.1" value="0.5"
+                 style="width: 200px;">
+          <span id="seasonal-value">0.5</span>
+        </label>
+      </div>
+
+      <div class="ctrl-group">
+        <label class="ctrl-label">
+          <span data-lang="en">Noise Level:</span>
+          <span data-lang="zh">噪声水平：</span>
+          <input type="range" id="noise-slider" min="0" max="1" step="0.1" value="0.2"
+                 style="width: 200px;">
+          <span id="noise-value">0.2</span>
+        </label>
+      </div>
+
+      <button class="sim-btn" id="decompose-btn" data-lang="en">Generate Series</button>
+      <button class="sim-btn" id="decompose-btn" data-lang="zh">生成序列</button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin: 2rem 0;">
+      <div>
+        <h4 data-lang="en">Original Series</h4>
+        <h4 data-lang="zh">原始序列</h4>
+        <canvas id="ts-original-canvas"></canvas>
+      </div>
+      <div>
+        <h4 data-lang="en">Trend Component</h4>
+        <h4 data-lang="zh">趋势成分</h4>
+        <canvas id="ts-trend-canvas"></canvas>
+      </div>
+      <div>
+        <h4 data-lang="en">Seasonal Component</h4>
+        <h4 data-lang="zh">季节成分</h4>
+        <canvas id="ts-seasonal-canvas"></canvas>
+      </div>
+      <div>
+        <h4 data-lang="en">Irregular (Residuals)</h4>
+        <h4 data-lang="zh">不规则（残差）</h4>
+        <canvas id="ts-residual-canvas"></canvas>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <h4 data-lang="en">Key Insight</h4>
+      <h4 data-lang="zh">关键洞察</h4>
+      <p data-lang="en">
+        Decomposition reveals what's driving your series. High trend suggests a deterministic
+        process; high seasonality suggests repeating cycles (seasonal adjustment may help);
+        high noise suggests limited predictability.
+      </p>
+      <p data-lang="zh">
+        分解揭示了驱动序列的因素。高趋势表明确定性过程；高季节性表明重复周期（季节调整可能有帮助）；
+        高噪声表明可预测性有限。
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 3: Stationarity & Differencing ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">3. Stationarity & Differencing</h2>
+    <h2 data-lang="zh">3. 平稳性与差分</h2>
+
+    <p data-lang="en">
+      Most time series methods (like ARIMA) require <strong>stationarity:</strong> the mean, variance,
+      and autocorrelation structure don't change over time.
+    </p>
+    <p data-lang="zh">
+      大多数时间序列方法（如ARIMA）需要<strong>平稳性：</strong>均值、方差和自相关结构不随时间变化。
+    </p>
+
+    <h3 data-lang="en">Non-Stationary (Trending)</h3>
+    <h3 data-lang="zh">非平稳（趋势）</h3>
+
+    <p data-lang="en">
+      If your series has a trend or seasonal pattern, it's non-stationary. Solutions:
+    </p>
+    <p data-lang="zh">
+      如果你的序列有趋势或季节性模式，它是非平稳的。解决方案：
+    </p>
+
+    <ul>
+      <li data-lang="en">
+        <strong>First differencing:</strong> y' = y_t − y_{t−1}. Removes trends.
+      </li>
+      <li data-lang="zh">
+        <strong>一阶差分：</strong> y' = y_t − y_{t−1}。移除趋势。
+      </li>
+      <li data-lang="en">
+        <strong>Seasonal differencing:</strong> y' = y_t − y_{t−12} (for monthly data with 12-month cycle).
+        Removes seasonality.
+      </li>
+      <li data-lang="zh">
+        <strong>季节差分：</strong> y' = y_t − y_{t−12}（对于12个月周期的月度数据）。移除季节性。
+      </li>
+      <li data-lang="en">
+        <strong>Log transformation:</strong> If variance grows with level, take log(y) first.
+      </li>
+      <li data-lang="zh">
+        <strong>对数转换：</strong>如果方差随水平增加而增加，首先取log(y)。
+      </li>
+    </ul>
+
+    <h3 data-lang="en">The ADF Test</h3>
+    <h3 data-lang="zh">ADF 检验</h3>
+
+    <p data-lang="en">
+      The Augmented Dickey-Fuller (ADF) test checks for a unit root (non-stationarity).
+      If p-value &lt; 0.05, reject the null hypothesis and conclude stationarity.
+    </p>
+    <p data-lang="zh">
+      增强Dickey-Fuller（ADF）检验检查单位根（非平稳性）。如果p值< 0.05，拒绝原假设并得出平稳性结论。
+    </p>
+
+    <h3 data-lang="en">ACF & PACF for Identifying AR/MA Orders</h3>
+    <h3 data-lang="zh">使用 ACF 和 PACF 识别 AR/MA 阶数</h3>
+
+    <p data-lang="en">
+      After stationarizing:
+    </p>
+    <p data-lang="zh">
+      平稳化后：
+    </p>
+
+    <ul>
+      <li data-lang="en">
+        <strong>ACF (Autocorrelation Function):</strong> If it decays slowly, you need AR (autoregressive).
+        If it cuts off after lag q, you need MA (moving average) of order q.
+      </li>
+      <li data-lang="zh">
+        <strong>ACF（自相关函数）：</strong>如果衰减缓慢，你需要AR（自回归）。
+        如果在滞后q后截断，你需要阶数为q的MA（移动平均）。
+      </li>
+      <li data-lang="en">
+        <strong>PACF (Partial Autocorrelation Function):</strong> If it cuts off after lag p, you need AR of order p.
+      </li>
+      <li data-lang="zh">
+        <strong>PACF（偏自相关函数）：</strong>如果在滞后p后截断，你需要阶数为p的AR。
+      </li>
+    </ul>
+  </section>
+
+  <!-- ===== SECTION 4: ARIMA in R ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">4. ARIMA in R: Step by Step</h2>
+    <h2 data-lang="zh">4. R 中的 ARIMA：逐步</h2>
+
+    <pre><code class="language-r">
+library(forecast)
+library(tseries)
+
+# Suppose we have monthly sales data
+data(AirPassengers)
+y <- AirPassengers
+
+# Plot the series
+autoplot(y) +
+  labs(title = "Airline Passenger Data", y = "Passengers", x = "Year")
+
+# Step 1: Check stationarity
+adf.test(y)
+# If p-value > 0.05, the series is non-stationary
+
+# Step 2: If non-stationary, difference
+y_diff <- diff(y)
+adf.test(y_diff)  # Should now be stationary
+
+# For seasonal data
+y_diff_seasonal <- diff(y, lag = 12)  # Seasonal differencing
+
+# Step 3: Look at ACF/PACF
+acf(y_diff, lag.max = 20)
+pacf(y_diff, lag.max = 20)
+
+# Step 4a: Manual ARIMA specification
+# ARIMA(p, d, q) where:
+#   p = number of AR terms
+#   d = number of differences
+#   q = number of MA terms
+fit <- arima(y, order = c(1, 1, 1))
+summary(fit)
+
+# Step 4b: Auto ARIMA (recommended for beginners)
+fit_auto <- auto.arima(y, seasonal = TRUE)
+summary(fit_auto)
+
+# Step 5: Check residuals
+checkresiduals(fit_auto)
+# Residuals should look like white noise
+
+# Step 6: Forecast
+forecast_result <- forecast(fit_auto, h = 12)  # h = 12 months ahead
+autoplot(forecast_result)
+
+# Extract point forecasts and confidence intervals
+forecast_result
+    </code></pre>
+
+    <p data-lang="en">
+      <strong>ARIMA(p, d, q) Interpretation:</strong>
+    </p>
+    <p data-lang="zh">
+      <strong>ARIMA(p, d, q) 解释：</strong>
+    </p>
+
+    <ul>
+      <li data-lang="en">
+        <strong>p (AR order):</strong> Number of past values to use. ARIMA(1, ...) uses y_{t-1}.
+      </li>
+      <li data-lang="zh">
+        <strong>p（AR 阶数）：</strong>要使用的过去值的数量。ARIMA(1, ...) 使用 y_{t-1}。
+      </li>
+      <li data-lang="en">
+        <strong>d (Differencing):</strong> Number of times to difference. d=1 removes linear trend.
+      </li>
+      <li data-lang="zh">
+        <strong>d（差分）：</strong>差分次数。d=1 移除线性趋势。
+      </li>
+      <li data-lang="en">
+        <strong>q (MA order):</strong> Number of past forecast errors to use.
+      </li>
+      <li data-lang="zh">
+        <strong>q（MA 阶数）：</strong>要使用的过去预测误差的数量。
+      </li>
+    </ul>
+  </section>
+
+  <!-- ===== SECTION 5: Social Science Applications ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">5. Social Science Applications</h2>
+    <h2 data-lang="zh">5. 社会科学应用</h2>
+
+    <h3 data-lang="en">Interrupted Time Series (ITS) Design</h3>
+    <h3 data-lang="zh">中断时间序列（ITS）设计</h3>
+
+    <p data-lang="en">
+      Evaluating a policy intervention by comparing pre- and post-intervention trends.
+      Includes a level change (did the series jump?) and slope change (did the trend change?).
+    </p>
+    <p data-lang="zh">
+      通过比较干预前后的趋势来评估政策干预。包括水平变化（序列是否跳跃？）和斜率变化（趋势是否改变？）。
+    </p>
+
+    <pre><code class="language-r">
+# ITS example: crime reduction after new policing policy
+# Series: monthly crime counts over 5 years (60 months)
+# Intervention at month 24
+
+time <- 1:60
+intervention <- ifelse(time >= 24, 1, 0)
+time_since_intervention <- pmax(0, time - 24)
+
+# Fit ITS model
+fit_its <- lm(crime_count ~ time + intervention + time_since_intervention, data = mydata)
+summary(fit_its)
+
+# Interpretation:
+# - intervention coefficient = level change (immediate effect)
+# - time_since_intervention coefficient = change in slope post-intervention
+    </code></pre>
+
+    <h3 data-lang="en">Election Forecasting with ARIMA + Structural Breaks</h3>
+    <h3 data-lang="zh">使用 ARIMA + 结构断点进行选举预测</h3>
+
+    <p data-lang="en">
+      Poll aggregation often uses ARIMA to smooth daily variation and detect when something
+      has changed (structural break = shift in support). The `strucchange` package helps identify
+      when the data generating process changed.
+    </p>
+    <p data-lang="zh">
+      民调汇总通常使用 ARIMA 平滑日变化并检测何时发生了变化（结构断点 = 支持转变）。
+      `strucchange` 包有助于识别数据生成过程何时改变。
+    </p>
+
+    <h3 data-lang="en">When to Use ARIMA vs Panel Fixed Effects</h3>
+    <h3 data-lang="zh">何时使用 ARIMA 与面板固定效应</h3>
+
+    <table style="width: 100%; margin: 1rem 0; border-collapse: collapse;">
+      <tr style="background: var(--parchment);">
+        <th style="padding: 0.5rem; border: 1px solid var(--ink-ghost); text-align: left;" data-lang="en">Scenario</th>
+        <th style="padding: 0.5rem; border: 1px solid var(--ink-ghost); text-align: left;" data-lang="zh">情景</th>
+        <th style="padding: 0.5rem; border: 1px solid var(--ink-ghost); text-align: left;" data-lang="en">Method</th>
+        <th style="padding: 0.5rem; border: 1px solid var(--ink-ghost); text-align: left;" data-lang="zh">方法</th>
+      </tr>
+      <tr>
+        <td style="padding: 0.5rem; border: 1px solid var(--ink-ghost);" data-lang="en">One unit over time (e.g., one country 1980-2020)</td>
+        <td style="padding: 0.5rem; border: 1px solid var(--ink-ghost);" data-lang="zh">一个单位随时间（例如，一个国家 1980-2020）</td>
+        <td style="padding: 0.5rem; border: 1px solid var(--ink-ghost);" data-lang="en">ARIMA</td>
+        <td style="padding: 0.5rem; border: 1px solid var(--ink-ghost);" data-lang="zh">ARIMA</td>
+      </tr>
+      <tr style="background: var(--cream);">
+        <td style="padding: 0.5rem; border: 1px solid var(--ink-ghost);" data-lang="en">Many units over time (e.g., 50 states, 20 years)</td>
+        <td style="padding: 0.5rem; border: 1px solid var(--ink-ghost);" data-lang="zh">多个单位随时间（例如，50 个州，20 年）</td>
+        <td style="padding: 0.5rem; border: 1px solid var(--ink-ghost);" data-lang="en">Panel fixed effects or mixed models</td>
+        <td style="padding: 0.5rem; border: 1px solid var(--ink-ghost);" data-lang="zh">面板固定效应或混合模型</td>
+      </tr>
+      <tr>
+        <td style="padding: 0.5rem; border: 1px solid var(--ink-ghost);" data-lang="en">Many units with strong autocorrelation</td>
+        <td style="padding: 0.5rem; border: 1px solid var(--ink-ghost);" data-lang="zh">具有强自相关的多个单位</td>
+        <td style="padding: 0.5rem; border: 1px solid var(--ink-ghost);" data-lang="en">Panel VAR or dynamic panel model</td>
+        <td style="padding: 0.5rem; border: 1px solid var(--ink-ghost);" data-lang="zh">面板 VAR 或动态面板模型</td>
+      </tr>
+    </table>
+  </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  const trendSlider = document.getElementById('trend-slider');
+  const seasonalSlider = document.getElementById('seasonal-slider');
+  const noiseSlider = document.getElementById('noise-slider');
+  const decomposeBtn = document.getElementById('decompose-btn');
+
+  const trendValue = document.getElementById('trend-value');
+  const seasonalValue = document.getElementById('seasonal-value');
+  const noiseValue = document.getElementById('noise-value');
+
+  trendSlider.addEventListener('input', () => {
+    trendValue.textContent = trendSlider.value;
+  });
+  seasonalSlider.addEventListener('input', () => {
+    seasonalValue.textContent = seasonalSlider.value;
+  });
+  noiseSlider.addEventListener('input', () => {
+    noiseValue.textContent = noiseSlider.value;
+  });
+
+  function generateTimeSeries() {
+    const trendStrength = parseFloat(trendSlider.value);
+    const seasonalAmplitude = parseFloat(seasonalSlider.value);
+    const noiseLevel = parseFloat(noiseSlider.value);
+
+    const n = 120;
+    const trend = Array.from({length: n}, (_, i) => (i / n) * 10 * trendStrength);
+    const seasonal = Array.from({length: n}, (_, i) => seasonalAmplitude * 5 * Math.sin(2 * Math.PI * i / 12));
+    const noise = Array.from({length: n}, () => noiseLevel * (Math.random() - 0.5) * 10);
+
+    const original = Array.from({length: n}, (_, i) => 50 + trend[i] + seasonal[i] + noise[i]);
+    const time = Array.from({length: n}, (_, i) => i);
+
+    return {time, original, trend: trend.map((t, i) => 50 + t), seasonal, noise, residual: noise};
+  }
+
+  let charts = {original: null, trend: null, seasonal: null, residual: null};
+
+  function updateCharts() {
+    const {time, original, trend, seasonal, residual} = generateTimeSeries();
+
+    const canvasIds = ['ts-original-canvas', 'ts-trend-canvas', 'ts-seasonal-canvas', 'ts-residual-canvas'];
+    const dataArrays = [original, trend, seasonal, residual];
+    const colors = ['#1976d2', '#2e7d32', '#f57c00', '#d32f2f'];
+    const keys = ['original', 'trend', 'seasonal', 'residual'];
+
+    canvasIds.forEach((canvasId, idx) => {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      if (charts[keys[idx]]) {
+        charts[keys[idx]].destroy();
+      }
+
+      charts[keys[idx]] = new Chart(canvas, {
+        type: 'scatter',
+        data: {
+          datasets: [{
+            label: keys[idx],
+            data: time.map((t, i) => ({x: t, y: dataArrays[idx][i]})),
+            borderColor: colors[idx],
+            backgroundColor: colors[idx],
+            showLine: true,
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0.3,
+            fill: false
+          }]
+        },
+        options: {
+          responsive: true,
+          animation: {duration: 0},
+          scales: {
+            x: {title: {display: true, text: 'Time'}},
+            y: {title: {display: true, text: 'Value'}}
+          },
+          plugins: {
+            legend: {display: false}
+          }
+        }
+      });
+    });
+  }
+
+  decomposeBtn.addEventListener('click', updateCharts);
+  updateCharts();
+</script>
+
+<style>
+  table {
+    background: white;
+  }
+</style>

@@ -1,0 +1,483 @@
+---
+layout: methods-guide
+title: "Network Centrality in R"
+title_zh: "R 中的网络中心性分析"
+parent_title: "Network Analysis"
+parent_title_zh: "网络分析"
+parent_url: "reg-network.html"
+bilingual: true
+mathjax: true
+---
+
+<h2 id="net-basics">
+  <span data-lang="en">Network Fundamentals Recap</span>
+  <span data-lang="zh">网络基础知识回顾</span>
+</h2>
+
+<p data-lang="en">
+A network consists of <strong>nodes</strong> (actors: people, organizations, countries) and <strong>edges</strong> (relationships: friendships, trade, alliances). Networks can be represented as an <strong>adjacency matrix</strong> where entry (i, j) = 1 if i and j are connected, 0 otherwise.
+</p>
+
+<p data-lang="zh">
+网络由<strong>节点</strong>（参与者：人、组织、国家）和<strong>边</strong>（关系：友谊、贸易、联盟）组成。网络可以表示为<strong>邻接矩阵</strong>，其中条目 (i, j) = 1 如果 i 和 j 相连，否则为 0。
+</p>
+
+<p data-lang="en">
+Network properties vary:
+</p>
+
+<p data-lang="zh">
+网络属性不同：
+</p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Directed vs undirected:</strong> Directed edges have arrows (A → B ≠ B → A); undirected edges are symmetric (A ↔ B).</li>
+  <li data-lang="zh"><strong>有向 vs 无向：</strong>有向边有箭头（A → B ≠ B → A）；无向边是对称的（A ↔ B）。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Weighted vs unweighted:</strong> Weighted edges carry strength (e.g., trade volume); unweighted edges are binary.</li>
+  <li data-lang="zh"><strong>加权 vs 无权：</strong>加权边携带强度（例如贸易量）；无权边是二进制的。</li>
+</ul>
+
+<p data-lang="en">
+<strong>Why centrality matters:</strong> In social networks, central actors often have more influence, access to information, and control over resources. In disease networks, central nodes predict contagion. In organizational hierarchies, centrality identifies key decision-makers.
+</p>
+
+<p data-lang="zh">
+<strong>为什么中心性很重要：</strong>在社交网络中，中心参与者通常有更多影响力、信息获取和资源控制权。在疾病网络中，中心节点预测传染。在组织层次中，中心性识别关键决策者。
+</p>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="net-centrality-types">
+  <span data-lang="en">Four Centrality Measures</span>
+  <span data-lang="zh">四种中心性度量</span>
+</h2>
+
+<h3 id="degree-centrality">
+  <span data-lang="en">1. Degree Centrality</span>
+  <span data-lang="zh">1. 度中心性</span>
+</h3>
+
+<p data-lang="en">
+<strong>Intuition:</strong> How many direct connections does a node have? A popular person or an active trading partner.
+</p>
+
+<p data-lang="zh">
+<strong>直观理解：</strong>节点有多少直接连接？一个受欢迎的人或活跃的贸易伙伴。
+</p>
+
+<div class="math-note">
+C<sub>D</sub>(<i>v</i>) = deg(<i>v</i>) / (<i>n</i>−1)
+</div>
+
+<p data-lang="en">
+where deg(v) is the count of edges touching v, and n is total nodes. Normalized by (n−1) to scale [0, 1].
+</p>
+
+<p data-lang="zh">
+其中 deg(v) 是接触 v 的边数，n 是总节点数。按 (n−1) 归一化以缩放 [0, 1]。
+</p>
+
+<h3 id="between-centrality">
+  <span data-lang="en">2. Betweenness Centrality</span>
+  <span data-lang="zh">2. 中介中心性</span>
+</h3>
+
+<p data-lang="en">
+<strong>Intuition:</strong> How often does a node lie on the shortest path between other pairs? Identifies brokers and gatekeepers—nodes that control information flow.
+</p>
+
+<p data-lang="zh">
+<strong>直观理解：</strong>节点多频繁地位于其他对之间的最短路径上？识别代理人和守门人——控制信息流的节点。
+</p>
+
+<div class="math-note">
+C<sub>B</sub>(<i>v</i>) = Σ<sub>s≠v≠t</sub> σ(<i>s</i>,<i>t</i>|<i>v</i>) / σ(<i>s</i>,<i>t</i>)
+</div>
+
+<p data-lang="en">
+where σ(s, t) is the total number of shortest paths from s to t, and σ(s, t | v) is the count of those paths passing through v.
+</p>
+
+<p data-lang="zh">
+其中 σ(s, t) 是从 s 到 t 的最短路径总数，σ(s, t | v) 是通过 v 的那些路径的计数。
+</p>
+
+<p data-lang="en">
+<strong>Social science meaning:</strong> High betweenness nodes are strategic connectors. In organizations, they control communication between departments. In social movements, they bridge ideological groups.
+</p>
+
+<p data-lang="zh">
+<strong>社会科学意义：</strong>高中介中心性节点是战略连接点。在组织中，它们控制部门之间的沟通。在社会运动中，它们桥接意识形态群体。
+</p>
+
+<h3 id="close-centrality">
+  <span data-lang="en">3. Closeness Centrality</span>
+  <span data-lang="zh">3. 接近中心性</span>
+</h3>
+
+<p data-lang="en">
+<strong>Intuition:</strong> How quickly can a node reach all others? Nodes with short average distances to everyone else are centrally located and have fast access to information or resources.
+</p>
+
+<p data-lang="zh">
+<strong>直观理解：</strong>节点能多快地到达所有其他节点？到其他每个节点的平均距离最短的节点位于中心位置，能够快速获取信息或资源。
+</p>
+
+<div class="math-note">
+C<sub>C</sub>(<i>v</i>) = (<i>n</i>−1) / Σ<sub>u≠v</sub> d(<i>v</i>, <i>u</i>)
+</div>
+
+<p data-lang="en">
+where d(v, u) is the shortest path length from v to u.
+</p>
+
+<p data-lang="zh">
+其中 d(v, u) 是从 v 到 u 的最短路径长度。
+</p>
+
+<p data-lang="en">
+<strong>Social science meaning:</strong> High closeness enables rapid information diffusion. In supply chains, closeness indicates efficiency. In epidemiology, central nodes spread disease faster.
+</p>
+
+<p data-lang="zh">
+<strong>社会科学意义：</strong>高接近中心性能够实现快速信息传播。在供应链中，接近性表示效率。在流行病学中，中心节点传播疾病更快。
+</p>
+
+<h3 id="eigen-centrality">
+  <span data-lang="en">4. Eigenvector/PageRank Centrality</span>
+  <span data-lang="zh">4. 特征向量/页面排名中心性</span>
+</h3>
+
+<p data-lang="en">
+<strong>Intuition:</strong> Being connected to well-connected nodes matters. If your friends are popular, you're more important. Google's PageRank uses this logic.
+</p>
+
+<p data-lang="zh">
+<strong>直观理解：</strong>与连接良好的节点相连很重要。如果你的朋友很受欢迎，你就更重要。谷歌的PageRank使用这种逻辑。
+</p>
+
+<div class="math-note">
+<i>x<sub>i</sub></i> = (1/λ) Σ<sub>j</sub> A<sub>ij</sub> <i>x<sub>j</sub></i>
+</div>
+
+<p data-lang="en">
+where A is the adjacency matrix and x is the eigenvector corresponding to the largest eigenvalue λ. Interpreted as: node i's importance is proportional to the sum of its neighbors' importances.
+</p>
+
+<p data-lang="zh">
+其中 A 是邻接矩阵，x 是对应最大特征值 λ 的特征向量。解释为：节点 i 的重要性与其邻居重要性之和成正比。
+</p>
+
+<p data-lang="en">
+<strong>Social science meaning:</strong> Eigenvector centrality captures <em>prestige</em> or <em>status</em>. In academic citation networks, highly-cited papers and their citers are both central. In political networks, alignment with powerful actors amplifies influence.
+</p>
+
+<p data-lang="zh">
+<strong>社会科学意义：</strong>特征向量中心性捕捉<em>声望</em>或<em>地位</em>。在学术引文网络中，被高度引用的论文及其引用者都是中心的。在政治网络中，与强大参与者的一致性放大了影响力。
+</p>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="net-igraph">
+  <span data-lang="en">igraph in R</span>
+  <span data-lang="zh">R 中的 igraph</span>
+</h2>
+
+<p data-lang="en">
+The <code>igraph</code> package is the standard for network analysis in R. It provides fast implementations of all centrality measures and visualization tools.
+</p>
+
+<p data-lang="zh">
+<code>igraph</code>包是R中网络分析的标准。它为所有中心性度量和可视化工具提供了快速实现。
+</p>
+
+<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
+library(igraph)
+library(tidyverse)
+
+# Load edge and node data
+edges_df &lt;- read.csv("edges.csv")  # cols: from, to, weight
+nodes_df &lt;- read.csv("nodes.csv")  # cols: id, name, type
+
+# Create graph from edgelist
+g &lt;- graph_from_data_frame(edges_df,
+                             directed = FALSE,
+                             vertices = nodes_df)
+
+# Compute centrality measures (normalized)
+V(g)$degree &lt;- degree(g, normalized = TRUE)
+V(g)$between &lt;- betweenness(g, normalized = TRUE)
+V(g)$closeness &lt;- closeness(g, normalized = TRUE)
+V(g)$eigen &lt;- eigen_centrality(g)$vector
+
+# View results
+data.frame(
+  node = V(g)$name,
+  degree = V(g)$degree,
+  between = V(g)$between,
+  closeness = V(g)$closeness,
+  eigen = V(g)$eigen
+) %&gt;%
+  arrange(desc(degree)) %&gt;%
+  head(10)
+
+# Visualize: node size by degree, color by betweenness
+plot(g,
+     vertex.size = V(g)$degree * 30,
+     vertex.color = scales::rescale(V(g)$between, to = c(0, 1)),
+     vertex.label = V(g)$name,
+     vertex.label.cex = 0.7,
+     edge.width = E(g)$weight / 10,
+     layout = layout_nicely(g))
+
+# Export results to data frame
+centrality_df &lt;- data.frame(
+  node_id = V(g)$id,
+  name = V(g)$name,
+  degree = degree(g, normalized = TRUE),
+  betweenness = betweenness(g, normalized = TRUE),
+  closeness = closeness(g, normalized = TRUE),
+  eigenvector = eigen_centrality(g)$vector
+)
+</pre>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="net-compare">
+  <span data-lang="en">Interactive Centrality Comparison</span>
+  <span data-lang="zh">交互式中心性比较</span>
+</h2>
+
+<p data-lang="en">
+Click a centrality measure below to see how nodes are ranked. The visualization updates: node size corresponds to centrality score, and colors shift from light (low) to dark (high).
+</p>
+
+<p data-lang="zh">
+单击下面的中心性度量以查看节点的排名方式。可视化更新：节点大小对应中心性得分，颜色从浅色（低）变为深色（高）。
+</p>
+
+<div class="sim-panel" style="background: var(--parchment); padding: 1.5rem; border-radius: 0.5rem; margin: 1.5rem 0;">
+  <div style="margin-bottom: 1rem;">
+    <button class="sim-btn" onclick="changeCentrality('degree')" style="background: var(--warm); color: white; padding: 0.7rem 1.2rem; border: none; border-radius: 0.3rem; cursor: pointer; margin-right: 0.5rem; font-weight: bold;">
+      <span data-lang="en">Degree</span>
+      <span data-lang="zh">度中心性</span>
+    </button>
+    <button class="sim-btn" onclick="changeCentrality('between')" style="background: var(--ink-faded); color: white; padding: 0.7rem 1.2rem; border: none; border-radius: 0.3rem; cursor: pointer; margin-right: 0.5rem; font-weight: bold;">
+      <span data-lang="en">Betweenness</span>
+      <span data-lang="zh">中介中心性</span>
+    </button>
+    <button class="sim-btn" onclick="changeCentrality('closeness')" style="background: var(--gold); color: var(--ink); padding: 0.7rem 1.2rem; border: none; border-radius: 0.3rem; cursor: pointer; margin-right: 0.5rem; font-weight: bold;">
+      <span data-lang="en">Closeness</span>
+      <span data-lang="zh">接近中心性</span>
+    </button>
+    <button class="sim-btn" onclick="changeCentrality('eigen')" style="background: var(--red); color: white; padding: 0.7rem 1.2rem; border: none; border-radius: 0.3rem; cursor: pointer; font-weight: bold;">
+      <span data-lang="en">Eigenvector</span>
+      <span data-lang="zh">特征向量中心性</span>
+    </button>
+  </div>
+
+  <div style="display: flex; gap: 2rem;">
+    <div style="flex: 1;">
+      <canvas id="network-canvas" width="400" height="400" style="border: 1px solid var(--ink); background: var(--cream); border-radius: 0.3rem;"></canvas>
+    </div>
+    <div style="flex: 1; font-size: 0.85em;">
+      <table id="centrality-table" style="width: 100%; border-collapse: collapse;">
+        <tr style="background: var(--gold);">
+          <th style="padding: 0.5rem; border: 1px solid var(--ink); text-align: left;">Node</th>
+          <th style="padding: 0.5rem; border: 1px solid var(--ink); text-align: right;">Score</th>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// Network data: fixed nodes with pre-computed centrality measures
+const networkData = {
+  nodes: [
+    { id: 0, name: "A", x: 150, y: 100 },
+    { id: 1, name: "B", x: 250, y: 100 },
+    { id: 2, name: "C", x: 200, y: 200 },
+    { id: 3, name: "D", x: 100, y: 250 },
+    { id: 4, name: "E", x: 250, y: 250 },
+    { id: 5, name: "F", x: 175, y: 350 },
+    { id: 6, name: "G", x: 275, y: 350 },
+    { id: 7, name: "H", x: 50, y: 150 }
+  ],
+  edges: [
+    [0, 1], [0, 2], [0, 7],
+    [1, 2], [1, 4],
+    [2, 3], [2, 4], [2, 5],
+    [3, 5],
+    [4, 5], [4, 6],
+    [5, 6]
+  ],
+  centrality: {
+    degree: [0.428, 0.428, 0.714, 0.285, 0.428, 0.428, 0.285, 0.142],
+    between: [0.142, 0.119, 0.333, 0.071, 0.142, 0.238, 0.071, 0.0],
+    closeness: [0.636, 0.636, 0.777, 0.583, 0.636, 0.7, 0.583, 0.533],
+    eigen: [0.382, 0.382, 0.559, 0.205, 0.382, 0.441, 0.205, 0.0]
+  }
+};
+
+let currentMeasure = 'degree';
+
+function changeCentrality(measure) {
+  currentMeasure = measure;
+  drawNetwork();
+  updateTable();
+}
+
+function drawNetwork() {
+  const canvas = document.getElementById('network-canvas');
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const scores = networkData.centrality[currentMeasure];
+  const maxScore = Math.max(...scores);
+
+  // Draw edges
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+  ctx.lineWidth = 1;
+  networkData.edges.forEach(([from, to]) => {
+    const nodeFrom = networkData.nodes[from];
+    const nodeTo = networkData.nodes[to];
+    ctx.beginPath();
+    ctx.moveTo(nodeFrom.x, nodeFrom.y);
+    ctx.lineTo(nodeTo.x, nodeTo.y);
+    ctx.stroke();
+  });
+
+  // Draw nodes
+  networkData.nodes.forEach((node, idx) => {
+    const score = scores[idx];
+    const size = 10 + (score / maxScore) * 30;
+    const hue = (1 - score / maxScore) * 240; // red (0) to blue (240)
+    const color = `hsl(${hue}, 100%, 50%)`;
+
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, size, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 12px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(node.name, node.x, node.y);
+  });
+}
+
+function updateTable() {
+  const scores = networkData.centrality[currentMeasure];
+  const sorted = networkData.nodes
+    .map((node, idx) => ({ name: node.name, score: scores[idx] }))
+    .sort((a, b) => b.score - a.score);
+
+  let html = '<tr style="background: var(--gold);"><th style="padding: 0.5rem; border: 1px solid var(--ink); text-align: left;">Node</th><th style="padding: 0.5rem; border: 1px solid var(--ink); text-align: right;">Score</th></tr>';
+
+  sorted.forEach((row, idx) => {
+    const bg = idx % 2 === 0 ? 'var(--cream)' : 'var(--parchment)';
+    html += `<tr style="background: ${bg};">
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">${row.name}</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink); text-align: right;">${row.score.toFixed(3)}</td>
+    </tr>`;
+  });
+
+  document.getElementById('centrality-table').innerHTML = html;
+}
+
+// Initialize
+drawNetwork();
+updateTable();
+</script>
+
+<div class="insight-box" style="background: var(--warm); color: white; padding: 1rem; border-radius: 0.3rem; margin-top: 1rem;">
+  <p data-lang="en"><strong>Insight:</strong> Node C has the highest degree and closeness (highly connected, central location). Node B has high degree and eigenvector centrality (well-connected to other well-connected nodes). Node D has low degree but moderate betweenness (it bridges clusters despite few direct links). Different measures reveal different structural roles.</p>
+  <p data-lang="zh"><strong>洞察：</strong>节点C具有最高的度数和接近中心性（连接良好、中心位置）。节点B具有高度数和特征向量中心性（与其他连接良好的节点相连）。节点D度数低但中介中心性适中（尽管直接链接少，但它桥接了集群）。不同的度量揭示不同的结构角色。</p>
+</div>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="net-community">
+  <span data-lang="en">Community Detection</span>
+  <span data-lang="zh">社区检测</span>
+</h2>
+
+<p data-lang="en">
+Networks often contain <strong>communities</strong>—dense subsets of nodes with many internal edges and few external edges. Identifying communities reveals natural clustering and structural organization.
+</p>
+
+<p data-lang="zh">
+网络通常包含<strong>社区</strong>——密集的节点子集，具有许多内部边和很少的外部边。识别社区揭示了自然聚类和结构组织。
+</p>
+
+<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
+library(igraph)
+
+# Louvain algorithm for community detection
+comm &lt;- cluster_louvain(g, seed = 42)
+membership(comm)  # Community assignment for each node
+length(comm)      # Number of communities found
+modularity(comm)  # Modularity score [0, 1]
+
+# Modularity: fraction of edges within communities minus expected by chance
+# High modularity (>0.3) indicates strong community structure
+
+# Walktrap: random walk-based method
+comm_walktrap &lt;- cluster_walktrap(g, steps = 4)
+membership(comm_walktrap)
+
+# Label propagation: fast, for large networks
+comm_label &lt;- cluster_label_prop(g)
+
+# Visualize with communities
+plot(g,
+     vertex.color = membership(comm),
+     vertex.size = degree(g) * 2,
+     layout = layout_with_fr(g))
+
+# Community-level analysis
+community_sizes &lt;- sizes(comm)
+community_sizes  # Number of nodes per community
+
+# Find densest community
+comm_density &lt;- sapply(1:length(comm), function(i) {
+  subg &lt;- induced_subgraph(g, which(membership(comm) == i))
+  edge_density(subg)
+})
+</pre>
+
+<p data-lang="en">
+<strong>Applications in social science:</strong>
+</p>
+
+<p data-lang="zh">
+<strong>社会科学应用：</strong>
+</p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Political polarization:</strong> Communities in political retweet networks correspond to left/right ideological camps. Weakly connected inter-community edges are bridges enabling discourse across divides.</li>
+  <li data-lang="zh"><strong>政治两极分化：</strong>政治转发网络中的社区对应于左/右意识形态阵营。连接较弱的社区间边是跨越分歧进行话语的桥梁。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Echo chambers:</strong> Social media algorithms reinforce community boundaries, limiting exposure to out-group ideas. Modularity measures echo chamber strength.</li>
+  <li data-lang="zh"><strong>信息茧房：</strong>社交媒体算法强化社区边界，限制对群体外观点的接触。模块化度量信息茧房的强度。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Friendship networks:</strong> Communities often align with demographic groups (race, gender, class) or shared interests. Studying within-community cohesion and between-community ties reveals segregation and integration.</li>
+  <li data-lang="zh"><strong>友谊网络：</strong>社区通常与人口学群体（种族、性别、阶级）或共同兴趣一致。研究社区内凝聚力和社区间联系揭示隔离和融合。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Supply chains:</strong> Communities represent supplier clusters or geographic regions. Fragmented communities indicate supply chain vulnerability.</li>
+  <li data-lang="zh"><strong>供应链：</strong>社区代表供应商集群或地理区域。分散的社区表示供应链易于受到破坏。</li>
+</ul>
+

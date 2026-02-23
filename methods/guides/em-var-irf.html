@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang="en">VAR, Impulse Responses &amp; Granger Causality | Empirical Modeling</title>
+    <title data-lang="zh">VAR、脉冲响应与 Granger 因果 | 经验建模</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="guide-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="zh">
+    <div class="guide-layout">
+        <div class="guide-topbar">
+            <div class="guide-breadcrumb">
+                <a href="../empirical-modeling.html" data-lang="en">Empirical Modeling</a>
+                <a href="../empirical-modeling.html" data-lang="zh">经验建模</a>
+                <span class="sep">/</span>
+                <span data-lang="en">VAR, Impulse Responses & Granger Causality</span>
+                <span data-lang="zh">VAR、脉冲响应与 Granger 因果</span>
+            </div>
+            <div class="guide-lang-toggle">
+                <button class="guide-lang-btn active" data-lang="zh">中文</button>
+                <button class="guide-lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+
+        <div class="guide-content-wrapper">
+            <div class="guide-content">
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="en">Back to Empirical Modeling</a>
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="zh">返回经验建模</a>
+
+                <div class="guide-header">
+                    <div class="guide-tag">
+                        <span data-lang="en">ZERO-BASE FRIENDLY · FROM FIRST PRINCIPLES</span>
+                        <span data-lang="zh">零基础友好 · 从首原理</span>
+                    </div>
+                    <h1>
+                        <span data-lang="en">VAR, Impulse Responses & Granger Causality</span>
+                        <span data-lang="zh">VAR、脉冲响应与 Granger 因果</span>
+                    </h1>
+                    <p>
+                        <span data-lang="en">System-level dynamics — vector autoregression, impulse response functions, FEVD, and Granger causality testing.</span>
+                        <span data-lang="zh">系统级动态——向量自回归、脉冲响应函数、方差分解和 Granger 因果检验。</span>
+                    </p>
+                </div>
+
+                <!-- Section 1: When Do You Need a VAR? -->
+        <section>
+            <h2>
+                <span data-lang="en">1. When Do You Need a VAR?</span>
+                <span data-lang="zh">1. 你什么时候需要VAR？</span>
+            </h2>
+
+            <p data-lang="en">A VAR (Vector Autoregression) is useful whenever you have multiple variables that affect each other simultaneously, and you want to study their dynamic relationships.</p>
+            <p data-lang="zh">当你有多个变量相互同时影响，并且想研究它们的动态关系时，VAR（向量自回归）是有用的。</p>
+
+            <h3 data-lang="en">The Key Problem</h3>
+            <h3 data-lang="zh">关键问题</h3>
+
+            <p data-lang="en">Suppose you're studying monetary policy. You have:</p>
+            <p data-lang="zh">假设你在研究货币政策。你有：</p>
+
+            <ul>
+                <li data-lang="en"><strong>Interest rate</strong> (set by the central bank)</li>
+                <li data-lang="zh"><strong>利率</strong>（由央行设定）</li>
+                <li data-lang="en"><strong>Inflation</strong> (price growth)</li>
+                <li data-lang="zh"><strong>通胀</strong>（价格增长）</li>
+                <li data-lang="en"><strong>Unemployment</strong> (joblessness)</li>
+                <li data-lang="zh"><strong>失业</strong>（失业人数）</li>
+                <li data-lang="en"><strong>GDP growth</strong> (economic activity)</li>
+                <li data-lang="zh"><strong>GDP增长</strong>（经济活动）</li>
+            </ul>
+
+            <p data-lang="en">Can you use a simple regression with interest rate on the left and inflation on the right? <strong>No!</strong> Because inflation also affects interest rates (the central bank raises rates when inflation rises). This is <em>simultaneity</em>—everything affects everything else at the same time.</p>
+            <p data-lang="zh">你能使用简单回归，左边是利率，右边是通胀吗？<strong>不行！</strong>因为通胀也影响利率（当通胀上升时央行会提高利率）。这是<em>同时性</em>——一切同时相互影响。</p>
+
+            <div class="definition">
+                <div class="definition-title">
+                    <span data-lang="en">When to Use a VAR</span>
+                    <span data-lang="zh">何时使用VAR</span>
+                </div>
+                <p data-lang="en">Use VAR when: (1) you have 2+ variables of interest, (2) they interact with each other, (3) you can't clearly put one on the left side and others on the right side of an equation, and (4) you care about dynamic effects over time.</p>
+                <p data-lang="zh">使用VAR当：（1）你有2个以上感兴趣的变量，（2）它们相互互动，（3）你不能清楚地把一个放在方程的左边，其他放在右边，（4）你关心时间内的动态效应。</p>
+            </div>
+
+            <h3 data-lang="en">Real-World Example: Monetary Policy Shock</h3>
+            <h3 data-lang="zh">真实例子：货币政策冲击</h3>
+
+            <p data-lang="en">Imagine the central bank surprises everyone and cuts interest rates by 1%. What happens?</p>
+            <p data-lang="zh">想象央行让所有人惊讶，利率下降1%。会发生什么？</p>
+
+            <ul>
+                <li data-lang="en"><strong>Immediately:</strong> Interest rate drops (this is the shock)</li>
+                <li data-lang="zh"><strong>立即：</strong>利率下降（这是冲击）</li>
+                <li data-lang="en"><strong>1-2 quarters later:</strong> Businesses borrow more, consumption rises, GDP grows faster</li>
+                <li data-lang="zh"><strong>1-2个季度后：</strong>企业借贷增加，消费上升，GDP增长更快</li>
+                <li data-lang="en"><strong>3-4 quarters later:</strong> Firms hire more workers, unemployment falls</li>
+                <li data-lang="zh"><strong>3-4个季度后：</strong>企业招聘更多工人，失业率下降</li>
+                <li data-lang="en"><strong>6+ quarters later:</strong> Inflation starts to rise as the economy heats up</li>
+                <li data-lang="zh"><strong>6个以上季度后：</strong>随着经济升温，通胀开始上升</li>
+            </ul>
+
+            <p data-lang="en">This chain of reactions over time is what a VAR captures. You ask: "If I shock interest rates, what's the full dynamic response of all other variables?" A VAR answers this.</p>
+            <p data-lang="zh">这种时间内的反应链是VAR所捕捉的。你问："如果我冲击利率，所有其他变量的完整动态响应是什么？"VAR回答这个问题。</p>
+        </section>
+
+        <!-- Section 2: The VAR Idea -->
+        <section>
+            <h2>
+                <span data-lang="en">2. The VAR Idea: Symmetry is Key</span>
+                <span data-lang="zh">2. VAR的想法：对称性是关键</span>
+            </h2>
+
+            <p data-lang="en">The core insight of a VAR is simple: treat all variables symmetrically. Don't pick one variable as "special" and put it on the left. Instead, assume each variable depends on its own past AND the past of all other variables.</p>
+            <p data-lang="zh">VAR的核心洞察很简单：对称地对待所有变量。不要选择一个变量作为"特殊"变量并把它放在左边。相反，假设每个变量都取决于它自己的过去以及所有其他变量的过去。</p>
+
+            <h3 data-lang="en">The Mental Model: A Round Table</h3>
+            <h3 data-lang="zh">思维模型：一个圆桌</h3>
+
+            <p data-lang="en">Imagine all your variables sitting at a round table. Each variable looks back at its neighbors' past behavior and its own past behavior. Each quarter, everyone updates based on what everyone else was doing. No variable is the "boss"—they're all equal.</p>
+            <p data-lang="zh">想象所有变量坐在一个圆桌周围。每个变量回顾它的邻居的过去行为和它自己的过去行为。每个季度，每个人都基于其他人在做什么来更新。没有变量是"老板"——它们都是平等的。</p>
+
+            <h3 data-lang="en">General Form</h3>
+            <h3 data-lang="zh">一般形式</h3>
+
+            <p data-lang="en">For a VAR with <span class="math-inline">n</span> variables and <span class="math-inline">p</span> lags:</p>
+            <p data-lang="zh">对于有<span class="math-inline">n</span>个变量和<span class="math-inline">p</span>个滞后的VAR：</p>
+
+            <div class="equation">
+                $$\mathbf{y}_t = \mathbf{c} + \mathbf{A}_1 \mathbf{y}_{t-1} + \mathbf{A}_2 \mathbf{y}_{t-2} + \cdots + \mathbf{A}_p \mathbf{y}_{t-p} + \mathbf{u}_t$$
+                <div class="equation-label">VAR(p) in matrix form</div>
+            </div>
+
+            <p data-lang="en">Where:</p>
+            <p data-lang="zh">其中：</p>
+
+            <ul>
+                <li data-lang="en"><span class="math-inline">\mathbf{y}_t</span> is the vector of all variables at time <span class="math-inline">t</span> (e.g., [interest rate, inflation, unemployment, GDP])</li>
+                <li data-lang="zh"><span class="math-inline">\mathbf{y}_t</span>是时间<span class="math-inline">t</span>的所有变量的向量（例如，[利率，通胀，失业，GDP]）</li>
+                <li data-lang="en"><span class="math-inline">\mathbf{c}</span> is a constant vector (drift terms)</li>
+                <li data-lang="zh"><span class="math-inline">\mathbf{c}</span>是常数向量（漂移项）</li>
+                <li data-lang="en"><span class="math-inline">\mathbf{A}_i</span> are <span class="math-inline">n \times n</span> coefficient matrices (one for each lag)</li>
+                <li data-lang="zh"><span class="math-inline">\mathbf{A}_i</span>是<span class="math-inline">n \times n</span>系数矩阵（每个滞后一个）</li>
+                <li data-lang="en"><span class="math-inline">\mathbf{u}_t</span> is the error vector (shocks to each variable)</li>
+                <li data-lang="zh"><span class="math-inline">\mathbf{u}_t</span>是误差向量（每个变量的冲击）</li>
+            </ul>
+
+            <p data-lang="en">The <em>key</em> is that each element of <span class="math-inline">\mathbf{y}_t</span> appears on the left side of its own equation AND in the equations for other variables.</p>
+            <p data-lang="zh"><em>关键</em>是<span class="math-inline">\mathbf{y}_t</span>的每个元素都出现在它自己方程的左边<em>以及</em>其他变量的方程中。</p>
+        </section>
+
+        <!-- Section 3: A Concrete 2-Variable VAR(1) -->
+        <section>
+            <h2>
+                <span data-lang="en">3. A Concrete Example: 2-Variable VAR(1) with Real Numbers</span>
+                <span data-lang="zh">3. 具体例子：带实数的2变量VAR(1)</span>
+            </h2>
+
+            <p data-lang="en">Let's build intuition with the simplest meaningful case: 2 variables, 1 lag. Think of it as quarterly data.</p>
+            <p data-lang="zh">让我们用最简单的有意义的情况建立直觉：2个变量，1个滞后。把它看作季度数据。</p>
+
+            <h3 data-lang="en">Our Variables</h3>
+            <h3 data-lang="zh">我们的变量</h3>
+
+            <ul>
+                <li data-lang="en"><span class="math-inline">Y_{1,t}</span> = GDP growth rate at quarter <span class="math-inline">t</span> (in percent)</li>
+                <li data-lang="zh"><span class="math-inline">Y_{1,t}</span> = 季度<span class="math-inline">t</span>的GDP增长率（百分比）</li>
+                <li data-lang="en"><span class="math-inline">Y_{2,t}</span> = Inflation rate at quarter <span class="math-inline">t</span> (in percent)</li>
+                <li data-lang="zh"><span class="math-inline">Y_{2,t}</span> = 季度<span class="math-inline">t</span>的通胀率（百分比）</li>
+            </ul>
+
+            <h3 data-lang="en">The Two Equations</h3>
+            <h3 data-lang="zh">两个方程</h3>
+
+            <p data-lang="en">A VAR(1) with 2 variables gives us 2 equations, one for each variable:</p>
+            <p data-lang="zh">一个有2个变量的VAR(1)给我们2个方程，每个变量一个：</p>
+
+            <div class="equation">
+                $$Y_{1,t} = c_1 + a_{11} Y_{1,t-1} + a_{12} Y_{2,t-1} + u_{1,t}$$
+                <div class="equation-label">Equation 1: GDP Growth</div>
+            </div>
+
+            <div class="equation">
+                $$Y_{2,t} = c_2 + a_{21} Y_{1,t-1} + a_{22} Y_{2,t-1} + u_{2,t}$$
+                <div class="equation-label">Equation 2: Inflation</div>
+            </div>
+
+            <h3 data-lang="en">Interpretation of Coefficients</h3>
+            <h3 data-lang="zh">系数的解释</h3>
+
+            <table>
+                <tr>
+                    <th data-lang="en">Coefficient</th>
+                    <th data-lang="zh">系数</th>
+                    <th data-lang="en">Meaning</th>
+                    <th data-lang="zh">含义</th>
+                </tr>
+                <tr>
+                    <td><span class="math-inline">a_{11}</span></td>
+                    <td><span class="math-inline">a_{11}</span></td>
+                    <td data-lang="en">Effect of own past GDP on current GDP</td>
+                    <td data-lang="zh">过去GDP对当前GDP的影响</td>
+                </tr>
+                <tr>
+                    <td><span class="math-inline">a_{12}</span></td>
+                    <td><span class="math-inline">a_{12}</span></td>
+                    <td data-lang="en">Effect of past inflation on current GDP</td>
+                    <td data-lang="zh">过去通胀对当前GDP的影响</td>
+                </tr>
+                <tr>
+                    <td><span class="math-inline">a_{21}</span></td>
+                    <td><span class="math-inline">a_{21}</span></td>
+                    <td data-lang="en">Effect of past GDP on current inflation</td>
+                    <td data-lang="zh">过去GDP对当前通胀的影响</td>
+                </tr>
+                <tr>
+                    <td><span class="math-inline">a_{22}</span></td>
+                    <td><span class="math-inline">a_{22}</span></td>
+                    <td data-lang="en">Effect of own past inflation on current inflation</td>
+                    <td data-lang="zh">过去通胀对当前通胀的影响</td>
+                </tr>
+            </table>
+
+            <h3 data-lang="en">Hypothetical Estimated Values</h3>
+            <h3 data-lang="zh">假设估计值</h3>
+
+            <p data-lang="en">Suppose we estimate the VAR and get these coefficients (made up but realistic):</p>
+            <p data-lang="zh">假设我们估计VAR并获得这些系数（编造但现实的）：</p>
+
+            <div class="equation">
+                $$Y_{1,t} = 0.5 + 0.6 Y_{1,t-1} - 0.1 Y_{2,t-1} + u_{1,t}$$
+                <div class="equation-label">Estimated GDP equation</div>
+            </div>
+
+            <div class="equation">
+                $$Y_{2,t} = 0.2 + 0.2 Y_{1,t-1} + 0.8 Y_{2,t-1} + u_{2,t}$$
+                <div class="equation-label">Estimated Inflation equation</div>
+            </div>
+
+            <div class="example">
+                <div class="example-title">
+                    <span data-lang="en">Example Interpretation</span>
+                    <span data-lang="zh">例子解释</span>
+                </div>
+                <p data-lang="en"><strong>For the GDP equation:</strong></p>
+                <p data-lang="zh"><strong>对于GDP方程：</strong></p>
+                <ul>
+                    <li data-lang="en">If last quarter's GDP was 2%, and inflation was 1%, then this quarter's GDP growth is expected to be: 0.5 + 0.6(2) - 0.1(1) = 0.5 + 1.2 - 0.1 = 1.6%</li>
+                    <li data-lang="zh">如果上季度的GDP是2%，通胀是1%，那么本季度GDP增长预期是：0.5 + 0.6(2) - 0.1(1) = 0.5 + 1.2 - 0.1 = 1.6%</li>
+                    <li data-lang="en">Higher past inflation slightly reduces GDP growth (coefficient is negative: -0.1)</li>
+                    <li data-lang="zh">更高的过去通胀略微减少GDP增长（系数为负：-0.1）</li>
+                </ul>
+                <p data-lang="en"><strong>For the inflation equation:</strong></p>
+                <p data-lang="zh"><strong>对于通胀方程：</strong></p>
+                <ul>
+                    <li data-lang="en">If last quarter's GDP was 2%, and inflation was 1%, then this quarter's inflation is expected to be: 0.2 + 0.2(2) + 0.8(1) = 0.2 + 0.4 + 0.8 = 1.4%</li>
+                    <li data-lang="zh">如果上季度GDP是2%，通胀是1%，那么本季度通胀预期是：0.2 + 0.2(2) + 0.8(1) = 0.2 + 0.4 + 0.8 = 1.4%</li>
+                    <li data-lang="en">Inflation is very persistent (coefficient 0.8 on its own lag)</li>
+                    <li data-lang="zh">通胀非常持久（在其自己的滞后上系数为0.8）</li>
+                </ul>
+            </div>
+
+            <p data-lang="en">Notice how the two equations are linked: inflation appears in the GDP equation (it holds back growth), and GDP appears in the inflation equation (fast growth raises prices). This coupling is what a VAR captures.</p>
+            <p data-lang="zh">注意两个方程如何相互联系：通胀出现在GDP方程中（它阻碍增长），GDP出现在通胀方程中（快速增长会提高价格）。这种耦合正是VAR所捕捉的。</p>
+        </section>
+
+        <!-- Section 4: Estimation -->
+        <section>
+            <h2>
+                <span data-lang="en">4. Estimation: Just OLS on Each Equation</span>
+                <span data-lang="zh">4. 估计：对每个方程只需OLS</span>
+            </h2>
+
+            <p data-lang="en">Here's the good news: estimating a VAR is surprisingly simple. You can use Ordinary Least Squares (OLS) on each equation separately.</p>
+            <p data-lang="zh">好消息是：估计VAR出人意料地简单。你可以对每个方程单独使用普通最小二乘法（OLS）。</p>
+
+            <h3 data-lang="en">Why OLS Works Here</h3>
+            <h3 data-lang="zh">为什么OLS在这里有效</h3>
+
+            <p data-lang="en">You might worry: "Wait, don't we have simultaneity? Isn't that a problem?" Good question! But here's the key: in a VAR, we have lagged variables on the right side, not contemporaneous (current) values. The variables on the right (<span class="math-inline">Y_{t-1}, Y_{t-2}, \ldots</span>) are predetermined—they were determined in the past, before today's errors <span class="math-inline">u_t</span> occurred. So there's no simultaneity problem, and OLS is valid.</p>
+            <p data-lang="zh">你可能担心："等等，我们没有同时性问题吗？这不是一个问题吗？"好问题！但关键是：在VAR中，右边有滞后变量，而不是同时（当前）值。右边的变量（<span class="math-inline">Y_{t-1}, Y_{t-2}, \ldots</span>）是预先确定的——它们在过去被确定，在今天的错误<span class="math-inline">u_t</span>发生之前。所以没有同时性问题，OLS是有效的。</p>
+
+            <h3 data-lang="en">The Recipe</h3>
+            <h3 data-lang="zh">步骤</h3>
+
+            <ol>
+                <li data-lang="en">Stack your data: rows are observations (time periods), columns are variables</li>
+                <li data-lang="zh">堆叠数据：行是观察（时间段），列是变量</li>
+                <li data-lang="en">Create lagged versions of all variables. For each lag <span class="math-inline">j</span>, create <span class="math-inline">Y_{t-j}</span></li>
+                <li data-lang="zh">创建所有变量的滞后版本。对于每个滞后<span class="math-inline">j</span>，创建<span class="math-inline">Y_{t-j}</span></li>
+                <li data-lang="en">For each variable <span class="math-inline">Y_i</span>, run a separate OLS regression:</li>
+                <li data-lang="zh">对于每个变量<span class="math-inline">Y_i</span>，运行单独的OLS回归：</li>
+                <li data-lang="en" style="margin-left: 2rem;"><span class="math-inline">Y_{i,t} = c_i + a_{i1} Y_{1,t-1} + a_{i2} Y_{2,t-1} + \cdots + a_{in} Y_{n,t-1} + a_{i1}' Y_{1,t-2} + \cdots + \text{(more lags)} + u_{i,t}</span></li>
+                <li data-lang="zh" style="margin-left: 2rem;"><span class="math-inline">Y_{i,t} = c_i + a_{i1} Y_{1,t-1} + a_{i2} Y_{2,t-1} + \cdots + a_{in} Y_{n,t-1} + a_{i1}' Y_{1,t-2} + \cdots + \text{(更多滞后)} + u_{i,t}</span></li>
+                <li data-lang="en">Save the coefficients and the residuals (predicted errors) from each equation</li>
+                <li data-lang="zh">保存每个方程的系数和残差（预测误差）</li>
+            </ol>
+
+            <div class="note">
+                <div class="note-title">
+                    <span data-lang="en">Important: Error Correlation</span>
+                    <span data-lang="zh">重要：误差相关</span>
+                </div>
+                <p data-lang="en">Although you estimate each equation separately, the errors <span class="math-inline">u_{1,t}</span> and <span class="math-inline">u_{2,t}</span> (and other errors) may be <em>correlated</em>. This is fine! In fact, it's expected. The correlation in errors represents shocks that simultaneously affect multiple variables. We'll use this when computing IRFs.</p>
+                <p data-lang="zh">虽然你分别估计每个方程，但误差<span class="math-inline">u_{1,t}</span>和<span class="math-inline">u_{2,t}</span>（以及其他误差）可能是<em>相关的</em>。这很好！实际上，这是预期的。误差的相关代表同时影响多个变量的冲击。我们在计算IRF时会使用这一点。</p>
+            </div>
+        </section>
+
+        <!-- Section 5: Choosing Lag Length -->
+        <section>
+            <h2>
+                <span data-lang="en">5. Choosing Lag Length: AIC and BIC</span>
+                <span data-lang="zh">5. 选择滞后长度：AIC和BIC</span>
+            </h2>
+
+            <p data-lang="en">How many lags should you include? Too few and you miss important dynamics. Too many and you waste degrees of freedom (and your estimates become noisy). This is solved with information criteria.</p>
+            <p data-lang="zh">你应该包含多少个滞后？太少而你会错过重要的动态。太多而你会浪费自由度（你的估计变得嘈杂）。这通过信息准则来解决。</p>
+
+            <h3 data-lang="en">AIC (Akaike Information Criterion)</h3>
+            <h3 data-lang="zh">AIC（赤池信息准则）</h3>
+
+            <div class="equation">
+                $$\text{AIC}(p) = \ln|\Sigma(p)| + \frac{2pn^2}{T}$$
+                <div class="equation-label">AIC for lag length p</div>
+            </div>
+
+            <p data-lang="en">Where <span class="math-inline">|\Sigma(p)|</span> is the determinant of the error covariance matrix, <span class="math-inline">p</span> is the lag length, <span class="math-inline">n</span> is the number of variables, and <span class="math-inline">T</span> is the number of observations.</p>
+            <p data-lang="zh">其中<span class="math-inline">|\Sigma(p)|</span>是误差协方差矩阵的行列式，<span class="math-inline">p</span>是滞后长度，<span class="math-inline">n</span>是变量数，<span class="math-inline">T</span>是观察数。</p>
+
+            <h3 data-lang="en">BIC (Bayesian Information Criterion)</h3>
+            <h3 data-lang="zh">BIC（贝叶斯信息准则）</h3>
+
+            <div class="equation">
+                $$\text{BIC}(p) = \ln|\Sigma(p)| + \frac{pn^2 \ln T}{T}$$
+                <div class="equation-label">BIC for lag length p</div>
+            </div>
+
+            <h3 data-lang="en">How to Use Them</h3>
+            <h3 data-lang="zh">如何使用它们</h3>
+
+            <ol>
+                <li data-lang="en">Estimate your VAR for different lag lengths: <span class="math-inline">p = 1, 2, 3, \ldots, p_{\max}</span></li>
+                <li data-lang="zh">为不同的滞后长度估计你的VAR：<span class="math-inline">p = 1, 2, 3, \ldots, p_{\max}</span></li>
+                <li data-lang="en">Compute AIC and BIC for each lag length</li>
+                <li data-lang="zh">为每个滞后长度计算AIC和BIC</li>
+                <li data-lang="en">Choose the <span class="math-inline">p</span> that minimizes AIC or BIC (different software may recommend differently)</li>
+                <li data-lang="zh">选择使AIC或BIC最小的<span class="math-inline">p</span>（不同的软件可能有不同的推荐）</li>
+            </ol>
+
+            <div class="example">
+                <div class="example-title">
+                    <span data-lang="en">Lag Selection Example</span>
+                    <span data-lang="zh">滞后选择例子</span>
+                </div>
+                <table>
+                    <tr>
+                        <th data-lang="en">Lag (p)</th>
+                        <th data-lang="zh">滞后(p)</th>
+                        <th data-lang="en">AIC</th>
+                        <th data-lang="zh">AIC</th>
+                        <th data-lang="en">BIC</th>
+                        <th data-lang="zh">BIC</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>3.52</td>
+                        <td>3.52</td>
+                        <td>3.68</td>
+                        <td>3.68</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2</td>
+                        <td><strong>3.41</strong></td>
+                        <td><strong>3.41</strong></td>
+                        <td>3.73</td>
+                        <td>3.73</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>3</td>
+                        <td>3.45</td>
+                        <td>3.45</td>
+                        <td><strong>3.92</strong></td>
+                        <td><strong>3.92</strong></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>4</td>
+                        <td>3.51</td>
+                        <td>3.51</td>
+                        <td>4.14</td>
+                        <td>4.14</td>
+                    </tr>
+                </table>
+                <p data-lang="en">In this example, AIC suggests lag 2 (minimum at 3.41), while BIC suggests lag 1 (minimum at 3.68). BIC penalizes complexity more heavily, so it tends to choose fewer lags. For this data, a researcher might choose lag 2 as a compromise.</p>
+                <p data-lang="zh">在这个例子中，AIC建议滞后2（3.41的最小值），而BIC建议滞后1（3.68的最小值）。BIC对复杂性的惩罚更重，所以它倾向于选择更少的滞后。对于这个数据，研究人员可能会选择滞后2作为折中。</p>
+            </div>
+
+            <h3 data-lang="en">Practical Guidance</h3>
+            <h3 data-lang="zh">实践指导</h3>
+
+            <ul>
+                <li data-lang="en"><strong>Start with a maximum:</strong> Choose a sensible upper bound based on data frequency. For quarterly data, often 4-8 lags. For monthly, maybe 12-24.</li>
+                <li data-lang="zh"><strong>从最大值开始：</strong>根据数据频率选择合理的上界。对于季度数据，通常是4-8个滞后。对于月度，也许是12-24。</li>
+                <li data-lang="en"><strong>Use both AIC and BIC:</strong> If they disagree, AIC tends to pick more lags (better fit), BIC picks fewer (simpler model). Your choice depends on your priorities.</li>
+                <li data-lang="zh"><strong>使用AIC和BIC：</strong>如果它们不同意，AIC倾向于选择更多滞后（更好的拟合），BIC选择更少（更简单的模型）。你的选择取决于你的优先级。</li>
+                <li data-lang="en"><strong>Check residuals:</strong> No matter what the criteria say, check if your residuals look like white noise. If not, add more lags.</li>
+                <li data-lang="zh"><strong>检查残差：</strong>不管准则怎么说，检查你的残差是否看起来像白噪声。如果不是，添加更多滞后。</li>
+            </ul>
+        </section>
+
+        <!-- Section 6: Impulse Response Functions -->
+        <section>
+            <h2>
+                <span data-lang="en">6. Impulse Response Functions: What Happens After a Shock?</span>
+                <span data-lang="zh">6. 脉冲响应函数：冲击后会发生什么？</span>
+            </h2>
+
+            <p data-lang="en">Now for the fun part. After you've estimated your VAR, you ask: "What if I shock one variable by 1 unit? How do all variables respond over the next 10 (or 20) periods?"</p>
+            <p data-lang="zh">现在是有趣的部分。在你估计了VAR后，你问："如果我冲击一个变量1个单位会怎样？在接下来的10（或20）个时期内所有变量是如何响应的？"</p>
+
+            <div class="definition">
+                <div class="definition-title">
+                    <span data-lang="en">Impulse Response Function (IRF)</span>
+                    <span data-lang="zh">脉冲响应函数（IRF）</span>
+                </div>
+                <p data-lang="en">The IRF measures the response of each variable to a one-time, one-unit shock to some other variable, holding all other shocks at zero. It shows the dynamic path of all variables after the shock.</p>
+                <p data-lang="zh">IRF衡量每个变量对某个其他变量的一次性、一个单位冲击的响应，同时将所有其他冲击保持为零。它显示冲击后所有变量的动态路径。</p>
+            </div>
+
+            <h3 data-lang="en">Step-by-Step Numerical Example</h3>
+            <h3 data-lang="zh">分步数值例子</h3>
+
+            <p data-lang="en">Let's use our GDP and inflation VAR from earlier:</p>
+            <p data-lang="zh">让我们使用之前的GDP和通胀VAR：</p>
+
+            <div class="equation">
+                $$Y_{1,t} = 0.5 + 0.6 Y_{1,t-1} - 0.1 Y_{2,t-1} + u_{1,t}$$
+            </div>
+
+            <div class="equation">
+                $$Y_{2,t} = 0.2 + 0.2 Y_{1,t-1} + 0.8 Y_{2,t-1} + u_{2,t}$$
+            </div>
+
+            <p data-lang="en">Suppose both variables are in steady state: <span class="math-inline">Y_1 = 3\%</span> (GDP growth) and <span class="math-inline">Y_2 = 2\%</span> (inflation). Now imagine inflation gets shocked by +1% (perhaps due to an unexpected oil price spike).</p>
+            <p data-lang="zh">假设两个变量处于稳定状态：<span class="math-inline">Y_1 = 3\%</span>（GDP增长）和<span class="math-inline">Y_2 = 2\%</span>（通胀）。现在想象通胀受到+1%的冲击（可能由于意外的油价上涨）。</p>
+
+            <h4 data-lang="en">Period 0 (the shock hits)</h4>
+            <h4 data-lang="zh">期间0（冲击来临）</h4>
+
+            <p data-lang="en">At <span class="math-inline">t=0</span>, inflation jumps from 2% to 3% due to the shock. GDP stays at 3% (the shock hasn't had time to affect GDP yet).</p>
+            <p data-lang="zh">在<span class="math-inline">t=0</span>，由于冲击，通胀从2%跳到3%。GDP保持在3%（冲击还没有时间影响GDP）。</p>
+
+            <p data-lang="en" style="text-align: center; margin: 1rem 0;"><strong>Impact:</strong> <span class="math-inline">\Delta Y_1 = 0\%</span>, <span class="math-inline">\Delta Y_2 = +1\%</span></p>
+            <p data-lang="zh" style="text-align: center; margin: 1rem 0;"><strong>冲击：</strong> <span class="math-inline">\Delta Y_1 = 0\%</span>, <span class="math-inline">\Delta Y_2 = +1\%</span></p>
+
+            <h4 data-lang="en">Period 1 (one quarter later)</h4>
+            <h4 data-lang="zh">期间1（一个季度后）</h4>
+
+            <p data-lang="en">Now the high inflation from last quarter feeds back into the equations:</p>
+            <p data-lang="zh">现在上个季度的高通胀反馈进入方程：</p>
+
+            <p data-lang="en">GDP at t=1:</p>
+            <p data-lang="zh">t=1的GDP：</p>
+
+            <div class="equation">
+                $$Y_{1,1} = 0.5 + 0.6(3) - 0.1(3) + 0 = 0.5 + 1.8 - 0.3 = 2.0\%$$
+            </div>
+
+            <p data-lang="en">The high inflation last period (3% instead of 2%) reduces current GDP by 0.1 × 1 = 0.1 percentage points.</p>
+            <p data-lang="zh">上个期间的高通胀（3%而不是2%）将当前GDP减少0.1 × 1 = 0.1个百分点。</p>
+
+            <p data-lang="en">Inflation at t=1:</p>
+            <p data-lang="zh">t=1的通胀：</p>
+
+            <div class="equation">
+                $$Y_{2,1} = 0.2 + 0.2(3) + 0.8(3) + 0 = 0.2 + 0.6 + 2.4 = 3.2\%$$
+            </div>
+
+            <p data-lang="en">Inflation is very persistent (0.8 coefficient), so it stays elevated at 3.2%.</p>
+            <p data-lang="zh">通胀非常持久（系数0.8），所以它保持在3.2%的高水平。</p>
+
+            <p data-lang="en" style="text-align: center; margin: 1rem 0;"><strong>Response:</strong> <span class="math-inline">\Delta Y_1 = 2.0 - 3.0 = -1.0\%</span>, <span class="math-inline">\Delta Y_2 = 3.2 - 2.0 = +1.2\%</span></p>
+            <p data-lang="zh" style="text-align: center; margin: 1rem 0;"><strong>响应：</strong> <span class="math-inline">\Delta Y_1 = 2.0 - 3.0 = -1.0\%</span>, <span class="math-inline">\Delta Y_2 = 3.2 - 2.0 = +1.2\%</span></p>
+
+            <h4 data-lang="en">Period 2 and Beyond</h4>
+            <h4 data-lang="zh">期间2及以后</h4>
+
+            <p data-lang="en">Continue this process. Over time, both variables gradually return to their baseline as the initial shock decays.</p>
+            <p data-lang="zh">继续这个过程。随着时间的推移，当初始冲击衰减时，两个变量都逐渐恢复到基线。</p>
+
+            <table>
+                <tr>
+                    <th data-lang="en">Quarter</th>
+                    <th data-lang="zh">季度</th>
+                    <th data-lang="en">GDP (from shock)</th>
+                    <th data-lang="zh">GDP（来自冲击）</th>
+                    <th data-lang="en">Inflation (from shock)</th>
+                    <th data-lang="zh">通胀（来自冲击）</th>
+                </tr>
+                <tr>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td>+1.0%</td>
+                    <td>+1.0%</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>-1.0%</td>
+                    <td>-1.0%</td>
+                    <td>+1.2%</td>
+                    <td>+1.2%</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>-0.5%</td>
+                    <td>-0.5%</td>
+                    <td>+0.8%</td>
+                    <td>+0.8%</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>3</td>
+                    <td>-0.2%</td>
+                    <td>-0.2%</td>
+                    <td>+0.5%</td>
+                    <td>+0.5%</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>4</td>
+                    <td>-0.1%</td>
+                    <td>-0.1%</td>
+                    <td>+0.3%</td>
+                    <td>+0.3%</td>
+                </tr>
+                <tr>
+                    <td>5+</td>
+                    <td>5+</td>
+                    <td>≈ 0%</td>
+                    <td>≈ 0%</td>
+                    <td>≈ 0%</td>
+                    <td>≈ 0%</td>
+                </tr>
+            </table>
+
+            <h3 data-lang="en">Key Insight</h3>
+            <h3 data-lang="zh">关键洞察</h3>
+
+            <p data-lang="en">Notice:</p>
+            <p data-lang="zh">注意：</p>
+
+            <ul>
+                <li data-lang="en"><strong>Asymmetry:</strong> The inflation shock initially raises inflation (makes sense) but lowers GDP (inflation is bad for growth)</li>
+                <li data-lang="zh"><strong>不对称性：</strong>通胀冲击最初提高通胀（有意义）但降低GDP（通胀对增长不利）</li>
+                <li data-lang="en"><strong>Persistence:</strong> Inflation shock takes 5+ quarters to fully dissipate (because inflation coefficient is 0.8)</li>
+                <li data-lang="zh"><strong>持久性：</strong>通胀冲击需要5个以上季度才能完全消散（因为通胀系数为0.8）</li>
+                <li data-lang="en"><strong>Spillover:</strong> A shock to one variable (inflation) affects another (GDP) through the system's interconnections</li>
+                <li data-lang="zh"><strong>溢出：</strong>一个变量（通胀）的冲击通过系统的相互连接影响另一个（GDP）</li>
+            </ul>
+
+            <div class="note">
+                <div class="note-title">
+                    <span data-lang="en">Ordering Matters (Preview)</span>
+                    <span data-lang="zh">顺序很重要（预览）</span>
+                </div>
+                <p data-lang="en">In this example, we shocked inflation directly. But what if we shocked GDP? The response of inflation would be different. What if we jointly shock both? The VAR framework lets us ask all these questions. (We'll address the issue of "which variable do we shock first" in Section 8.)</p>
+                <p data-lang="zh">在这个例子中，我们直接冲击通胀。但如果我们冲击GDP会怎样？通胀的响应会不同。如果我们同时冲击两个呢？VAR框架让我们问所有这些问题。（我们将在第8节中解决"我们首先冲击哪个变量"的问题。）</p>
+            </div>
+        </section>
+
+        <!-- Section 7: Reading IRF Plots -->
+        <section>
+            <h2>
+                <span data-lang="en">7. Reading IRF Plots and Confidence Bands</span>
+                <span data-lang="zh">7. 阅读IRF图表和信心带</span>
+            </h2>
+
+            <p data-lang="en">In practice, you won't compute IRFs by hand. Your software (R, Python, Stata, etc.) will produce plots. Here's how to interpret them.</p>
+            <p data-lang="zh">在实践中，你不会手工计算IRF。你的软件（R、Python、Stata等）会生成图表。以下是如何解释它们。</p>
+
+            <h3 data-lang="en">Anatomy of an IRF Plot</h3>
+            <h3 data-lang="zh">IRF图的剖析</h3>
+
+            <p data-lang="en">A typical IRF plot has:</p>
+            <p data-lang="zh">典型的IRF图有：</p>
+
+            <ul>
+                <li data-lang="en"><strong>X-axis:</strong> Time (quarters, years, periods after the shock). Usually 0 to 20 or 40 periods.</li>
+                <li data-lang="zh"><strong>X轴：</strong>时间（冲击后的季度、年、时期）。通常是0到20或40个时期。</li>
+                <li data-lang="en"><strong>Y-axis:</strong> Response magnitude (percentage points or levels, depending on your variables). Often centered at zero.</li>
+                <li data-lang="zh"><strong>Y轴：</strong>响应幅度（百分点或水平，取决于你的变量）。通常以零为中心。</li>
+                <li data-lang="en"><strong>Solid line:</strong> The point estimate (mean IRF)</li>
+                <li data-lang="zh"><strong>实线：</strong>点估计（平均IRF）</li>
+                <li data-lang="en"><strong>Shaded area or dashed lines:</strong> Confidence bands (usually 68% or 95%)</li>
+                <li data-lang="zh"><strong>阴影区域或虚线：</strong>信心带（通常68%或95%）</li>
+            </ul>
+
+            <h3 data-lang="en">Interpretation Rules</h3>
+            <h3 data-lang="zh">解释规则</h3>
+
+            <div class="definition">
+                <div class="definition-title">
+                    <span data-lang="en">The Zero Rule</span>
+                    <span data-lang="zh">零规则</span>
+                </div>
+                <p data-lang="en">If the confidence band includes zero at some horizon, the effect at that horizon is not statistically significant. If the band is strictly positive (or strictly negative), the effect is significant.</p>
+                <p data-lang="zh">如果信心带在某个水平包括零，则在该水平处的效应在统计上不显著。如果带严格为正（或严格为负），则效应显著。</p>
+            </div>
+
+            <h3 data-lang="en">Visual Patterns to Look For</h3>
+            <h3 data-lang="zh">要寻找的视觉模式</h3>
+
+            <ul>
+                <li data-lang="en"><strong>Peak response:</strong> When does the variable respond most strongly? Usually within the first few quarters.</li>
+                <li data-lang="zh"><strong>峰值响应：</strong>变量最强烈地响应的时间是什么时候？通常在前几个季度内。</li>
+                <li data-lang="en"><strong>Decay:</strong> How fast does the effect wear off? Exponential decay is common (halving every few periods).</li>
+                <li data-lang="zh"><strong>衰减：</strong>效应消退多快？指数衰减很常见（每几个时期翻倍）。</li>
+                <li data-lang="en"><strong>Direction flip:</strong> Does the variable respond one way at first, then flip sign? This can indicate complex feedback loops.</li>
+                <li data-lang="zh"><strong>方向翻转：</strong>变量最初以某种方式响应，然后翻转符号吗？这可能表示复杂的反馈环路。</li>
+                <li data-lang="en"><strong>Width of band:</strong> Narrower bands = more confidence in the estimate. Very wide bands = high uncertainty.</li>
+                <li data-lang="zh"><strong>带的宽度：</strong>更窄的带=对估计的更多信心。非常宽的带=高度不确定性。</li>
+            </ul>
+
+            <div class="example">
+                <div class="example-title">
+                    <span data-lang="en">Example Interpretations</span>
+                    <span data-lang="zh">例子解释</span>
+                </div>
+                <p data-lang="en"><strong>Scenario 1:</strong> An interest rate shock. The IRF shows GDP initially stays flat (monetary policy has lags), then rises in quarters 2-4, peaks at quarter 3, then slowly decays back to zero by quarter 20. Interpretation: "The policy is most effective 3 quarters after implementation, but effects fade out over 5 years."</p>
+                <p data-lang="zh"><strong>情景1：</strong>利率冲击。IRF显示GDP最初保持平稳（货币政策有滞后），然后在第2-4季度上升，在第3季度达到峰值，然后缓慢衰减回零在第20季度。解释："政策在实施3个季度后最有效，但效应在5年内消退。"</p>
+
+                <p data-lang="en"><strong>Scenario 2:</strong> An inflation shock. The confidence band is very wide from periods 0-8, but narrows afterward. Interpretation: "We're very uncertain about short-term effects, but confident about medium-term effects."</p>
+                <p data-lang="zh"><strong>情景2：</strong>通胀冲击。信心带在第0-8个时期非常宽，但之后变窄。解释："我们对短期效应非常不确定，但对中期效应有信心。"</p>
+            </div>
+        </section>
+
+        <!-- Section 8: Ordering and Identification -->
+        <section>
+            <h2>
+                <span data-lang="en">8. The Dirty Secret: Ordering Matters</span>
+                <span data-lang="zh">8. 肮脏的秘密：顺序很重要</span>
+            </h2>
+
+            <p data-lang="en">Here's the uncomfortable truth: your VAR results depend on the <em>ordering</em> of variables. Change the order, and you get different IRFs.</p>
+            <p data-lang="zh">这是不舒服的真相：你的VAR结果取决于变量的<em>顺序</em>。改变顺序，你会得到不同的IRF。</p>
+
+            <h3 data-lang="en">Why?</h3>
+            <h3 data-lang="zh">为什么？</h3>
+
+            <p data-lang="en">When you compute an IRF, you're isolating a "shock" to one variable and seeing how other variables respond. But in reality, the errors <span class="math-inline">u_{1,t}</span> and <span class="math-inline">u_{2,t}</span> are correlated! That is, multiple variables might get shocked at the same time.</p>
+            <p data-lang="zh">当你计算IRF时，你正在隔离一个变量的"冲击"并查看其他变量如何响应。但在现实中，误差<span class="math-inline">u_{1,t}</span>和<span class="math-inline">u_{2,t}</span>是相关的！也就是说，多个变量可能同时受到冲击。</p>
+
+            <p data-lang="en">To compute an IRF with only one variable shocked at a time, you need to "decompose" the correlated shocks into uncorrelated ones. The <strong>Cholesky decomposition</strong> is a common way to do this, but it assumes an ordering: which variable is shocked first?</p>
+            <p data-lang="zh">要计算一次只有一个变量受到冲击的IRF，你需要将相关的冲击"分解"为不相关的冲击。<strong>Cholesky分解</strong>是一种常见的方法，但它假设了一个顺序：哪个变量首先受到冲击？</p>
+
+            <h3 data-lang="en">Cholesky Ordering</h3>
+            <h3 data-lang="zh">Cholesky顺序</h3>
+
+            <p data-lang="en">The Cholesky ordering assumes that variables higher in the list respond to shocks instantaneously (within the quarter), while variables lower in the list have delayed responses (only in the next quarter and beyond).</p>
+            <p data-lang="zh">Cholesky顺序假设列表中较高的变量会立即响应冲击（在季度内），而列表中较低的变量会有延迟响应（只在下一个季度及以后）。</p>
+
+            <div class="example">
+                <div class="example-title">
+                    <span data-lang="en">Ordering A vs. Ordering B</span>
+                    <span data-lang="zh">顺序A对比顺序B</span>
+                </div>
+                <p data-lang="en"><strong>Ordering A:</strong> [GDP growth, Inflation]</p>
+                <p data-lang="zh"><strong>顺序A：</strong>[GDP增长, 通胀]</p>
+                <ul>
+                    <li data-lang="en">A shock to GDP affects inflation only next quarter</li>
+                    <li data-lang="zh">对GDP的冲击只在下个季度影响通胀</li>
+                    <li data-lang="en">A shock to inflation immediately affects GDP (in the same quarter)</li>
+                    <li data-lang="zh">对通胀的冲击立即影响GDP（在同一季度）</li>
+                </ul>
+
+                <p data-lang="en"><strong>Ordering B:</strong> [Inflation, GDP growth]</p>
+                <p data-lang="zh"><strong>顺序B：</strong>[通胀, GDP增长]</p>
+                <ul>
+                    <li data-lang="en">A shock to inflation affects GDP only next quarter</li>
+                    <li data-lang="zh">对通胀的冲击只在下个季度影响GDP</li>
+                    <li data-lang="en">A shock to GDP immediately affects inflation (in the same quarter)</li>
+                    <li data-lang="zh">对GDP的冲击立即影响通胀（在同一季度）</li>
+                </ul>
+
+                <p data-lang="en">These will give different impulse response functions! The choice matters.</p>
+                <p data-lang="zh">这些会产生不同的脉冲响应函数！选择很重要。</p>
+            </div>
+
+            <h3 data-lang="en">How to Choose an Ordering</h3>
+            <h3 data-lang="zh">如何选择一个顺序</h3>
+
+            <p data-lang="en">The ordering should reflect your economic beliefs about which variables respond fastest to shocks:</p>
+            <p data-lang="zh">顺序应反映你关于哪些变量对冲击反应最快的经济信念：</p>
+
+            <ul>
+                <li data-lang="en"><strong>Put slow-responding variables first.</strong> Variables like inflation or commodity prices adjust slowly.</li>
+                <li data-lang="zh"><strong>首先放入响应缓慢的变量。</strong>像通胀或商品价格这样的变量调整缓慢。</li>
+                <li data-lang="en"><strong>Put fast-responding variables last.</strong> Market prices (like interest rates or exchange rates) adjust quickly.</li>
+                <li data-lang="zh"><strong>最后放入响应快速的变量。</strong>市场价格（如利率或汇率）迅速调整。</li>
+                <li data-lang="en"><strong>Use economic theory.</strong> If theory says variable X doesn't respond to Y within a quarter, put Y after X in your ordering.</li>
+                <li data-lang="zh"><strong>使用经济理论。</strong>如果理论说变量X在一个季度内不响应Y，把Y放在你顺序中X的后面。</li>
+            </ul>
+
+            <div class="note">
+                <div class="note-title">
+                    <span data-lang="en">Advanced: Other Identification Methods</span>
+                    <span data-lang="zh">高级：其他识别方法</span>
+                </div>
+                <p data-lang="en">Cholesky ordering is the simplest method, but not the only one. Researchers also use:</p>
+                <p data-lang="zh">Cholesky顺序是最简单的方法，但不是唯一的。研究人员也使用：</p>
+                <ul>
+                    <li data-lang="en"><strong>Sign restrictions:</strong> Specify that certain variables must move in certain directions after a shock, without specifying exact timing.</li>
+                    <li data-lang="zh"><strong>符号限制：</strong>指定某些变量在冲击后必须朝某些方向移动，不指定确切的时间。</li>
+                    <li data-lang="en"><strong>Structural VARs (SVAR):</strong> Use economic theory to write down simultaneous equations, then solve for shocks.</li>
+                    <li data-lang="zh"><strong>结构性VAR（SVAR）：</strong>使用经济理论写下同时方程，然后求解冲击。</li>
+                    <li data-lang="en"><strong>Narrative shocks:</strong> Identify historical events (policy changes, wars) and treat them as known shocks.</li>
+                    <li data-lang="zh"><strong>叙述冲击：</strong>识别历史事件（政策变化、战争）并将其视为已知冲击。</li>
+                </ul>
+                <p data-lang="en">For now, focus on Cholesky. It's robust and widely used.</p>
+                <p data-lang="zh">现在，专注于Cholesky。它是稳健且广泛使用的。</p>
+            </div>
+        </section>
+
+        <!-- Section 9: Forecast Error Variance Decomposition -->
+        <section>
+            <h2>
+                <span data-lang="en">9. FEVD: Who's Responsible for Uncertainty?</span>
+                <span data-lang="zh">9. FEVD：谁对不确定性负责？</span>
+            </h2>
+
+            <p data-lang="en">An IRF tells you: "If inflation shocks, what happens to GDP?" But a different question is: "In the long run, what fraction of GDP's changes come from inflation shocks versus GDP's own shocks?"</p>
+            <p data-lang="zh">IRF告诉你："如果通胀冲击，GDP会发生什么？"但一个不同的问题是："从长期来看，GDP变化的多少比例来自通胀冲击对GDP自己的冲击？"</p>
+
+            <div class="definition">
+                <div class="definition-title">
+                    <span data-lang="en">Forecast Error Variance Decomposition (FEVD)</span>
+                    <span data-lang="zh">预测误差方差分解（FEVD）</span>
+                </div>
+                <p data-lang="en">FEVD breaks down the forecast variance (uncertainty) of a variable into contributions from shocks to each variable in the system. It answers: "How much of variable X's uncertainty comes from shocks to X, Y, Z, etc.?"</p>
+                <p data-lang="zh">FEVD将一个变量的预测方差（不确定性）分解为系统中每个变量的冲击的贡献。它回答："变量X的多少不确定性来自对X、Y、Z等的冲击？"</p>
+            </div>
+
+            <h3 data-lang="en">Example: GDP Variance</h3>
+            <h3 data-lang="zh">例子：GDP方差</h3>
+
+            <p data-lang="en">After estimating the VAR, you compute the FEVD of GDP growth. Results might look like this:</p>
+            <p data-lang="zh">估计VAR后，你计算GDP增长的FEVD。结果可能如下所示：</p>
+
+            <table>
+                <tr>
+                    <th data-lang="en">Horizon (quarters)</th>
+                    <th data-lang="zh">水平（季度）</th>
+                    <th data-lang="en">% from GDP shocks</th>
+                    <th data-lang="zh">来自GDP冲击的%</th>
+                    <th data-lang="en">% from Inflation shocks</th>
+                    <th data-lang="zh">来自通胀冲击的%</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>100%</td>
+                    <td>100%</td>
+                    <td>0%</td>
+                    <td>0%</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>4</td>
+                    <td>85%</td>
+                    <td>85%</td>
+                    <td>15%</td>
+                    <td>15%</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>8</td>
+                    <td>70%</td>
+                    <td>70%</td>
+                    <td>30%</td>
+                    <td>30%</td>
+                </tr>
+                <tr>
+                    <td>20</td>
+                    <td>20</td>
+                    <td>60%</td>
+                    <td>60%</td>
+                    <td>40%</td>
+                    <td>40%</td>
+                </tr>
+            </table>
+
+            <h3 data-lang="en">Interpretation</h3>
+            <h3 data-lang="zh">解释</h3>
+
+            <ul>
+                <li data-lang="en"><strong>At 1 quarter:</strong> GDP variance is 100% from GDP shocks, 0% from inflation. (This makes sense: inflation takes time to affect GDP.)</li>
+                <li data-lang="zh"><strong>在1季度：</strong>GDP方差100%来自GDP冲击，0%来自通胀。（这很合理：通胀需要时间才能影响GDP。）</li>
+                <li data-lang="en"><strong>At 4 quarters:</strong> 85% of GDP variance still comes from GDP shocks, but 15% now comes from inflation shocks.</li>
+                <li data-lang="zh"><strong>在4季度：</strong>85%的GDP方差仍然来自GDP冲击，但15%现在来自通胀冲击。</li>
+                <li data-lang="en"><strong>At 20 quarters:</strong> Long-run, 60% from GDP shocks, 40% from inflation shocks. Inflation accounts for a big chunk of GDP's long-run volatility.</li>
+                <li data-lang="zh"><strong>在20季度：</strong>长期，60%来自GDP冲击，40%来自通胀冲击。通胀占GDP长期波动的很大部分。</li>
+            </ul>
+
+            <div class="note">
+                <div class="note-title">
+                    <span data-lang="en">FEVD and Ordering</span>
+                    <span data-lang="zh">FEVD和顺序</span>
+                </div>
+                <p data-lang="en">Like IRFs, FEVD depends on your Cholesky ordering. A different ordering will give different percentages. So don't treat FEVD percentages as universal truth—they reflect your assumptions about which variables respond faster.</p>
+                <p data-lang="zh">像IRF一样，FEVD取决于你的Cholesky顺序。不同的顺序会给出不同的百分比。所以不要把FEVD百分比当作普遍真理——它们反映了你关于哪些变量响应更快的假设。</p>
+            </div>
+        </section>
+
+        <!-- Section 10: Granger Causality -->
+        <section>
+            <h2>
+                <span data-lang="en">10. Granger Causality: Does Past Y Help Predict X?</span>
+                <span data-lang="zh">10. Granger因果关系：过去的Y是否帮助预测X？</span>
+            </h2>
+
+            <p data-lang="en">Now for a different kind of question. We've been asking: "If I shock Y, what happens to X?" But we can also ask: "Does past Y contain information about future X, beyond what past X tells us?"</p>
+            <p data-lang="zh">现在是一个不同的问题。我们一直在问："如果我冲击Y，X会发生什么？"但我们也可以问："过去的Y包含关于未来X的信息，超越过去的X告诉我们的吗？"</p>
+
+            <div class="definition">
+                <div class="definition-title">
+                    <span data-lang="en">Granger Causality</span>
+                    <span data-lang="zh">Granger因果关系</span>
+                </div>
+                <p data-lang="en">We say Y "Granger-causes" X if past values of Y help predict X beyond what past values of X alone can predict. This is <em>not</em> true causality (Y doesn't necessarily cause X in a deep economic sense), but rather a statement about <em>predictive content</em>.</p>
+                <p data-lang="zh">我们说Y "Granger因果关系" X，如果Y的过去值在帮助预测X中超越X的过去值单独能预测的。这<em>不是</em>真正的因果关系（Y不一定在深刻的经济意义上导致X），而是关于<em>预测内容</em>的声明。</p>
+            </div>
+
+            <h3 data-lang="en">How to Test It</h3>
+            <h3 data-lang="zh">如何测试它</h3>
+
+            <p data-lang="en">Using the VAR, you can test Granger causality with a simple F-test:</p>
+            <p data-lang="zh">使用VAR，你可以用简单的F测试来测试Granger因果关系：</p>
+
+            <h4 data-lang="en">Restricted model (H0: Y does NOT Granger-cause X):</h4>
+            <h4 data-lang="zh">受限模型（H0：Y不是Granger因果关系X）：</h4>
+
+            <div class="equation">
+                $$X_t = c + a_{11} X_{t-1} + a_{12} X_{t-2} + \cdots + u_t$$
+                <div class="equation-label">Only past X predicts current X</div>
+            </div>
+
+            <h4 data-lang="en">Unrestricted model (H1: Y does Granger-cause X):</h4>
+            <h4 data-lang="zh">无限制模型（H1：Y是Granger因果关系X）：</h4>
+
+            <div class="equation">
+                $$X_t = c + a_{11} X_{t-1} + a_{12} X_{t-2} + \cdots + b_{11} Y_{t-1} + b_{12} Y_{t-2} + \cdots + u_t$$
+                <div class="equation-label">Both past X and past Y predict current X</div>
+            </div>
+
+            <p data-lang="en">Compute an F-statistic testing whether the <span class="math-inline">b</span> coefficients (on past Y) are jointly zero. If they are, Y doesn't Granger-cause X. If not, it does.</p>
+            <p data-lang="zh">计算一个F统计量，测试<span class="math-inline">b</span>系数（关于过去Y）是否共同为零。如果是，Y不是Granger因果关系X。如果不是，它是。</p>
+
+            <div class="example">
+                <div class="example-title">
+                    <span data-lang="en">Hypothetical Result</span>
+                    <span data-lang="zh">假设结果</span>
+                </div>
+                <p data-lang="en"><strong>Test:</strong> Does inflation Granger-cause GDP growth?</p>
+                <p data-lang="zh"><strong>测试：</strong>通胀是否Granger因果关系GDP增长？</p>
+
+                <p data-lang="en"><strong>Restricted model R²:</strong> 0.65 (GDP predicted by its own past)</p>
+                <p data-lang="zh"><strong>受限模型R²：</strong>0.65（GDP由其自身的过去预测）</p>
+
+                <p data-lang="en"><strong>Unrestricted model R²:</strong> 0.72 (GDP predicted by its past AND inflation's past)</p>
+                <p data-lang="zh"><strong>无限制模型R²：</strong>0.72（GDP由其过去和通胀的过去预测）</p>
+
+                <p data-lang="en"><strong>F-statistic:</strong> 5.2 (p-value = 0.008)</p>
+                <p data-lang="zh"><strong>F统计量：</strong>5.2（p值=0.008）</p>
+
+                <p data-lang="en"><strong>Conclusion:</strong> We reject the null hypothesis. Past inflation does contain information about future GDP growth. Inflation Granger-causes GDP (though remember: this is predictive, not true causality).</p>
+                <p data-lang="zh"><strong>结论：</strong>我们拒绝零假设。过去的通胀确实包含关于未来GDP增长的信息。通胀Granger因果关系GDP（虽然请记住：这是预测性的，不是真正的因果关系）。</p>
+            </div>
+
+            <div class="note">
+                <div class="note-title">
+                    <span data-lang="en">A Caveat: Predictive ≠ Causal</span>
+                    <span data-lang="zh">警告：预测性≠因果性</span>
+                </div>
+                <p data-lang="en">Granger causality tests <em>predictive</em> power, not true causation. Just because past Y helps predict X doesn't mean Y causes X. There could be a third variable Z that causes both X and Y, making them correlated but not causal. Always think about the economics, not just the statistics.</p>
+                <p data-lang="zh">Granger因果关系测试<em>预测</em>能力，不是真正的因果关系。仅仅因为过去的Y帮助预测X并不意味着Y导致X。可能有第三个变量Z导致X和Y，使它们相关但不是因果的。总是考虑经济学，而不仅仅是统计数据。</p>
+            </div>
+        </section>
+
+        <!-- Section 11: Practical Checklist -->
+        <section>
+            <h2>
+                <span data-lang="en">11. Practical Checklist: Step-by-Step Recipe</span>
+                <span data-lang="zh">11. 实用清单：分步食谱</span>
+            </h2>
+
+            <p data-lang="en">Ready to estimate your own VAR? Here's a checklist to keep you on track.</p>
+            <p data-lang="zh">准备估计你自己的VAR？这是一个清单来让你保持正轨。</p>
+
+            <div class="checklist">
+                <div class="checklist-title">
+                    <span data-lang="en">The VAR Checklist</span>
+                    <span data-lang="zh">VAR清单</span>
+                </div>
+
+                <ol style="list-style: decimal; margin-left: 2rem;">
+                    <li data-lang="en"><strong>Data preparation:</strong> Collect your variables (quarterly, monthly, or annual). Clean them (remove outliers, handle missing values). Decide on the sample period.</li>
+                    <li data-lang="zh"><strong>数据准备：</strong>收集你的变量（季度、月度或年度）。清洁它们（去除离群值，处理缺失值）。决定样本期间。</li>
+
+                    <li data-lang="en"><strong>Check stationarity:</strong> For each variable, run an Augmented Dickey-Fuller (ADF) test. If a variable is non-stationary (unit root), difference it (take first differences) or use it in levels if you're confident it's stationary. Or use a VECM if you have cointegration.</li>
+                    <li data-lang="zh"><strong>检查平稳性：</strong>对于每个变量，运行增强型Dickey-Fuller（ADF）测试。如果一个变量是非平稳的（单位根），对其进行差分（取一阶差分）或如果你确信它是平稳的则使用水平。或如果你有协整则使用VECM。</li>
+
+                    <li data-lang="en"><strong>Choose lag length:</strong> Test VAR(1), VAR(2), ..., VAR(p_max). Compute AIC and BIC for each. Choose the lag length that minimizes AIC (or BIC if you prefer parsimony).</li>
+                    <li data-lang="zh"><strong>选择滞后长度：</strong>测试VAR(1)、VAR(2)、...、VAR(p_max)。为每个计算AIC和BIC。选择使AIC最小的滞后长度（或如果你喜欢简约则选择BIC）。</li>
+
+                    <li data-lang="en"><strong>Estimate the VAR:</strong> Run OLS on each equation separately. Save coefficients and residuals.</li>
+                    <li data-lang="zh"><strong>估计VAR：</strong>分别对每个方程运行OLS。保存系数和残差。</li>
+
+                    <li data-lang="en"><strong>Check residuals:</strong> Are residuals white noise? Plot ACF/PACF. Do a serial correlation test (Ljung-Box). If residuals are correlated, add more lags. If they're normally distributed, great; if not, be cautious with confidence intervals.</li>
+                    <li data-lang="zh"><strong>检查残差：</strong>残差是白噪声吗？绘制ACF/PACF。做序列相关测试（Ljung-Box）。如果残差相关，添加更多滞后。如果它们是正态分布的，很好；如果不是，对信心区间要谨慎。</li>
+
+                    <li data-lang="en"><strong>Choose a Cholesky ordering:</strong> Decide which variable responds fastest. This reflects your economic priors. Document your choice.</li>
+                    <li data-lang="zh"><strong>选择Cholesky顺序：</strong>决定哪个变量响应最快。这反映了你的经济先验。记录你的选择。</li>
+
+                    <li data-lang="en"><strong>Compute IRFs:</strong> For each variable, shock it by 1 unit (or 1 standard deviation). Trace the responses of all variables over 10-20 periods. Include confidence bands (bootstrap or analytical).</li>
+                    <li data-lang="zh"><strong>计算IRF：</strong>对于每个变量，冲击它1个单位（或1个标准差）。追踪所有变量在10-20个时期内的响应。包括信心带（引导或分析）。</li>
+
+                    <li data-lang="en"><strong>Compute FEVD:</strong> Break down variance at different horizons (1, 4, 8, 20 quarters). See which shocks matter most for which variables.</li>
+                    <li data-lang="zh"><strong>计算FEVD：</strong>在不同的水平（1、4、8、20个季度）分解方差。查看哪些冲击对哪些变量最重要。</li>
+
+                    <li data-lang="en"><strong>Test Granger causality:</strong> Test which variables Granger-cause which others. Report F-stats and p-values.</li>
+                    <li data-lang="zh"><strong>测试Granger因果关系：</strong>测试哪些变量Granger因果关系哪些其他的。报告F统计和p值。</li>
+
+                    <li data-lang="en"><strong>Sensitivity analysis:</strong> Try alternative Cholesky orderings. Do your conclusions hold? If IRFs change dramatically, be honest about the uncertainty.</li>
+                    <li data-lang="zh"><strong>敏感性分析：</strong>尝试替代的Cholesky顺序。你的结论成立吗？如果IRF发生剧烈变化，对不确定性要诚实。</li>
+
+                    <li data-lang="en"><strong>Write it up:</strong> Report the estimated coefficients, IRFs (with plots), FEVD tables, and Granger causality tests. Be clear about your assumptions (stationarity, ordering, lag length).</li>
+                    <li data-lang="zh"><strong>写下来：</strong>报告估计的系数、IRF（带图表）、FEVD表和Granger因果关系测试。对你的假设（平稳性、顺序、滞后长度）要明确。</li>
+                </ol>
+            </div>
+
+            <h3 data-lang="en">Common Pitfalls to Avoid</h3>
+            <h3 data-lang="zh">要避免的常见陷阱</h3>
+
+            <ul>
+                <li data-lang="en"><strong>Non-stationary data:</strong> If you use non-stationary variables, your estimates may be spurious. Always test for unit roots.</li>
+                <li data-lang="zh"><strong>非平稳数据：</strong>如果你使用非平稳变量，你的估计可能是虚假的。总是测试单位根。</li>
+
+                <li data-lang="en"><strong>Too many variables:</strong> Each additional variable costs degrees of freedom. With p lags and n variables, you're estimating pn² coefficients. With limited data, estimates become imprecise. Start with 2-4 key variables.</li>
+                <li data-lang="zh"><strong>太多变量：</strong>每个额外的变量都会损失自由度。对于p个滞后和n个变量，你正在估计pn²个系数。数据有限时，估计变得不精确。从2-4个关键变量开始。</li>
+
+                <li data-lang="en"><strong>Ignoring ordering:</strong> Don't pretend your Cholesky ordering is unique truth. Try alternatives. Report sensitivity.</li>
+                <li data-lang="zh"><strong>忽视顺序：</strong>不要假装你的Cholesky顺序是唯一真理。尝试替代品。报告敏感性。</li>
+
+                <li data-lang="en"><strong>Confusing Granger causality with causality:</strong> Past inflation predicting GDP ≠ inflation causes growth. Be careful with language.</li>
+                <li data-lang="zh"><strong>混淆Granger因果关系和因果关系：</strong>过去的通胀预测GDP≠通胀导致增长。对语言要小心。</li>
+
+                <li data-lang="en"><strong>Narrow confidence bands:</strong> Confidence bands can be misleading if you have few observations or high volatility. Be conservative in interpretation.</li>
+                <li data-lang="zh"><strong>狭窄的信心带：</strong>如果你有很少的观察或高波动性，信心带可能具有欺骗性。在解释中要保守。</li>
+            </ul>
+        </section>
+
+        <!-- Section 12: Summary -->
+        <section>
+            <h2>
+                <span data-lang="en">Summary: What You Now Know</span>
+                <span data-lang="zh">总结：你现在知道什么</span>
+            </h2>
+
+            <p data-lang="en">You've made it through the entire journey! Here's what you can now do:</p>
+            <p data-lang="zh">你已经完成了整个旅程！以下是你现在可以做的：</p>
+
+            <ul>
+                <li data-lang="en"><strong>Recognize when to use a VAR:</strong> When multiple variables affect each other simultaneously.</li>
+                <li data-lang="zh"><strong>认识何时使用VAR：</strong>当多个变量同时相互影响时。</li>
+
+                <li data-lang="en"><strong>Build a simple VAR:</strong> Write down the equations, understand each coefficient's meaning.</li>
+                <li data-lang="zh"><strong>构建一个简单的VAR：</strong>写下方程，理解每个系数的含义。</li>
+
+                <li data-lang="en"><strong>Estimate a VAR:</strong> Use OLS on each equation separately. Choose lag length with AIC/BIC.</li>
+                <li data-lang="zh"><strong>估计一个VAR：</strong>对每个方程分别使用OLS。用AIC/BIC选择滞后长度。</li>
+
+                <li data-lang="en"><strong>Compute impulse response functions:</strong> Shock one variable and trace how all variables respond over time.</li>
+                <li data-lang="zh"><strong>计算脉冲响应函数：</strong>冲击一个变量并追踪所有变量如何随时间响应。</li>
+
+                <li data-lang="en"><strong>Read and interpret IRF plots:</strong> Look for peak responses, decay patterns, and significance (confidence bands including zero).</li>
+                <li data-lang="zh"><strong>读取和解释IRF图：</strong>查找峰值响应、衰减模式和显著性（信心带包括零）。</li>
+
+                <li data-lang="en"><strong>Understand ordering:</strong> Know that your IRF results depend on Cholesky ordering. Choose defensible orderings and test sensitivity.</li>
+                <li data-lang="zh"><strong>理解顺序：</strong>知道你的IRF结果取决于Cholesky顺序。选择可防守的顺序并测试敏感性。</li>
+
+                <li data-lang="en"><strong>Decompose uncertainty:</strong> Use FEVD to understand which shocks drive which variables' variability.</li>
+                <li data-lang="zh"><strong>分解不确定性：</strong>使用FEVD来理解哪些冲击推动哪些变量的可变性。</li>
+
+                <li data-lang="en"><strong>Test predictive relationships:</strong> Use Granger causality to see if one variable's past predicts another's future.</li>
+                <li data-lang="zh"><strong>测试预测关系：</strong>使用Granger因果关系来查看一个变量的过去是否预测另一个的未来。</li>
+
+                <li data-lang="en"><strong>Execute the full workflow:</strong> From data cleaning to sensitivity analysis, you have a blueprint.</li>
+                <li data-lang="zh"><strong>执行完整的工作流：</strong>从数据清洁到敏感性分析，你有一个蓝图。</li>
+            </ul>
+
+            <div class="definition">
+                <div class="definition-title">
+                    <span data-lang="en">Last Thought: Humility</span>
+                    <span data-lang="zh">最后想法：谦虚</span>
+                </div>
+                <p data-lang="en">VARs are powerful tools, but remember: they're statistical models, not crystal balls. Your results depend on assumptions (stationarity, lag length, ordering). Always be transparent about these choices. Always check sensitivity. And remember Granger causality: correlation and predictability are not causality.</p>
+                <p data-lang="zh">VAR是强大的工具，但记住：它们是统计模型，不是水晶球。你的结果取决于假设（平稳性、滞后长度、顺序）。总是对这些选择透明。总是检查敏感性。记住Granger因果关系：相关性和可预测性不是因果关系。</p>
+            </div>
+        </section></section>
+
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langBtns = document.querySelectorAll('.guide-lang-btn');
+        // Exclude buttons from content elements
+        const enElements = document.querySelectorAll('.guide-content [data-lang="en"], .guide-breadcrumb [data-lang="en"], a.guide-back[data-lang="en"], .guide-header [data-lang="en"], .guide-tag [data-lang="en"]');
+        const zhElements = document.querySelectorAll('.guide-content [data-lang="zh"], .guide-breadcrumb [data-lang="zh"], a.guide-back[data-lang="zh"], .guide-header [data-lang="zh"], .guide-tag [data-lang="zh"]');
+        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        setLanguage(savedLang);
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                localStorage.setItem('preferred-lang', lang);
+                setLanguage(lang);
+            });
+        });
+        function setLanguage(lang) {
+            langBtns.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('.guide-lang-btn[data-lang="' + lang + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            if (lang === 'en') {
+                enElements.forEach(el => { el.style.display = ''; });
+                zhElements.forEach(el => { el.style.display = 'none'; });
+                document.body.className = 'en';
+            } else {
+                enElements.forEach(el => { el.style.display = 'none'; });
+                zhElements.forEach(el => { el.style.display = ''; });
+                document.body.className = 'zh';
+            }
+        }
+    });
+    </script>
+
+</body>
+</html>

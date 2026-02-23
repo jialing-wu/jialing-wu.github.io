@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Head Attention: Complete Mathematical Derivation</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'EB Garamond', serif;
+            background: #f8f7f3;
+            color: #2c2c2c;
+            line-height: 1.8;
+        }
+
+        body.zh {
+            font-family: 'Noto Serif SC', 'EB Garamond', serif;
+        }
+
+        .container {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #fafaf9;
+        }
+
+        .header {
+            margin-bottom: 50px;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 30px;
+        }
+
+        .header-tag {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            color: #d4af37;
+            margin-bottom: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3em;
+            font-weight: 300;
+            line-height: 1.2;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .header .subtitle {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+        }
+
+        .header-controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .language-toggle {
+            background: transparent;
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            padding: 8px 16px;
+            border-radius: 3px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        .language-toggle:hover {
+            background: #d4af37;
+            color: #1a1a1a;
+        }
+
+        .back-link {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.9rem;
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #d4af37;
+        }
+
+        .content {
+            font-size: 1.05rem;
+        }
+
+        .section {
+            margin-bottom: 45px;
+        }
+
+        .section h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2em;
+            font-weight: 400;
+            color: #1a1a1a;
+            margin-bottom: 25px;
+            margin-top: 45px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            letter-spacing: -0.01em;
+        }
+
+        .section h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            font-weight: 400;
+            color: #2c2c2c;
+            margin-bottom: 18px;
+            margin-top: 30px;
+            letter-spacing: -0.01em;
+        }
+
+        .section h4 {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #444;
+            margin-bottom: 12px;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        p {
+            margin-bottom: 18px;
+            text-align: justify;
+        }
+
+        .math-box {
+            background: #f0ebe2;
+            border-left: 4px solid #d4af37;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 2px;
+            overflow-x: auto;
+        }
+
+        .math-box.derivation {
+            background: #fff9f0;
+            border-left-color: #e8a76d;
+        }
+
+        .math-box.definition {
+            background: #f5f5f0;
+            border-left-color: #888;
+        }
+
+        .math-box.note {
+            background: #fef9f3;
+            border-left-color: #c9a054;
+        }
+
+        .equation {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.95rem;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+
+        .text-zh {
+            display: none;
+        }
+
+        .text-en {
+            display: block;
+        }
+
+        body.zh .text-zh {
+            display: block;
+        }
+
+        body.zh .text-en {
+            display: none;
+        }
+
+        .lang-label {
+            display: inline;
+        }
+
+        body.zh .lang-label {
+            display: inline;
+        }
+
+        ul, ol {
+            margin: 20px 0 20px 30px;
+            line-height: 1.9;
+        }
+
+        li {
+            margin-bottom: 12px;
+        }
+
+        .highlight {
+            background-color: #fff8dc;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.95em;
+        }
+
+        .derivation-step {
+            margin: 20px 0;
+            padding-left: 20px;
+            border-left: 2px solid #e8a76d;
+        }
+
+        .step-label {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.85rem;
+            color: #c9a054;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+        }
+
+        .toc {
+            background: #fafaf5;
+            border: 1px solid #e0e0e0;
+            padding: 25px;
+            margin-bottom: 40px;
+            border-radius: 2px;
+        }
+
+        .toc h3 {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #666;
+            margin-bottom: 15px;
+            margin-top: 0;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            margin-bottom: 10px;
+        }
+
+        .toc a {
+            color: #d4af37;
+            text-decoration: none;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .toc a:hover {
+            color: #1a1a1a;
+        }
+
+        .footer {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.85rem;
+            color: #999;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .section h2 {
+                font-size: 1.5em;
+            }
+
+            .section h3 {
+                font-size: 1.2em;
+            }
+
+            .container {
+                padding: 25px 15px;
+            }
+        }
+
+        /* MathJax overflow handling */
+        .MathJax {
+            overflow-x: auto;
+        }
+
+        .mjx-chtml {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="en">
+    <div class="container">
+        <div class="header">
+            <div class="header-tag">
+                <span class="text-en">ADVANCED · PROOF & DERIVATION</span>
+                <span class="text-zh">进阶 · 证明与推导</span>
+            </div>
+            <h1>
+                <span class="text-en">Multi-Head Attention:<br>Complete Mathematical Derivation</span>
+                <span class="text-zh">多头注意力机制：<br>完整数学推导</span>
+            </h1>
+            <p class="subtitle">
+                <span class="text-en">Foundations of transformer architecture from first principles</span>
+                <span class="text-zh">从第一原理出发的Transformer架构基础</span>
+            </p>
+
+            <div class="header-controls">
+                <button class="language-toggle" onclick="toggleLanguage()">
+                    <span class="text-en">中文 (ZH)</span>
+                    <span class="text-zh">English (EN)</span>
+                </button>
+                <a href="../llm.html" class="back-link">
+                    <span class="text-en">← Back to LLM Methods</span>
+                    <span class="text-zh">← 返回LLM方法</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="toc">
+            <h3>
+                <span class="text-en">Contents</span>
+                <span class="text-zh">目录</span>
+            </h3>
+            <ul>
+                <li><a href="#scaled-dot-product">
+                    <span class="text-en">Scaled Dot-Product Attention</span>
+                    <span class="text-zh">缩放点积注意力</span>
+                </a></li>
+                <li><a href="#variance-analysis">
+                    <span class="text-en">Variance Analysis: Why Scale by √d_k</span>
+                    <span class="text-zh">方差分析：为什么要缩放√d_k</span>
+                </a></li>
+                <li><a href="#gradient-derivation">
+                    <span class="text-en">Gradient Derivation</span>
+                    <span class="text-zh">梯度推导</span>
+                </a></li>
+                <li><a href="#multihead">
+                    <span class="text-en">Multi-Head Attention Architecture</span>
+                    <span class="text-zh">多头注意力架构</span>
+                </a></li>
+                <li><a href="#positional-encoding">
+                    <span class="text-en">Positional Encoding Mathematics</span>
+                    <span class="text-zh">位置编码数学</span>
+                </a></li>
+                <li><a href="#self-vs-cross">
+                    <span class="text-en">Self-Attention vs Cross-Attention</span>
+                    <span class="text-zh">自注意力与交叉注意力</span>
+                </a></li>
+                <li><a href="#complexity">
+                    <span class="text-en">Computational Complexity Analysis</span>
+                    <span class="text-zh">计算复杂性分析</span>
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="content">
+
+            <!-- SECTION 1: SCALED DOT-PRODUCT ATTENTION -->
+            <div class="section" id="scaled-dot-product">
+                <h2>
+                    <span class="text-en">1. Scaled Dot-Product Attention</span>
+                    <span class="text-zh">1. 缩放点积注意力</span>
+                </h2>
+
+                <p>
+                    <span class="text-en">Attention is a mechanism that learns to selectively focus on relevant information. The scaled dot-product attention function computes a weighted sum of values based on the similarity between queries and keys.</span>
+                    <span class="text-zh">注意力是一种学习有选择地关注相关信息的机制。缩放点积注意力函数根据查询和键之间的相似性计算值的加权和。</span>
+                </p>
+
+                <h3>
+                    <span class="text-en">Definition</span>
+                    <span class="text-zh">定义</span>
+                </h3>
+
+                <div class="math-box definition">
+                    <div class="equation">$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$</div>
+                </div>
+
+                <p>
+                    <span class="text-en">Where:</span>
+                    <span class="text-zh">其中：</span>
+                </p>
+                <ul>
+                    <li><span class="text-en"><span class="highlight">Q</span> ∈ ℝ^(n×d_k): Query matrix</span>
+                        <span class="text-zh"><span class="highlight">Q</span> ∈ ℝ^(n×d_k): 查询矩阵</span></li>
+                    <li><span class="text-en"><span class="highlight">K</span> ∈ ℝ^(m×d_k): Key matrix</span>
+                        <span class="text-zh"><span class="highlight">K</span> ∈ ℝ^(m×d_k): 键矩阵</span></li>
+                    <li><span class="text-en"><span class="highlight">V</span> ∈ ℝ^(m×d_v): Value matrix</span>
+                        <span class="text-zh"><span class="highlight">V</span> ∈ ℝ^(m×d_v): 值矩阵</span></li>
+                    <li><span class="text-en"><span class="highlight">d_k</span>: Dimension of keys (typically d_model / num_heads)</span>
+                        <span class="text-zh"><span class="highlight">d_k</span>: 键的维度（通常为d_model / num_heads）</span></li>
+                </ul>
+
+                <h3>
+                    <span class="text-en">Step-by-Step Computation</span>
+                    <span class="text-zh">分步计算</span>
+                </h3>
+
+                <div class="derivation-step">
+                    <div class="step-label">
+                        <span class="text-en">Step 1: Compute Attention Scores</span>
+                        <span class="text-zh">步骤1：计算注意力分数</span>
+                    </div>
+                    <div class="math-box">
+                        <div class="equation">$$S = QK^T \in \mathbb{R}^{n \times m}$$</div>
+                        <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                            <span class="text-en">Each element S_{ij} = ⟨q_i, k_j⟩ measures the similarity between query i and key j.</span>
+                            <span class="text-zh">每个元素S_{ij} = ⟨q_i, k_j⟩测量查询i和键j之间的相似性。</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="step-label">
+                        <span class="text-en">Step 2: Scale by √d_k</span>
+                        <span class="text-zh">步骤2：缩放√d_k</span>
+                    </div>
+                    <div class="math-box">
+                        <div class="equation">$$\tilde{S} = \frac{S}{\sqrt{d_k}} = \frac{QK^T}{\sqrt{d_k}}$$</div>
+                        <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                            <span class="text-en">This prevents attention scores from becoming too large, which would cause the softmax gradient to vanish.</span>
+                            <span class="text-zh">这防止注意力分数变得太大，这会导致softmax梯度消失。</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="step-label">
+                        <span class="text-en">Step 3: Apply Softmax</span>
+                        <span class="text-zh">步骤3：应用Softmax</span>
+                    </div>
+                    <div class="math-box">
+                        <div class="equation">$$A = \text{softmax}\left(\tilde{S}\right) \in \mathbb{R}^{n \times m}$$</div>
+                        <div class="equation">$$A_{ij} = \frac{\exp(\tilde{S}_{ij})}{\sum_{k=1}^{m} \exp(\tilde{S}_{ik})}$$</div>
+                        <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                            <span class="text-en">Each row of A represents a probability distribution over the m keys, summing to 1.</span>
+                            <span class="text-zh">A的每一行代表m个键上的概率分布，求和为1。</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="step-label">
+                        <span class="text-en">Step 4: Weighted Sum of Values</span>
+                        <span class="text-zh">步骤4：值的加权和</span>
+                    </div>
+                    <div class="math-box">
+                        <div class="equation">$$O = AV \in \mathbb{R}^{n \times d_v}$$</div>
+                        <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                            <span class="text-en">The output is a weighted combination of value vectors, where weights A_{ij} determine how much each value contributes to output i.</span>
+                            <span class="text-zh">输出是值向量的加权组合，其中权重A_{ij}确定每个值对输出i的贡献程度。</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: VARIANCE ANALYSIS -->
+            <div class="section" id="variance-analysis">
+                <h2>
+                    <span class="text-en">2. Variance Analysis: Why Scale by √d_k?</span>
+                    <span class="text-zh">2. 方差分析：为什么要缩放√d_k？</span>
+                </h2>
+
+                <p>
+                    <span class="text-en">The scaling factor is not arbitrary. It emerges from analyzing the variance of dot products between random vectors.</span>
+                    <span class="text-zh">缩放因子不是任意的。它来自于随机向量之间点积方差的分析。</span>
+                </p>
+
+                <h3>
+                    <span class="text-en">Variance of Dot Products</span>
+                    <span class="text-zh">点积的方差</span>
+                </h3>
+
+                <p>
+                    <span class="text-en">Consider two independent random vectors <span class="highlight">q</span> and <span class="highlight">k</span>, both with dimension d_k, where each element is drawn from a standard normal distribution 𝒩(0,1).</span>
+                    <span class="text-zh">考虑两个独立的随机向量<span class="highlight">q</span>和<span class="highlight">k</span>，两者维度为d_k，其中每个元素都从标准正态分布𝒩(0,1)中抽取。</span>
+                </p>
+
+                <div class="math-box derivation">
+                    <div class="step-label">
+                        <span class="text-en">Variance Calculation</span>
+                        <span class="text-zh">方差计算</span>
+                    </div>
+                    <div class="equation">$$q, k \sim \mathcal{N}(0, 1)^{d_k}$$</div>
+                    <div class="equation">$$\text{Var}(\langle q, k \rangle) = \mathbb{E}[\langle q, k \rangle^2] - (\mathbb{E}[\langle q, k \rangle])^2$$</div>
+                </div>
+
+                <p>
+                    <span class="text-en">Since q and k are zero-mean, E[⟨q,k⟩] = 0. The variance simplifies to:</span>
+                    <span class="text-zh">由于q和k是零均值，E[⟨q,k⟩] = 0。方差简化为：</span>
+                </p>
+
+                <div class="math-box">
+                    <div class="equation">$$\text{Var}(\langle q, k \rangle) = \mathbb{E}[\langle q, k \rangle^2] = \mathbb{E}\left[\left(\sum_{i=1}^{d_k} q_i k_i\right)^2\right]$$</div>
+                </div>
+
+                <p>
+                    <span class="text-en">Expanding the square and using independence:</span>
+                    <span class="text-zh">展开平方并使用独立性：</span>
+                </p>
+
+                <div class="math-box">
+                    <div class="equation">$$= \mathbb{E}\left[\sum_{i=1}^{d_k} q_i^2 k_i^2 + \sum_{i \neq j} q_i q_j k_i k_j\right]$$</div>
+                    <div class="equation">$$= \sum_{i=1}^{d_k} \mathbb{E}[q_i^2]\mathbb{E}[k_i^2] + \sum_{i \neq j} \mathbb{E}[q_i]\mathbb{E}[q_j]\mathbb{E}[k_i]\mathbb{E}[k_j]$$</div>
+                </div>
+
+                <p>
+                    <span class="text-en">Since q_i, k_i ~ 𝒩(0,1), we have E[q_i²] = E[k_i²] = 1, and E[q_i] = E[k_i] = 0:</span>
+                    <span class="text-zh">由于q_i, k_i ~ 𝒩(0,1)，我们有E[q_i²] = E[k_i²] = 1，且E[q_i] = E[k_i] = 0：</span>
+                </p>
+
+                <div class="math-box">
+                    <div class="equation">$$\text{Var}(\langle q, k \rangle) = d_k \cdot 1 \cdot 1 = d_k$$</div>
+                </div>
+
+                <h3>
+                    <span class="text-en">Effect of Scaling</span>
+                    <span class="text-zh">缩放的效果</span>
+                </h3>
+
+                <div class="math-box note">
+                    <div class="equation">$$\text{Var}\left(\frac{\langle q, k \rangle}{\sqrt{d_k}}\right) = \frac{1}{d_k} \text{Var}(\langle q, k \rangle) = \frac{d_k}{d_k} = 1$$</div>
+                </div>
+
+                <p>
+                    <span class="text-en">By scaling attention scores by 1/√d_k, we ensure that regardless of the embedding dimension, attention logits maintain stable variance. This prevents extreme values that would cause softmax to saturate, leading to vanishing gradients during backpropagation.</span>
+                    <span class="text-zh">通过按1/√d_k缩放注意力分数，我们确保无论嵌入维度如何，注意力logits都能保持稳定的方差。这防止了极端值导致softmax饱和，从而在反向传播过程中导致梯度消失。</span>
+                </p>
+            </div>
+
+            <!-- SECTION 3: GRADIENT DERIVATION -->
+            <div class="section" id="gradient-derivation">
+                <h2>
+                    <span class="text-en">3. Gradient Derivation</span>
+                    <span class="text-zh">3. 梯度推导</span>
+                </h2>
+
+                <p>
+                    <span class="text-en">Computing gradients with respect to Q, K, and V is essential for training. We derive each using the chain rule.</span>
+                    <span class="text-zh">计算关于Q、K和V的梯度对于训练至关重要。我们使用链式法则推导每个梯度。</span>
+                </p>
+
+                <h3>
+                    <span class="text-en">Forward Pass Review</span>
+                    <span class="text-zh">前向传播回顾</span>
+                </h3>
+
+                <div class="math-box">
+                    <div class="equation">$$S = QK^T$$</div>
+                    <div class="equation">$$\tilde{S} = \frac{S}{\sqrt{d_k}}$$</div>
+                    <div class="equation">$$A = \text{softmax}(\tilde{S})$$</div>
+                    <div class="equation">$$O = AV$$</div>
+                </div>
+
+                <h3>
+                    <span class="text-en">Gradient w.r.t. V</span>
+                    <span class="text-zh">关于V的梯度</span>
+                </h3>
+
+                <div class="derivation-step">
+                    <div class="math-box">
+                        <div class="equation">$$\frac{\partial \mathcal{L}}{\partial V} = \frac{\partial \mathcal{L}}{\partial O} \cdot \frac{\partial O}{\partial V} = A^T \frac{\partial \mathcal{L}}{\partial O}$$</div>
+                    </div>
+                    <p style="margin-top: 15px;">
+                        <span class="text-en">Since O = AV (matrix multiplication), ∂O/∂V = A^T. This gradient is straightforward: the contribution to each value is weighted by its attention weights.</span>
+                        <span class="text-zh">由于O = AV（矩阵乘法），∂O/∂V = A^T。这个梯度很直接：每个值的贡献由其注意力权重加权。</span>
+                    </p>
+                </div>
+
+                <h3>
+                    <span class="text-en">Gradient w.r.t. A (Attention Matrix)</span>
+                    <span class="text-zh">关于A（注意力矩阵）的梯度</span>
+                </h3>
+
+                <div class="derivation-step">
+                    <div class="math-box">
+                        <div class="equation">$$\frac{\partial \mathcal{L}}{\partial A} = \frac{\partial \mathcal{L}}{\partial O} \cdot \frac{\partial O}{\partial A} = \frac{\partial \mathcal{L}}{\partial O} \cdot V^T$$</div>
+                    </div>
+                </div>
+
+                <h3>
+                    <span class="text-en">Gradient of Softmax</span>
+                    <span class="text-zh">Softmax的梯度</span>
+                </h3>
+
+                <p>
+                    <span class="text-en">The softmax derivative is more complex. For a softmax function:</span>
+                    <span class="text-zh">softmax导数更复杂。对于softmax函数：</span>
+                </p>
+
+                <div class="math-box">
+                    <div class="equation">$$\frac{\partial A_{ij}}{\partial \tilde{S}_{kl}} = \delta_{ik}(A_{ij}\delta_{jl} - A_{ij}A_{il})$$</div>
+                </div>
+
+                <p>
+                    <span class="text-en">Where δ is the Kronecker delta. For elements in the same row (i=k), this simplifies to:</span>
+                    <span class="text-zh">其中δ是Kronecker增量。对于同一行中的元素（i=k），这简化为：</span>
+                </p>
+
+                <div class="math-box">
+                    <div class="equation">$$\frac{\partial}{\partial \tilde{S}_{ij}} = A_{ij}(\delta_{jj'} - A_{ij'})$$</div>
+                </div>
+
+                <h3>
+                    <span class="text-en">Gradient w.r.t. Scaled Scores</span>
+                    <span class="text-zh">关于缩放分数的梯度</span>
+                </h3>
+
+                <div class="derivation-step">
+                    <div class="math-box">
+                        <div class="equation">$$\frac{\partial \mathcal{L}}{\partial \tilde{S}} = \frac{\partial \mathcal{L}}{\partial A} \odot A \left(I - A\right)$$</div>
+                    </div>
+                    <p style="margin-top: 15px;">
+                        <span class="text-en">Where ⊙ denotes element-wise multiplication (Hadamard product).</span>
+                        <span class="text-zh">其中⊙表示逐元素乘法（Hadamard乘积）。</span>
+                    </p>
+                </div>
+
+                <h3>
+                    <span class="text-en">Gradient w.r.t. Q and K</span>
+                    <span class="text-zh">关于Q和K的梯度</span>
+                </h3>
+
+                <p>
+                    <span class="text-en">Since <span class="highlight">S = QK^T</span> and <span class="highlight">∂S/∂Q = K</span>:</span>
+                    <span class="text-zh">由于<span class="highlight">S = QK^T</span>且<span class="highlight">∂S/∂Q = K</span>：</span>
+                </p>
+
+                <div class="derivation-step">
+                    <div class="math-box">
+                        <div class="equation">$$\frac{\partial \mathcal{L}}{\partial \tilde{S}} = \frac{1}{\sqrt{d_k}} \frac{\partial \mathcal{L}}{\partial S}$$</div>
+                    </div>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="math-box">
+                        <div class="equation">$$\frac{\partial \mathcal{L}}{\partial Q} = \frac{1}{\sqrt{d_k}} \frac{\partial \mathcal{L}}{\partial S} K$$</div>
+                        <div class="equation">$$\frac{\partial \mathcal{L}}{\partial K} = \frac{1}{\sqrt{d_k}} Q^T \frac{\partial \mathcal{L}}{\partial S}$$</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 4: MULTI-HEAD ATTENTION -->
+            <div class="section" id="multihead">
+                <h2>
+                    <span class="text-en">4. Multi-Head Attention Architecture</span>
+                    <span class="text-zh">4. 多头注意力架构</span>
+                </h2>
+
+                <p>
+                    <span class="text-en">Single-head attention may limit the model's ability to attend to information from different representation subspaces. Multi-head attention enables simultaneous attention to multiple subspaces.</span>
+                    <span class="text-zh">单头注意力可能限制了模型从不同表示子空间关注信息的能力。多头注意力使同时关注多个子空间成为可能。</span>
+                </p>
+
+                <h3>
+                    <span class="text-en">Architecture Definition</span>
+                    <span class="text-zh">架构定义</span>
+                </h3>
+
+                <div class="math-box definition">
+                    <div class="equation">$$\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \ldots, \text{head}_h)W^O$$</div>
+                    <div class="equation">$$\text{where } \text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)$$</div>
+                </div>
+
+                <p>
+                    <span class="text-en">Where:</span>
+                    <span class="text-zh">其中：</span>
+                </p>
+                <ul>
+                    <li><span class="text-en"><span class="highlight">h</span>: Number of attention heads (typically 8, 12, or 16)</span>
+                        <span class="text-zh"><span class="highlight">h</span>: 注意力头数（通常为8、12或16）</span></li>
+                    <li><span class="text-en"><span class="highlight">d_k = d_v = d_model / h</span>: Dimension of each head</span>
+                        <span class="text-zh"><span class="highlight">d_k = d_v = d_model / h</span>: 每个头的维度</span></li>
+                    <li><span class="text-en"><span class="highlight">W_i^Q, W_i^K, W_i^V</span> ∈ ℝ^(d_model × d_k): Projection matrices for head i</span>
+                        <span class="text-zh"><span class="highlight">W_i^Q, W_i^K, W_i^V</span> ∈ ℝ^(d_model × d_k): 头i的投影矩阵</span></li>
+                    <li><span class="text-en"><span class="highlight">W^O</span> ∈ ℝ^(h·d_v × d_model): Output projection</span>
+                        <span class="text-zh"><span class="highlight">W^O</span> ∈ ℝ^(h·d_v × d_model): 输出投影</span></li>
+                </ul>
+
+                <h3>
+                    <span class="text-en">Dimension Analysis</span>
+                    <span class="text-zh">维度分析</span>
+                </h3>
+
+                <div class="math-box note">
+                    <p style="margin-top: 0;">
+                        <span class="text-en">For a transformer with d_model = 512 and h = 8:</span>
+                        <span class="text-zh">对于d_model = 512且h = 8的transformer：</span>
+                    </p>
+                    <div class="equation">$$d_k = d_v = \frac{512}{8} = 64$$</div>
+                    <ul style="margin-bottom: 0;">
+                        <li><span class="text-en">Each W_i^Q, W_i^K, W_i^V has shape 512 × 64</span>
+                            <span class="text-zh">每个W_i^Q, W_i^K, W_i^V的形状为512 × 64</span></li>
+                        <li><span class="text-en">Each head output has shape (batch_size, seq_len, 64)</span>
+                            <span class="text-zh">每个头的输出形状为(batch_size, seq_len, 64)</span></li>
+                        <li><span class="text-en">Concatenated output has shape (batch_size, seq_len, 512)</span>
+                            <span class="text-zh">连接输出的形状为(batch_size, seq_len, 512)</span></li>
+                    </ul>
+                </div>
+
+                <h3>
+                    <span class="text-en">Computational Flow</span>
+                    <span class="text-zh">计算流程</span>
+                </h3>
+
+                <div class="derivation-step">
+                    <div class="step-label">
+                        <span class="text-en">Step 1: Projection</span>
+                        <span class="text-zh">步骤1：投影</span>
+                    </div>
+                    <div class="math-box">
+                        <div class="equation">$$Q_i = QW_i^Q, \quad K_i = KW_i^K, \quad V_i = VW_i^V$$</div>
+                        <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                            <span class="text-en">Project input to each head's subspace. Each projection matrix learns different aspects of the input.</span>
+                            <span class="text-zh">将输入投影到每个头的子空间。每个投影矩阵学习输入的不同方面。</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="step-label">
+                        <span class="text-en">Step 2: Apply Attention</span>
+                        <span class="text-zh">步骤2：应用注意力</span>
+                    </div>
+                    <div class="math-box">
+                        <div class="equation">$$\text{head}_i = \text{Attention}(Q_i, K_i, V_i) = \text{softmax}\left(\frac{Q_i K_i^T}{\sqrt{d_k}}\right)V_i$$</div>
+                        <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                            <span class="text-en">Each head computes attention independently within its subspace.</span>
+                            <span class="text-zh">每个头在其子空间内独立计算注意力。</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="step-label">
+                        <span class="text-en">Step 3: Concatenate</span>
+                        <span class="text-zh">步骤3：连接</span>
+                    </div>
+                    <div class="math-box">
+                        <div class="equation">$$\text{Concat} = [\text{head}_1, \text{head}_2, \ldots, \text{head}_h] \in \mathbb{R}^{n \times (h \cdot d_v)}$$</div>
+                        <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                            <span class="text-en">Concatenate outputs from all heads along the feature dimension.</span>
+                            <span class="text-zh">沿特征维连接所有头的输出。</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="step-label">
+                        <span class="text-en">Step 4: Output Projection</span>
+                        <span class="text-zh">步骤4：输出投影</span>
+                    </div>
+                    <div class="math-box">
+                        <div class="equation">$$\text{MultiHead}(Q,K,V) = \text{Concat} \cdot W^O \in \mathbb{R}^{n \times d_{model}}$$</div>
+                        <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                            <span class="text-en">A learned linear transformation combines information from all heads back to the original dimension.</span>
+                            <span class="text-zh">学习的线性变换将来自所有头的信息组合回原始维度。</span>
+                        </p>
+                    </div>
+                </div>
+
+                <h3>
+                    <span class="text-en">Why Multi-Head Matters</span>
+                    <span class="text-zh">为什么多头很重要</span>
+                </h3>
+
+                <p>
+                    <span class="text-en">Multi-head attention provides:</span>
+                    <span class="text-zh">多头注意力提供：</span>
+                </p>
+                <ul>
+                    <li><span class="text-en"><span class="highlight">Representation Diversity</span>: Different heads can learn different attention patterns (e.g., syntactic vs. semantic)</span>
+                        <span class="text-zh"><span class="highlight">表示多样性</span>：不同的头可以学习不同的注意力模式（例如，句法与语义）</span></li>
+                    <li><span class="text-en"><span class="highlight">Parallel Computation</span>: Heads compute in parallel, enabling efficient computation</span>
+                        <span class="text-zh"><span class="highlight">并行计算</span>：头并行计算，启用高效计算</span></li>
+                    <li><span class="text-en"><span class="highlight">Reduced Complexity per Head</span>: Each head operates on reduced dimension (d_k rather than d_model), lowering per-head computational cost</span>
+                        <span class="text-zh"><span class="highlight">减少每个头的复杂性</span>：每个头在降低的维度上运行（d_k而不是d_model），降低每个头的计算成本</span></li>
+                </ul>
+            </div>
+
+            <!-- SECTION 5: POSITIONAL ENCODING -->
+            <div class="section" id="positional-encoding">
+                <h2>
+                    <span class="text-en">5. Positional Encoding Mathematics</span>
+                    <span class="text-zh">5. 位置编码数学</span>
+                </h2>
+
+                <p>
+                    <span class="text-en">Transformers are permutation-invariant: they treat input sequences identically regardless of token order. Positional encodings inject order information into the model.</span>
+                    <span class="text-zh">Transformer是排列不变的：无论令牌顺序如何，它们都以相同方式处理输入序列。位置编码将顺序信息注入模型中。</span>
+                </p>
+
+                <h3>
+                    <span class="text-en">Sinusoidal Positional Encoding</span>
+                    <span class="text-zh">正弦位置编码</span>
+                </h3>
+
+                <div class="math-box definition">
+                    <div class="equation">$$PE(pos, 2i) = \sin\left(\frac{pos}{10000^{2i/d_{model}}}\right)$$</div>
+                    <div class="equation">$$PE(pos, 2i+1) = \cos\left(\frac{pos}{10000^{2i/d_{model}}}\right)$$</div>
+                    <p style="margin-bottom: 0; margin-top: 15px;">
+                        <span class="text-en">where pos is the position in the sequence and i is the dimension index.</span>
+                        <span class="text-zh">其中pos是序列中的位置，i是维度索引。</span>
+                    </p>
+                </div>
+
+                <h3>
+                    <span class="text-en">Mathematical Properties</span>
+                    <span class="text-zh">数学性质</span>
+                </h3>
+
+                <h4>
+                    <span class="text-en">1. Linear Attention Distance</span>
+                    <span class="text-zh">1. 线性注意力距离</span>
+                </h4>
+
+                <p>
+                    <span class="text-en">A key property is that PE(pos+k) can be expressed as a linear function of PE(pos):</span>
+                    <span class="text-zh">一个关键性质是PE(pos+k)可以表示为PE(pos)的线性函数：</span>
+                </p>
+
+                <div class="math-box">
+                    <div class="equation">$$PE(pos+k, i) = PE(pos, i)\cos(k\omega_i) + PE(pos', i)\sin(k\omega_i)$$</div>
+                    <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                        <span class="text-en">where ω_i = 1/10000^(2i/d_model) and pos' is the complementary dimension. This allows the model to learn relative positions efficiently.</span>
+                        <span class="text-zh">其中ω_i = 1/10000^(2i/d_model)，pos'是补充维度。这允许模型有效地学习相对位置。</span>
+                    </p>
+                </div>
+
+                <h4>
+                    <span class="text-en">2. Periodicity Analysis</span>
+                    <span class="text-zh">2. 周期性分析</span>
+                </h4>
+
+                <p>
+                    <span class="text-en">Each sinusoidal component has a period that increases with i:</span>
+                    <span class="text-zh">每个正弦成分的周期随i增加：</span>
+                </p>
+
+                <div class="math-box">
+                    <div class="equation">$$T_i = 2\pi \cdot 10000^{2i/d_{model}}$$</div>
+                </div>
+
+                <p>
+                    <span class="text-en">For i = 0, T_0 ≈ 6.28 (cycle every ~6 positions). For i = d_model/2, T_(d_model/2) ≈ 2π·10000 (very long period).</span>
+                    <span class="text-zh">对于i = 0，T_0 ≈ 6.28（每~6个位置循环一次）。对于i = d_model/2，T_(d_model/2) ≈ 2π·10000（非常长的周期）。</span>
+                </p>
+
+                <h4>
+                    <span class="text-en">3. Uniqueness</span>
+                    <span class="text-zh">3. 唯一性</span>
+                </h4>
+
+                <p>
+                    <span class="text-en">Different positions have unique encoding vectors (within practical sequence lengths), allowing the model to distinguish positions:</span>
+                    <span class="text-zh">不同的位置具有唯一的编码向量（在实际序列长度内），允许模型区分位置：</span>
+                </p>
+
+                <div class="math-box note">
+                    <p style="margin-top: 0;">
+                        <span class="text-en">For a d_model = 512 dimension and sequence length ≤ 5000, PE vectors are nearly orthogonal, ensuring position distinction.</span>
+                        <span class="text-zh">对于d_model = 512维度和序列长度≤ 5000，PE向量几乎正交，确保位置区分。</span>
+                    </p>
+                </div>
+
+                <h3>
+                    <span class="text-en">Rotary Position Embedding (RoPE)</span>
+                    <span class="text-zh">旋转位置嵌入（RoPE）</span>
+                </h3>
+
+                <p>
+                    <span class="text-en">RoPE, introduced in recent models (e.g., GPT-Neo-X, LLaMA), encodes position by rotating query and key vectors in their 2D subspaces.</span>
+                    <span class="text-zh">RoPE在最近的模型（例如GPT-Neo-X、LLaMA）中引入，通过在其2D子空间中旋转查询和键向量来编码位置。</span>
+                </p>
+
+                <div class="math-box definition">
+                    <p style="margin-top: 0; margin-bottom: 10px;">
+                        <span class="text-en"><span class="highlight">RoPE Rotation Matrix</span> for dimension pair (2i, 2i+1):</span>
+                        <span class="text-zh"><span class="highlight">RoPE旋转矩阵</span>（维度对(2i, 2i+1)）：</span>
+                    </p>
+                    <div class="equation">$$\mathcal{R}_m(\theta_i) = \begin{pmatrix} \cos(m\theta_i) & -\sin(m\theta_i) \\ \sin(m\theta_i) & \cos(m\theta_i) \end{pmatrix}$$</div>
+                    <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                        <span class="text-en">where θ_i = 10000^(-2i/d_model) and m is the position index.</span>
+                        <span class="text-zh">其中θ_i = 10000^(-2i/d_model)，m是位置索引。</span>
+                    </p>
+                </div>
+
+                <h4>
+                    <span class="text-en">RoPE Application</span>
+                    <span class="text-zh">RoPE应用</span>
+                </h4>
+
+                <p>
+                    <span class="text-en">For query and key vectors, RoPE applies rotations:</span>
+                    <span class="text-zh">对于查询和键向量，RoPE应用旋转：</span>
+                </p>
+
+                <div class="math-box">
+                    <div class="equation">$$q'_m = \mathcal{R}_m(\theta) q_m$$</div>
+                    <div class="equation">$$k'_n = \mathcal{R}_n(\theta) k_n$$</div>
+                </div>
+
+                <p>
+                    <span class="text-en">The attention score then becomes:</span>
+                    <span class="text-zh">注意力分数随后变成：</span>
+                </p>
+
+                <div class="math-box">
+                    <div class="equation">$$q'_m \cdot k'_n = q_m \cdot \mathcal{R}_{n-m}(\theta) k_n$$</div>
+                </div>
+
+                <p>
+                    <span class="text-en">Critically, the dot product depends only on the <span class="highlight">relative position</span> (n - m), not absolute positions. This enables:
+                    <ul style="margin-top: 10px;">
+                        <li><span class="text-en">Generalization to longer sequences during inference</span>
+                            <span class="text-zh">在推理过程中泛化到更长的序列</span></li>
+                        <li><span class="text-en">Natural handling of relative distance rather than absolute position</span>
+                            <span class="text-zh">自然处理相对距离而不是绝对位置</span></li>
+                    </ul></span>
+                    <span class="text-zh">关键的是，点积仅取决于<span class="highlight">相对位置</span>（n - m），而不是绝对位置。这启用：
+                    <ul style="margin-top: 10px;">
+                        <li>在推理过程中泛化到更长的序列</li>
+                        <li>自然处理相对距离而不是绝对位置</li>
+                    </ul></span>
+                </p>
+
+                <h4>
+                    <span class="text-en">RoPE vs. Sinusoidal PE</span>
+                    <span class="text-zh">RoPE与正弦PE对比</span>
+                </h4>
+
+                <div class="math-box note">
+                    <ul style="margin-top: 0; margin-bottom: 0;">
+                        <li><span class="text-en"><span class="highlight">Sinusoidal</span>: Absolute position encoding, added to embeddings</span>
+                            <span class="text-zh"><span class="highlight">正弦</span>：绝对位置编码，添加到嵌入中</span></li>
+                        <li><span class="text-en"><span class="highlight">RoPE</span>: Relative position information, applied via rotation during attention computation</span>
+                            <span class="text-zh"><span class="highlight">RoPE</span>：相对位置信息，在注意力计算期间通过旋转应用</span></li>
+                        <li><span class="text-en"><span class="highlight">RoPE Advantage</span>: Better extrapolation to longer sequences, more explicit relative position encoding</span>
+                            <span class="text-zh"><span class="highlight">RoPE优势</span>：更好地外推到更长的序列，更明确的相对位置编码</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SECTION 6: SELF VS CROSS ATTENTION -->
+            <div class="section" id="self-vs-cross">
+                <h2>
+                    <span class="text-en">6. Self-Attention vs. Cross-Attention</span>
+                    <span class="text-zh">6. 自注意力与交叉注意力</span>
+                </h2>
+
+                <p>
+                    <span class="text-en">While the core attention mechanism is identical, self-attention and cross-attention differ in how Q, K, V are sourced, enabling different information flows.</span>
+                    <span class="text-zh">虽然核心注意力机制相同，但自注意力和交叉注意力在Q、K、V的源头上有所不同，能够实现不同的信息流。</span>
+                </p>
+
+                <h3>
+                    <span class="text-en">Self-Attention</span>
+                    <span class="text-zh">自注意力</span>
+                </h3>
+
+                <div class="math-box definition">
+                    <p style="margin-top: 0; margin-bottom: 10px;">
+                        <span class="text-en"><span class="highlight">Query, Key, and Value come from the same input</span>:</span>
+                        <span class="text-zh"><span class="highlight">查询、键和值来自同一输入</span>：</span>
+                    </p>
+                    <div class="equation">$$Q = H W^Q, \quad K = H W^K, \quad V = H W^V$$</div>
+                    <div class="equation">$$\text{Attention}(H) = \text{softmax}\left(\frac{(HW^Q)(HW^K)^T}{\sqrt{d_k}}\right)HW^V$$</div>
+                    <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                        <span class="text-en">where H ∈ ℝ^(n×d_model) is the hidden state.</span>
+                        <span class="text-zh">其中H ∈ ℝ^(n×d_model)是隐藏状态。</span>
+                    </p>
+                </div>
+
+                <h4>
+                    <span class="text-en">Information Flow</span>
+                    <span class="text-zh">信息流</span>
+                </h4>
+
+                <p>
+                    <span class="text-en">In self-attention, each position can attend to all other positions in the same sequence, enabling:</span>
+                    <span class="text-zh">在自注意力中，每个位置可以关注同一序列中的所有其他位置，从而实现：</span>
+                </p>
+                <ul>
+                    <li><span class="text-en">Contextual understanding within a single sequence</span>
+                        <span class="text-zh">单个序列内的上下文理解</span></li>
+                    <li><span class="text-en">Bidirectional context (in non-causal settings)</span>
+                        <span class="text-zh">双向上下文（在非因果设置中）</span></li>
+                    <li><span class="text-en">Direct inter-token relationships</span>
+                        <span class="text-zh">直接的令牌间关系</span></li>
+                </ul>
+
+                <h3>
+                    <span class="text-en">Cross-Attention</span>
+                    <span class="text-zh">交叉注意力</span>
+                </h3>
+
+                <div class="math-box definition">
+                    <p style="margin-top: 0; margin-bottom: 10px;">
+                        <span class="text-en"><span class="highlight">Query comes from one sequence, Key and Value from another</span>:</span>
+                        <span class="text-zh"><span class="highlight">查询来自一个序列，键和值来自另一个</span>：</span>
+                    </p>
+                    <div class="equation">$$Q = H_{target} W^Q$$</div>
+                    <div class="equation">$$K = H_{source} W^K, \quad V = H_{source} W^V$$</div>
+                    <div class="equation">$$\text{CrossAttention}(H_{target}, H_{source}) = \text{softmax}\left(\frac{(H_{target}W^Q)(H_{source}W^K)^T}{\sqrt{d_k}}\right)H_{source}W^V$$</div>
+                </div>
+
+                <h4>
+                    <span class="text-en">Information Flow</span>
+                    <span class="text-zh">信息流</span>
+                </h4>
+
+                <p>
+                    <span class="text-en">Cross-attention enables information transfer between two different sequences:</span>
+                    <span class="text-zh">交叉注意力能够在两个不同的序列之间进行信息传输：</span>
+                </p>
+                <ul>
+                    <li><span class="text-en">Encoder-decoder architectures: Decoder attends to encoder outputs</span>
+                        <span class="text-zh">编码器-解码器架构：解码器关注编码器输出</span></li>
+                    <li><span class="text-en">Image-text models: Text tokens attend to image patches</span>
+                        <span class="text-zh">图像文本模型：文本令牌关注图像补丁</span></li>
+                    <li><span class="text-en">Retrieval-augmented generation: Query attends to retrieved documents</span>
+                        <span class="text-zh">检索增强生成：查询关注检索到的文档</span></li>
+                </ul>
+
+                <h3>
+                    <span class="text-en">Mathematical Distinction</span>
+                    <span class="text-zh">数学区分</span>
+                </h3>
+
+                <div class="math-box note">
+                    <div style="margin-top: 0;">
+                        <p style="margin-bottom: 8px;">
+                            <span class="text-en"><span class="highlight">Self-Attention</span>: Symmetric dependency</span>
+                            <span class="text-zh"><span class="highlight">自注意力</span>：对称依赖</span>
+                        </p>
+                        <div class="equation">$$\text{Attention}(H,H,H)$$</div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <p style="margin-bottom: 8px;">
+                            <span class="text-en"><span class="highlight">Cross-Attention</span>: Asymmetric dependency</span>
+                            <span class="text-zh"><span class="highlight">交叉注意力</span>：非对称依赖</span>
+                        </p>
+                        <div class="equation">$$\text{Attention}(H_1, H_2, H_2) \neq \text{Attention}(H_2, H_1, H_1)$$</div>
+                    </div>
+                </div>
+
+                <p>
+                    <span class="text-en">This asymmetry allows the model to explicitly control which sequence provides context and which sequence is being updated.</span>
+                    <span class="text-zh">这种不对称允许模型明确控制哪个序列提供上下文，哪个序列正在被更新。</span>
+                </p>
+            </div>
+
+            <!-- SECTION 7: COMPLEXITY ANALYSIS -->
+            <div class="section" id="complexity">
+                <h2>
+                    <span class="text-en">7. Computational Complexity Analysis</span>
+                    <span class="text-zh">7. 计算复杂性分析</span>
+                </h2>
+
+                <p>
+                    <span class="text-en">Understanding the computational cost of attention is critical for designing efficient models, especially for long sequences.</span>
+                    <span class="text-zh">理解注意力的计算成本对于设计高效模型至关重要，特别是对于长序列。</span>
+                </p>
+
+                <h3>
+                    <span class="text-en">Standard Attention Complexity</span>
+                    <span class="text-zh">标准注意力复杂性</span>
+                </h3>
+
+                <div class="math-box definition">
+                    <p style="margin-top: 0; margin-bottom: 10px;">
+                        <span class="text-en"><span class="highlight">Time Complexity: O(n²d_k)</span></span>
+                        <span class="text-zh"><span class="highlight">时间复杂性: O(n²d_k)</span></span>
+                    </p>
+                    <div class="equation">$$QK^T: \quad O(n \times d_k \times n) = O(n^2 d_k)$$</div>
+                    <div class="equation">$$\text{softmax}(QK^T) \cdot V: \quad O(n \times n \times d_v) = O(n^2 d_v)$$</div>
+                    <div class="equation">$$\text{Total}: \quad O(n^2 d_k) + O(n^2 d_v) = O(n^2 d_{model})$$</div>
+                </div>
+
+                <h4>
+                    <span class="text-en">Memory Complexity</span>
+                    <span class="text-zh">内存复杂性</span>
+                </h4>
+
+                <div class="math-box">
+                    <p style="margin-top: 0; margin-bottom: 10px;">
+                        <span class="text-en"><span class="highlight">Space Complexity: O(n² + nd_model)</span></span>
+                        <span class="text-zh"><span class="highlight">空间复杂性: O(n² + nd_model)</span></span>
+                    </p>
+                    <ul style="margin-bottom: 0;">
+                        <li><span class="text-en">Attention matrix A: O(n²)</span>
+                            <span class="text-zh">注意力矩阵A: O(n²)</span></li>
+                        <li><span class="text-en">Input/Output: O(nd_model)</span>
+                            <span class="text-zh">输入/输出: O(nd_model)</span></li>
+                        <li><span class="text-en">Intermediate: O(n²) dominates for long sequences</span>
+                            <span class="text-zh">中间结果: O(n²)对于长序列占主导</span></li>
+                    </ul>
+                </div>
+
+                <h3>
+                    <span class="text-en">Why O(n²) is Problematic</span>
+                    <span class="text-zh">为什么O(n²)是问题</span>
+                </h3>
+
+                <p>
+                    <span class="text-en">For sequence length n = 4096 with d_model = 512:</span>
+                    <span class="text-zh">对于序列长度n = 4096，d_model = 512：</span>
+                </p>
+
+                <div class="math-box note">
+                    <ul style="margin-top: 0; margin-bottom: 0;">
+                        <li><span class="text-en">Attention matrix: 4096² × 2 bytes (float16) = 64 MB per head</span>
+                            <span class="text-zh">注意力矩阵: 4096² × 2字节 (float16) = 每个头64 MB</span></li>
+                        <li><span class="text-en">For 12 heads: 768 MB just for attention weights</span>
+                            <span class="text-zh">对于12个头: 仅注意力权重就需要768 MB</span></li>
+                        <li><span class="text-en">With batch size 16: ~12 GB memory for attention alone</span>
+                            <span class="text-zh">批大小为16: 仅注意力就需要~12 GB内存</span></li>
+                    </ul>
+                </div>
+
+                <h3>
+                    <span class="text-en">Approaches to Reduce Complexity</span>
+                    <span class="text-zh">降低复杂性的方法</span>
+                </h3>
+
+                <h4>
+                    <span class="text-en">1. Sparse Attention</span>
+                    <span class="text-zh">1. 稀疏注意力</span>
+                </h4>
+
+                <div class="derivation-step">
+                    <p>
+                        <span class="text-en">Restrict attention to local windows instead of all pairs:</span>
+                        <span class="text-zh">将注意力限制在局部窗口而不是所有对：</span>
+                    </p>
+                    <div class="math-box">
+                        <div class="equation">$$\text{Complexity}: \quad O(n \cdot w \cdot d_k)$$</div>
+                        <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                            <span class="text-en">where w is the local window size (e.g., 64 or 128). For w ≪ n, this reduces complexity to linear.</span>
+                            <span class="text-zh">其中w是局部窗口大小（例如64或128）。对于w ≪ n，这将复杂性降低到线性。</span>
+                        </p>
+                    </div>
+                    <p style="margin-top: 10px;">
+                        <span class="text-en"><span class="highlight">Examples</span>: Longformer, BigBird</span>
+                        <span class="text-zh"><span class="highlight">示例</span>: Longformer、BigBird</span>
+                    </p>
+                </div>
+
+                <h4>
+                    <span class="text-en">2. Low-Rank Approximation</span>
+                    <span class="text-zh">2. 低秩近似</span>
+                </h4>
+
+                <div class="derivation-step">
+                    <p>
+                        <span class="text-en">Approximate attention matrix using low-rank decomposition:</span>
+                        <span class="text-zh">使用低秩分解近似注意力矩阵：</span>
+                    </p>
+                    <div class="math-box">
+                        <div class="equation">$$A \approx U V^T$$</div>
+                        <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                            <span class="text-en">where U, V ∈ ℝ^(n×r) with r ≪ n.</span>
+                            <span class="text-zh">其中U, V ∈ ℝ^(n×r)，r ≪ n。</span>
+                        </p>
+                    </div>
+                    <p style="margin-top: 10px;">
+                        <span class="text-en"><span class="highlight">Complexity</span>: O(n·r·d_k) where r is the rank</span>
+                        <span class="text-zh"><span class="highlight">复杂性</span>: O(n·r·d_k)，其中r是秩</span>
+                    </p>
+                </div>
+
+                <h4>
+                    <span class="text-en">3. Linear Attention / Kernel Methods</span>
+                    <span class="text-zh">3. 线性注意力/核方法</span>
+                </h4>
+
+                <div class="derivation-step">
+                    <p>
+                        <span class="text-en">Use feature maps to compute attention implicitly:</span>
+                        <span class="text-zh">使用特征映射隐式计算注意力：</span>
+                    </p>
+                    <div class="math-box">
+                        <div class="equation">$$\text{Attention}(Q,K,V) \approx \frac{(\phi(Q)\phi(K)^T)V}{\phi(Q)(\phi(K)^T \mathbf{1})}$$</div>
+                        <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                            <span class="text-en">where φ is a feature mapping (e.g., ELU, kernel function).</span>
+                            <span class="text-zh">其中φ是特征映射（例如ELU、核函数）。</span>
+                        </p>
+                    </div>
+                    <p style="margin-top: 10px;">
+                        <span class="text-en"><span class="highlight">Complexity</span>: O(n·d_k·d_v)</span>
+                        <span class="text-zh"><span class="highlight">复杂性</span>: O(n·d_k·d_v)</span>
+                    </p>
+                    <p>
+                        <span class="text-en"><span class="highlight">Examples</span>: Performer, Linear Transformer</span>
+                        <span class="text-zh"><span class="highlight">示例</span>: Performer、Linear Transformer</span>
+                    </p>
+                </div>
+
+                <h4>
+                    <span class="text-en">4. Flash Attention (Algorithmic Optimization)</span>
+                    <span class="text-zh">4. Flash Attention（算法优化）</span>
+                </h4>
+
+                <div class="derivation-step">
+                    <p>
+                        <span class="text-en">Keep attention computation in GPU fast memory (SRAM) instead of global memory:</span>
+                        <span class="text-zh">将注意力计算保留在GPU快速内存（SRAM）中，而不是全局内存中：</span>
+                    </p>
+                    <div class="math-box">
+                        <div class="equation">$$\text{FLOPS}: \quad O(n^2 d_k) \quad \text{(unchanged)}$$</div>
+                        <div class="equation">$$\text{Memory Access}: \quad \text{2-5x reduction}$$</div>
+                        <p style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem;">
+                            <span class="text-en">By optimizing I/O patterns, Flash Attention achieves actual 2-3x speedup on modern GPUs without changing theoretical complexity.</span>
+                            <span class="text-zh">通过优化I/O模式，Flash Attention在现代GPU上实现2-3倍的实际加速，而不改变理论复杂性。</span>
+                        </p>
+                    </div>
+                </div>
+
+                <h3>
+                    <span class="text-en">Complexity Comparison Table</span>
+                    <span class="text-zh">复杂性比较表</span>
+                </h3>
+
+                <div class="math-box note" style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                        <tr style="border-bottom: 1px solid #ccc;">
+                            <td style="padding: 8px; text-align: left;"><span class="text-en">Method</span><span class="text-zh">方法</span></td>
+                            <td style="padding: 8px; text-align: center;"><span class="text-en">Time</span><span class="text-zh">时间</span></td>
+                            <td style="padding: 8px; text-align: center;"><span class="text-en">Space</span><span class="text-zh">空间</span></td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px;"><span class="text-en">Standard</span><span class="text-zh">标准</span></td>
+                            <td style="padding: 8px; text-align: center;">O(n²d)</td>
+                            <td style="padding: 8px; text-align: center;">O(n²)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px;"><span class="text-en">Sparse (local)</span><span class="text-zh">稀疏（局部）</span></td>
+                            <td style="padding: 8px; text-align: center;">O(n·w·d)</td>
+                            <td style="padding: 8px; text-align: center;">O(n·w)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px;"><span class="text-en">Linear</span><span class="text-zh">线性</span></td>
+                            <td style="padding: 8px; text-align: center;">O(n·d²)</td>
+                            <td style="padding: 8px; text-align: center;">O(n·d)</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px;"><span class="text-en">Flash (I/O)</span><span class="text-zh">Flash（I/O）</span></td>
+                            <td style="padding: 8px; text-align: center;">O(n²d)*</td>
+                            <td style="padding: 8px; text-align: center;">O(n² + d)*</td>
+                        </tr>
+                    </table>
+                    <p style="margin: 10px 0 0 0; font-size: 0.85rem;">
+                        <span class="text-en">* Same theoretical complexity, but 2-3x faster in practice due to optimized I/O.</span>
+                        <span class="text-zh">* 相同的理论复杂性，但由于优化的I/O在实践中快2-3倍。</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="footer">
+                <p>
+                    <span class="text-en">Advanced mathematics guide for transformer architectures. For implementation details, consult the Attention Is All You Need paper and subsequent research.</span>
+                    <span class="text-zh">Transformer架构的高级数学指南。有关实现细节，请参考《Attention Is All You Need》论文和随后的研究。</span>
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleLanguage() {
+            const html = document.documentElement;
+            const currentLang = html.getAttribute('data-lang');
+            const body = document.body;
+
+            if (currentLang === 'en') {
+                html.setAttribute('data-lang', 'zh');
+                body.classList.remove('en');
+                body.classList.add('zh');
+            } else {
+                html.setAttribute('data-lang', 'en');
+                body.classList.remove('zh');
+                body.classList.add('en');
+            }
+        }
+    </script>
+</body>
+</html>

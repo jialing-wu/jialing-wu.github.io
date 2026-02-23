@@ -1,0 +1,713 @@
+---
+layout: methods-guide
+title: "Interaction Effects: Visual Guide and R Code"
+title_zh: "交互效应：可视化指南与 R 代码"
+parent_title: "Empirical Modeling"
+parent_title_zh: "经验建模"
+parent_url: "reg-empirical.html"
+bilingual: true
+---
+
+<style>
+  .method-header {
+    background: linear-gradient(135deg, var(--cream) 0%, var(--parchment) 100%);
+    border-left: 4px solid var(--gold);
+    padding: 24px;
+    margin-bottom: 28px;
+    border-radius: 3px;
+  }
+  
+  .method-meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faded);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 12px;
+  }
+  
+  .method-header h1 {
+    font-family: var(--serif);
+    font-size: 32px;
+    color: var(--ink);
+    margin: 8px 0 12px 0;
+    font-weight: normal;
+  }
+  
+  .method-header p {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--ink-faded);
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  .insight-box {
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-family: var(--serif);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  
+  .math-note {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--parchment);
+    padding: 12px 16px;
+    border-radius: 3px;
+    margin: 10px 0;
+    color: var(--ink);
+    overflow-x: auto;
+  }
+  
+  .section-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--ink);
+    margin: 28px 0 14px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gold);
+  }
+  
+  .theory-text {
+    font-family: var(--serif);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 12px 0;
+  }
+  
+  .controls-section {
+    background: var(--parchment);
+    padding: 18px;
+    border-radius: 3px;
+    margin: 16px 0;
+  }
+  
+  .control-group {
+    margin: 12px 0;
+    padding: 12px;
+    background: white;
+    border-radius: 3px;
+    border-left: 3px solid var(--gold);
+  }
+  
+  .control-label {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .slider-container {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  
+  input[type="range"] {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--ink-ghost);
+    outline: none;
+    -webkit-appearance: none;
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+  }
+  
+  input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    border: none;
+  }
+  
+  .value-display {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink);
+    min-width: 50px;
+    text-align: right;
+  }
+  
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin: 16px 0;
+    border-bottom: 2px solid var(--ink-ghost);
+  }
+  
+  .tab-btn {
+    padding: 10px 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ink-faded);
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+  }
+  
+  .tab-btn.active {
+    color: var(--ink);
+    border-bottom-color: var(--gold);
+  }
+  
+  .tab-content {
+    display: none;
+  }
+  
+  .tab-content.active {
+    display: block;
+  }
+  
+  #interactionChart {
+    max-width: 100%;
+    height: 380px;
+    margin: 20px 0;
+  }
+  
+  .code-block {
+    background: var(--paper);
+    padding: 16px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 13px;
+    overflow-x: auto;
+    line-height: 1.7;
+    margin: 12px 0;
+    color: var(--ink);
+    border: 1px solid var(--ink-ghost);
+  }
+  
+  .code-label {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ink-faded);
+    margin-top: 14px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  
+  .warning-box {
+    background: rgba(204, 0, 0, 0.05);
+    border-left: 3px solid var(--red);
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-family: var(--serif);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  
+  [data-lang="zh"] {
+    display: none;
+  }
+  
+  body.lang-zh [data-lang="en"] {
+    display: none;
+  }
+  
+  body.lang-zh [data-lang="zh"] {
+    display: inline;
+  }
+</style>
+
+<div class="method-header">
+  <div class="method-meta" data-lang="en">INTERACTIVE GUIDE · GUIDE 1</div>
+  <div class="method-meta" data-lang="zh">交互式指南 · 指南 1</div>
+  <h1 data-lang="en">Interaction Effects: Visual Guide and R Code</h1>
+  <h1 data-lang="zh">交互效应：可视化指南与 R 代码</h1>
+  <p data-lang="en">When the effect of one variable depends on another: continuous × binary, continuous × continuous, and how to interpret marginal effects correctly.</p>
+  <p data-lang="zh">当一个变量的效应取决于另一个变量时：连续×二元、连续×连续，以及如何正确解释边际效应。</p>
+</div>
+
+<div class="section-title" data-lang="en">Understanding Interactions</div>
+<div class="section-title" data-lang="zh">理解交互效应</div>
+
+<div class="theory-text" data-lang="en">
+  <strong>Without interaction:</strong> Y = β₀ + β₁X + β₂Z + ε<br>
+  The effect of X on Y is always β₁, regardless of Z.
+</div>
+<div class="theory-text" data-lang="zh">
+  <strong>没有交互：</strong>Y = β₀ + β₁X + β₂Z + ε<br>
+  X 对 Y 的效应始终是 β₁，不管 Z 的值。
+</div>
+
+<div class="theory-text" data-lang="en">
+  <strong>With interaction:</strong> Y = β₀ + β₁X + β₂Z + β₃XZ + ε<br>
+  The effect of X on Y depends on Z: ∂Y/∂X = β₁ + β₃Z
+</div>
+<div class="theory-text" data-lang="zh">
+  <strong>有交互：</strong>Y = β₀ + β₁X + β₂Z + β₃XZ + ε<br>
+  X 对 Y 的效应取决于 Z：∂Y/∂X = β₁ + β₃Z
+</div>
+
+<div class="math-note">
+  <span data-lang="en">
+    <strong>Marginal Effect:</strong> ∂Y/∂X = β₁ + β₃Z<br>
+    The effect of X is no longer constant—it changes with Z. This is what an interaction means.
+  </span>
+  <span data-lang="zh">
+    <strong>边际效应：</strong>∂Y/∂X = β₁ + β₃Z<br>
+    X 的效应不再恒定——它随 Z 变化。这就是交互的含义。
+  </span>
+</div>
+
+<div class="warning-box" data-lang="en">
+  <strong>Golden Rule:</strong> Never include an interaction without both main effects. Omitting a main effect changes the meaning of all other coefficients and makes interpretation impossible.
+</div>
+<div class="warning-box" data-lang="zh">
+  <strong>黄金法则：</strong>不要在没有两个主效应的情况下包含交互。省略主效应会改变所有其他系数的含义，使解释变得不可能。
+</div>
+
+<div class="section-title" data-lang="en">Interactive Visualization</div>
+<div class="section-title" data-lang="zh">交互式可视化</div>
+
+<div class="controls-section">
+  <div class="theory-text" data-lang="en" style="margin-top: 0; margin-bottom: 12px;">
+    Adjust the sliders to see how β₁, β₂, and β₃ change the regression lines. The intercept is fixed at β₀ = 50.
+  </div>
+  <div class="theory-text" data-lang="zh" style="margin-top: 0; margin-bottom: 12px;">
+    调整滑块以查看 β₁、β₂ 和 β₃ 如何改变回归线。截距固定在 β₀ = 50。
+  </div>
+  
+  <div class="tabs">
+    <button class="tab-btn active" data-lang="en" onclick="switchTab('continuous-binary')">Continuous × Binary</button>
+    <button class="tab-btn" data-lang="zh" onclick="switchTab('continuous-binary')">连续×二元</button>
+    <button class="tab-btn active" data-lang="en" onclick="switchTab('continuous-continuous')">Continuous × Continuous</button>
+    <button class="tab-btn" data-lang="zh" onclick="switchTab('continuous-continuous')">连续×连续</button>
+  </div>
+  
+  <!-- Tab 1: Continuous × Binary -->
+  <div id="continuous-binary-tab" class="tab-content active">
+    <div class="control-group">
+      <div class="control-label" data-lang="en">β₁ (Main effect of X)</div>
+      <div class="control-label" data-lang="zh">β₁（X 的主效应）</div>
+      <div class="slider-container">
+        <input type="range" id="cb-beta1" min="-10" max="10" step="0.5" value="3">
+        <span class="value-display" id="cb-beta1-val">3.0</span>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <div class="control-label" data-lang="en">β₂ (Group difference at X=0)</div>
+      <div class="control-label" data-lang="zh">β₂（X=0 时的组差异）</div>
+      <div class="slider-container">
+        <input type="range" id="cb-beta2" min="-15" max="15" step="0.5" value="5">
+        <span class="value-display" id="cb-beta2-val">5.0</span>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <div class="control-label" data-lang="en">β₃ (Interaction: slope difference)</div>
+      <div class="control-label" data-lang="zh">β₃（交互：斜率差异）</div>
+      <div class="slider-container">
+        <input type="range" id="cb-beta3" min="-8" max="8" step="0.5" value="1">
+        <span class="value-display" id="cb-beta3-val">1.0</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Tab 2: Continuous × Continuous -->
+  <div id="continuous-continuous-tab" class="tab-content">
+    <div class="control-group">
+      <div class="control-label" data-lang="en">β₁ (Main effect of X)</div>
+      <div class="control-label" data-lang="zh">β₁（X 的主效应）</div>
+      <div class="slider-container">
+        <input type="range" id="cc-beta1" min="-10" max="10" step="0.5" value="2">
+        <span class="value-display" id="cc-beta1-val">2.0</span>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <div class="control-label" data-lang="en">β₂ (Main effect of Z)</div>
+      <div class="control-label" data-lang="zh">β₂（Z 的主效应）</div>
+      <div class="slider-container">
+        <input type="range" id="cc-beta2" min="-10" max="10" step="0.5" value="3">
+        <span class="value-display" id="cc-beta2-val">3.0</span>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <div class="control-label" data-lang="en">β₃ (Interaction: slope variation by Z)</div>
+      <div class="control-label" data-lang="zh">β₃（交互：按 Z 的斜率变化）</div>
+      <div class="slider-container">
+        <input type="range" id="cc-beta3" min="-3" max="3" step="0.1" value="0.5">
+        <span class="value-display" id="cc-beta3-val">0.5</span>
+      </div>
+    </div>
+    
+    <div class="theory-text" data-lang="en" style="margin-top: 12px; font-size: 13px;">
+      <strong>Three lines shown:</strong> Red (Z = -1), Blue (Z = 0), Green (Z = +1). As β₃ increases, slopes diverge. Zero interaction: lines are parallel.
+    </div>
+    <div class="theory-text" data-lang="zh" style="margin-top: 12px; font-size: 13px;">
+      <strong>显示三条线：</strong>红色（Z = -1）、蓝色（Z = 0）、绿色（Z = +1）。随着 β₃ 增加，斜率发散。零交互：线平行。
+    </div>
+  </div>
+</div>
+
+<canvas id="interactionChart"></canvas>
+
+<div class="section-title" data-lang="en">Interpretation Guide</div>
+<div class="section-title" data-lang="zh">解释指南</div>
+
+<div class="insight-box" data-lang="en">
+  <strong>In Continuous × Binary:</strong><br>
+  If you move the β₃ slider, watch the lines diverge or converge. A positive β₃ means the group 1 line is steeper (X has stronger effect in group 1). A negative β₃ means group 0 line is steeper (X has weaker effect in group 1, or stronger in group 0).
+</div>
+<div class="insight-box" data-lang="zh">
+  <strong>在连续×二元中：</strong><br>
+  移动 β₃ 滑块时，观察线发散或收敛。正 β₃ 意味着第 1 组的线更陡峭（X 在第 1 组中的效应更强）。负 β₃ 意味着第 0 组的线更陡峭（X 在第 1 组中的效应更弱，或在第 0 组中更强）。
+</div>
+
+<div class="insight-box" data-lang="en">
+  <strong>In Continuous × Continuous:</strong><br>
+  β₃ controls whether slopes change across levels of Z. If β₃ = 0 (no interaction), all three lines are parallel. If β₃ > 0, lines diverge upward. If β₃ < 0, lines converge.
+</div>
+<div class="insight-box" data-lang="zh">
+  <strong>在连续×连续中：</strong><br>
+  β₃ 控制斜率是否在 Z 的不同水平上变化。如果 β₃ = 0（无交互），所有三条线平行。如果 β₃ > 0，线向上发散。如果 β₃ < 0，线收敛。
+</div>
+
+<div class="section-title" data-lang="en">R Code for Interaction Models</div>
+<div class="section-title" data-lang="zh">R 交互模型代码</div>
+
+<div class="code-label" data-lang="en">Case 1: Binary Moderator (0/1)</div>
+<div class="code-label" data-lang="zh">情况 1：二元调节变量 (0/1)</div>
+
+<div class="code-block"><code>library(ggplot2)
+library(dplyr)
+
+# Y = political participation, X = income, Z = gender (0=male, 1=female)
+model_int <- lm(participation ~ income * gender, data = df)
+summary(model_int)
+
+# The formula expands to:
+# participation ~ income + gender + income:gender
+
+# Marginal effects:
+# For males (gender=0): effect of income = β₁
+# For females (gender=1): effect of income = β₁ + β₃</code></pre>
+</div>
+
+<div class="code-label" data-lang="en">Visualize with ggplot2</div>
+<div class="code-label" data-lang="zh">用 ggplot2 可视化</div>
+
+<div class="code-block"><code">df %>%
+  mutate(gender_f = factor(gender, labels = c("Male", "Female"))) %>%
+  ggplot(aes(x = income, y = participation, color = gender_f)) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(title = "Income × Gender Interaction",
+       x = "Income", y = "Political Participation",
+       color = "Gender") +
+  theme_minimal()</code></pre>
+</div>
+
+<div class="code-label" data-lang="en">Case 2: Continuous Moderator</div>
+<div class="code-label" data-lang="zh">情况 2：连续调节变量</div>
+
+<div class="code-block"><code">library(margins)
+
+# Y = voter turnout, X = education, Z = political interest
+model_cont <- lm(turnout ~ education * pol_interest, data = df)
+summary(model_cont)
+
+# Marginal effects at specific Z values
+marg <- margins(model_cont, at = list(pol_interest = c(1, 3, 5)))
+summary(marg)
+# Shows: effect of education when interest = 1, 3, 5 (with CIs)</code></pre>
+</div>
+
+<div class="code-label" data-lang="en">Modern approach: marginaleffects package</div>
+<div class="code-label" data-lang="zh">现代方法：marginaleffects 包</div>
+
+<div class="code-block"><code">library(marginaleffects)
+
+# Conditional marginal effects
+slopes(model_int, variables = "income", 
+       newdata = datagrid(gender = c(0, 1)))
+# Shows: effect of income for males and females (with CIs)
+
+# Plot marginal effects across the range of Z
+plot_slopes(model_int, variables = "income", condition = "gender")
+
+# For continuous moderator:
+plot_slopes(model_cont, variables = "education", condition = "pol_interest")
+# Shows how education effect changes across interest levels</code></pre>
+</div>
+
+<div class="code-label" data-lang="en">Extract and report marginal effects neatly</div>
+<div class="code-label" data-lang="zh">提取并整洁地报告边际效应</div>
+
+<div class="code-block"><code">library(marginaleffects)
+
+# Create a summary table of marginal effects
+meff <- slopes(model_int, variables = "income", 
+               newdata = datagrid(gender = c(0, 1)))
+summary(meff)
+
+# For publication, extract point estimates and CIs:
+meff_df <- as.data.frame(meff)
+meff_df %>%
+  select(gender, estimate, conf.low, conf.high) %>%
+  mutate(across(where(is.numeric), round, 3))</code></pre>
+</div>
+
+<div class="section-title" data-lang="en">Common Mistakes</div>
+<div class="section-title" data-lang="zh">常见错误</div>
+
+<div class="warning-box" data-lang="en">
+  <strong>1. Reporting only interaction coefficient:</strong> β₃ = 0.8 is not the full story. The effect of X on Y depends on Z. Always compute and report marginal effects at meaningful Z values (e.g., Z = 0, mean, or specific groups).
+</div>
+<div class="warning-box" data-lang="zh">
+  <strong>1. 仅报告交互系数：</strong>β₃ = 0.8 不是完整的故事。X 对 Y 的效应取决于 Z。始终在有意义的 Z 值（例如 Z = 0、平均值或特定组）处计算和报告边际效应。
+</div>
+
+<div class="warning-box" data-lang="en">
+  <strong>2. Forgetting uncertainty in marginal effects:</strong> The marginal effect ∂Y/∂X = β₁ + β₃Z is itself uncertain. Always plot confidence intervals around slopes, not just point estimates.
+</div>
+<div class="warning-box" data-lang="zh">
+  <strong>2. 忘记边际效应中的不确定性：</strong>边际效应 ∂Y/∂X = β₁ + β₃Z 本身是不确定的。始终绘制斜率周围的置信区间，而不仅仅是点估计。
+</div>
+
+<div class="warning-box" data-lang="en">
+  <strong>3. Plotting raw coefficients as if they're slopes:</strong> In a continuous × continuous interaction, β₁ is NOT the slope of the X effect in the visualization. It's the slope when Z = 0. At other Z values, the slope is β₁ + β₃Z. Use plot_slopes() or similar tools.
+</div>
+<div class="warning-box" data-lang="zh">
+  <strong>3. 将原始系数绘制为斜率：</strong>在连续×连续交互中，β₁ 不是可视化中 X 效应的斜率。它是 Z = 0 时的斜率。在其他 Z 值处，斜率为 β₁ + β₃Z。使用 plot_slopes() 或类似工具。
+</div>
+
+<div class="warning-box" data-lang="en">
+  <strong>4. Centering & Interpretation:</strong> If X and Z are not centered, β₁ and β₂ can be hard to interpret (especially if 0 is outside the range of the data). Center X and Z before fitting if you want "main effects" to be interpretable.
+</div>
+<div class="warning-box" data-lang="zh">
+  <strong>4. 中心化和解释：</strong>如果 X 和 Z 没有中心化，β₁ 和 β₂ 可能很难解释（特别是如果 0 在数据范围之外）。如果您希望"主效应"可解释，在拟合之前对 X 和 Z 进行中心化。
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  let currentTab = 'continuous-binary';
+  let interactionChart = null;
+  
+  const ctx = document.getElementById('interactionChart').getContext('2d');
+  
+  function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.getElementById(tab + '-tab').classList.add('active');
+    
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    updateChart();
+  }
+  
+  function generateInteractionData() {
+    if (currentTab === 'continuous-binary') {
+      const beta1 = parseFloat(document.getElementById('cb-beta1').value);
+      const beta2 = parseFloat(document.getElementById('cb-beta2').value);
+      const beta3 = parseFloat(document.getElementById('cb-beta3').value);
+      
+      const xValues = [];
+      for (let x = -3; x <= 3; x += 0.15) xValues.push(parseFloat(x.toFixed(2)));
+      
+      // Group 0 (Z=0): Y = 50 + beta1*X
+      const group0 = xValues.map(x => 50 + beta1 * x);
+      
+      // Group 1 (Z=1): Y = 50 + beta2 + (beta1 + beta3)*X
+      const group1 = xValues.map(x => 50 + beta2 + (beta1 + beta3) * x);
+      
+      return { xValues, group0, group1, group2: null, group3: null };
+    } else {
+      // Continuous × Continuous
+      const beta1 = parseFloat(document.getElementById('cc-beta1').value);
+      const beta2 = parseFloat(document.getElementById('cc-beta2').value);
+      const beta3 = parseFloat(document.getElementById('cc-beta3').value);
+      
+      const xValues = [];
+      for (let x = -3; x <= 3; x += 0.15) xValues.push(parseFloat(x.toFixed(2)));
+      
+      // Z = -1: Y = 50 + beta2*(-1) + beta1*X + beta3*X*(-1)
+      const zMinus1 = xValues.map(x => 50 + beta2 * (-1) + beta1 * x + beta3 * x * (-1));
+      
+      // Z = 0: Y = 50 + beta1*X
+      const zZero = xValues.map(x => 50 + beta1 * x);
+      
+      // Z = +1: Y = 50 + beta2*(1) + beta1*X + beta3*X*(1)
+      const zPlus1 = xValues.map(x => 50 + beta2 * (1) + beta1 * x + beta3 * x * (1));
+      
+      return { xValues, group0: zMinus1, group1: zZero, group2: zPlus1, group3: null };
+    }
+  }
+  
+  function updateChart() {
+    const data = generateInteractionData();
+    
+    const datasets = [];
+    
+    if (currentTab === 'continuous-binary') {
+      datasets.push({
+        label: 'Group 0 (Z=0)',
+        data: data.group0,
+        borderColor: '#0066CC',
+        backgroundColor: 'rgba(0, 102, 204, 0.05)',
+        borderWidth: 3,
+        fill: false,
+        tension: 0,
+        pointRadius: 0,
+        hoverRadius: 5
+      });
+      
+      datasets.push({
+        label: 'Group 1 (Z=1)',
+        data: data.group1,
+        borderColor: '#CC0000',
+        backgroundColor: 'rgba(204, 0, 0, 0.05)',
+        borderWidth: 3,
+        fill: false,
+        tension: 0,
+        pointRadius: 0,
+        hoverRadius: 5
+      });
+    } else {
+      // Continuous × Continuous
+      datasets.push({
+        label: 'Z = -1',
+        data: data.group0,
+        borderColor: '#FF6B6B',
+        backgroundColor: 'rgba(255, 107, 107, 0.05)',
+        borderWidth: 2.5,
+        fill: false,
+        tension: 0,
+        pointRadius: 0,
+        hoverRadius: 5,
+        borderDash: [0]
+      });
+      
+      datasets.push({
+        label: 'Z = 0',
+        data: data.group1,
+        borderColor: '#0066CC',
+        backgroundColor: 'rgba(0, 102, 204, 0.05)',
+        borderWidth: 3,
+        fill: false,
+        tension: 0,
+        pointRadius: 0,
+        hoverRadius: 5
+      });
+      
+      datasets.push({
+        label: 'Z = +1',
+        data: data.group2,
+        borderColor: '#00AA00',
+        backgroundColor: 'rgba(0, 170, 0, 0.05)',
+        borderWidth: 2.5,
+        fill: false,
+        tension: 0,
+        pointRadius: 0,
+        hoverRadius: 5,
+        borderDash: [0]
+      });
+    }
+    
+    if (interactionChart) {
+      interactionChart.destroy();
+    }
+    
+    interactionChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.xValues,
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              font: { family: "'Lora', serif", size: 13 },
+              color: 'rgba(0, 0, 0, 0.7)',
+              usePointStyle: true,
+              padding: 15
+            }
+          }
+        },
+        scales: {
+          x: {
+            type: 'linear',
+            position: 'bottom',
+            title: {
+              display: true,
+              text: 'X',
+              font: { family: "'Lora', serif", size: 13 }
+            },
+            min: -3,
+            max: 3,
+            ticks: {
+              font: { family: "'JetBrains Mono', monospace", size: 11 }
+            },
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Y (Outcome)',
+              font: { family: "'Lora', serif", size: 13 }
+            },
+            ticks: {
+              font: { family: "'JetBrains Mono', monospace", size: 11 }
+            },
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  // Event listeners
+  ['cb-beta1', 'cb-beta2', 'cb-beta3', 'cc-beta1', 'cc-beta2', 'cc-beta3'].forEach(id => {
+    const elem = document.getElementById(id);
+    if (elem) {
+      elem.addEventListener('input', (e) => {
+        const valId = id + '-val';
+        const valDisplay = document.getElementById(valId);
+        if (valDisplay) {
+          valDisplay.textContent = parseFloat(e.target.value).toFixed(1);
+        }
+        updateChart();
+      });
+    }
+  });
+  
+  // Initialize
+  updateChart();
+</script>
+

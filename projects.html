@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — Jialing Wu</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Jialing Wu — NSF-funded research projects in engineering education, e4usa and FIRST robotics.">
+<meta property="og:title" content="Projects — Jialing Wu">
+<meta property="og:description" content="Jialing Wu — NSF-funded research projects in engineering education, e4usa and FIRST robotics.">
+<meta property="og:image" content="https://jialing-wu.github.io/assets/images/photo.jpg">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<nav id="nav"><div class="nav-inner">
+  <a class="nav-brand" href="index.html">Jialing Wu</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Bio</a></li>
+    <li><a href="background.html">Background</a></li>
+    <li><a href="publications.html">Publications</a></li>
+    <li><a href="teaching.html">Teaching</a></li>
+    <li><a href="projects.html" class="active">Projects</a></li>
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="methods/index.html">Methods Notebook</a></li>
+  </ul>
+<button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('open');this.previousElementSibling.classList.toggle('open')"><span></span></button></div></nav>
+
+<div class="pg-head"><h1>Projects</h1><p>Funded research projects and collaborative initiatives.</p></div>
+
+<section class="wrap" style="padding-bottom:64px">
+  <div class="proj-grid">
+    <div class="proj-item">
+      <img class="proj-thumb" src="assets/images/proj-xrp.jpg" alt="e4usa+FIRST XRP">
+      <div class="proj-body">
+        <h3>e4usa+FIRST — XRP Robotics Platform</h3>
+        <div class="proj-period">2025 – Present</div>
+        <p>An unprecedented effort establishing a partnership between e4usa and FIRST, leveraging collective strengths toward furthering the democratization of engineering education.</p>
+        <div class="proj-meta">
+          <div class="proj-meta-row"><span class="proj-label">Team</span><span class="proj-meta-val"><a href="https://eed.osu.edu/people/carberry.22" target="_blank">Adam Carberry</a>, <a href="https://scholar.google.com/citations?user=5Ui5Pg8AAAAJ" target="_blank">Assad Iqbal</a>, Jialing Wu &amp; Daniel Li</span></div>
+          <div class="proj-meta-row"><span class="proj-label">Collaborators</span><span class="proj-meta-val"><a href="https://scholar.google.com/citations?user=m3nU_g8AAAAJ" target="_blank">Medha Dalal</a> (ASU), <a href="https://experientialrobotics.org/" target="_blank">David Rogers</a> (Experiential), <a href="https://www.wpi.edu/people/faculty/bamiller" target="_blank">Brad Miller</a> (WPI)</span></div>
+          <div class="proj-meta-row"><span class="proj-label">Funding</span><span class="proj-meta-val">National Science Foundation</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="proj-item">
+      <img class="proj-thumb" src="assets/images/proj-e4usa.jpg" alt="Engineering for Us All">
+      <div class="proj-body">
+        <h3><a href="https://e4usa.org/" target="_blank">Engineering for Us All (e4usa)</a></h3>
+        <div class="proj-period">2023 – 2025</div>
+        <p>A first-of-its-kind national initiative designed to introduce engineering design principles to a new generation of students.</p>
+        <div class="proj-meta">
+          <div class="proj-meta-row"><span class="proj-label">Team</span><span class="proj-meta-val"><a href="https://eed.osu.edu/people/carberry.22" target="_blank">Adam Carberry</a>, <a href="https://scholar.google.com/citations?user=5Ui5Pg8AAAAJ" target="_blank">Assad Iqbal</a> &amp; Jialing Wu</span></div>
+          <div class="proj-meta-row"><span class="proj-label">Collaborators</span><span class="proj-meta-val"><a href="https://eng.umd.edu/meet-dean" target="_blank">Samuel Graham</a> (UMD), <a href="https://engineering.vanderbilt.edu/bio/stacy-klein/" target="_blank">Stacy Klein-Gardner</a> (Vanderbilt), Kenneth Reid (UIndy), Jennifer Kouo (JHU), <a href="https://scholar.google.com/citations?user=m3nU_g8AAAAJ" target="_blank">Medha Dalal</a> (ASU), Bruk Berhane (FIU)</span></div>
+          <div class="proj-meta-row"><span class="proj-label">Funding</span><span class="proj-meta-val">National Science Foundation</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-l">© 2026 Jialing Wu</div>
+  <div class="foot-r">
+    <a href="https://scholar.google.com/citations?user=1qK9_vUAAAAJ&hl=en&oi=ao" target="_blank">Scholar</a>
+    <a href="https://www.linkedin.com/in/jialingwueducation/" target="_blank">LinkedIn</a>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40));
+const b=document.querySelector('.btt');window.addEventListener('scroll',()=>{if(b)b.classList.toggle('show',window.scrollY>300)});
+</script>
+<button class="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+</body>
+</html>
