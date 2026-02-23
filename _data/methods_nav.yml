@@ -85,3 +85,8 @@
 
 - category: "Sample"
   category_zh: "实例演练"
+  items:
+    - title: "Intro to Network Analysis"
+      title_zh: "网络分析入门演示"
+      url: "sample-network-intro.html"
+      num: "01"

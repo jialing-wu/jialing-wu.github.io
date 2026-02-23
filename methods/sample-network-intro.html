@@ -1,0 +1,396 @@
+---
+layout: methods-course
+title: "Introduction to Network Analysis"
+breadcrumb: "Sample"
+bilingual: true
+---
+
+<style>
+/* ── Presentation Mode ───────────────────────────────── */
+.pres-toggle{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--sans);font-size:12px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;
+  color:var(--gold);background:var(--warm);
+  border:1px solid var(--parchment);border-radius:4px;
+  padding:8px 18px;cursor:pointer;transition:all .2s;
+  margin-bottom:20px;
+}
+.pres-toggle:hover{background:var(--gold);color:var(--paper);border-color:var(--gold)}
+.pres-toggle .pres-icon{font-size:16px}
+
+/* Slide mode */
+body.presenting .sidebar,
+body.presenting .sidebar-overlay,
+body.presenting .topbar,
+body.presenting .page-toc,
+body.presenting .pres-toggle,
+body.presenting .page-nav,
+body.presenting .pres-hide{display:none!important}
+
+body.presenting .layout{display:block}
+body.presenting .main{margin:0;padding:0;width:100vw}
+body.presenting .content{
+  max-width:100vw!important;padding:0!important;margin:0!important;
+}
+body.presenting .slide{
+  display:none;
+  width:100vw;height:100vh;
+  padding:60px 10vw;
+  box-sizing:border-box;
+  overflow-y:auto;
+  background:var(--paper);
+}
+body.presenting .slide.active{display:flex;flex-direction:column;justify-content:center}
+body.presenting .slide h2{font-size:2.4rem;margin-bottom:24px}
+body.presenting .slide h3{font-size:1.6rem}
+body.presenting .slide p,
+body.presenting .slide li{font-size:1.15rem;line-height:1.8}
+body.presenting .slide .method-desc{font-size:1.15rem;line-height:1.8}
+body.presenting .slide .method-analogy,
+body.presenting .slide .method-when,
+body.presenting .slide .method-example{font-size:1.05rem}
+
+/* Slide counter */
+body.presenting .slide-counter{
+  position:fixed;bottom:24px;right:32px;
+  font-family:var(--sans);font-size:13px;
+  color:var(--ink-ghost);letter-spacing:.05em;
+  z-index:999;
+}
+/* ESC hint */
+body.presenting .pres-esc{
+  position:fixed;top:20px;right:28px;
+  font-family:var(--sans);font-size:11px;
+  color:var(--ink-ghost);letter-spacing:.05em;
+  opacity:.6;z-index:999;
+}
+/* Progress bar */
+body.presenting .pres-progress{
+  position:fixed;top:0;left:0;height:3px;
+  background:var(--gold);z-index:999;
+  transition:width .3s ease;
+}
+
+/* ── Section number badge ───────────────────────────── */
+.slide-num{
+  font-family:var(--sans);font-size:11px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:12px;
+}
+</style>
+
+<!-- PRESENTATION TOGGLE -->
+<button class="pres-toggle" onclick="togglePresentation()">
+  <span class="pres-icon">▶</span>
+  <span data-lang="en">Presentation Mode</span>
+  <span data-lang="zh">演示模式</span>
+</button>
+
+<!-- HEADER -->
+<div class="slide" id="slide-title">
+  <div class="method-header">
+    <h1 data-lang="en">Introduction to Network Analysis</h1>
+    <h1 data-lang="zh">网络分析入门</h1>
+    <div class="method-meta">Sample · 15–20 min</div>
+  </div>
+  <div class="intro-cards">
+    <div class="intro-card">
+      <div class="card-label" data-lang="en">What Is This?</div>
+      <div class="card-label" data-lang="zh">这是什么？</div>
+      <div data-lang="en"><p>A practical introduction to network analysis for social scientists. Part 1 covers the core concepts; Part 2 walks through a published paper step by step. Designed for a 15–20 minute presentation.</p></div>
+      <div data-lang="zh"><p>面向社会科学研究者的网络分析实用入门。第一部分讲核心概念；第二部分逐步拆解一篇发表论文。设计为 15–20 分钟演示。</p></div>
+    </div>
+    <div class="intro-card">
+      <div class="card-label" data-lang="en">Audience</div>
+      <div class="card-label" data-lang="zh">受众</div>
+      <div data-lang="en"><p>Graduate students across disciplines. No network analysis background assumed; basic familiarity with regression is helpful.</p></div>
+      <div data-lang="zh"><p>跨学科研究生。无需网络分析背景；了解回归分析基础即可。</p></div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider pres-hide">
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  PART 1: WHAT IS NETWORK ANALYSIS?                 -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<!-- SLIDE: Why Relationships -->
+<div class="slide" id="slide-why">
+  <div class="slide-num" data-lang="en">Part 1 · Slide 1</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 1 页</div>
+  <h2 data-lang="en">Why Study Relationships, Not Just Individuals?</h2>
+  <h2 data-lang="zh">为什么要研究关系，而不只是个体？</h2>
+
+  <p class="method-desc" data-lang="en">Most quantitative methods treat each observation as independent: one row per person, each row unrelated to others. But many social phenomena are fundamentally relational. Who you know shapes what you know. Who trades with whom shapes which economies grow. Who co-sponsors legislation with whom reveals hidden political alliances.</p>
+  <p class="method-desc" data-lang="zh">大多数定量方法把每个观测视为独立的：每人一行，行与行无关。但许多社会现象本质上是关系性的。你认识谁影响你知道什么。谁与谁贸易决定哪些经济体增长。谁和谁联署法案揭示隐藏的政治联盟。</p>
+
+  <p class="method-desc" data-lang="en">Network analysis provides the tools to study these relational structures. Instead of asking "what are this person's attributes?", we ask "what is this person's position in a web of relationships?" — and that position often explains outcomes better than individual characteristics alone.</p>
+  <p class="method-desc" data-lang="zh">网络分析提供研究这些关系结构的工具。不是问"这个人有什么属性？"，而是问"这个人在关系网中处于什么位置？"——这个位置往往比个体特征更能解释结果。</p>
+
+  <div class="method-analogy" data-lang="en"><strong>Think of it this way:</strong> A resume tells you about a person. A phone log tells you about their world.</div>
+  <div class="method-analogy" data-lang="zh"><strong>换个方式想：</strong>简历告诉你一个人。通话记录告诉你他的世界。</div>
+</div>
+
+<!-- SLIDE: Core Vocabulary -->
+<div class="slide" id="slide-vocab">
+  <div class="slide-num" data-lang="en">Part 1 · Slide 2</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 2 页</div>
+  <h2 data-lang="en">The Language of Networks</h2>
+  <h2 data-lang="zh">网络的语言</h2>
+
+  <p class="method-desc" data-lang="en">A network has two building blocks: <strong>nodes</strong> (the actors — people, organizations, countries) and <strong>edges</strong> (the relationships — friendships, trade, co-authorship). That's it. Everything else builds on these two.</p>
+  <p class="method-desc" data-lang="zh">网络有两个基本构件：<strong>节点</strong>（行动者——人、组织、国家）和<strong>边</strong>（关系——友谊、贸易、合著）。就这些。其他一切都建立在这两者之上。</p>
+
+  <p class="method-desc" data-lang="en">Three key distinctions to remember:</p>
+  <p class="method-desc" data-lang="zh">三个关键区分：</p>
+
+  <p class="method-desc" data-lang="en"><strong>Directed vs. undirected:</strong> "A follows B on Twitter" is directed (A→B ≠ B→A). "A and B are co-authors" is undirected (symmetric). <strong>Weighted vs. binary:</strong> Trade volume between countries is weighted (a number); friendship is often binary (yes/no). <strong>Bipartite:</strong> Two types of nodes — e.g., people and organizations, students and courses.</p>
+  <p class="method-desc" data-lang="zh"><strong>有向 vs. 无向：</strong>"A 在 Twitter 上关注 B"是有向的（A→B ≠ B→A）。"A 和 B 是合著者"是无向的（对称）。<strong>加权 vs. 二元：</strong>国家间贸易量是加权的（一个数字）；友谊通常是二元的（是/否）。<strong>二部网络：</strong>两类节点——如人与组织、学生与课程。</p>
+</div>
+
+<!-- SLIDE: Who Is Important -->
+<div class="slide" id="slide-centrality">
+  <div class="slide-num" data-lang="en">Part 1 · Slide 3</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 3 页</div>
+  <h2 data-lang="en">Who Is "Important"? Three Answers</h2>
+  <h2 data-lang="zh">谁"重要"？三种回答</h2>
+
+  <p class="method-desc" data-lang="en">Imagine five people: Alice, Bob, Carol, Dave, Eve. Bob knows everyone in a tight cluster. Dave is the only bridge to Eve, who's otherwise isolated. Which one is "important"?</p>
+  <p class="method-desc" data-lang="zh">想象五个人：Alice、Bob、Carol、Dave、Eve。Bob 认识紧密群体里的每个人。Dave 是通往孤立的 Eve 的唯一桥梁。谁"重要"？</p>
+
+  <p class="method-desc" data-lang="en"><strong>Degree centrality</strong> — who has the most connections? Bob wins. This is the simplest measure: just count the edges. <strong>Betweenness centrality</strong> — who is a bridge? Dave is critical: remove him and Eve is completely cut off. Betweenness counts how often a node lies on the shortest path between others. <strong>Eigenvector centrality</strong> — who is connected to important people? Alice's two connections are both to Bob (the most connected), making her more central than Eve whose only tie is to the peripheral Dave.</p>
+  <p class="method-desc" data-lang="zh"><strong>度中心性</strong>——谁连接最多？Bob 赢。最简单的指标：数边的数量。<strong>中介中心性</strong>——谁是桥梁？Dave 至关重要：移除他，Eve 完全孤立。中介性统计节点出现在其他节点对之间最短路上的频率。<strong>特征向量中心性</strong>——谁和重要的人相连？Alice 的两条连接都通向 Bob（连接最多的人），这使她比 Eve 更中心——Eve 唯一的关系是边缘的 Dave。</p>
+
+  <div class="method-when" data-lang="en"><strong>Key insight:</strong> There is no single "right" measure of importance. Each captures a different structural role. Choose based on your research question.</div>
+  <div class="method-when" data-lang="zh"><strong>核心洞见：</strong>没有单一"正确"的重要性指标。每个捕捉不同的结构角色。根据研究问题选择。</div>
+</div>
+
+<!-- SLIDE: Communities -->
+<div class="slide" id="slide-community">
+  <div class="slide-num" data-lang="en">Part 1 · Slide 4</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 4 页</div>
+  <h2 data-lang="en">Finding Groups: Community Detection</h2>
+  <h2 data-lang="zh">发现群体：社区检测</h2>
+
+  <p class="method-desc" data-lang="en">Real networks are cliquish. Think of a high school cafeteria: the drama kids sit together, the athletes at another table. Within each group, everyone knows everyone; between groups, only a few cross-group ties exist.</p>
+  <p class="method-desc" data-lang="zh">真实网络是小团体的。想象高中食堂：戏剧社的孩子坐一起，运动员坐另一桌。每个群体内部大家互相认识；群体之间只有少数跨组联系。</p>
+
+  <p class="method-desc" data-lang="en"><strong>Community detection</strong> algorithms discover these groups automatically from the connection data alone — no labels needed. The most common approach maximizes <strong>modularity</strong>: a score that measures how many more within-group edges exist than you'd expect by chance. Applications range from identifying political factions in Congress to finding echo chambers on social media.</p>
+  <p class="method-desc" data-lang="zh"><strong>社区检测</strong>算法仅从连接数据就能自动发现这些群体——不需要标签。最常用的方法是最大化<strong>模块性</strong>：衡量组内边比随机预期多多少的分数。应用从识别国会政治派系到发现社交媒体回音室。</p>
+</div>
+
+<!-- SLIDE: When to Use -->
+<div class="slide" id="slide-when">
+  <div class="slide-num" data-lang="en">Part 1 · Slide 5</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 5 页</div>
+  <h2 data-lang="en">Should You Use Network Analysis?</h2>
+  <h2 data-lang="zh">你应该用网络分析吗？</h2>
+
+  <p class="method-desc" data-lang="en">Ask yourself three questions:</p>
+  <p class="method-desc" data-lang="zh">问自己三个问题：</p>
+
+  <p class="method-desc" data-lang="en"><strong>1. Is your data relational?</strong> If you have pairs — who knows whom, who trades with whom, who cites whom — you have network data. If each row is an independent person with no ties, standard methods may suffice.</p>
+  <p class="method-desc" data-lang="zh"><strong>1. 你的数据是关系性的吗？</strong>如果你有配对数据——谁认识谁、谁和谁贸易、谁引用谁——你就有网络数据。如果每行是独立的人且没有联系，标准方法可能足够。</p>
+
+  <p class="method-desc" data-lang="en"><strong>2. Does position matter?</strong> If you suspect that someone's structural position — their connections, their brokerage role, their community membership — affects their outcomes, network analysis can capture what regression cannot.</p>
+  <p class="method-desc" data-lang="zh"><strong>2. 位置重要吗？</strong>如果你怀疑某人的结构位置——他们的连接、中介角色、社区归属——影响他们的结果，网络分析能捕捉回归无法捕捉的东西。</p>
+
+  <p class="method-desc" data-lang="en"><strong>3. Is dependence the story?</strong> If the interesting part is that observations are <em>not</em> independent — your friend's behavior affects yours, one country's policy spills over to neighbors — then network analysis is your framework.</p>
+  <p class="method-desc" data-lang="zh"><strong>3. 依赖性是核心吗？</strong>如果有趣的部分正是观测<em>不</em>独立——你朋友的行为影响你，一国的政策溢出到邻国——那网络分析就是你的框架。</p>
+</div>
+
+<!-- SLIDE: Steps to a Network Analysis Paper -->
+<div class="slide" id="slide-steps">
+  <div class="slide-num" data-lang="en">Part 1 · Slide 6</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 6 页</div>
+  <h2 data-lang="en">From Idea to Paper: A Network Analysis Workflow</h2>
+  <h2 data-lang="zh">从想法到论文：网络分析的工作流程</h2>
+
+  <p class="method-desc" data-lang="en"><strong>Step 1 — Define the network.</strong> What are the nodes? What constitutes an edge? This is the most important decision. A poorly defined network leads to meaningless results. Be explicit: "Nodes = U.S. senators; edge = co-sponsored at least 3 bills in the 116th Congress."</p>
+  <p class="method-desc" data-lang="zh"><strong>第一步——定义网络。</strong>节点是什么？什么构成边？这是最重要的决定。定义不好的网络导致无意义的结果。要明确："节点 = 美国参议员；边 = 在第 116 届国会中共同联署至少 3 项法案。"</p>
+
+  <p class="method-desc" data-lang="en"><strong>Step 2 — Construct and validate.</strong> Build your edge list or adjacency matrix. Check: Is it sparse or dense? Are there isolates? Is the network connected? Visualize it early — a hairball means you need to filter or threshold.</p>
+  <p class="method-desc" data-lang="zh"><strong>第二步——构建并验证。</strong>建立边表或邻接矩阵。检查：稀疏还是密集？有孤立节点吗？网络是连通的吗？尽早可视化——一团乱麻意味着你需要过滤或设阈值。</p>
+
+  <p class="method-desc" data-lang="en"><strong>Step 3 — Describe.</strong> Compute global properties (density, diameter, clustering coefficient) and node-level measures (centrality, community membership). This is your descriptive statistics — the network equivalent of means and standard deviations.</p>
+  <p class="method-desc" data-lang="zh"><strong>第三步——描述。</strong>计算全局属性（密度、直径、聚类系数）和节点级指标（中心性、社区归属）。这是你的描述性统计——均值和标准差的网络等价物。</p>
+
+  <p class="method-desc" data-lang="en"><strong>Step 4 — Model (if needed).</strong> If your research question is causal or explanatory — "What drives tie formation?" "Does network position affect outcomes?" — use ERGM, QAP, or latent space models. This is your regression equivalent.</p>
+  <p class="method-desc" data-lang="zh"><strong>第四步——建模（如需要）。</strong>如果你的研究问题是因果或解释性的——"什么驱动关系形成？""网络位置是否影响结果？"——使用 ERGM、QAP 或潜在空间模型。这是回归的等价物。</p>
+
+  <p class="method-desc" data-lang="en"><strong>Step 5 — Robustness.</strong> Test sensitivity: Does the result change if you threshold edges differently? If you use a different centrality measure? If you remove the top 5% most connected nodes? Network results can be fragile — robustness checks are essential.</p>
+  <p class="method-desc" data-lang="zh"><strong>第五步——稳健性检验。</strong>测试敏感性：如果用不同阈值定义边，结果变吗？用不同中心性指标呢？移除连接最多的 5% 节点呢？网络结果可能脆弱——稳健性检验必不可少。</p>
+
+  <div class="method-when" data-lang="en"><strong>Now let's see this workflow in action.</strong> Part 2 walks through a real published paper — from research question to findings.</div>
+  <div class="method-when" data-lang="zh"><strong>现在让我们看看这个流程的实战。</strong>第二部分将逐步拆解一篇真实发表的论文——从研究问题到发现。</div>
+</div>
+
+<hr class="section-divider pres-hide">
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  PART 2: A PAPER WALKTHROUGH                       -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<!-- SLIDE: Part 2 Title -->
+<div class="slide" id="slide-part2">
+  <div class="slide-num" data-lang="en">Part 2</div>
+  <div class="slide-num" data-lang="zh">第二部分</div>
+  <h2 data-lang="en">Paper Walkthrough: Network Analysis in Action</h2>
+  <h2 data-lang="zh">论文拆解：网络分析实战</h2>
+
+  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">Paper to be selected. This section will walk through a published network analysis paper step by step: research question → data construction → network methods → key findings → extensions.</p>
+  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">论文待选。本节将逐步拆解一篇已发表的网络分析论文：研究问题 → 数据构建 → 网络方法 → 关键发现 → 延伸思考。</p>
+</div>
+
+<!-- SLIDE: Research Question -->
+<div class="slide" id="slide-rq">
+  <div class="slide-num" data-lang="en">Part 2 · Slide 1</div>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 1 页</div>
+  <h2 data-lang="en">The Research Question</h2>
+  <h2 data-lang="zh">研究问题</h2>
+
+  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">[ Placeholder — will describe the paper's core question and why a network approach is the right fit ]</p>
+  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">[ 占位 — 将介绍论文的核心问题，以及为什么网络分析是合适的方法 ]</p>
+</div>
+
+<!-- SLIDE: Data as Network -->
+<div class="slide" id="slide-data">
+  <div class="slide-num" data-lang="en">Part 2 · Slide 2</div>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 2 页</div>
+  <h2 data-lang="en">From Raw Data to a Network</h2>
+  <h2 data-lang="zh">从原始数据到网络</h2>
+
+  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">[ Placeholder — will explain: who are the nodes? what defines an edge? directed or undirected? weighted? how was the adjacency matrix constructed? ]</p>
+  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">[ 占位 — 将说明：节点是谁？边如何定义？有向还是无向？加权吗？邻接矩阵如何构建？ ]</p>
+</div>
+
+<!-- SLIDE: Methods Used -->
+<div class="slide" id="slide-methods">
+  <div class="slide-num" data-lang="en">Part 2 · Slide 3</div>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 3 页</div>
+  <h2 data-lang="en">Network Methods Applied</h2>
+  <h2 data-lang="zh">使用的网络方法</h2>
+
+  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">[ Placeholder — will describe which centrality measures, community detection, ERGM, or other methods the paper used, and why ]</p>
+  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">[ 占位 — 将描述论文使用了哪些中心性指标、社区检测、ERGM 或其他方法，以及原因 ]</p>
+</div>
+
+<!-- SLIDE: Key Findings -->
+<div class="slide" id="slide-findings">
+  <div class="slide-num" data-lang="en">Part 2 · Slide 4</div>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 4 页</div>
+  <h2 data-lang="en">Reading the Results</h2>
+  <h2 data-lang="zh">解读结果</h2>
+
+  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">[ Placeholder — will walk through key tables/figures from the paper and explain how to interpret network analysis output ]</p>
+  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">[ 占位 — 将逐步讲解论文中的关键表格/图形，说明如何解读网络分析输出 ]</p>
+</div>
+
+<!-- SLIDE: Extensions -->
+<div class="slide" id="slide-extend">
+  <div class="slide-num" data-lang="en">Part 2 · Slide 5</div>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 5 页</div>
+  <h2 data-lang="en">What Would You Do Differently?</h2>
+  <h2 data-lang="zh">你会怎么改进？</h2>
+
+  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">[ Placeholder — will discuss possible extensions, alternative methods, limitations, and how students might adapt this approach for their own research ]</p>
+  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">[ 占位 — 将讨论可能的延伸、替代方法、局限性，以及同学如何将此方法应用于自己的研究 ]</p>
+</div>
+
+<!-- SLIDE: Takeaway -->
+<div class="slide" id="slide-end">
+  <div class="slide-num" data-lang="en">Summary</div>
+  <div class="slide-num" data-lang="zh">总结</div>
+  <h2 data-lang="en">Getting Started with Network Analysis</h2>
+  <h2 data-lang="zh">开始你的网络分析</h2>
+
+  <p class="method-desc" data-lang="en"><strong>Step 1:</strong> Identify relational data in your research — who connects to whom? <strong>Step 2:</strong> Choose the right representation — directed or undirected, weighted or binary. <strong>Step 3:</strong> Start descriptive — visualize, compute centrality, detect communities. <strong>Step 4:</strong> Move to inference if needed — ERGM for what drives tie formation, QAP for network correlation.</p>
+  <p class="method-desc" data-lang="zh"><strong>第一步：</strong>在你的研究中识别关系数据——谁和谁相连？<strong>第二步：</strong>选择合适的表示——有向或无向，加权或二元。<strong>第三步：</strong>从描述开始——可视化、计算中心性、检测社区。<strong>第四步：</strong>需要时进入推断——ERGM 研究什么驱动关系形成，QAP 检验网络相关。</p>
+
+  <p class="method-desc" data-lang="en">For the full reference material, see <a href="/methods/reg-network.html">Network Analysis</a> in the Methods Notebook.</p>
+  <p class="method-desc" data-lang="zh">完整参考材料请见方法笔记本中的<a href="/methods/reg-network.html">网络分析</a>。</p>
+</div>
+
+<!-- PAGE NAV -->
+<div class="page-nav pres-hide">
+  <a class="pn-link pn-prev" href="/methods/reg-network.html">
+    <span class="pn-arrow">&larr;</span>
+    <span><span class="pn-title" data-lang="en">Network Analysis</span><span class="pn-title" data-lang="zh">网络分析</span></span>
+  </a>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  PRESENTATION ENGINE                               -->
+<!-- ═══════════════════════════════════════════════════ -->
+<script>
+(function(){
+  let presenting = false;
+  let current = 0;
+  let slides = [];
+  let counter, hint, progress;
+
+  window.togglePresentation = function(){
+    if(!presenting) enterPresentation();
+    else exitPresentation();
+  };
+
+  function enterPresentation(){
+    slides = Array.from(document.querySelectorAll('.slide'));
+    if(!slides.length) return;
+
+    presenting = true;
+    current = 0;
+    document.body.classList.add('presenting');
+
+    // Create counter
+    counter = document.createElement('div');
+    counter.className = 'slide-counter';
+    document.body.appendChild(counter);
+
+    // Create ESC hint
+    hint = document.createElement('div');
+    hint.className = 'pres-esc';
+    hint.textContent = 'ESC to exit';
+    document.body.appendChild(hint);
+
+    // Create progress bar
+    progress = document.createElement('div');
+    progress.className = 'pres-progress';
+    document.body.appendChild(progress);
+
+    showSlide(0);
+    document.addEventListener('keydown', onKey);
+  }
+
+  function exitPresentation(){
+    presenting = false;
+    document.body.classList.remove('presenting');
+    slides.forEach(s => s.classList.remove('active'));
+    if(counter) { counter.remove(); counter = null; }
+    if(hint) { hint.remove(); hint = null; }
+    if(progress) { progress.remove(); progress = null; }
+    document.removeEventListener('keydown', onKey);
+  }
+
+  function showSlide(idx){
+    slides.forEach(s => s.classList.remove('active'));
+    current = Math.max(0, Math.min(idx, slides.length - 1));
+    slides[current].classList.add('active');
+    slides[current].scrollTop = 0;
+    if(counter) counter.textContent = (current+1) + ' / ' + slides.length;
+    if(progress) progress.style.width = ((current+1)/slides.length*100) + '%';
+  }
+
+  function onKey(e){
+    if(e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' '){
+      e.preventDefault(); showSlide(current + 1);
+    } else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp'){
+      e.preventDefault(); showSlide(current - 1);
+    } else if(e.key === 'Escape'){
+      exitPresentation();
+    }
+  }
+})();
+</script>
