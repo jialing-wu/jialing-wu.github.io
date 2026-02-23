@@ -699,32 +699,45 @@ body.presenting .pres-progress{
   <h2 data-lang="en">From Raw Data to a Network</h2>
   <h2 data-lang="zh">从原始数据到网络</h2>
 
-  <div class="check-grid">
+  <div class="check-grid" style="grid-template-columns:1fr 1fr">
     <div class="check-card">
       <div class="check-icon">01</div>
-      <div class="check-title" data-lang="en">Setting</div>
-      <div class="check-title" data-lang="zh">场景</div>
-      <div class="check-desc" data-lang="en">A global insurance company, risk analysis domain. N = 344 employees (78% response rate). Mean age 47, mean tenure 11 years, roughly gender-balanced.</div>
-      <div class="check-desc" data-lang="zh">一家全球保险公司，风险分析部门。N = 344 名员工（78% 响应率）。平均年龄 47 岁，平均工龄 11 年，男女各半。</div>
+      <div class="check-title" data-lang="en">Who Was Studied</div>
+      <div class="check-title" data-lang="zh">研究对象</div>
+      <div class="check-desc" data-lang="en">344 employees in a global insurance company's risk analysis division. 78% responded to the survey. Average age 47, average tenure 11 years, roughly gender-balanced.</div>
+      <div class="check-desc" data-lang="zh">一家全球保险公司风险分析部门的 344 名员工。78% 回复了问卷。平均年龄 47 岁，平均工龄 11 年，男女各半。</div>
     </div>
     <div class="check-card">
       <div class="check-icon">02</div>
-      <div class="check-title" data-lang="en">Network</div>
-      <div class="check-title" data-lang="zh">网络</div>
-      <div class="check-desc" data-lang="en">Directed, binary. 535 ties. Density = .0045 (very sparse). Ego network (each person names up to 5 contacts) → inferred complete network.</div>
-      <div class="check-desc" data-lang="zh">有向、二元。535 条边。密度 = .0045（非常稀疏）。自我网络（每人最多提名 5 人）→ 推断完整网络。</div>
-    </div>
-    <div class="check-card">
-      <div class="check-icon">03</div>
-      <div class="check-title" data-lang="en">Three Data Sources</div>
-      <div class="check-title" data-lang="zh">三个数据来源</div>
-      <div class="check-desc" data-lang="en">Company database (age, gender, tenure); questionnaire (29-item skill self-assessment, expertise/specialist scales); network nomination ("Who do you ask for advice?" × 3 skill bundles).</div>
-      <div class="check-desc" data-lang="zh">公司数据库（年龄、性别、工龄）；问卷（29 项技能自评、专家/专才量表）；网络提名（"你找谁请教？" × 3 个技能领域）。</div>
+      <div class="check-title" data-lang="en">How the Network Was Built</div>
+      <div class="check-title" data-lang="zh">网络怎么建的</div>
+      <div class="check-desc" data-lang="en">Each person was asked: "Who do you go to for advice?" and could name up to 5 people — separately for 3 skill areas (core insurance, software, social). All individual answers were then combined into one organization-wide directed network: A→B means "A asks B." Only yes/no (binary), no frequency. Result: 535 advice ties total across 344 people — very sparse (density .0045), meaning most possible connections don't exist.</div>
+      <div class="check-desc" data-lang="zh">每个人被问："你找谁请教？"最多填 5 个人——分别针对 3 个技能领域（核心保险、软件、社交）。所有人的回答汇总成一张全组织的有向网络：A→B 表示"A 找 B 请教"。只记录有没有（二元），不记频率。结果：344 人之间共 535 条求助关系——非常稀疏（密度 .0045），意味着绝大多数可能的连接并不存在。</div>
     </div>
   </div>
-
-  <div class="method-when" data-lang="en"><strong>Network definition:</strong> Node = employee; directed edge A→B = "A asks B for advice." Binary (yes/no). 29 skills in 3 bundles: 18 core insurance, 7 software, 4 social.</div>
-  <div class="method-when" data-lang="zh"><strong>网络定义：</strong>节点 = 员工；有向边 A→B = "A 向 B 请教"。二元（是/否）。29 项技能分 3 类：18 项核心保险、7 项软件、4 项社交。</div>
+  <div class="check-grid">
+    <div class="check-card">
+      <div class="check-icon">03</div>
+      <div class="check-title" data-lang="en">Data Source: Company Records</div>
+      <div class="check-title" data-lang="zh">数据来源：公司档案</div>
+      <div class="check-desc" data-lang="en">Age, gender, tenure, job level, leadership responsibility — objective facts from the HR database.</div>
+      <div class="check-desc" data-lang="zh">年龄、性别、工龄、职级、是否有领导责任——来自 HR 数据库的客观信息。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">04</div>
+      <div class="check-title" data-lang="en">Data Source: Questionnaire</div>
+      <div class="check-title" data-lang="zh">数据来源：问卷</div>
+      <div class="check-desc" data-lang="en">29 skills rated on a self-assessment scale (18 core insurance + 7 software + 4 social), plus "I consider myself an expert / specialist" scales.</div>
+      <div class="check-desc" data-lang="zh">29 项技能自评（18 项核心保险 + 7 项软件 + 4 项社交），加上"我认为自己是专家/专才"的量表。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">05</div>
+      <div class="check-title" data-lang="en">Data Source: Network Nomination</div>
+      <div class="check-title" data-lang="zh">数据来源：网络提名</div>
+      <div class="check-desc" data-lang="en">"Who do you ask for advice on [core / software / social] skills?" — up to 5 names per skill area. This is what generates the network edges.</div>
+      <div class="check-desc" data-lang="zh">"在[核心/软件/社交]技能方面你找谁请教？"——每个领域最多填 5 个名字。这就是网络边的来源。</div>
+    </div>
+  </div>
 </div>
 
 <!-- SLIDE: Three-Study Design + Methods -->
