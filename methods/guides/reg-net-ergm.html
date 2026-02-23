@@ -320,69 +320,139 @@ But real networks have patterns that random graphs can't produce:
 
 <div class="depth-divider"><span data-lang="en">The Math Begins</span><span data-lang="zh">开始数学</span></div>
 
-<div class="level-badge intermediate" data-lang="en">Intermediate</div>
-<div class="level-badge intermediate" data-lang="zh">进阶</div>
+<div class="level-badge beginner" data-lang="en">Beginner-Friendly</div>
+<div class="level-badge beginner" data-lang="zh">小白友好</div>
 
 <h2 id="ergm-formula">
-  <span data-lang="en">The Core Formula</span>
-  <span data-lang="zh">核心公式</span>
+  <span data-lang="en">The Core Formula — As a Scoring System</span>
+  <span data-lang="zh">核心公式——当作评分系统来理解</span>
 </h2>
 
 <p data-lang="en">
-ERGM says: the probability of observing a particular network depends on how many "interesting patterns" it contains:
+Before we look at the formula, let's build the intuition. Think of ERGM as a <strong>scoring system</strong> for networks:
 </p>
 
 <p data-lang="zh">
-ERGM 说：观察到某个特定网络的概率，取决于它包含多少"有趣的模式"：
+看公式之前，先建立直觉。把 ERGM 想象成一个<strong>给网络打分的系统</strong>：
+</p>
+
+<div class="concept-row">
+  <div class="concept-card">
+    <div class="card-icon">g</div>
+    <h4 data-lang="en">Structural Patterns</h4>
+    <h4 data-lang="zh">结构模式</h4>
+    <p data-lang="en">Each pattern you care about (reciprocity, triangles, same-department ties) gets <strong>counted</strong>. These counts are called g — just "how many of this pattern exist."</p>
+    <p data-lang="zh">你关心的每种模式（互惠、三角形、同部门关系）都被<strong>数出来</strong>。这些计数叫 g——就是"这种模式有多少个"。</p>
+  </div>
+  <div class="concept-card">
+    <div class="card-icon">θ</div>
+    <h4 data-lang="en">Weights (Importance)</h4>
+    <h4 data-lang="zh">权重（重要性）</h4>
+    <p data-lang="en">Each pattern gets a <strong>weight</strong> θ. Positive θ = "more of this pattern → higher score." Negative θ = "more of this → lower score." ERGM's job is to find these weights.</p>
+    <p data-lang="zh">每种模式有一个<strong>权重</strong> θ。正 θ = "这种模式越多，分越高"。负 θ = "越多分越低"。ERGM 的任务就是找到这些权重。</p>
+  </div>
+</div>
+
+<p data-lang="en">
+The total score = θ₁ × g₁ + θ₂ × g₂ + ... (weight × count for each pattern, then add up). A network with a <strong>higher score is more likely</strong> to be the one you actually observed.
+</p>
+
+<p data-lang="zh">
+总分 = θ₁ × g₁ + θ₂ × g₂ + ...（每种模式的"权重 × 计数"加在一起）。<strong>总分越高的网络，越有可能</strong>就是你观察到的那个。
+</p>
+
+<p data-lang="en">
+Now here's the formal version of that idea:
+</p>
+
+<p data-lang="zh">
+下面是这个想法的数学表达：
 </p>
 
 <div class="ergm-formula">
 P(Y = y) = exp(θ₁ × g₁(y) + θ₂ × g₂(y) + ... ) / κ
 </div>
 
+<div class="unpack-list">
+  <div class="unpack-item">
+    <div class="symbol">θ × g</div>
+    <div class="explain" data-lang="en">The "score" — weight × count for each pattern, summed up. This is the core: it's what determines how likely a network is.</div>
+    <div class="explain" data-lang="zh">"总分"——每种模式的权重 × 计数，加在一起。这是核心：它决定了一个网络出现的可能性。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">exp(...)</div>
+    <div class="explain" data-lang="en">Turns the score into a positive number. Why? Because probabilities can't be negative. If the score is high, exp makes it a big positive number; if low, a small one.</div>
+    <div class="explain" data-lang="zh">把总分变成正数。为什么？因为概率不能是负的。分数高的话，exp 让它变成一个大正数；分数低，变成小正数。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">κ</div>
+    <div class="explain" data-lang="en"><strong>Normalizing constant</strong> — divides by the total of all possible networks' scores, so probabilities sum to 1. Think of it as "your score ÷ total scores = your probability." You never compute it directly (more on this later).</div>
+    <div class="explain" data-lang="zh"><strong>归一化常数</strong>——除以所有可能网络的分数总和，让概率加起来等于 1。可以理解为"你的分 ÷ 总分 = 你的概率"。你永远不直接算它（后面会说为什么）。</div>
+  </div>
+</div>
+
+<div class="callout tip">
+  <div class="callout-label" data-lang="en">In plain language</div>
+  <div class="callout-label" data-lang="zh">通俗说</div>
+  <p data-lang="en">The formula says: <em>score each possible network by counting its patterns, multiply each by a weight, and the networks with the highest scores are most likely to be the one we observe.</em></p>
+  <p data-lang="zh">这个公式在说：<em>给每个可能的网络打分——数它有多少种模式，乘以各自的权重——得分最高的网络最可能是我们观察到的那个。</em></p>
+</div>
+
+<!-- ── LEVEL 3.5 — LOG(ODDS) EXPLAINER ──────────────── -->
+
+<h3 id="log-odds">
+  <span data-lang="en">Quick Detour: What Is log(odds)?</span>
+  <span data-lang="zh">插播：log(odds) 是什么？</span>
+</h3>
+
 <p data-lang="en">
-Don't panic — let's unpack each piece:
+Before we go further, you'll see the term <strong>log(odds)</strong>. If you've seen logistic regression, you know this. If not, here's a 30-second version:
 </p>
 
 <p data-lang="zh">
-别慌——逐个拆解：
+继续之前，你会看到 <strong>log(odds)</strong> 这个术语。如果你学过逻辑回归就很熟悉。如果没有，30 秒讲清楚：
 </p>
 
 <div class="unpack-list">
   <div class="unpack-item">
-    <div class="symbol" data-lang="en">g₁(y), g₂(y)</div>
-    <div class="symbol" data-lang="zh">g₁(y), g₂(y)</div>
-    <div class="explain" data-lang="en"><strong>Network statistics</strong> — things you count in the network. How many ties? How many reciprocal pairs? How many triangles? How many ties between same-department people? Each g is just a count.</div>
-    <div class="explain" data-lang="zh"><strong>网络统计量</strong>——你在网络里能数的东西。多少条关系？多少对互惠？多少个三角形？多少条同部门的关系？每个 g 就是一个计数。</div>
+    <div class="symbol" data-lang="en">Probability</div>
+    <div class="symbol" data-lang="zh">概率</div>
+    <div class="explain" data-lang="en">"75% chance of buying" — ranges from 0 to 1.</div>
+    <div class="explain" data-lang="zh">"75% 的概率会买"——范围是 0 到 1。</div>
   </div>
   <div class="unpack-item">
-    <div class="symbol">θ₁, θ₂, ...</div>
-    <div class="explain" data-lang="en"><strong>Parameters (weights)</strong> — what ERGM estimates. Positive θ = "more of this pattern makes the network more likely." Negative θ = "less likely." Just like regression coefficients.</div>
-    <div class="explain" data-lang="zh"><strong>参数（权重）</strong>——ERGM 要估计的东西。正 θ = "这个模式越多，网络越可能出现"。负 θ = "越不可能"。和回归系数一样。</div>
+    <div class="symbol" data-lang="en">Odds</div>
+    <div class="symbol" data-lang="zh">几率</div>
+    <div class="explain" data-lang="en">P / (1−P). If P = 0.75, odds = 0.75 / 0.25 = <strong>3</strong>. Meaning: buying is 3× more likely than not buying. Ranges from 0 to ∞.</div>
+    <div class="explain" data-lang="zh">P / (1−P)。如果 P = 0.75，odds = 0.75 / 0.25 = <strong>3</strong>。意思是：买的可能性是不买的 3 倍。范围 0 到 ∞。</div>
   </div>
   <div class="unpack-item">
-    <div class="symbol">exp(...)</div>
-    <div class="explain" data-lang="en">Just makes all values positive — probabilities must be positive.</div>
-    <div class="explain" data-lang="zh">只是让所有值变成正数——概率必须为正。</div>
-  </div>
-  <div class="unpack-item">
-    <div class="symbol">κ</div>
-    <div class="explain" data-lang="en"><strong>Normalizing constant</strong> — makes all probabilities sum to 1. You never compute it directly (more on this later).</div>
-    <div class="explain" data-lang="zh"><strong>归一化常数</strong>——让所有概率加起来等于 1。你永远不直接算它（后面会说为什么）。</div>
+    <div class="symbol">log(odds)</div>
+    <div class="explain" data-lang="en">Take the logarithm of odds. Now it ranges from −∞ to +∞. <strong>Negative</strong> = unlikely, <strong>zero</strong> = coin flip, <strong>positive</strong> = likely. This is what makes it possible to use a simple addition formula.</div>
+    <div class="explain" data-lang="zh">对 odds 取对数。范围变成 −∞ 到 +∞。<strong>负数</strong> = 不太可能，<strong>零</strong> = 五五开，<strong>正数</strong> = 比较可能。正是这个变换让我们能用简单的加法公式。</div>
   </div>
 </div>
 
+<div class="callout">
+  <div class="callout-label" data-lang="en">Why this matters</div>
+  <div class="callout-label" data-lang="zh">这有什么用</div>
+  <p data-lang="en">In <strong>logistic regression</strong>, you predict whether something happens (yes/no) with: log(odds) = β₁ × age + β₂ × income. The β's tell you "how much does each factor push the probability up or down." ERGM uses <em>the exact same format</em> — just with network patterns instead of age and income.</p>
+  <p data-lang="zh"><strong>逻辑回归</strong>用这个格式预测某事是否发生：log(odds) = β₁ × 年龄 + β₂ × 收入。β 告诉你"每个因素把概率推高或拉低多少"。ERGM 的格式<em>一模一样</em>——只是把年龄、收入换成了网络模式。</p>
+</div>
+
+<!-- ── LEVEL 3.5 — THE TIE-LEVEL FORMULA ─────────────── -->
+
 <h3 id="tie-level">
-  <span data-lang="en">Reading ERGM Like Logistic Regression</span>
-  <span data-lang="zh">像读逻辑回归一样读 ERGM</span>
+  <span data-lang="en">The Tie-Level Formula — The One You Actually Use</span>
+  <span data-lang="zh">关系层面的公式——你真正用的那个</span>
 </h3>
 
 <p data-lang="en">
-The really useful version is the <strong>tie-level formula</strong>. For any specific pair (i, j):
+The "whole network" formula above is useful for theory but impractical. In practice, we ask a simpler question: <strong>for this specific pair of people, what are the odds they are connected?</strong>
 </p>
 
 <p data-lang="zh">
-真正实用的是<strong>关系层面</strong>的公式。对于任意一对 (i, j)：
+上面的"整个网络"公式在理论上有用，但不实用。实际上，我们问一个更简单的问题：<strong>对于这两个人，他们之间有关系的几率是多少？</strong>
 </p>
 
 <div class="ergm-formula">
@@ -390,25 +460,133 @@ log(odds of tie i→j) = θ₁ × Δg₁ + θ₂ × Δg₂ + ...
 </div>
 
 <p data-lang="en">
-<strong>Δg</strong> ("change statistic") = how much each network statistic changes if we add this one tie. This is exactly logistic regression form! The only difference: in regular logistic regression, predictors are fixed (age, income). In ERGM, predictors <em>change</em> depending on the rest of the network.
+This looks just like logistic regression! Compare:
 </p>
 
 <p data-lang="zh">
-<strong>Δg</strong>（"变化统计量"）= 加上这条关系后，每个统计量变化多少。这和逻辑回归形式完全一样！唯一区别：普通逻辑回归的预测变量是固定的（年龄、收入），ERGM 的预测变量会随网络其他部分<em>变化</em>。
+这和逻辑回归长得一模一样！对比一下：
+</p>
+
+<div class="concept-row">
+  <div class="concept-card">
+    <div class="card-icon" style="background:var(--leather)">LR</div>
+    <h4 data-lang="en">Logistic Regression</h4>
+    <h4 data-lang="zh">逻辑回归</h4>
+    <p data-lang="en">log(odds of buying) = β₁ × age + β₂ × income</p>
+    <p data-lang="zh">log(odds 购买) = β₁ × 年龄 + β₂ × 收入</p>
+    <p data-lang="en" style="margin-top:6px;font-size:12px;color:var(--ink-ghost)">Predictors (age, income) are fixed properties of the person.</p>
+    <p data-lang="zh" style="margin-top:6px;font-size:12px;color:var(--ink-ghost)">预测变量（年龄、收入）是人的固定属性。</p>
+  </div>
+  <div class="concept-card">
+    <div class="card-icon" style="background:var(--red)">ER</div>
+    <h4>ERGM</h4>
+    <p data-lang="en">log(odds of tie) = θ₁ × Δg₁ + θ₂ × Δg₂</p>
+    <p data-lang="zh">log(odds 关系) = θ₁ × Δg₁ + θ₂ × Δg₂</p>
+    <p data-lang="en" style="margin-top:6px;font-size:12px;color:var(--ink-ghost)">Predictors (Δg) <em>change</em> depending on the rest of the network — that's what makes ERGM special.</p>
+    <p data-lang="zh" style="margin-top:6px;font-size:12px;color:var(--ink-ghost)">预测变量（Δg）会随网络其他部分<em>变化</em>——这是 ERGM 的特殊之处。</p>
+  </div>
+</div>
+
+<!-- ── WHAT IS ΔG ─────────────────────────────────────── -->
+
+<h3 id="delta-g">
+  <span data-lang="en">What Exactly Is Δg?</span>
+  <span data-lang="zh">Δg 到底是什么？</span>
+</h3>
+
+<p data-lang="en">
+<strong>Δg ("change statistic")</strong> answers: if we add this one tie, how much does each network statistic change? Let's make it concrete:
+</p>
+
+<p data-lang="zh">
+<strong>Δg（"变化统计量"）</strong>回答的问题是：如果我们加上这一条关系，每个网络统计量变化多少？具体看：
 </p>
 
 <div class="callout tip">
-  <div class="callout-label" data-lang="en">Example: Alice → Bob</div>
-  <div class="callout-label" data-lang="zh">举例：Alice → Bob</div>
-  <p data-lang="en">Suppose the model has reciprocity and tenure homophily. For (Alice → Bob):</p>
-  <p data-lang="zh">假设模型包含互惠性和工龄同质性。对于 (Alice → Bob)：</p>
-  <p data-lang="en">Δg<sub>reciprocity</sub> = 1 if Bob already asks Alice (adding this tie creates a mutual pair), 0 otherwise.<br>
-  Δg<sub>tenure</sub> = 1 if Alice and Bob have similar tenure, 0 otherwise.</p>
-  <p data-lang="zh">Δg<sub>互惠</sub> = 1（如果 Bob 已经找 Alice 请教），否则 0。<br>
-  Δg<sub>工龄</sub> = 1（如果两人工龄相近），否则 0。</p>
-  <p data-lang="en">If θ<sub>reciprocity</sub> = 2.0, θ<sub>tenure</sub> = 0.5, and Bob already asks Alice with similar tenure: log(odds) = 2.0 × 1 + 0.5 × 1 = 2.5 → Alice is quite likely to ask Bob.</p>
-  <p data-lang="zh">如果 θ<sub>互惠</sub> = 2.0，θ<sub>工龄</sub> = 0.5，Bob 已经找 Alice、两人工龄相近：log(odds) = 2.0 + 0.5 = 2.5 → Alice 很可能找 Bob。</p>
+  <div class="callout-label" data-lang="en">Concrete Example: Should Alice → Bob exist?</div>
+  <div class="callout-label" data-lang="zh">具体例子：Alice → Bob 这条关系该不该存在？</div>
+  <p data-lang="en">Right now Alice and Bob are <em>not</em> connected. The model has two terms: <strong>reciprocity</strong> and <strong>tenure homophily</strong>. We ask: what would change if we added this tie?</p>
+  <p data-lang="zh">现在 Alice 和 Bob <em>没有</em>连线。模型有两个项：<strong>互惠性</strong>和<strong>工龄同质性</strong>。我们问：加上这条关系会改变什么？</p>
+  <p data-lang="en"><strong>Δg<sub>reciprocity</sub>:</strong> Does Bob already ask Alice? <strong>Yes</strong> → adding Alice→Bob creates a mutual pair → Δg = 1. <strong>No</strong> → Δg = 0.</p>
+  <p data-lang="zh"><strong>Δg<sub>互惠</sub>：</strong>Bob 已经在找 Alice 请教吗？<strong>是</strong> → 加上 Alice→Bob 产生了一个互惠对 → Δg = 1。<strong>否</strong> → Δg = 0。</p>
+  <p data-lang="en"><strong>Δg<sub>tenure</sub>:</strong> Do Alice and Bob have similar tenure? <strong>Yes</strong> → Δg = 1. <strong>No</strong> → Δg = 0.</p>
+  <p data-lang="zh"><strong>Δg<sub>工龄</sub>：</strong>Alice 和 Bob 工龄相近吗？<strong>是</strong> → Δg = 1。<strong>否</strong> → Δg = 0。</p>
+  <p data-lang="en">Suppose Bob <em>does</em> ask Alice and they have similar tenure. With θ<sub>reciprocity</sub> = 2.0 and θ<sub>tenure</sub> = 0.5:</p>
+  <p data-lang="zh">假设 Bob <em>的确</em>找 Alice，且两人工龄相近。θ<sub>互惠</sub> = 2.0，θ<sub>工龄</sub> = 0.5：</p>
+  <p data-lang="en">log(odds) = 2.0 × 1 + 0.5 × 1 = <strong>2.5</strong> → odds ≈ 12 → Alice is very likely to ask Bob.</p>
+  <p data-lang="zh">log(odds) = 2.0 × 1 + 0.5 × 1 = <strong>2.5</strong> → odds ≈ 12 → Alice 很可能找 Bob 请教。</p>
 </div>
+
+<div class="callout">
+  <div class="callout-label" data-lang="en">Key insight</div>
+  <div class="callout-label" data-lang="zh">关键理解</div>
+  <p data-lang="en">Δg is not a fixed personal trait — it depends on the <em>current state of the entire network</em>. If tomorrow Carol also starts asking Bob, that could change the Δg for other pairs. This interdependence is what makes ERGM different from regular regression, and why it needs special estimation methods.</p>
+  <p data-lang="zh">Δg 不是固定的个人属性——它取决于<em>整个网络的当前状态</em>。如果明天 Carol 也开始找 Bob，其他人对的 Δg 可能就变了。这种相互依赖正是 ERGM 和普通回归的区别，也是它需要特殊估计方法的原因。</p>
+</div>
+
+<!-- ── HOW THE TWO FORMULAS CONNECT ──────────────────── -->
+
+<button class="collapsible-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+  <span class="arrow">▶</span>
+  <span data-lang="en">How do the two formulas connect? (optional math)</span>
+  <span data-lang="zh">两个公式是怎么联系起来的？（选读数学）</span>
+</button>
+<div class="collapsible-content">
+
+<p data-lang="en">
+The tie-level formula is <em>derived from</em> the network-level formula. Here's the key step:
+</p>
+
+<p data-lang="zh">
+关系层面的公式是从网络层面的公式<em>推导出来的</em>。关键步骤：
+</p>
+
+<p data-lang="en">
+We want to compare: P(this tie exists) vs. P(this tie doesn't exist), holding everything else constant. Write both:
+</p>
+
+<p data-lang="zh">
+我们要比较：P(这条关系存在) vs. P(这条关系不存在)，其他都不变。把两个写出来：
+</p>
+
+<div class="ergm-formula" style="font-size:14px;text-align:left">
+P(with tie) = exp(θ₁ × g₁<sub>with</sub> + θ₂ × g₂<sub>with</sub>) / κ<br>
+P(without) = exp(θ₁ × g₁<sub>without</sub> + θ₂ × g₂<sub>without</sub>) / κ
+</div>
+
+<p data-lang="en">
+Divide them to get the odds. The κ cancels out (this is why we never need to compute it!):
+</p>
+
+<p data-lang="zh">
+相除得到 odds。κ 约掉了（这就是为什么我们永远不用算它！）：
+</p>
+
+<div class="ergm-formula" style="font-size:14px">
+odds = exp(θ₁ × (g₁<sub>with</sub> − g₁<sub>without</sub>) + θ₂ × (g₂<sub>with</sub> − g₂<sub>without</sub>))
+</div>
+
+<p data-lang="en">
+The differences g<sub>with</sub> − g<sub>without</sub> are exactly Δg! Take log of both sides:
+</p>
+
+<p data-lang="zh">
+差值 g<sub>有</sub> − g<sub>无</sub> 就是 Δg！两边取 log：
+</p>
+
+<div class="ergm-formula" style="font-size:14px">
+log(odds) = θ₁ × Δg₁ + θ₂ × Δg₂
+</div>
+
+<p data-lang="en">
+And we're back to the tie-level formula. The magic: κ vanished, leaving us with something we can actually compute.
+</p>
+
+<p data-lang="zh">
+又回到关系层面的公式了。关键：κ 消失了，剩下的是我们真正能算的东西。
+</p>
+
+</div><!-- end collapsible derivation -->
 
 <!-- ═══════════════════════════════════════════════════
      LEVEL 4 — HOW IT'S ESTIMATED
@@ -425,39 +603,46 @@ log(odds of tie i→j) = θ₁ × Δg₁ + θ₂ × Δg₂ + ...
 </h2>
 
 <p data-lang="en">
-The computational challenge: that normalizing constant κ requires summing over <strong>every possible network</strong>. For just 10 people, there are 2<sup>45</sup> ≈ 35 trillion possible networks. You can't enumerate them all.
+Remember κ — the normalizing constant we said you never compute? Here's why: it requires summing over <strong>every possible network</strong>. For just 10 people, there are 2<sup>45</sup> ≈ 35 trillion possible networks. Impossible to enumerate.
 </p>
 
 <p data-lang="zh">
-计算上的挑战：归一化常数 κ 需要对<strong>所有可能的网络</strong>求和。光是 10 个人就有 2<sup>45</sup> ≈ 35 万亿种可能网络。根本没法一个一个列举。
+还记得 κ——我们说永远不用算的那个归一化常数吗？原因是：它需要对<strong>所有可能的网络</strong>求和。光是 10 个人就有 2<sup>45</sup> ≈ 35 万亿种可能。根本没法穷举。
 </p>
 
 <p data-lang="en">
-<strong>Solution: MCMC (Markov Chain Monte Carlo).</strong> Instead of checking every possible network, the computer:
+<strong>Solution: MCMC (Markov Chain Monte Carlo)</strong> — don't enumerate, <em>simulate</em>.
 </p>
 
 <p data-lang="zh">
-<strong>解决办法：MCMC（马尔可夫链蒙特卡罗）。</strong>不逐一检查，计算机这样做：
+<strong>解决办法：MCMC（马尔可夫链蒙特卡罗）</strong>——不穷举，<em>模拟</em>。
 </p>
 
+<div class="callout tip">
+  <div class="callout-label" data-lang="en">Analogy: Reverse-engineering a recipe</div>
+  <div class="callout-label" data-lang="zh">类比：反推食谱</div>
+  <p data-lang="en">You ate a delicious dish and want to find the recipe (θ). You don't try every possible combination of ingredients. Instead: make a guess → cook it → taste it → "too salty" → reduce salt → cook again → "not sweet enough" → add sugar → repeat until it tastes right. <strong>MCMC is this "taste and adjust" loop for networks.</strong></p>
+  <p data-lang="zh">你吃了一道好菜，想找出食谱（θ）。你不需要试遍所有配料组合。而是：先猜 → 做出来 → 尝一口 → "太咸了" → 减盐 → 再做 → "不够甜" → 加糖 → 反复调整，直到味道对了。<strong>MCMC 就是网络版的"品尝和调整"循环。</strong></p>
+</div>
+
 <ol class="step-flow" data-lang="en">
-  <li>Start with the observed network and an initial guess for θ.</li>
-  <li>Randomly add or remove one tie at a time, creating simulated networks.</li>
-  <li>Compare: do the simulated networks' statistics match the real one? Too few triangles → increase θ<sub>triangle</sub>. Too many → decrease it.</li>
-  <li>Repeat until simulated networks look like the real one. Then θ is your answer.</li>
+  <li><strong>Start:</strong> take the observed network and an initial guess for θ.</li>
+  <li><strong>Simulate:</strong> randomly add or remove one tie at a time, creating simulated networks based on current θ.</li>
+  <li><strong>Compare:</strong> do the simulated networks' statistics match the real one? Too few triangles → increase θ<sub>triangle</sub>. Too many → decrease it.</li>
+  <li><strong>Repeat</strong> until simulated networks look like the real one. Then θ is your answer.</li>
 </ol>
 <ol class="step-flow" data-lang="zh">
-  <li>从观察到的网络和初始猜测的 θ 开始。</li>
-  <li>每次随机加上或去掉一条关系，生成模拟网络。</li>
-  <li>比较：模拟网络的统计量和真实网络一致吗？三角形太少 → 增大 θ<sub>三角形</sub>。太多 → 减小。</li>
-  <li>重复，直到模拟网络看起来像真实网络。这时候的 θ 就是答案。</li>
+  <li><strong>起点：</strong>拿到观察到的网络，猜一组初始 θ。</li>
+  <li><strong>模拟：</strong>根据当前 θ，每次随机加上或去掉一条关系，生成模拟网络。</li>
+  <li><strong>对比：</strong>模拟网络的统计量和真实网络一致吗？三角形太少 → 增大 θ<sub>三角形</sub>。太多 → 减小。</li>
+  <li><strong>重复，</strong>直到模拟网络看起来像真实网络。这时候的 θ 就是答案。</li>
 </ol>
 
 <div class="callout">
-  <div class="callout-label" data-lang="en">In plain language</div>
-  <div class="callout-label" data-lang="zh">通俗说</div>
-  <p data-lang="en">ERGM finds parameters by repeatedly asking "if these were the true rules, would we see something like the real network?" It tweaks the rules until the answer is yes.</p>
-  <p data-lang="zh">ERGM 反复问"如果这些是真实规则，我们能看到类似真实网络的东西吗？"然后不断调整直到答案是"能"。</p>
+  <div class="callout-label" data-lang="en">In one sentence</div>
+  <div class="callout-label" data-lang="zh">一句话</div>
+  <p data-lang="en">ERGM repeatedly asks: <em>"if these were the true rules, would we see something like the real network?"</em> It tweaks the rules until the answer is yes.</p>
+  <p data-lang="zh">ERGM 反复问：<em>"如果这些是真实规则，我们能看到类似真实网络的东西吗？"</em>然后不断调整直到答案是"能"。</p>
 </div>
 
 <!-- ═══════════════════════════════════════════════════
