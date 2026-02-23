@@ -162,6 +162,26 @@ next:
     <h3 data-lang="zh">选择一个测量</h3>
     <p class="method-desc" data-lang="en">Different centrality measures answer different questions. Degree = "Who has many connections?" Betweenness = "Who is a broker or gatekeeper?" Eigenvector = "Who is connected to important others?" Closeness = "Who can quickly reach everyone else?" No single right answer — choose based on your research question.</p>
     <p class="method-desc" data-lang="zh">不同中心性测量回答不同问题。度 = "谁有许多连接？"中介性 = "谁是经纪人或守门人？"特征向量 = "谁与重要人物相连？"接近性 = "谁能快速接触每个人？"无单一正确答案——基于研究问题选择。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Think of centrality like measuring influence in an office. Degree centrality counts how many people come to your desk each day. Betweenness centrality asks whether all inter-department emails pass through you. Eigenvector centrality asks whether the people who come to your desk are themselves well-connected — the CEO's assistant may have low degree but enormous indirect reach.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>把中心性想象为衡量办公室影响力。度中心性计算每天有多少人来你的桌前。中介中心性问的是所有跨部门邮件是否都经过你。特征向量中心性问的是来你桌前的人本身是否人脉广——CEO 的助理可能度数低，但间接影响力巨大。</div>
+    <div class="method-when" data-lang="en"><strong>When to use:</strong> You have a network and want to rank or compare nodes by structural importance. Choose the centrality measure that matches your definition of "importance" — popularity (degree), brokerage (betweenness), prestige (eigenvector), or reachability (closeness).</div>
+    <div class="method-when" data-lang="zh"><strong>何时用：</strong>有网络数据且想按结构重要性排名或比较节点。选择匹配你的"重要性"定义的中心性指标——受欢迎度（度）、中介（中介性）、声望（特征向量）、可达性（接近性）。</div>
+  </div>
+
+  <!-- Section 2 guide -->
+  <h3 data-lang="en">Guide</h3>
+  <h3 data-lang="zh">指南</h3>
+  <div class="m-list">
+    <a class="m-card" href="/methods/guides/reg-net-centrality.html">
+      <div class="m-num">▶</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Network Centrality in R</div>
+        <div class="m-title" data-lang="zh">R 中的网络中心性分析</div>
+        <div class="m-desc" data-lang="en">Interactive centrality comparison (degree, betweenness, closeness, eigenvector) with igraph.</div>
+        <div class="m-desc" data-lang="zh">四种中心性指标交互比较，含 igraph 代码。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
   </div>
 </div>
 
@@ -218,6 +238,26 @@ next:
     <h3 data-lang="zh">验证与解释</h3>
     <p class="method-desc" data-lang="en">Just because an algorithm finds communities doesn't mean they're meaningful. Always validate: (1) Do detected communities align with known groupings (political affiliation, industry sector, geographic region)? (2) Are there significant differences in attributes between communities? (3) Do communities make sense theoretically?</p>
     <p class="method-desc" data-lang="zh">仅因算法发现社区不意味着有意义。总是验证：（1）检测社区是否与已知分组一致（政治立场、行业、地理）？（2）社区间属性有显著差异？（3）社区在理论上有意义？</p>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Applying Louvain to the U.S. Senate co-sponsorship network reveals two primary communities that align almost perfectly with party affiliation. The handful of senators who fall in the "wrong" community are often moderates who frequently co-sponsor across party lines — the algorithm discovers political behavior without knowing party labels.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>对美国参议院联署网络应用 Louvain 算法，揭示出两个主要社区，几乎完全对应党派归属。少数被分入"错误"社区的参议员通常是温和派，频繁进行跨党联署——算法在不知道党派标签的情况下发现了政治行为。</div>
+    <div class="method-when" data-lang="en"><strong>When to use:</strong> You want to find groups or clusters in your network without pre-defining them. Good for exploratory analysis: discovering factions, cliques, or blocs. Not appropriate when you already know the groups and want to test whether they differ.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用：</strong>想在网络中发现群组或聚类但不预先定义它们。适合探索性分析：发现派系、小圈子或集团。已知分组且想检验差异时不适用。</div>
+  </div>
+
+  <!-- Section 3 guide -->
+  <h3 data-lang="en">Guide</h3>
+  <h3 data-lang="zh">指南</h3>
+  <div class="m-list">
+    <a class="m-card" href="/methods/guides/reg-net-modularity.html">
+      <div class="m-num">▶</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Community Detection: Modularity &amp; Algorithms</div>
+        <div class="m-title" data-lang="zh">社区检测：模块性与算法</div>
+        <div class="m-desc" data-lang="en">Modularity Q derivation, Louvain algorithm step-by-step, spectral methods, and resolution limits.</div>
+        <div class="m-desc" data-lang="zh">模块性 Q 完整推导、Louvain 算法逐步解析、谱方法与分辨率极限。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
   </div>
 </div>
 
@@ -276,6 +316,26 @@ next:
     <h3 data-lang="zh">测量扩散</h3>
     <p class="method-desc" data-lang="en">In practice: (1) Identify the initial adopter(s). (2) Track who-adopted-when over time. (3) Estimate threshold θ for each individual or group. (4) Compare predicted (network model) vs. observed adoption curves. (5) Identify which network features (density, bridging ties, hierarchy) accelerate or slow diffusion.</p>
     <p class="method-desc" data-lang="zh">实际上：（1）识别初始采取者。（2）追踪随时间谁采取。（3）估计每个个体或群体的阈值 θ。（4）对比预测（网络模型）vs. 观察采取曲线。（5）识别哪些网络特征（密度、桥接关系、层级）加速或减缓扩散。</p>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Centola (2010) showed experimentally that health behaviors spread faster through clustered networks (where your friends know each other) than through random networks with long-range bridges. This contradicts the "strength of weak ties" prediction — because adopting a health behavior is complex contagion requiring social reinforcement, not just information.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>Centola (2010) 通过实验证明，健康行为在聚簇网络（你的朋友互相认识）中传播比在具有长距离桥接的随机网络中更快。这与"弱关系的力量"预测相矛盾——因为采取健康行为是需要社会强化的复杂传播，而非仅仅信息传递。</div>
+    <div class="method-when" data-lang="en"><strong>When to use:</strong> You want to model or predict how something spreads through a network — disease, information, technology adoption, protest participation. Choose simple contagion (SIR) when one exposure suffices; choose threshold models when adoption requires social reinforcement from multiple peers.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用：</strong>想建模或预测事物如何在网络中传播——疾病、信息、技术采用、抗议参与。一次接触即可时选简单传播（SIR）；采取需多个同伴社会强化时选阈值模型。</div>
+  </div>
+
+  <!-- Section 4 guide -->
+  <h3 data-lang="en">Guide</h3>
+  <h3 data-lang="zh">指南</h3>
+  <div class="m-list">
+    <a class="m-card" href="/methods/guides/reg-net-diffusion.html">
+      <div class="m-num">▶</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Network Diffusion: Mathematical Models</div>
+        <div class="m-title" data-lang="zh">网络扩散：数学模型</div>
+        <div class="m-desc" data-lang="en">SIR on networks, threshold models, information cascades, and R simulations.</div>
+        <div class="m-desc" data-lang="zh">网络上的 SIR 模型、阈值模型、信息级联与 R 模拟代码。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
   </div>
 </div>
 
@@ -328,6 +388,22 @@ next:
     <div class="method-when" data-lang="en"><strong>When to use:</strong> When you suspect that network ties are driven by an underlying social space (e.g., ideological proximity, geographic closeness) that you cannot directly observe. Particularly useful for visualization: the estimated positions give you a meaningful map of the social space. Use <code>latentnet</code> in R.</div>
     <div class="method-when" data-lang="zh"><strong>何时用：</strong>怀疑网络关系由不可直接观测的底层社会空间驱动时（如意识形态接近、地理邻近）。对可视化特别有用：估计的位置给出社会空间的有意义地图。使用 R 中的 <code>latentnet</code>。</div>
   </div>
+
+  <!-- Section 5 guide -->
+  <h3 data-lang="en">Guide</h3>
+  <h3 data-lang="zh">指南</h3>
+  <div class="m-list">
+    <a class="m-card" href="/methods/guides/reg-net-ergm.html">
+      <div class="m-num">▶</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">ERGM: From Intuition to Math</div>
+        <div class="m-title" data-lang="zh">ERGM：从直觉到数学</div>
+        <div class="m-desc" data-lang="en">Full ERGM derivation, MCMC estimation, degeneracy solutions, and statnet implementation.</div>
+        <div class="m-desc" data-lang="zh">ERGM 完整推导、MCMC 估计、退化问题解决方案与 statnet 实现。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
+  </div>
 </div>
 
 <hr class="section-divider">
@@ -336,55 +412,55 @@ next:
   <h2 data-lang="en">Guides</h2>
   <h2 data-lang="zh">配套指南</h2>
 
-  <h3 data-lang="en" style="margin-top:24px;">Foundations</h3>
-  <h3 data-lang="zh" style="margin-top:24px;">基础推导</h3>
+  <h3 data-lang="en" style="margin-top:24px;">Sample</h3>
+  <h3 data-lang="zh" style="margin-top:24px;">实例演练</h3>
+  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">Coming soon.</p>
+  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">即将推出。</p>
+
+  <h3 data-lang="en" style="margin-top:32px;">All Guides</h3>
+  <h3 data-lang="zh" style="margin-top:32px;">全部指南</h3>
   <div class="m-list">
-    <a class="m-card" href="/methods/guides/reg-net-centrality.html">
-      <div class="m-num">01</div>
-      <div class="m-info">
-        <div class="m-title" data-lang="en">Network Centrality in R</div>
-        <div class="m-title" data-lang="zh">R 中的网络中心性分析</div>
-        <div class="m-desc" data-lang="en">Interactive centrality comparison (degree, betweenness, closeness, eigenvector) with igraph.</div>
-        <div class="m-desc" data-lang="zh">四种中心性指标（度、中介、接近、特征向量）交互比较，含 igraph 代码。</div>
-      </div>
-      <div class="m-arrow">→</div>
-    </a>
     <a class="m-card" href="/methods/guides/reg-net-modularity.html">
-      <div class="m-num">02</div>
+      <div class="m-num">▶</div>
       <div class="m-info">
-        <div class="m-title" data-lang="en">Community Detection: Modularity & Algorithms</div>
+        <div class="m-title" data-lang="en">Community Detection: Modularity &amp; Algorithms</div>
         <div class="m-title" data-lang="zh">社区检测：模块性与算法</div>
-        <div class="m-desc" data-lang="en">Modularity Q derivation, Louvain algorithm step-by-step, spectral methods, and resolution limits.</div>
-        <div class="m-desc" data-lang="zh">模块性 Q 完整推导、Louvain 算法逐步解析、谱方法与分辨率极限。</div>
-      </div>
-      <div class="m-arrow">→</div>
-    </a>
-    <a class="m-card" href="/methods/guides/reg-net-diffusion.html">
-      <div class="m-num">03</div>
-      <div class="m-info">
-        <div class="m-title" data-lang="en">Network Diffusion: Mathematical Models</div>
-        <div class="m-title" data-lang="zh">网络扩散：数学模型</div>
-        <div class="m-desc" data-lang="en">SIR on networks, threshold models, information cascades, and R simulations.</div>
-        <div class="m-desc" data-lang="zh">网络上的 SIR 模型、阈值模型、信息级联与 R 模拟代码。</div>
+        <div class="m-desc" data-lang="en">Modularity Q derivation, Louvain algorithm, spectral methods.</div>
+        <div class="m-desc" data-lang="zh">模块性 Q 推导、Louvain 算法、谱方法。</div>
       </div>
       <div class="m-arrow">→</div>
     </a>
     <a class="m-card" href="/methods/guides/reg-net-ergm.html">
-      <div class="m-num">04</div>
+      <div class="m-num">▶</div>
       <div class="m-info">
-        <div class="m-title" data-lang="en">ERGM: Mathematical Foundations</div>
-        <div class="m-title" data-lang="zh">ERGM：数学基础</div>
-        <div class="m-desc" data-lang="en">Full ERGM derivation, MCMC estimation, degeneracy solutions, and statnet implementation.</div>
-        <div class="m-desc" data-lang="zh">ERGM 完整推导、MCMC 估计、退化问题解决方案与 statnet 实现。</div>
+        <div class="m-title" data-lang="en">ERGM: From Intuition to Math</div>
+        <div class="m-title" data-lang="zh">ERGM：从直觉到数学</div>
+        <div class="m-desc" data-lang="en">Full derivation, MCMC estimation, statnet implementation.</div>
+        <div class="m-desc" data-lang="zh">完整推导、MCMC 估计、statnet 实现。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
+    <a class="m-card" href="/methods/guides/reg-net-centrality.html">
+      <div class="m-num">▶</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Network Centrality in R</div>
+        <div class="m-title" data-lang="zh">R 中的网络中心性分析</div>
+        <div class="m-desc" data-lang="en">Degree, betweenness, closeness, eigenvector with igraph.</div>
+        <div class="m-desc" data-lang="zh">度、中介、接近、特征向量，含 igraph 代码。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
+    <a class="m-card" href="/methods/guides/reg-net-diffusion.html">
+      <div class="m-num">▶</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Network Diffusion: Mathematical Models</div>
+        <div class="m-title" data-lang="zh">网络扩散：数学模型</div>
+        <div class="m-desc" data-lang="en">SIR on networks, threshold models, R simulations.</div>
+        <div class="m-desc" data-lang="zh">网络 SIR、阈值模型、R 模拟代码。</div>
       </div>
       <div class="m-arrow">→</div>
     </a>
   </div>
-
-  <h3 data-lang="en" style="margin-top:32px;">Sample</h3>
-  <h3 data-lang="zh" style="margin-top:32px;">实例演练</h3>
-  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">Coming soon.</p>
-  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">即将推出。</p>
 </div>
 
 <hr class="section-divider">
