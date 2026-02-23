@@ -69,13 +69,44 @@ next:
   <h2 data-lang="zh">先验、似然与后验：贝叶斯逻辑</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> Frequentist statistics answers: "What's the probability of this data, given that the null hypothesis is true?" But you don't care about the null hypothesis. You care about the opposite: "Given that I observed this data, what's the probability that my hypothesis is true?" Bayesian inference flips the question around and answers <em>your</em> actual research question. The mathematics: Bayes' theorem. The philosophy: parameters are random (they have probability distributions), data are fixed (you have them in hand).</p>
+    <p data-lang="zh"><strong>问题：</strong>频率统计回答："给定零假设为真，这组数据的概率是多少？"但你不关心零假设。你关心相反的："给定我观察到这个数据，我的假设为真的概率是多少？"贝叶斯推断翻转问题并回答<em>你</em>真正的研究问题。数学：贝叶斯定理。哲学：参数是随机的（它们有概率分布），数据是固定的（你手中有）。</p>
   </div>
 
+  <!-- Subsection 1: Frequentist vs. Bayesian -->
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Frequentist vs. Bayesian: A Philosophical Divide</h3>
+    <h3 data-lang="zh">频率派与贝叶斯派：哲学分野</h3>
+    <p class="method-desc" data-lang="en"><strong>Frequentist inference:</strong> Parameters are fixed (but unknown). Data are random—you imagine repeating your experiment infinitely many times. A confidence interval means: "if I repeated this study 100 times, my interval would contain the true parameter about 95 times." This is awkward because your actual study gave you data once, not infinitely. <strong>Bayesian inference:</strong> Data are fixed (you have them). Parameters are random—each parameter has a probability distribution reflecting uncertainty. A credible interval means: "given my data, there's 95% probability the true parameter lies in this range." This is intuitive: it's the actual statement researchers want.</p>
+    <p class="method-desc" data-lang="zh"><strong>频率推断：</strong>参数是固定的（但未知）。数据是随机的——你想象无限多次重复实验。置信区间意思是："如果我重复这个研究 100 次，我的区间大约 95 次包含真实参数。"这很尴尬因为你的实际研究给你数据一次，不是无限次。<strong>贝叶斯推断：</strong>数据是固定的（你有它们）。参数是随机的——每个参数有概率分布反映不确定性。可信区间意思是："给定我的数据，真实参数在这个范围内的概率是 95%。"这很直观：这是研究者想要的实际陈述。</p>
+    <div class="method-analogy" data-lang="en">A detective builds a case. Starting with no suspects (a diffuse prior), each new clue updates the probability distribution over suspects (posterior). With enough evidence, one suspect becomes overwhelmingly likely. The detective never "rejects the suspect with p < 0.05"—they simply adjust their confidence based on evidence.</div>
+    <div class="method-analogy" data-lang="zh">侦探建立案件。从没有嫌疑人开始（散漫先验），每个新线索更新嫌疑人的概率分布（后验）。有足够证据后，一个嫌疑人变得压倒性可能。侦探永远不会"以 p < 0.05 拒绝嫌疑人"——他们只是根据证据调整信心。</div>
+  </div>
+
+  <!-- Subsection 2: Bayes' Theorem -->
+  <div class="method-section">
+    <h3 data-lang="en">Bayes' Theorem: The Core Formula</h3>
+    <h3 data-lang="zh">贝叶斯定理：核心公式</h3>
+    <p class="method-desc" data-lang="en">The entire framework rests on one equation: Posterior ∝ Likelihood × Prior. Formally: p(θ|Data) ∝ p(Data|θ) × p(θ). Read this piece by piece. p(θ|Data) is the <strong>posterior distribution</strong>—your updated belief about parameter θ after seeing data. p(Data|θ) is the <strong>likelihood</strong>—the probability of your observed data given a particular θ value. p(θ) is the <strong>prior distribution</strong>—your belief before seeing data. The ∝ means "proportional to" (a normalizing constant makes it a true probability). Intuition: your final belief (posterior) is shaped by what you started with (prior) and what the data tell you (likelihood). Strong data can overcome weak priors.</p>
+    <p class="method-desc" data-lang="zh">整个框架基于一个方程：后验 ∝ 似然 × 先验。形式上：p(θ|Data) ∝ p(Data|θ) × p(θ)。逐件读这个。p(θ|Data) 是<strong>后验分布</strong>——你看到数据后参数 θ 的更新信念。p(Data|θ) 是<strong>似然</strong>——给定特定 θ 值观察数据的概率。p(θ) 是<strong>先验分布</strong>——看到数据前你的信念。∝ 意思是"成比例于"（归一化常数使其成为真概率）。直观：你的最终信念（后验）由你起始信念（先验）和数据告诉你（似然）塑造。强数据可以克服弱先验。</p>
+  </div>
+
+  <!-- Subsection 3: The Prior -->
+  <div class="method-section">
+    <h3 data-lang="en">The Prior: Encoding Prior Knowledge</h3>
+    <h3 data-lang="zh">先验：编码先前知识</h3>
+    <p class="method-desc" data-lang="en">Critics fear Bayesian analysis is "subjective"—you choose your prior, so you can push results however you want. But this is a strength, not a weakness. You <em>always</em> have prior beliefs (from theory, previous studies, domain knowledge); frequentist methods just hide them. Bayesian forces transparency: state your prior explicitly. Two types: <strong>Weakly informative priors</strong> express uncertainty. Example for regression: Normal(0, 2.5) on standardized predictors says "I have no strong belief about the direction or magnitude of effects." <strong>Informative priors</strong> encode substantive knowledge. Example: based on ten prior studies, corruption reduces investment; prior is Normal(-0.8, 0.2). When you have strong data (large sample), the prior barely matters—the likelihood dominates. When data are weak (small sample), the prior provides crucial information, preventing wildly implausible estimates.</p>
+    <p class="method-desc" data-lang="zh">批评者害怕贝叶斯分析是"主观的"——你选择先验，所以你可以随意推动结果。但这是优势，不是劣势。你<em>总是</em>有先前信念（来自理论、以前的研究、领域知识）；频率方法只是隐藏它们。贝叶斯强制透明：明确陈述你的先验。两种类型：<strong>弱信息先验</strong>表达不确定性。回归例子：标准化预测变量上的 Normal(0, 2.5) 说"我对效应的方向或幅度没有强烈信念。"<strong>信息先验</strong>编码实质知识。例子：基于十项以前研究，腐败减少投资；先验是 Normal(-0.8, 0.2)。当你有强数据（大样本）时，先验几乎无关——似然主导。当数据弱（小样本）时，先验提供关键信息，防止不合理估计。</p>
+    <div class="method-when" data-lang="en"><strong>When to use informative priors:</strong> You have genuine domain expertise or prior studies guiding your expectations. <strong>When to use weak priors:</strong> You want minimal influence from prior beliefs and maximum influence from data (conservative approach).</div>
+    <div class="method-when" data-lang="zh"><strong>何时用信息先验：</strong>你有真正的领域专业知识或以前的研究指导期望。<strong>何时用弱先验：</strong>你想最小化先前信念影响和最大化数据影响（保守方法）。</div>
+  </div>
+
+  <!-- Subsection 4: Posterior Shrinkage -->
+  <div class="method-section">
+    <h3 data-lang="en">Why the Posterior Shrinks Toward the Prior When Data Are Limited</h3>
+    <h3 data-lang="zh">为什么当数据有限时后验向先验缩小</h3>
+    <p class="method-desc" data-lang="en">A key insight: when your sample is small, the posterior (your updated belief) is pulled back toward the prior (your starting belief). This is not a bug—it's a feature. Mathematically, with little data, the likelihood is "flat" (many θ values explain the data equally well), so the prior shape matters. Example: estimating corruption levels in 10 countries with only 5 observations each. The raw country-by-country OLS estimates would be wildly noisy. A Bayesian hierarchical model assumes countries are similar, placing a shared prior on them. Each country's posterior estimate is pulled toward the overall average (partial pooling). Small countries get more shrinkage; large countries (more data) are pulled less. This produces better predictions and avoids extreme estimates.</p>
+    <p class="method-desc" data-lang="zh">一个关键见解：当你的样本很小时，后验（你的更新信念）被拉回先验（你的起始信念）。这不是错误——这是特征。数学上，数据很少时，似然是"平坦的"（许多 θ 值同样好地解释数据），所以先验形状重要。例子：用只有 5 个观测值的 10 个国家估计腐败水平。原始逐国 OLS 估计会非常嘈杂。贝叶斯分层模型假设国家相似，对它们放置共享先验。每个国家的后验估计被拉向总体平均值（部分汇总）。小国家获得更多收缩；大国家（更多数据）被拉得更少。这产生更好的预测并避免极端估计。</p>
   </div>
 </div>
 
@@ -87,13 +118,46 @@ next:
   <h2 data-lang="zh">贝叶斯回归的实践</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> Understanding Bayesian theory is one thing; implementing it is another. How do you actually run a Bayesian regression? What do the posterior samples mean? How do credible intervals differ from confidence intervals, and what does that difference imply for interpretation?</p>
+    <p data-lang="zh"><strong>问题：</strong>理解贝叶斯理论是一回事；实现是另一回事。你真的怎样跑贝叶斯回归？后验样本意思是什么？可信区间与置信区间如何不同，这个差异对解释意味着什么？</p>
   </div>
 
+  <!-- Subsection 1: Model Specification -->
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Specifying a Bayesian Regression Model</h3>
+    <h3 data-lang="zh">指定贝叶斯回归模型</h3>
+    <p class="method-desc" data-lang="en">A Bayesian regression has the same form as OLS—Y = β₀ + β₁X₁ + ... + βₖXₖ—but now you assign prior distributions to every parameter. Standard approach: <strong>place a weakly informative prior on each β</strong>, say Normal(0, 2.5) on standardized X variables. This says "I expect effects are small to medium; I'm not sure about direction." <strong>Place a prior on the error standard deviation σ</strong>, typically Exponential(1). The computational algorithm (see below) then draws samples from the posterior distribution of (β₀, β₁, ..., βₖ, σ) that is consistent with both your priors and your data.</p>
+    <p class="method-desc" data-lang="zh">贝叶斯回归与 OLS 同样形式——Y = β₀ + β₁X₁ + ... + βₖXₖ——但现在你给每个参数分配先验分布。标准方法：<strong>对每个 β 放置弱信息先验</strong>，比如标准化 X 变量上的 Normal(0, 2.5)。这说"我期望效应很小到中等；我不确定方向。"<strong>对误差标准差 σ 放置先验</strong>，通常 Exponential(1)。计算算法（见下）然后从与你的先验和数据一致的 (β₀, β₁, ..., βₖ, σ) 的后验分布中抽取样本。</p>
+    <div class="method-analogy" data-lang="en">Building a model is like running a thought experiment before seeing data. "I think effects are probably small and I'm unsure about direction" becomes a mathematical prior. "Here's my data"—the likelihood updates that. The result is a posterior reflecting both prior beliefs and data evidence.</div>
+    <div class="method-analogy" data-lang="zh">构建模型就像在看数据前进行思想实验。"我认为效应可能很小且我不确定方向"变成数学先验。"这是我的数据"——似然更新。结果是反映先前信念和数据证据的后验。</div>
+  </div>
+
+  <!-- Subsection 2: MCMC Sampling -->
+  <div class="method-section">
+    <h3 data-lang="en">MCMC: How the Computer Draws Posterior Samples</h3>
+    <h3 data-lang="zh">MCMC：计算机如何抽取后验样本</h3>
+    <p class="method-desc" data-lang="en">Here's the challenge: the posterior distribution p(θ|Data) is often too complicated to calculate directly. Solution: use Markov Chain Monte Carlo (MCMC), an algorithm that produces samples from the posterior without computing it explicitly. Think of it as a random walk through parameter space that, over time, spends more time in regions of high posterior probability. Modern implementations (Stan, brms) handle the details automatically. What you need to know: (1) MCMC produces a "chain"—a sequence of parameter draws. (2) The first draws (warm-up or burn-in) are discarded because the chain hasn't converged yet. (3) After warm-up, remaining samples approximate your posterior distribution. (4) If you have 4,000 post-warmup draws, you have 4,000 plausible parameter vectors, each consistent with prior and data.</p>
+    <p class="method-desc" data-lang="zh">这里是挑战：后验分布 p(θ|Data) 通常太复杂而不能直接计算。解决方案：使用马尔可夫链蒙特卡洛 (MCMC)，一种算法产生后验样本而不显式计算。将其视为通过参数空间的随机游走，随时间，花费更多时间在高后验概率区域。现代实现（Stan、brms）自动处理细节。你需要知道：(1) MCMC 产生一个"链"——参数抽取序列。(2) 第一次抽取（预热或消除）被丢弃因为链还未收敛。(3) 预热后，剩余样本近似你的后验分布。(4) 如果你有 4,000 后热身抽取，你有 4,000 可信参数向量，每个与先验和数据一致。</p>
+  </div>
+
+  <!-- Subsection 3: Interpreting Posterior Samples and Credible Intervals -->
+  <div class="method-section">
+    <h3 data-lang="en">Credible Intervals: Direct Probability Statements</h3>
+    <h3 data-lang="zh">可信区间：直接概率陈述</h3>
+    <p class="method-desc" data-lang="en">From 4,000 posterior samples of β₁, a simple calculation gives the 95% credible interval: the range containing the middle 95% of samples. For example, if samples range from -0.2 to 0.8, the 95% credible interval is roughly [-0.2, 0.8]. Interpretation: "Given my data and prior, there is 95% probability that β₁ lies in this interval." This is the intuitive statement researchers want. Frequentist confidence intervals can't claim this (they require awkward "repeat-sampling" language). A credible interval is also called a Bayesian confidence interval—use the term you prefer.</p>
+    <p class="method-desc" data-lang="zh">从 4,000 β₁ 的后验样本，一个简单计算给出 95% 可信区间：包含中间 95% 样本的范围。例如，如果样本范围从 -0.2 到 0.8，95% 可信区间大约是 [-0.2, 0.8]。解释："给定我的数据和先验，β₁ 在这个区间内的概率是 95%。"这是研究者想要的直观陈述。频率置信区间不能声称这个（它们需要尴尬的"重复抽样"语言）。可信区间也称为贝叶斯置信区间——使用你偏好的术语。</p>
+    <div class="method-analogy" data-lang="en">A frequentist confidence interval is like telling a doctor: "If I repeated the blood test 100 times on the same patient, the interval would contain the true value about 95 times." A credible interval says: "Given this patient's test result, there's 95% chance the true value is here." The credible interval is what the doctor actually cares about.</div>
+    <div class="method-analogy" data-lang="zh">频率置信区间就像告诉医生："如果我在同一患者上重复血液测试 100 次，区间大约 95 次包含真实值。"可信区间说："给定这个患者的测试结果，真实值在这里的概率是 95%。"可信区间是医生真正关心的。</div>
+    <div class="method-example" data-lang="en"><strong>Government spending effect:</strong> Bayesian regression of growth on spending (with other controls). Posterior samples of the spending coefficient cluster around 0.1. The 95% credible interval is [0.02, 0.18]. Direct interpretation: "Given the data, there's 95% probability the true effect is between 0.02 and 0.18." You can also ask: "What's the probability the effect is positive?" Count posterior samples > 0; if 98% are positive, the answer is 0.98. (Frequentist approaches can't easily answer "what's the probability?").</div>
+    <div class="method-example" data-lang="zh"><strong>政府支出效应：</strong>增长对支出的贝叶斯回归（有其他控制）。支出系数的后验样本聚集在 0.1 周围。95% 可信区间是 [0.02, 0.18]。直接解释："给定数据，真实效应在 0.02 和 0.18 之间的概率是 95%。"你也可以问："效应为正的概率是多少？"计数后验样本 > 0；如果 98% 为正，答案是 0.98。（频率方法不能容易回答"概率是多少？"）。</div>
+  </div>
+
+  <!-- Subsection 4: Advantages Over Frequentist Regression -->
+  <div class="method-section">
+    <h3 data-lang="en">Advantages: What Bayesian Regression Gives You That OLS Cannot</h3>
+    <h3 data-lang="zh">优势：贝叶斯回归给你 OLS 不能的什么</h3>
+    <p class="method-desc" data-lang="en">(1) <strong>Direct probability statements:</strong> "Is the effect positive?" → count samples. "Is the effect large?" → compare to a threshold. (2) <strong>Transparent prior information:</strong> you can include domain knowledge; you force yourself to state assumptions explicitly. (3) <strong>Flexible model extensions:</strong> Bayesian hierarchical models (see next section) are natural; adding structure is easier than in frequentist frameworks. (4) <strong>Decision-making:</strong> Posterior distributions directly support policy decisions ("if the effect is > X, do A; otherwise do B"). Frequentist hypothesis tests don't. (5) <strong>Small sample advantages:</strong> when data are sparse, a sensible prior prevents unreasonable estimates (shrinkage toward prior).</p>
+    <p class="method-desc" data-lang="zh">(1) <strong>直接概率陈述：</strong>"效应为正吗？"→ 计数样本。"效应很大吗？"→ 与阈值比较。(2) <strong>透明先验信息：</strong>你可以包括领域知识；你强制自己明确陈述假设。(3) <strong>灵活模型扩展：</strong>贝叶斯分层模型（见下一部分）是自然的；添加结构比频率框架容易。(4) <strong>决策制定：</strong>后验分布直接支持政策决定（"如果效应 > X，做 A；否则做 B"）。频率假设检验不会。(5) <strong>小样本优势：</strong>当数据稀疏时，合理先验防止不合理估计（向先验收缩）。</p>
   </div>
 </div>
 
@@ -105,13 +169,36 @@ next:
   <h2 data-lang="zh">层次（多层）贝叶斯模型</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> Your data have a natural hierarchy: students nested in schools, legislators nested in parties, observations nested in countries. Estimating a separate regression for each group (school-by-school) gives noisy estimates when groups are small. Pooling all data together ignores group-level variation. Bayesian hierarchical models split the difference through an elegant mechanism: group-level parameters are drawn from a higher-level (hyper) distribution, which "knows" that groups are similar. Each group's estimate is then pulled toward the overall mean (partial pooling).</p>
+    <p data-lang="zh"><strong>问题：</strong>你的数据有自然层次：学生嵌套在学校内，立法者嵌套在政党内，观测嵌套在国家内。为每组（逐校）估计单独回归在组很小时给出嘈杂估计。汇总所有数据忽略组级变异。贝叶斯分层模型通过优雅机制分割差异：组级参数从更高级别（超）分布抽取，"知道"组是相似的。每个组的估计然后被拉向总体平均（部分汇总）。</p>
   </div>
 
+  <!-- Subsection 1: The Hierarchical Structure -->
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Hierarchical Structure: Groups Share a Common Distribution</h3>
+    <h3 data-lang="zh">层次结构：组共享共同分布</h3>
+    <p class="method-desc" data-lang="en">In a Bayesian hierarchical model, group-level parameters come from a shared hyper-prior. Example: estimate test score effects on student outcomes, with students nested in 50 schools. <strong>Level 1 (within-school):</strong> For school j, outcomes y_ij = β₀_j + β₁_j × study_hours_ij + ε_ij. Each school has its own intercept (β₀_j) and slope (β₁_j). <strong>Level 2 (between-school):</strong> The school-level intercepts are not independent; they're drawn from a distribution: β₀_j ~ Normal(μ₀, σ₀²). Similarly, β₁_j ~ Normal(μ₁, σ₁²). <strong>Level 3 (hyper-priors):</strong> Place priors on the hyper-parameters μ₀, σ₀, μ₁, σ₁. The result: schools are not estimated in isolation but as members of a population of schools. Small schools (little data) get pulled toward the population mean; large schools (much data) stay close to their own mean.</p>
+    <p class="method-desc" data-lang="zh">在贝叶斯分层模型中，组级参数来自共享超先验。例子：估计测试成绩对学生结果的影响，学生嵌套在 50 所学校内。<strong>第 1 级（校内）：</strong>对于学校 j，结果 y_ij = β₀_j + β₁_j × study_hours_ij + ε_ij。每所学校有自己的截距 (β₀_j) 和斜率 (β₁_j)。<strong>第 2 级（校间）：</strong>学校级截距不独立；它们从分布抽取：β₀_j ~ Normal(μ₀, σ₀²)。类似地，β₁_j ~ Normal(μ₁, σ₁²)。<strong>第 3 级（超先验）：</strong>对超参数 μ₀, σ₀, μ₁, σ₁ 放置先验。结果：学校不是孤立地估计而是作为学校人口的成员。小学校（数据很少）被拉向人口平均；大学校（数据很多）保持接近自己的平均。</p>
+    <div class="method-analogy" data-lang="en">A Bayesian hierarchical model is like trusting an expert before seeing individual cases. Before observing each school's data, you know: "Schools are probably similar; I expect most effects are near the overall average, but there's variation." This prior knowledge shapes all school estimates, providing stability especially where data are sparse.</div>
+    <div class="method-analogy" data-lang="zh">贝叶斯分层模型就像在看单个案例前信任专家。看到每所学校的数据前，你知道："学校可能相似；我期望大多数效应在总体平均附近，但有变异。"这个先验知识塑造所有学校估计，提供稳定性特别在数据稀疏的地方。</div>
+  </div>
+
+  <!-- Subsection 2: Partial Pooling Explained -->
+  <div class="method-section">
+    <h3 data-lang="en">Partial Pooling: Balancing Individual and Group Information</h3>
+    <h3 data-lang="zh">部分汇总：平衡个体与组信息</h3>
+    <p class="method-desc" data-lang="en">Partial pooling is the key insight. Compare three approaches: (1) <strong>No pooling:</strong> Estimate each school separately (50 independent regressions). School with n=5 students gets a wildly noisy estimate. (2) <strong>Complete pooling:</strong> Ignore schools entirely; estimate one regression for all students. This ignores real school-level variation. (3) <strong>Partial pooling (Bayesian):</strong> Each school's estimate is a weighted average of its own data and the population average. A small school (little data, high uncertainty) gets pulled heavily toward the population mean. A large school (much data, low uncertainty) is pulled weakly. The weights are determined automatically by the model: schools with high estimated between-group variance are pulled less; low variance is pulled more. This is optimal in a precise statistical sense.</p>
+    <p class="method-desc" data-lang="zh">部分汇总是关键见解。比较三种方法：(1) <strong>无汇总：</strong>单独估计每所学校（50 个独立回归）。有 n=5 学生的学校获得极其嘈杂的估计。(2) <strong>完全汇总：</strong>完全忽略学校；为所有学生估计一个回归。这忽视真实学校级变异。(3) <strong>部分汇总（贝叶斯）：</strong>每所学校的估计是其自己数据和人口平均的加权平均。小学校（数据很少，不确定性高）被拉向人口平均。大学校（数据很多，不确定性低）被拉弱。权重由模型自动决定：具有高估计组间方差的学校被拉弱；低方差被拉多。这在精确统计意义上是最优的。</p>
+    <div class="method-example" data-lang="en"><strong>Legislative ideal point estimation:</strong> Estimate ideology (a latent variable) for each legislator from their voting record. With 500 roll-call votes, a legislator is well-identified. But a legislator with 50 votes (perhaps they were absent) is noisy. Bayesian hierarchical model: all legislators' ideal points come from a party distribution. Each legislator's estimated ideology is pulled toward their party's average, with small-sample legislators pulled harder.</div>
+    <div class="method-example" data-lang="zh"><strong>立法者理想点估计：</strong>从投票记录估计每位立法者的意识形态（潜变量）。500 次记名投票，立法者很好地识别。但有 50 票的立法者（可能他们缺席）很嘈杂。贝叶斯分层模型：所有立法者的理想点来自党分布。每位立法者的估计意识形态被拉向他们党的平均，小样本立法者被拉得更硬。</div>
+  </div>
+
+  <!-- Subsection 3: Advantages Over Frequentist MLM -->
+  <div class="method-section">
+    <h3 data-lang="en">Advantages Over Frequentist Multilevel Models</h3>
+    <h3 data-lang="zh">相比频率多层模型的优势</h3>
+    <p class="method-desc" data-lang="en">Frequentist multilevel models (mixed-effects models in R: lmer()) are powerful but have limitations. <strong>Bayesian advantages:</strong> (1) <strong>Uncertainty propagation:</strong> Bayesian posteriors naturally propagate uncertainty through all levels. A small group's uncertainty is reflected in its posterior distribution. Frequentist predictions often under-estimate uncertainty. (2) <strong>Flexible priors:</strong> You can encode domain knowledge at any level (e.g., "school effects are probably small" → regularizing hyper-prior). (3) <strong>Small groups handled gracefully:</strong> Groups with few observations receive sensible shrinkage from the hyper-prior without ad hoc adjustments. (4) <strong>Model comparison:</strong> Bayesian methods (via posterior predictive checks, below) more naturally compare models than frequentist likelihood-ratio tests with their complex degrees-of-freedom adjustments.</p>
+    <p class="method-desc" data-lang="zh">频率多层模型（R 中的混合效应模型：lmer()）很强大但有限制。<strong>贝叶斯优势：</strong>(1) <strong>不确定性传播：</strong>贝叶斯后验自然通过所有级别传播不确定性。小组的不确定性反映在其后验分布中。频率预测通常低估不确定性。(2) <strong>灵活先验：</strong>你可以在任何级别编码领域知识（例如，"学校效应可能很小"→ 规范化超先验）。(3) <strong>小组优雅处理：</strong>观测很少的组从超先验接收合理收缩而无特殊调整。(4) <strong>模型比较：</strong>贝叶斯方法（通过下面的后验预测检验）比频率似然比检验更自然地比较模型及其复杂的自由度调整。</p>
   </div>
 </div>
 
@@ -123,13 +210,46 @@ next:
   <h2 data-lang="zh">MCMC 诊断与后验预测检验</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> MCMC produces draws from the posterior, but how do you know the algorithm worked? Did the chain converge (settle into the correct distribution)? Did you run enough iterations? And beyond computational diagnostics, how do you validate that your model is reasonable? Does it actually capture the patterns in your data?</p>
+    <p data-lang="zh"><strong>问题：</strong>MCMC 产生后验样本，但你怎样知道算法有效？链收敛（稳定到正确分布）吗？你运行足够的迭代吗？除了计算诊断，你怎样验证你的模型合理？它真的捕捉你数据的模式吗？</p>
   </div>
 
+  <!-- Subsection 1: Trace Plots and R-hat -->
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">MCMC Convergence Diagnostics: Trace Plots and R-hat</h3>
+    <h3 data-lang="zh">MCMC 收敛诊断：迹图与 R-hat</h3>
+    <p class="method-desc" data-lang="en"><strong>Trace plot:</strong> A time-series plot of MCMC draws for each parameter. If the algorithm works, the trace should look like "white noise" or a "hairy caterpillar"—no trend, just jittering around a constant value. If the trace shows a trend (drifting upward or downward), the chain has not converged; discard more burn-in iterations. If multiple chains (you should run at least 2) have different trace plots, they haven't converged to the same distribution; the model is unreliable. <strong>R-hat (Gelman-Rubin statistic):</strong> A numerical summary. R-hat ≈ 1.0 means chains have converged. R-hat > 1.1 is a red flag—the chains are still exploring different regions. Standard practice: check all parameters have R-hat < 1.05 before trusting results.</p>
+    <p class="method-desc" data-lang="zh"><strong>迹图：</strong>每个参数的 MCMC 抽取的时间序列图。如果算法有效，迹应该看起来像"白噪声"或"毛茸茸的毛毛虫"——无趋势，只是围绕常数值抖动。如果迹显示趋势（向上或向下漂移），链未收敛；丢弃更多热身迭代。如果多条链（你应该运行至少 2 条）有不同迹图，它们未收敛到同样分布；模型不可靠。<strong>R-hat（Gelman-Rubin 统计量）：</strong>数值摘要。R-hat ≈ 1.0 表示链已收敛。R-hat > 1.1 是危险信号——链仍在探索不同地区。标准做法：在信任结果前检查所有参数的 R-hat < 1.05。</p>
+    <div class="method-analogy" data-lang="en">MCMC is like a thermometer that samples temperature by bouncing around a room. If the thermometer settles into a steady jitter at 70°F, you trust it (converged). If it drifts from 60°F to 80°F to 90°F, the thermometer is broken (not converged).</div>
+    <div class="method-analogy" data-lang="zh">MCMC 就像通过在房间周围反弹来采样温度的温度计。如果温度计稳定在 70°F 的稳定抖动，你信任它（已收敛）。如果它从 60°F 漂移到 80°F 到 90°F，温度计坏了（未收敛）。</div>
+  </div>
+
+  <!-- Subsection 2: Effective Sample Size -->
+  <div class="method-section">
+    <h3 data-lang="en">Effective Sample Size: How Many Independent Draws Did You Really Get?</h3>
+    <h3 data-lang="zh">有效样本量：你真的得到多少独立抽取？</h3>
+    <p class="method-desc" data-lang="en">MCMC chains have autocorrelation: successive draws are not independent (draw 1000 is similar to draw 1001). This reduces the "effective sample size" (ESS)—the equivalent number of independent samples. Example: you draw 4,000 iterations, but ESS = 800 because of high autocorrelation. This 5-fold reduction means your posterior estimates have higher standard error than you'd have with 4,000 truly independent draws. High autocorrelation signals inefficient sampling (your model or algorithm is slow). Modern implementations report ESS automatically; watch for ESS < 400 (a rule of thumb), which suggests running longer chains or reparameterizing the model.</p>
+    <p class="method-desc" data-lang="zh">MCMC 链有自相关：连续抽取不独立（第 1000 次抽取类似第 1001 次）。这减少"有效样本量"(ESS)——等价独立样本数。例子：你抽取 4,000 次迭代，但 ESS = 800 因为高自相关。这个 5 倍减少意味着你的后验估计有比 4,000 真正独立抽取更高的标准误。高自相关表示无效率采样（你的模型或算法很慢）。现代实现自动报告 ESS；注意 ESS < 400（一个经验法则），建议运行更长链或重新参数化模型。</p>
+  </div>
+
+  <!-- Subsection 3: Posterior Predictive Checks -->
+  <div class="method-section">
+    <h3 data-lang="en">Posterior Predictive Checks: Does Your Model Generate Realistic Data?</h3>
+    <h3 data-lang="zh">后验预测检验：你的模型生成现实数据吗？</h3>
+    <p class="method-desc" data-lang="en">The most important model validation tool. The logic: your fitted model should be able to generate data that looks like what you actually observed. Here's how: (1) Draw samples from the posterior. (2) For each posterior sample, simulate new data (y_rep) from your model. (3) Compare the distribution of y_rep to the distribution of actual y. If they overlap substantially, your model "works"—it captures the patterns in the data. If y_rep has a very different distribution (e.g., it's skewed when y is symmetric), your model misses something. Formally, you check whether a test statistic (e.g., mean, standard deviation, maximum value) computed from y falls within the range from simulated y_rep. If the actual test statistic is in the extreme tails of the simulated distribution, the model is inadequate.</p>
+    <p class="method-desc" data-lang="zh">最重要的模型验证工具。逻辑：你拟合的模型应该能生成看起来像你实际观察的数据。这里是怎样的：(1) 从后验抽取样本。(2) 对于每个后验样本，从你的模型模拟新数据 (y_rep)。(3) 比较 y_rep 的分布与实际 y 的分布。如果它们实质性重叠，你的模型"有效"——它捕捉数据中的模式。如果 y_rep 有非常不同的分布（例如，当 y 对称时它倾斜），你的模型漏掉东西。形式上，你检查从 y 计算的检验统计量（例如，均值、标准差、最大值）是否落在模拟 y_rep 的范围内。如果实际检验统计量在模拟分布的极端尾部，模型不足。</p>
+    <div class="method-analogy" data-lang="en">You build a weather simulation model and want to validate it. Run the simulation 1,000 times. Do the simulated July temperatures match actual July temperatures from your region? If simulation produces 45°F average when July averages 75°F, something is wrong. Posterior predictive checks ask: "Can this model generate the data I observed?"</div>
+    <div class="method-analogy" data-lang="zh">你构建天气模拟模型并想验证。运行模拟 1,000 次。模拟的 7 月温度与你地区的实际 7 月温度是否匹配？如果模拟产生 45°F 平均值当 7 月平均 75°F，有什么问题。后验预测检验问："这个模型能生成我观察的数据吗？"</div>
+    <div class="method-example" data-lang="en"><strong>Election fraud detection:</strong> You model vote margins as a mixture of normal distributions (honest elections + some fraud). Posterior predictive check: simulate vote distributions from the posterior. Do simulations look like observed election data? If not, the model misses key features (e.g., the actual data have more extreme outcomes than the model predicts). Revise the model.</div>
+    <div class="method-example" data-lang="zh"><strong>选举舞弊检测：</strong>你建模投票差距作为正态分布的混合（诚实选举+一些舞弊）。后验预测检验：从后验模拟投票分布。模拟看起来像观察的选举数据吗？如果不是，模型漏掉关键特征（例如，实际数据比模型预测有更多极端结果）。修订模型。</div>
+  </div>
+
+  <!-- Subsection 4: Prior Sensitivity -->
+  <div class="method-section">
+    <h3 data-lang="en">Prior Sensitivity Analysis</h3>
+    <h3 data-lang="zh">先验敏感性分析</h3>
+    <p class="method-desc" data-lang="en">If your conclusions depend heavily on the prior you chose, that's a problem. Responsible Bayesian practice includes <strong>sensitivity analysis:</strong> fit your model with different reasonable priors and see if conclusions change. Example: estimate a policy effect using a weak prior Normal(0, 2.5), then a slightly informative prior Normal(0.5, 1) that encodes prior expectation of a positive effect. If both priors lead to similar conclusions (credible interval [0.3, 0.8] vs. [0.2, 0.9]), your results are robust. If the weak prior says [−0.1, 0.7] and the strong informative prior says [0.8, 1.2], the data are not strong enough to overcome the prior—you need more evidence or should stick with weaker priors to be conservative.</p>
+    <p class="method-desc" data-lang="zh">如果你的结论很大程度取决于你选择的先验，这是问题。负责任的贝叶斯做法包括<strong>敏感性分析：</strong>用不同合理先验拟合你的模型，看结论是否改变。例子：使用弱先验 Normal(0, 2.5) 估计政策效应，然后略有信息先验 Normal(0.5, 1) 编码正效应的先前期望。如果两个先验导致相似结论（可信区间 [0.3, 0.8] 对 [0.2, 0.9]），你的结果鲁棒。如果弱先验说 [-0.1, 0.7] 而强信息先验说 [0.8, 1.2]，数据不足以克服先验——你需要更多证据或应该坚持更弱先验保守。</p>
   </div>
 </div>
 
@@ -142,8 +262,22 @@ next:
   <h2 data-lang="en">Resources</h2>
   <h2 data-lang="zh">资源</h2>
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Key references and further reading — coming soon.</p>
-    <p class="method-desc" data-lang="zh">关键参考文献与延伸阅读——整理中。</p>
+    <p class="method-desc" data-lang="en"><strong>Foundational texts and guides:</strong></p>
+    <p class="method-desc" data-lang="zh"><strong>基础文本与指南：</strong></p>
+    <ul style="margin-left:20px;line-height:1.8;color:var(--ink-faded)">
+      <li><strong>Gelman, A., et al. (2013).</strong> <em>Bayesian Data Analysis</em> (3rd ed.). — The definitive technical reference; dense but authoritative. Chapter 5 covers Bayesian inference; Chapter 11 covers hierarchical models.</li>
+      <li><strong>McElreath, R. (2020).</strong> <em>Statistical Rethinking</em> (2nd ed.). — Accessible introduction emphasizing conceptual understanding over equations. Highly recommended for building intuition before diving into technical material.</li>
+      <li><strong>Jackman, S. (2009).</strong> <em>Bayesian Analysis for the Social Sciences</em>. — Tailored to political science and sociology; see Chapter 2 for regression, Chapter 4 for hierarchical models, Chapter 5 for ideal point estimation.</li>
+      <li><strong>Gelmanan, A., Carlin, J. B., Stern, H. S., & Rubin, D. B. (2003).</strong> Bayesian Data Analysis (2nd ed.), Chapter 6. — Posterior predictive checking explained with examples; foundational paper: Gelman et al. (1996) "Posterior Predictive Assessment of Model Fitness via Realized Discrepancies."</li>
+    </ul>
+    <p class="method-desc" data-lang="en"><strong>Software and implementation:</strong></p>
+    <p class="method-desc" data-lang="zh"><strong>软件与实现：</strong></p>
+    <ul style="margin-left:20px;line-height:1.8;color:var(--ink-faded)">
+      <li><strong>brms (R):</strong> Bayesian Regression Models using Stan. Accessible formula interface; automatic priors; produces posterior samples. <code>brm(y ~ x1 + x2 + (1 | group))</code> for a hierarchical model with random intercepts.</li>
+      <li><strong>Stan:</strong> Probabilistic programming language; powerful for custom models. Steeper learning curve but essential for non-standard models.</li>
+      <li><strong>PyMC (Python):</strong> MCMC in Python with intuitive syntax. Growing community; good for exploratory modeling.</li>
+      <li><strong>Diagnostics:</strong> <code>bayesplot</code> (R) for trace plots and posterior predictive checks; <code>tidybayes</code> for plotting posterior distributions.</li>
+    </ul>
   </div>
 </div>
 

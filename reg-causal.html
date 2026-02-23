@@ -59,82 +59,256 @@ next:
   <a href="#ci-s3" data-lang="zh">我想让处理组和控制组可比<span class="pi-arrow">&rarr; &sect;3</span></a>
   <a href="#ci-s4" data-lang="en">I have before-and-after data across treated and untreated groups <span class="pi-arrow">&rarr; &sect;4</span></a>
   <a href="#ci-s4" data-lang="zh">我有处理组和对照组的前后对比数据<span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#ci-s5" data-lang="en">The treatment effect varies — how do I study who benefits most? <span class="pi-arrow">&rarr; &sect;5</span></a>
+  <a href="#ci-s5" data-lang="zh">处理效应因人而异——怎么研究谁受益最大？<span class="pi-arrow">&rarr; &sect;5</span></a>
 </div>
 
 <hr class="section-divider">
 
 <!-- SECTION 1 -->
 <div class="section" id="ci-s1">
-  <h2 data-lang="en">Randomized Experiments: The Gold Standard</h2>
-  <h2 data-lang="zh">随机实验：黄金标准</h2>
+  <h2 data-lang="en">I Have Experimental Data — How Do I Estimate Treatment Effects?</h2>
+  <h2 data-lang="zh">我有实验数据——怎么估计处理效应？</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> You've run a randomized experiment: some voters get a nonpartisan mailer about voting, others don't. You observe turnout outcomes for both groups. How do you estimate the causal effect of the mailer? In observational data, people who receive the mailer might differ from those who don't — more civic-minded people might seek it out. In an experiment, randomization removes this selection bias: treated and control groups are identical (on average) before treatment. Comparing them now reveals the treatment's true effect.</p>
+    <p data-lang="zh"><strong>问题：</strong>你已经运行了一个随机实验：一些选民收到关于投票的无党派信函，其他人没有。你观察两组的投票结果。你如何估计信函的因果效应？在观察数据中，收到信函的人可能与没有收到的人不同——更有公民心的人可能会寻求它。在实验中，随机化消除了这种选择偏差：处理组和控制组在处理前（平均而言）是相同的。现在比较它们可以显示处理的真实效应。</p>
   </div>
 
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">The Fundamental Problem and Potential Outcomes Framework</h3>
+    <h3 data-lang="zh">根本问题与潜在结果框架</h3>
+    <p class="method-desc" data-lang="en">You cannot observe the same person with and without treatment. Person i either votes (Y=1) after receiving a mailer or doesn't. You see only one outcome. The solution: potential outcomes framework. Define Y_i(1) = outcome if treated, Y_i(0) = outcome if control. The causal effect for person i is Y_i(1) − Y_i(0). But you observe only one. However, if treatment is assigned randomly, the average treatment effect (ATE) equals the average outcome of the treated group minus the average outcome of the control group: ATE = E[Y|T=1] − E[Y|T=0].</p>
+    <p class="method-desc" data-lang="zh">你无法观察同一个人的处理和无处理状态。人 i 要么在收到信函后投票（Y=1），要么不投票。你只看到一个结果。解决方案：潜在结果框架。定义 Y_i(1) = 如果处理的结果，Y_i(0) = 如果控制的结果。人 i 的因果效应是 Y_i(1) − Y_i(0)。但你只观察一个。然而，如果处理是随机分配的，平均处理效应（ATE）等于处理组的平均结果减去控制组的平均结果：ATE = E[Y|T=1] − E[Y|T=0]。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> You can't test the same person both with and without a drug. But if you randomly split 1000 people into two groups, give drug to one group, you've created two parallel universes at the moment of randomization. The two groups are identical on average (genetics, health history, everything). After drug assignment, they differ only in the drug. Comparing outcomes reveals the drug's effect.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>你无法测试同一个人既有药也没有药。但如果你随机将 1000 人分成两组，给一组药，你在随机化的时刻创造了两个平行的世界。两组在平均上是相同的（遗传学、健康历史、一切）。药物分配后，他们只在药物上不同。比较结果显示药物的效应。</div>
+    <div class="method-when" data-lang="en"><strong>When randomization works:</strong> Always! It's the gold standard. Any truly random assignment (coin flip, lottery, computer random number generator) makes treatment independent of potential outcomes. <strong>When randomization fails:</strong> When assignment is systematic (students choose their own treatment), when there's selection bias in who participates, or when the experiment is not actually run (you have only observational data).</div>
+    <div class="method-when" data-lang="zh"><strong>何时随机化有效：</strong>总是！这是黄金标准。任何真正的随机分配（投币、彩票、计算机随机数生成器）使处理独立于潜在结果。<strong>何时随机化失败：</strong>当分配是系统性的（学生选择自己的处理）、当有参与者选择偏差或实验实际未运行（你只有观察数据）时。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Green & Gerber's 2000 GOTV experiment in New Haven. Outcome: did the person vote? Randomized treatments: (1) no mailer (control), (2) nonpartisan mailer, (3) in-person canvassing. By comparing turnout across treatment groups, they estimated that canvassing increased turnout by 9 percentage points (causal effect). This differed sharply from observational estimates, which were biased due to selection.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>Green & Gerber 的 2000 年新哈文 GOTV 实验。结果：这个人是否投票？随机处理：（1）无信函（控制）、（2）无党派信函、（3）亲身拜访。通过比较处理组的投票率，他们估计拜访增加投票率 9 个百分点（因果效应）。这与观察估计值明显不同，观察值因选择偏差而有偏。</div>
   </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">ATE vs. ATT: Intent-to-Treat and Compliance</h3>
+    <h3 data-lang="zh">ATE 对 ATT：意图处理与依从</h3>
+    <p class="method-desc" data-lang="en">In a perfect experiment, everyone assigned to treatment receives it and everyone assigned to control receives nothing. In reality, some assigned to treatment don't comply (they don't read the mailer), and some control group members find the treatment elsewhere. Intent-to-Treat (ITT) estimates the effect of assignment, not the effect of actual treatment receipt. Average Treatment Effect on the Treated (ATT) estimates the effect for those who actually complied. ITT is usually smaller than ATT because non-compliers dilute the effect. When compliance is universal, ITT = ATT. Use ITT as your main estimate (it avoids biasing selection issues); use ATT to understand the effect for compliers.</p>
+    <p class="method-desc" data-lang="zh">在完美的实验中，分配到处理的每个人都会接受它，分配到控制的每个人都不会接受任何东西。实际上，一些分配到处理的人不依从（他们不读信函），一些控制组成员在其他地方找到处理。意图处理（ITT）估计分配的效应，不是实际处理接收的效应。处理组平均处理效应（ATT）估计那些实际依从的人的效应。ITT 通常比 ATT 小，因为非依从者稀释了效应。当依从通用时，ITT = ATT。使用 ITT 作为你的主要估计（它避免了有偏的选择问题）；使用 ATT 来理解依从者的效应。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> ITT is like measuring the effect of a workplace wellness program by comparing all workers in a building with the program to all workers in a building without it. Some might ignore it; some might use it heavily. ATT measures the effect for workers who actually used it. ITT is "clean" because assignment is random; ATT is harder to interpret because people who use wellness programs might differ (healthier baseline).</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>ITT 就像通过比较有项目的建筑中的所有工人与没有项目的建筑中的所有工人来测量工作场所健康项目的效应。一些可能忽略它；一些可能大量使用它。ATT 为实际使用它的工人测量效应。ITT 是「清洁」的，因为分配是随机的；ATT 更难解释，因为使用健康项目的人可能不同（更健康的基线）。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Clustered Randomization and Analysis</h3>
+    <h3 data-lang="zh">集群随机化与分析</h3>
+    <p class="method-desc" data-lang="en">Sometimes you can't randomize individuals. School administrators might randomize classrooms, not students; cities randomize police precincts, not officers. This is clustered randomization: units are grouped, and groups are randomly assigned. The problem: outcomes within a cluster are correlated (students in the same classroom are similar). OLS standard errors assume independence and will be too small. You must use cluster-robust standard errors, accounting for within-cluster correlation. Most modern regression packages offer cluster-robust options (se(cluster(...)) in Stata, vcov = "HC1" with clusters in R).</p>
+    <p class="method-desc" data-lang="zh">有时你无法随机化个人。学校管理员可能随机化教室而不是学生；城市随机化警察分局而不是警官。这是集群随机化：单位被分组，组被随机分配。问题：集群内的结果是相关的（同一教室的学生相似）。OLS 标准误差假设独立，会太小。你必须使用集群稳健标准误差，考虑集群内相关性。大多数现代回归包提供集群稳健选项（Stata 中的 se(cluster(...))，R 中带有集群的 vcov = "HC1"）。</p>
+  </div>
+
 </div>
 
 <hr class="section-divider">
 
 <!-- SECTION 2 -->
 <div class="section" id="ci-s2">
-  <h2 data-lang="en">Natural Experiments: RDD and Instrumental Variables</h2>
-  <h2 data-lang="zh">自然实验：断点回归与工具变量</h2>
+  <h2 data-lang="en">I Don't Have an Experiment, But I Have a Natural Discontinuity or Instrument</h2>
+  <h2 data-lang="zh">我没有实验，但有自然断点或工具变量</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> You want to estimate the causal effect of education on earnings. Randomizing education is unethical. You observe actual education and earnings, but people who got more education likely differ in unmeasured ways (ambition, family wealth) from those who didn't. Can you still estimate causation? Yes, if you exploit a natural discontinuity or have an instrumental variable — some exogenous source of variation in education that you can use as a natural experiment.</p>
+    <p data-lang="zh"><strong>问题：</strong>你想估计教育对收入的因果效应。随机化教育是不道德的。你观察实际教育和收入，但获得更多教育的人可能在未测量的方面（野心、家庭财富）与没有获得教育的人不同。你仍能估计因果关系吗？是的，如果你利用自然断点或有一个工具变量——教育中的某种外生变化源，你可以用它作为自然实验。</p>
   </div>
 
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Regression Discontinuity Design (RDD)</h3>
+    <h3 data-lang="zh">断点回归设计（RDD）</h3>
+    <p class="method-desc" data-lang="en">RDD exploits thresholds. Example: you get a college scholarship if your high school GPA ≥ 3.5; otherwise you don't. Near the threshold, the treatment (scholarship) is essentially randomized: someone with 3.49 GPA is nearly identical to someone with 3.51 GPA, except they got different treatment. By comparing outcomes just above and just below the cutoff, you identify the causal effect of the scholarship on later earnings. Sharp RDD: treatment jumps from 0 to 1 at the cutoff. Fuzzy RDD: treatment probability jumps but doesn't go from 0 to 1 (some 3.51 GPA students decline the scholarship). RDD relies on continuity: all variables except treatment must be smooth (not jump) at the cutoff.</p>
+    <p class="method-desc" data-lang="zh">RDD 利用阈值。例子：如果你的高中成绩 ≥ 3.5，你会获得大学奖学金；否则你不会。在阈值附近，处理（奖学金）基本上是随机的：3.49 成绩的学生与 3.51 成绩的学生几乎相同，除了他们获得了不同的处理。通过比较恰好在截断线上方和下方的结果，你识别奖学金对后来收入的因果效应。尖锐 RDD：处理在截断线处从 0 跳到 1。模糊 RDD：处理概率跳跃但不从 0 到 1（一些 3.51 成绩学生拒绝奖学金）。RDD 依赖于连续性：除了处理外，所有变量必须在截断线处平滑（不跳跃）。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Imagine a scholarship cutoff at 3.5 GPA. Students just above (3.501) and just below (3.499) are nearly identical in ambition, ability, and family background. The only difference: arbitrary luck in the GPA rounding. One group gets the scholarship; the other doesn't. Comparing their futures reveals the scholarship's effect. RDD works because you're comparing individuals who are nearly identical on all unmeasured confounders — the threshold creates a local randomization.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>想象一个 3.5 成绩的奖学金截断。刚好在上方（3.501）和刚好在下方（3.499）的学生在野心、能力和家庭背景上几乎相同。唯一的区别：成绩四舍五入的任意幸运。一组获得奖学金；另一组没有。比较他们的未来显示奖学金的效应。RDD 有效是因为你在比较在所有未测量的混淆因素上几乎相同的个人——阈值创造了一个局部随机化。</div>
+    <div class="method-when" data-lang="en"><strong>When to use RDD:</strong> Whenever there's a clear, policy-determined threshold that affects treatment assignment discontinuously. Test validity by checking whether covariates are continuous at the cutoff (they should be smooth, not jump). Plot outcomes on both sides to visualize the discontinuity. <strong>When NOT to use:</strong> If the threshold is endogenous (people manipulate it to cross it, violating continuity), or if treatment effect varies sharply across the cutoff region (RDD identifies local effects, not global ATE).</div>
+    <div class="method-when" data-lang="zh"><strong>何时用 RDD：</strong>当有一个清晰的、政策确定的阈值不连续地影响处理分配时。通过检查协变量在截断处是否连续来测试有效性（它们应该平滑，不跳跃）。在两边绘制结果来可视化断点。<strong>何时不用：</strong>如果阈值是内生的（人们操纵它来穿过它，违反连续性），或如果处理效应在截断区域内变化很大（RDD 识别局部效应，不是全局 ATE）。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Angrist & Lavy studied class size effects in Israel using a threshold: schools are required to split a class if enrollment exceeds 40 students. Classes with 40 vs. 41 students have nearly identical composition but different sizes. By comparing test scores just above and below 40, they estimated the causal effect of class size on learning (negative: larger classes harm learning).</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>Angrist & Lavy 在以色列使用阈值研究班级规模效应：如果招生人数超过 40 人，学校需要分班。40 对 41 人的班级有几乎相同的组成但不同的大小。通过比较 40 以上和以下的测试分数，他们估计了班级规模对学习的因果效应（负面：更大的班级危害学习）。</div>
   </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Instrumental Variables (IV)</h3>
+    <h3 data-lang="zh">工具变量（IV）</h3>
+    <p class="method-desc" data-lang="en">An instrument is a variable that affects the treatment but not the outcome directly — only through treatment. Example: quarter of birth (QOB) is an instrument for education. QOB affects when you start school and when you're legally allowed to drop out (age cutoffs), so it influences education (first stage). But QOB shouldn't affect earnings except through its effect on education (exclusion restriction). Two-stage least squares (2SLS) uses the instrument to generate exogenous variation in treatment, then estimates the causal effect. First stage: regress treatment on the instrument. Second stage: regress outcome on the predicted treatment from stage one. The IV estimate is causal if two conditions hold: (1) relevance (instrument strongly predicts treatment), (2) exclusion (instrument doesn't directly affect outcome).</p>
+    <p class="method-desc" data-lang="zh">工具变量是一个影响处理但不直接影响结果的变量——仅通过处理影响结果。例子：出生季度（QOB）是教育的工具。QOB 影响你何时开始上学以及何时被法律允许辍学（年龄截断），所以它影响教育（第一阶段）。但 QOB 不应该影响收入，除了通过它对教育的影响（排斥限制）。两阶段最小二乘法（2SLS）使用工具来产生处理中的外生变化，然后估计因果效应。第一阶段：对工具进行处理回归。第二阶段：对第一阶段的预测处理进行结果回归。IV 估计是因果的，如果两个条件成立：（1）相关性（工具强力预测处理），（2）排斥（工具不直接影响结果）。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> The exclusion restriction is like a doctor's randomized recommendation. The doctor flips a coin and recommends medicine A or B to patients with the same symptoms (instruments the treatment). The coin flip shouldn't affect outcomes except through which medicine they take. This creates exogenous variation you can exploit. Weak instruments are like a biased coin that almost never recommends medicine B — it can't effectively randomize treatment.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>排斥限制就像医生的随机建议。医生掷硬币，向有相同症状的患者推荐药物 A 或 B（工具处理）。硬币翻转不应该影响结果，除了通过他们服用的药物。这创造了你可以利用的外生变化。弱工具就像一个有偏的硬币，几乎从不推荐药物 B——它无法有效地随机化处理。</div>
+    <div class="method-when" data-lang="en"><strong>When to use IV:</strong> When you have a credible instrument (genuinely exogenous variation in treatment). When you have theoretical reasons to believe the exclusion restriction holds. <strong>When NOT to use:</strong> When your instrument is weak (first-stage F-statistic < 10, indicating the instrument weakly predicts treatment). When exclusion restriction is violated (instrument affects outcome through channels other than treatment). IV estimates are larger than OLS when OLS is downward-biased by confounding; smaller when upward-biased.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用 IV：</strong>当你有一个可信的工具（处理中的真正外生变化）。当你有理论上的理由相信排斥限制成立。<strong>何时不用：</strong>当你的工具虚弱（第一阶段 F 统计 < 10，表示工具弱力预测处理）。当排斥限制被违反（工具通过除处理外的其他渠道影响结果）。IV 估计在 OLS 因混淆向下有偏时大于 OLS；当向上有偏时小于。</p>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Angrist & Krueger's classic study: quarter of birth (QOB) as an instrument for education's return. QOB affects the legal school-leaving age (students born in Q1 reach age 16 earlier in the school year than Q4 students), inducing variation in schooling. They estimated that one extra year of schooling increases earnings by 7-10%, using QOB to overcome selection bias (more motivated people pursue education).</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>Angrist & Krueger 的经典研究：出生季度（QOB）作为教育回报的工具。QOB 影响法定离校年龄（Q1 出生的学生在学年中比 Q4 学生更早达到 16 岁），引发学校教育中的变化。他们估计多一年的学校教育会增加收入 7-10%，使用 QOB 来克服选择偏差（更有动力的人追求教育）。</div>
+  </div>
+
 </div>
 
 <hr class="section-divider">
 
 <!-- SECTION 3 -->
 <div class="section" id="ci-s3">
-  <h2 data-lang="en">Matching Methods: Making Groups Comparable</h2>
-  <h2 data-lang="zh">匹配方法：让组间可比</h2>
+  <h2 data-lang="en">I Want to Make Treated and Control Groups Comparable</h2>
+  <h2 data-lang="zh">我想让处理组和控制组可比</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> You observe union membership (treatment) and earnings, but union members likely differ from non-members: they work in manufacturing vs. service sectors, have different education, seniority. These differences (confounders) bias any simple comparison. Propensity score matching (PSM) attempts to create a "quasi-experiment" by matching each treated unit to a control unit with identical (or very similar) observed characteristics. This makes the two groups comparable on observables, reducing bias from measured confounders.</p>
+    <p data-lang="zh"><strong>问题：</strong>你观察工会成员身份（处理）和收入，但工会成员可能与非成员不同：他们在制造业与服务业工作，有不同的教育、资历。这些差异（混淆因素）偏置任何简单的比较。倾向得分匹配（PSM）通过将每个处理单位匹配到具有相同（或非常相似）观察特征的控制单位来尝试创建一个「准实验」。这使两组在可观察变量上可比，减少来自测量混淆因素的偏差。</p>
   </div>
 
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Selection Bias and Confounding</h3>
+    <h3 data-lang="zh">选择偏差与混淆</h3>
+    <p class="method-desc" data-lang="en">In observational data, treatment assignment is not random. People choose or are chosen for treatment based on their characteristics and potential outcomes. This creates selection bias: any difference in outcomes between treated and control groups reflects both the treatment effect and differences in the groups themselves. A union worker might earn more than a non-union worker partly due to unionization (treatment effect) and partly because union workers are older, more experienced, or work in higher-paying industries (confounding). Matching attempts to remove confounding by making groups similar on all observed characteristics, isolating the treatment effect. However, matching only works if you've measured all confounders. Unmeasured confounding (e.g., worker motivation) still biases the estimate.</p>
+    <p class="method-desc" data-lang="zh">在观察数据中，处理分配不是随机的。人们根据他们的特征和潜在结果选择或被选择处理。这创造了选择偏差：处理组和控制组之间结果的任何差异反映了处理效应和组本身的差异。工会工人可能比非工会工人收入更高，部分原因是工会化（处理效应），部分原因是工会工人更老、更有经验或在更高薪行业工作（混淆）。匹配通过在所有观察特征上使组相似来尝试移除混淆，隔离处理效应。然而，匹配只有在你测量了所有混淆因素的情况下才有效。未测量的混淆（例如，工人动机）仍然会偏置估计。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Matching is like a casting director for a movie. You have tall actors and short actors, and you want to test whether height helps acting (treatment = being tall). A naive comparison would cast tall people in leading roles and short people in extras — but tall people might be better actors for other reasons. Matching pairs each tall actor with a short actor of similar skill, confidence, and charm. Now the only difference is height, so you can isolate height's effect on casting success.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>匹配就像电影的选角导演。你有高个子演员和矮个子演员，你想测试身高是否有助于表演（处理 = 身材高）。一个天真的比较会将高个子演员选角为主要角色，矮个子为配角——但高个子可能因为其他原因是更好的演员。匹配将每个高个子演员与具有相似技能、信心和魅力的矮个子演员配对。现在唯一的区别是身高，所以你可以隔离身高对选角成功的影响。</div>
   </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Propensity Score Matching (PSM)</h3>
+    <h3 data-lang="zh">倾向得分匹配（PSM）</h3>
+    <p class="method-desc" data-lang="en">The propensity score is the probability of receiving treatment given observed characteristics. PSM works in two steps: (1) Estimate a logit/probit model predicting treatment from all observed covariates. This gives each person a propensity score. (2) Match each treated unit to control units with similar propensity scores. The intuition: if two people have the same propensity score, they have identical observed characteristics (as far as your model captures), so they're comparable. Outcomes are compared within matched pairs. This removes bias from measured confounders. Common matching algorithms: nearest neighbor (match each treated to the closest control), radius matching (use all controls within a bandwidth), and caliper matching (only match within a maximum distance; discard unmatched units). After matching, check covariate balance: the matched treated and control groups should have similar distributions of all covariates.</p>
+    <p class="method-desc" data-lang="zh">倾向得分是给定观察特征接收处理的概率。PSM 分两步进行：（1）估计一个 logit/probit 模型，从所有观察协变量预测处理。这给每个人一个倾向得分。（2）将每个处理单位匹配到具有相似倾向得分的控制单位。直觉：如果两个人有相同的倾向得分，他们有相同的观察特征（就你的模型所捕获），所以他们是可比的。结果在匹配对内进行比较。这消除了来自测量混淆因素的偏差。常见的匹配算法：最近邻（将每个处理匹配到最接近的控制）、半径匹配（使用所有在带宽内的控制）和闸门匹配（只在最大距离内匹配；丢弃不匹配的单位）。匹配后，检查协变量平衡：匹配的处理和控制组应该有所有协变量的相似分布。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> PSM is like building a comparison group from observational data. You estimate the "probability each person became a union member" from their characteristics. Two workers with the same probability (propensity score) have similar characteristics. Pair each union worker with a non-union worker who has the same propensity score. Now the groups look identical on paper; comparison reveals the treatment effect.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>PSM 就像从观察数据中建立一个对照组。你从他们的特征估计「每个人成为工会成员的概率」。两个具有相同概率（倾向得分）的工人具有相似的特征。将每个工会工人与具有相同倾向得分的非工会工人配对。现在这些组在纸面上看起来相同；比较显示处理效应。</div>
+    <div class="method-when" data-lang="en"><strong>When to use PSM:</strong> When you have measured most confounders and want to reduce bias. When sample sizes are moderate and you need to condition on many covariates (easier than regression). <strong>When NOT to use:</strong> When you have unmeasured confounding (PSM doesn't help); when sample size is small (matching can waste data by discarding unmatched units); when your propensity score model is misspecified. PSM does not create causality; it only reduces bias from measured confounding. Always report covariate balance and sensitivity analyses.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用 PSM：</strong>当你已测量了大多数混淆因素并想减少偏差。当样本大小中等且你需要以许多协变量为条件（比回归更容易）。<strong>何时不用：</strong>当你有未测量的混淆（PSM 无法帮助）；当样本大小很小（匹配可能会通过丢弃不匹配的单位来浪费数据）；当你的倾向得分模型误指定。PSM 不能创建因果性；它只减少来自测量混淆的偏差。始终报告协变量平衡和敏感性分析。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Studying union wage effects. Estimate propensity score (probability of union membership) from education, age, industry, region. Match each union member to non-union workers with similar propensity scores. Compare wages. Naive difference: union workers earn $4/hour more. After matching on propensity score: difference shrinks to $1.50/hour because matched non-union workers are similar on observables (same industries, education, etc.).</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究工会工资效应。从教育、年龄、行业、地区估计倾向得分（工会成员身份的概率）。将每个工会成员匹配到具有相似倾向得分的非工会工人。比较工资。天真的差异：工会工人多挣 4 美元/小时。在倾向得分上匹配后：差异缩小到 1.50 美元/小时，因为匹配的非工会工人在可观察变量上相似（同一行业、教育等）。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">The Critical Limitation: Unmeasured Confounding</h3>
+    <h3 data-lang="zh">批判性局限：未测量的混淆</h3>
+    <p class="method-desc" data-lang="en">PSM and regression control methods can only eliminate bias from measured confounders. If you haven't measured worker motivation, ambition, or health status, and these affect both union membership and wages, you still have bias. This is unmeasured confounding, and no matching or regression adjustment cures it. This is why randomized experiments are the gold standard — randomization removes bias from both measured and unmeasured confounders. Always acknowledge unmeasured confounding as a limitation. Conduct sensitivity analyses (Rosenbaum bounds) that estimate how much unmeasured confounding would be needed to change your conclusions.</p>
+    <p class="method-desc" data-lang="zh">PSM 和回归控制方法只能消除来自测量混淆因素的偏差。如果你没有测量工人动机、野心或健康状况，而这些影响工会成员身份和工资，你仍然有偏差。这是未测量的混淆，没有匹配或回归调整可以治愈它。这就是为什么随机实验是黄金标准——随机化消除来自测量和未测量混淆因素的偏差。始终将未测量的混淆承认为一个局限。进行敏感性分析（Rosenbaum 界），估计改变你的结论需要多少未测量的混淆。</p>
+  </div>
+
 </div>
 
 <hr class="section-divider">
 
 <!-- SECTION 4 -->
 <div class="section" id="ci-s4">
-  <h2 data-lang="en">Difference-in-Differences and Synthetic Control</h2>
-  <h2 data-lang="zh">双重差分与合成控制</h2>
+  <h2 data-lang="en">I Have Before-and-After Data Across Treated and Untreated Groups</h2>
+  <h2 data-lang="zh">我有处理组和对照组的前后对比数据</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> You observe wages for union and non-union workers in 2019 and 2024. Union workers saw wages rise 15% (treatment effect or time trend?). Non-union workers' wages rose 5% (time trend). Difference-in-differences (DiD) isolates the treatment effect by comparing the two groups' changes over time. The logic: both groups experience the same time trend, but only the treated group experiences the treatment. The difference in changes (DiD = treated change − control change) is the treatment effect, assuming parallel trends.</p>
+    <p data-lang="zh"><strong>问题：</strong>你在 2019 和 2024 年观察工会和非工会工人的工资。工会工人工资增长 15%（处理效应还是时间趋势？）。非工会工人工资增长 5%（时间趋势）。双重差分（DiD）通过比较两组随时间的变化来隔离处理效应。逻辑：两个组都经历相同的时间趋势，但只有处理组经历处理。变化的差异（DiD = 处理组变化 − 控制组变化）是处理效应，假设平行趋势。</p>
   </div>
 
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">The Parallel Trends Assumption</h3>
+    <h3 data-lang="zh">平行趋势假设</h3>
+    <p class="method-desc" data-lang="en">DiD works by assuming that treated and control groups have parallel trends: absent treatment, they would have changed by the same amount over time. This doesn't mean they start at the same level (they can have different 2019 wages); it means they would grow at the same rate absent treatment. The threat: if treated units would have trended differently even without treatment, DiD produces biased estimates. Example: union membership was concentrated in manufacturing, which suffered a productivity shock unrelated to unions. Manufacturing wages fell anyway, so the parallel trends assumption is violated. Test the assumption by examining pre-treatment trends: plot both groups' outcomes over time before treatment. If lines are parallel, the assumption is plausible. If they're diverging, parallel trends is questionable. You can also run event-study plots, showing outcomes at every time period relative to treatment, to visualize whether the treatment "kicks in" at the right moment.</p>
+    <p class="method-desc" data-lang="zh">DiD 通过假设处理组和控制组有平行趋势来工作：在没有处理的情况下，他们会随时间变化相同的量。这并不意味着他们在同一水平开始（他们可以有不同的 2019 工资）；这意味着在没有处理的情况下，他们会以相同的速率增长。威胁：如果处理单位即使没有处理也会趋势不同，DiD 会产生有偏的估计。例子：工会成员身份集中在制造业，经历了与工会无关的生产力冲击。制造业工资无论如何都下降了，所以平行趋势假设被违反了。通过检查处理前的趋势来测试假设：在处理前的每个时期绘制两个组的结果。如果线是平行的，假设是合理的。如果它们发散，平行趋势是可疑的。你也可以运行事件研究图，显示相对于处理的每个时期的结果，以可视化处理是否在正确的时刻「启动」。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Imagine two restaurants. One gets a new competitor in 2023; the other doesn't. Both see revenues decline over 2019-2022 (time trend). If the treatment (competition) has an effect, we'd expect the treated restaurant's decline to accelerate after 2023 relative to the control restaurant. DiD compares the change in trends: (treated post − treated pre) − (control post − control pre). This isolates competition's effect on the trend, not the absolute revenue level.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>想象两家餐厅。一家在 2023 年获得新竞争对手；另一家没有。两家在 2019-2022 年都看到收入下降（时间趋势）。如果处理（竞争）有影响，我们预期处理的餐厅的下降在 2023 年后相对于控制餐厅加速。DiD 比较趋势中的变化：（处理后 − 处理前）−（控制后 − 控制前）。这隔离了竞争对趋势的影响，不是绝对收入水平。</div>
   </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">2×2 DiD: The Basic Setup</h3>
+    <h3 data-lang="zh">2×2 DiD：基本设置</h3>
+    <p class="method-desc" data-lang="en">Simplest form: two groups (treated, control), two time periods (before, after). Estimate: DiD = (Y_treated,after − Y_treated,before) − (Y_control,after − Y_control,before). More generally, regress the outcome on: (1) indicator for treated group, (2) indicator for post-treatment period, and (3) their interaction. The interaction coefficient is the DiD estimate. Add unit and time fixed effects to allow for group-specific levels and time-specific trends. With multiple periods, use regression with unit × time interaction to account for all time and unit effects simultaneously.</p>
+    <p class="method-desc" data-lang="zh">最简单的形式：两个组（处理、控制）、两个时期（之前、之后）。估计：DiD = (Y_treated,after − Y_treated,before) − (Y_control,after − Y_control,before)。更一般地，回归结果对：（1）处理组的指标、（2）处理后时期的指标和（3）它们的交互。交互系数是 DiD 估计。添加单位和时间固定效应以允许组特定水平和时间特定趋势。有多个时期时，使用带有单位 × 时间交互的回归来同时考虑所有时间和单位效应。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> DiD compares changes, not levels. It's like measuring whether a new medication helped patients by comparing how much sicker they got (2024 vs. 2019). Untreated patients got sicker too (time trend). If medicated patients got less sick, the difference in how sicker they got (DiD) is the medication's effect.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>DiD 比较变化，不是水平。这就像通过比较患者病情恶化的程度（2024 对 2019）来测量新药是否有帮助。未处理的患者也变得更病（时间趋势）。如果用药患者病情较轻，他们病情恶化程度的差异（DiD）是药物的效应。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Staggered Adoption and Recent Advances</h3>
+    <h3 data-lang="zh">错开采用与最近进展</h3>
+    <p class="method-desc" data-lang="en">Many policies roll out gradually: some states adopt a law in 2019, others in 2021, others never. This is staggered adoption. Standard DiD (comparing early vs. late adopters) can be biased because later adopters are often economically different or anticipate the policy. Recent work by Callaway and Sant'Anna (2021) proposes robust alternatives: honest DiD that avoids problematic comparisons, or heterogeneous treatment effects allowing effects to vary by adoption timing. When using staggered DiD, avoid comparing early and late adopters directly; instead, compare each cohort to never-adopters. Use the Callaway-Sant'Anna estimator if available in your software (did package in R, event_study in Stata).</p>
+    <p class="method-desc" data-lang="zh">许多政策逐步推出：一些州在 2019 年采用法律，其他州在 2021 年，其他州从不采用。这是错开的采用。标准 DiD（比较早期与晚期采用者）可能有偏差，因为晚期采用者通常在经济上不同或预期政策。Callaway 和 Sant'Anna (2021) 的最近工作提议了强大的替代方案：诚实 DiD 避免有问题的比较，或异质处理效应允许效应随采用时间变化。使用错开 DiD 时，避免直接比较早期和晚期采用者；相反，将每个队列与永不采用者比较。如果你的软件中可用，使用 Callaway-Sant'Anna 估计器（R 中的 did 包、Stata 中的 event_study）。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Synthetic Control Method</h3>
+    <h3 data-lang="zh">合成控制方法</h3>
+    <p class="method-desc" data-lang="en">Sometimes you have one treated unit (e.g., California) and many potential controls (other states). Standard DiD compares CA to the average of other states. Synthetic control builds a weighted average of control units that matches the treated unit's pre-treatment trends. Weights are chosen to minimize difference in outcomes between CA and the synthetic control pre-treatment. After treatment, the difference between CA and the synthetic control is the treatment effect. This is more flexible than DiD because it allows pre-treatment trends to differ, as long as you can match them exactly (via weighting). The downside: you have only one treated unit, so inference is challenging. Use placebo tests (apply the same method to control units, where you'll find no effects) to validate results.</p>
+    <p class="method-desc" data-lang="zh">有时你只有一个处理单位（例如，加州）和许多潜在的控制（其他州）。标准 DiD 将 CA 与其他州的平均值进行比较。合成控制建立了一个控制单位的加权平均，与处理单位的处理前趋势相匹配。选择权重以最小化 CA 和合成控制处理前的结果差异。处理后，CA 和合成控制之间的差异是处理效应。这比 DiD 更灵活，因为它允许处理前趋势不同，只要你能完全匹配它们（通过加权）。缺点：你只有一个处理单位，所以推断很具挑战。使用安慰剂检验（将同样的方法应用于控制单位，你会发现没有效应）来验证结果。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Synthetic control is like building a clone of a country (or state, firm, etc.) using pieces of similar countries. You find that a combination of Germany, France, and Canada closely matches the UK's pre-Brexit economic path. After Brexit, compare the real UK to this synthetic UK (made from Germany, France, Canada). The gap is Brexit's causal effect.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>合成控制就像使用相似国家的片段来建立一个国家（或州、公司等）的克隆。你发现德国、法国和加拿大的组合紧密匹配英国脱欧前的经济路径。脱欧后，比较真实的英国与这个合成英国（由德国、法国、加拿大组成）。差距是脱欧的因果效应。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Abadie & Gardeazabal (2003) study the economic impact of terrorism in the Basque Country (ETA violence starting 1975). They build a synthetic Basque Country from a weighted combination of Spanish regions, matching pre-1975 trends. Post-1975, the synthetic Basque region (had violence not occurred) would have grown faster than the actual region. The gap is terrorism's causal effect on per capita income.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>Abadie & Gardeazabal (2003) 研究恐怖主义在巴斯克地区（1975 年开始的 ETA 暴力）的经济影响。他们从西班牙地区的加权组合建立一个合成巴斯克地区，匹配 1975 年前趋势。1975 年后，合成巴斯克地区（如果暴力没有发生）会比实际地区增长更快。差距是恐怖主义对人均收入的因果效应。</div>
+  </div>
+
 </div>
 
 <hr class="section-divider">
 
+
+<!-- SECTION 5 -->
+<div class="section" id="ci-s5">
+  <h2 data-lang="en">Heterogeneous Treatment Effects: Who Benefits Most?</h2>
+  <h2 data-lang="zh">异质性处理效应：谁受益最大？</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You estimate that a job training program increases earnings by $2,000 on average. But does it help everyone equally? Perhaps the program helps less-educated workers enormously ($5,000 gain) but has negligible effects on college graduates ($200 gain). The Average Treatment Effect (ATE) hides this variation. Understanding who benefits most — heterogeneous treatment effects (HTE) — is often more important than the average effect. It tells policymakers who to target and helps researchers identify the mechanism through which a treatment works.</p>
+    <p data-lang="zh"><strong>问题：</strong>你估计一个职业培训项目平均增加收入 2,000 美元。但它对每个人的帮助都一样吗？也许该项目极大地帮助受教育程度较低的工人（增加 5,000 美元），但对大学毕业生的影响可以忽略不计（增加 200 美元）。平均处理效应（ATE）隐藏了这种变化。理解谁受益最多——异质性处理效应（HTE）——通常比平均效应更重要。它告诉政策制定者应该针对谁，并帮助研究人员识别处理发挥作用的机制。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Subgroup Analysis and Interaction Terms</h3>
+    <h3 data-lang="zh">子组分析与交互项</h3>
+    <p class="method-desc" data-lang="en">The simplest approach: split the sample by a moderating variable (education level, gender, age) and estimate the treatment effect separately in each subgroup. Compare the estimated effects across groups. A more efficient approach: include an interaction term between treatment and the moderator. If the training program effect varies by education, regress earnings on: treatment, education, and treatment × education. The coefficient on the interaction term tells you how much the treatment effect changes per unit increase in education. A negative coefficient means the program helps less-educated workers more.</p>
+    <p class="method-desc" data-lang="zh">最简单的方法：按调节变量（教育水平、性别、年龄）划分样本，并分别估计每个子组中的处理效应。比较各组之间的估计效应。更有效的方法：在处理和调节变量之间包含一个交互项。如果培训项目效应因教育程度而异，对收入回归：处理、教育和处理 × 教育。交互项的系数告诉你处理效应随教育程度每增加一个单位的变化量。负系数意味着该项目对受教育程度较低的工人更有帮助。</p>
+    <p class="method-desc" data-lang="en">The critical danger: multiple subgroup testing. If you test 10 subgroup-specific hypotheses (effect for each of 10 demographic groups), you expect one to be "significant" by chance at p < 0.05. Pre-specify which moderators you will test before seeing results. Apply Bonferroni corrections (divide alpha by number of tests) or use a hierarchical testing approach. When subgroup analyses are exploratory (data-driven), report them with appropriate caveats and higher significance thresholds (p < 0.01 or p < 0.001). Only confirmatory subgroup analyses — pre-specified before data collection — should receive the same credibility as the main treatment effect estimate.</p>
+    <p class="method-desc" data-lang="zh">关键危险：多重子组检验。如果你测试 10 个子组特定假设（10 个人口统计组各自的效应），你预期其中一个在 p < 0.05 时通过偶然「显著」。在看到结果之前预先指定你将测试哪些调节变量。应用 Bonferroni 修正（将 alpha 除以测试次数）或使用层次检验方法。当子组分析是探索性的（数据驱动），以适当的警告和更高的显著性阈值（p < 0.01 或 p < 0.001）报告它们。只有确认性子组分析——在数据收集之前预先指定——才应该获得与主要处理效应估计相同的可信度。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Imagine testing whether a fertilizer helps crop growth. Average effect: +10% yield. But subgroup analysis shows sand-based soils gain +25% while clay soils gain only +2%. The average hides the interaction. The interaction term (fertilizer × soil type) quantifies this: the fertilizer's effect depends on soil type. Similarly, a GOTV program may boost turnout more in low-turnout districts (where baseline enthusiasm is low) than high-turnout districts (ceiling effect).</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>想象测试肥料是否有助于作物生长。平均效应：产量 +10%。但子组分析显示沙土增加 +25%，而粘土仅增加 +2%。平均值隐藏了交互作用。交互项（肥料 × 土壤类型）量化了这一点：肥料的效应取决于土壤类型。同样，GOTV 项目可能在低投票率地区（基线热情低）比高投票率地区（天花板效应）更能提高投票率。</div>
+    <div class="method-when" data-lang="en"><strong>When to use subgroup analysis:</strong> When theory predicts effect heterogeneity. When policymakers need targeting information. Pre-specify the moderators. <strong>When NOT to use:</strong> Never go fishing in subgroups after a null main effect — that is p-hacking. A "null" main effect combined with one "significant" subgroup effect is almost always a false positive.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用子组分析：</strong>当理论预测效应异质性时。当政策制定者需要定向信息时。预先指定调节变量。<strong>何时不用：</strong>在零主效应后不要在子组中寻找——这是 p-hacking。结合一个「显著」子组效应的「零」主效应几乎总是假阳性。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A study of conditional cash transfer (CCT) programs. ATE: school enrollment increases by 8 percentage points. Pre-specified subgroup analyses: (1) Effect larger for girls than boys (+12 pp vs. +4 pp), confirming prior theory about gender gaps in education. (2) Effect larger in rural areas than urban (+11 pp vs. +5 pp), consistent with cash relieving larger opportunity costs in rural settings. Both subgroup findings had theoretical basis and were pre-specified, giving them credibility.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>关于条件现金转移（CCT）项目的研究。ATE：学校入学率增加 8 个百分点。预先指定的子组分析：（1）效应对女孩比男孩更大（+12 pp 对 +4 pp），证实了关于教育中性别差距的先前理论。（2）效应在农村地区比城市更大（+11 pp 对 +5 pp），与现金在农村减轻更大机会成本一致。两个子组发现都有理论基础并预先指定，赋予它们可信度。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">LATE: Local Average Treatment Effects in IV Designs</h3>
+    <h3 data-lang="zh">LATE：IV 设计中的局部平均处理效应</h3>
+    <p class="method-desc" data-lang="en">When you use an instrumental variable, you don't estimate the ATE. You estimate the Local Average Treatment Effect (LATE): the causal effect for compliers — people who take up treatment because of the instrument and would not take up treatment without it. Non-compliers (always-takers and never-takers) are not identified. This is an important distinction: IV estimates the effect for the subset of the population whose treatment status is changed by the instrument. If compliers are a non-representative subgroup, LATE may not generalize to the full population. LATE is still internally valid (it is a causal effect for compliers), but external validity (generalizability) depends on how representative compliers are.</p>
+    <p class="method-desc" data-lang="zh">使用工具变量时，你不估计 ATE。你估计局部平均处理效应（LATE）：依从者的因果效应——因工具而接受处理，且没有工具就不会接受处理的人。非依从者（总是接受者和从不接受者）无法识别。这是一个重要区别：IV 估计其处理状态因工具而改变的人群子集的效应。如果依从者是非代表性子群体，LATE 可能无法推广到整个人群。LATE 仍然具有内部效度（它是依从者的因果效应），但外部效度（可推广性）取决于依从者的代表性。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> An IV instrument (e.g., a doctor's recommendation) changes the treatment for "compliers" — patients who follow whatever the doctor says. Always-takers get the treatment regardless; never-takers refuse regardless. The IV estimate is only for those in the middle. If compliers are sicker-than-average patients (the doctor especially targets them), your LATE reflects the treatment effect for the sick, not for everyone.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>IV 工具（例如，医生的建议）改变了「依从者」的处理——无论医生说什么都遵从的患者。总是接受者无论如何都会接受处理；从不接受者无论如何都拒绝。IV 估计只适用于中间的那些人。如果依从者是比平均更病的患者（医生特别针对他们），你的 LATE 反映了对病人的处理效应，而不是对所有人的。</div>
+    <div class="method-when" data-lang="en"><strong>When LATE matters:</strong> When IV estimates are used to make policy claims for the entire population. The policy relevance depends on how similar compliers are to the general target population. If the instrument induces compliance only among a narrow group, the LATE is informative but limited. Always describe who the compliers are and discuss whether LATE generalizes. Use first-stage characteristics of treated units to characterize the complier population.</div>
+    <div class="method-when" data-lang="zh"><strong>LATE 何时重要：</strong>当 IV 估计用于对整个人群提出政策主张时。政策相关性取决于依从者与一般目标人群的相似程度。如果工具只在一个狭窄的群体中引起依从，LATE 是有信息的但有限的。始终描述依从者是谁，并讨论 LATE 是否能推广。使用处理单位的第一阶段特征来描述依从者群体。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Angrist & Krueger's QOB instrument for education. Compliers: students who would have dropped out earlier if QOB-linked age cutoffs had not kept them in school longer. These are likely students at the margin of dropping out — perhaps lower-ability or lower-motivation students. The LATE estimates the return to education for this marginal student, not for the average or highly motivated student. This is a different, and arguably more policy-relevant, quantity than the ATE.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>Angrist & Krueger 的 QOB 工具用于教育。依从者：如果 QOB 相关年龄截止没有让他们在学校留得更长，本会更早辍学的学生。这些可能是处于辍学边缘的学生——也许是能力较低或动机较低的学生。LATE 估计对这个边际学生的教育回报，而不是对普通或高度有动力的学生。这与 ATE 不同，可以说与政策更相关。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Machine Learning for HTE: Causal Forests</h3>
+    <h3 data-lang="zh">机器学习用于 HTE：因果森林</h3>
+    <p class="method-desc" data-lang="en">Traditional regression can estimate HTE for pre-specified interactions. But what if you don't know which variables moderate the treatment effect? Causal forests (Wager & Athey, 2018) extend random forests to estimate Conditional Average Treatment Effects (CATE): E[Y(1)−Y(0)|X]. For each individual with covariates X, a causal forest estimates their personal treatment effect. The algorithm: (1) split the sample into training and evaluation folds, (2) build decision trees that maximize heterogeneity in treatment effects (not just outcomes), (3) ensemble many trees to get stable estimates. Causal forests can discover which variables most strongly moderate the treatment effect, even across complex interactions, without pre-specification. The output: a personalized treatment effect estimate for each observation and a ranking of which covariates explain heterogeneity most.</p>
+    <p class="method-desc" data-lang="zh">传统回归可以估计预先指定的交互的 HTE。但如果你不知道哪些变量调节处理效应呢？因果森林（Wager & Athey, 2018）将随机森林扩展到估计条件平均处理效应（CATE）：E[Y(1)−Y(0)|X]。对于具有协变量 X 的每个个体，因果森林估计他们的个人处理效应。算法：（1）将样本分割为训练和评估折，（2）构建最大化处理效应异质性（不仅仅是结果）的决策树，（3）集成多个树以获得稳定的估计。因果森林可以发现哪些变量最强烈地调节处理效应，即使在复杂的交互中，也不需要预先指定。输出：每个观测的个性化处理效应估计和哪些协变量最能解释异质性的排名。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Instead of asking "does this drug work?" (ATE) or "does it work differently for men vs. women?" (pre-specified subgroup), causal forests ask "what combination of age, gender, health status, and prior conditions predicts who benefits most?" It's like personalized medicine: the effect depends on a patient's full profile, not just one variable.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>与其问「这种药有效吗？」（ATE）或「它对男性和女性的效果不同吗？」（预先指定的子组），因果森林问「年龄、性别、健康状况和先前条件的哪种组合预测谁受益最多？」这就像个性化医疗：效应取决于患者的完整档案，而不仅仅是一个变量。</div>
+    <div class="method-when" data-lang="en"><strong>When to use causal forests:</strong> Large samples (> 1,000 treated observations). When you have many potential moderators and want data-driven heterogeneity discovery. When you want to target interventions (identify who to treat). <strong>When NOT to use:</strong> Small samples — the forest needs data to split reliably. When you have strong theoretical predictions about heterogeneity (use pre-specified interactions instead). Always validate causal forest estimates with separate out-of-sample data; never report in-sample HTE estimates without cross-validation. Use the grf package in R (Generalized Random Forests by Athey et al.).</div>
+    <div class="method-when" data-lang="zh"><strong>何时用因果森林：</strong>大样本（> 1,000 个处理观测）。当你有许多潜在的调节变量，想要数据驱动的异质性发现时。当你想要定向干预（识别谁应该接受处理）时。<strong>何时不用：</strong>小样本——森林需要数据来可靠分割。当你对异质性有强理论预测时（改用预先指定的交互）。始终用单独的样本外数据验证因果森林估计；永远不要在没有交叉验证的情况下报告样本内 HTE 估计。使用 R 中的 grf 包（Athey 等人的广义随机森林）。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A study of small-group civic deliberation programs. Main effect: modest increase in civic engagement (+0.15 SD). Causal forest analysis: CATE estimates reveal that the treatment effect is large (+0.4 SD) for politically disengaged participants with low baseline civic knowledge, but near zero for already-engaged participants. The program works by informing the uninformed, not by re-engaging the already engaged. This heterogeneity finding has direct policy implications: target the program at low-knowledge, low-engagement communities.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>关于小组公民审议项目的研究。主效应：公民参与度适度增加（+0.15 SD）。因果森林分析：CATE 估计显示，对于具有低基线公民知识的政治不参与参与者，处理效应很大（+0.4 SD），但对于已经参与的参与者接近零。该项目通过告知无知者来工作，而不是通过重新吸引已经参与者。这个异质性发现有直接的政策意义：针对知识水平低、参与度低的社区。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Causal Mediation Analysis: How Does X Affect Y?</h3>
+    <h3 data-lang="zh">因果中介分析：X 是如何影响 Y 的？</h3>
+    <p class="method-desc" data-lang="en">Sometimes you know X causes Y (via an experiment), but you want to know the mechanism: does X affect Y directly, or through an intermediate variable M? This is mediation. Example: a job training program (X) increases employment (Y). Does it work by teaching skills (M1), by providing job contacts (M2), or directly by improving confidence? Causal mediation analysis decomposes the total treatment effect into: (1) Direct Effect: X → Y path not through M, and (2) Indirect Effect (mediated): X → M → Y path. The indirect effect is the portion of X's effect that works through M.</p>
+    <p class="method-desc" data-lang="zh">有时你知道 X 导致 Y（通过实验），但你想知道机制：X 是直接影响 Y，还是通过中间变量 M？这就是中介。例子：职业培训项目（X）增加就业率（Y）。它是通过教授技能（M1）、提供工作联系（M2）还是直接通过提高信心来发挥作用的？因果中介分析将总处理效应分解为：（1）直接效应：X → Y 路径，不通过 M，和（2）间接效应（中介）：X → M → Y 路径。间接效应是通过 M 起作用的 X 效应的部分。</p>
+    <p class="method-desc" data-lang="en">The key assumption for causal mediation: sequential ignorability. Given treatment assignment (X) and covariates, the mediator (M) must be independent of the potential outcomes for Y. This is strong and often untestable — if unmeasured confounders affect both M and Y, mediation estimates are biased. This is why mediation results are more fragile than main treatment effects. Always conduct sensitivity analyses to assess how much unmeasured M-Y confounding would be needed to reverse the finding. Use the mediation package in R (Imai et al., 2010) or Stata's gsem command for causal mediation.</p>
+    <p class="method-desc" data-lang="zh">因果中介的关键假设：顺序可忽略性。给定处理分配（X）和协变量，中介变量（M）必须独立于 Y 的潜在结果。这很强且通常无法检验——如果未测量的混淆因素影响 M 和 Y，中介估计是有偏的。这就是为什么中介结果比主要处理效应更脆弱。始终进行敏感性分析，以评估需要多少未测量的 M-Y 混淆才能逆转发现。使用 R 中的 mediation 包（Imai 等人，2010）或 Stata 的 gsem 命令进行因果中介。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A teacher improves students' test scores (total effect). Mediation asks: does the teacher work by inspiring curiosity (which improves learning), by drilling practice problems (which builds skills), or by a combination? If you can measure "curiosity levels" and "practice hours" as mediators, you can estimate what fraction of the test score improvement runs through each channel.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>一位老师提高了学生的测试分数（总效应）。中介问：老师是通过激发好奇心（改善学习）、通过练习题（建立技能）还是通过组合来工作的？如果你可以测量「好奇心水平」和「练习小时数」作为中介变量，你可以估计测试分数改善通过每个渠道流动的部分。</div>
+    <div class="method-when" data-lang="en"><strong>When to use mediation:</strong> When you have a well-established causal effect and want to understand the mechanism. When the mediator can be measured before Y (temporal precedence matters). When you have theoretical reason to expect mediation. <strong>When NOT to use:</strong> When you only have observational data for X (no experimental variation); mediation from observational X is very hard to interpret causally. When the mediator is not clearly measured before the outcome. Report sensitivity analyses for unmeasured confounding.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用中介：</strong>当你有一个成熟的因果效应且想了解机制时。当中介变量可以在 Y 之前测量时（时间优先性很重要）。当你有理论原因期望中介时。<strong>何时不用：</strong>当你只有 X 的观察数据（没有实验变化）时；来自观察 X 的中介很难因果解释。当中介变量在结果之前测量不清晰时。报告未测量混淆的敏感性分析。</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
 
 <!-- RESOURCES -->
 <hr class="section-divider">
@@ -142,8 +316,8 @@ next:
   <h2 data-lang="en">Resources</h2>
   <h2 data-lang="zh">资源</h2>
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Key references and further reading — coming soon.</p>
-    <p class="method-desc" data-lang="zh">关键参考文献与延伸阅读——整理中。</p>
+    <p class="method-desc" data-lang="en"><strong>Randomized experiments:</strong> Gerber & Green (2012) on field experiments; Campbell & Stanley (1963) on experimental design. <strong>RDD:</strong> Cattaneo, Idrobo & Titiunik (2020) on rdrobust (R/Stata package). <strong>IV:</strong> Angrist & Pischke (2009) on econometric methods. <strong>Matching:</strong> MatchIt package in R (Ho et al., 2011). <strong>DiD:</strong> Callaway & Sant'Anna (2021) on staggered adoption; Abadie (2005) on synthetic control. <strong>Software:</strong> R packages: MatchIt, rdrobust, did, Synth. Stata: teffects, rdrobust, synth. Always report balance diagnostics, sensitivity tests, and discuss threats to assumptions.</p>
+    <p class="method-desc" data-lang="zh"><strong>随机实验：</strong>Gerber & Green (2012) 关于田间实验；Campbell & Stanley (1963) 关于实验设计。<strong>RDD：</strong>Cattaneo、Idrobo 和 Titiunik (2020) 关于 rdrobust（R/Stata 包）。<strong>IV：</strong>Angrist & Pischke (2009) 关于计量经济学方法。<strong>匹配：</strong>R 中的 MatchIt 包（Ho et al., 2011）。<strong>DiD：</strong>Callaway & Sant'Anna (2021) 关于错开采用；Abadie (2005) 关于合成控制。<strong>软件：</strong>R 包：MatchIt、rdrobust、did、Synth。Stata：teffects、rdrobust、synth。始终报告平衡诊断、敏感性测试并讨论对假设的威胁。</p>
   </div>
 </div>
 

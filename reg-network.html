@@ -17,6 +17,13 @@ next:
 .problem-index a{display:block;font-size:14.5px;line-height:2;color:var(--ink-faded);text-decoration:none;transition:color .2s}
 .problem-index a:hover{color:var(--red)}
 .problem-index a .pi-arrow{font-family:var(--sans);font-size:11px;color:var(--gold);margin-left:6px}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border:1px solid var(--parchment);border-radius:4px;overflow:hidden}
+.compare-col{padding:18px;background:var(--paper)}
+.compare-col.alt{background:var(--warm)}
+.compare-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:12px}
+.compare-footer{grid-column:1/-1;padding:12px 18px;background:rgba(194,153,61,.05);border-top:1px solid var(--parchment);font-size:13px;color:var(--ink-faded);font-style:italic}
+.compare-col p{font-size:14.5px;line-height:1.65;color:var(--ink-faded);margin-bottom:8px}
+@media(max-width:860px){.compare-grid{grid-template-columns:1fr}}
 </style>
 
 <!-- HEADER -->
@@ -65,17 +72,27 @@ next:
 
 <!-- SECTION 1 -->
 <div class="section" id="na-s1">
-  <h2 data-lang="en">Network Basics: Nodes, Edges, and Graph Types</h2>
-  <h2 data-lang="zh">网络基础：节点、边与图的类型</h2>
+  <h2 data-lang="en">My Data Describes Relationships Between Actors — How Do I Work With It?</h2>
+  <h2 data-lang="zh">我的数据描述行动者之间的关系——怎么处理它？</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> Your data isn't a spreadsheet of independent observations. Instead, it describes ties: A co-sponsored legislation with B, C traded with D, E is friends with F. These relationships create structure. A senator is influential not because of their individual attributes alone, but because of whom they're connected to. You need specialized tools to represent, visualize, and analyze networks.</p>
+    <p data-lang="zh"><strong>问题：</strong>数据不是独立观测的电子表格。而是描述关系：A 与 B 联署立法，C 与 D 贸易，E 与 F 是朋友。这些关系创造结构。参议员影响力不仅来自个人属性，还来自他们的连接对象。需要专门工具来表示、可视化和分析网络。</p>
   </div>
 
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Graphs, Nodes, and Edges</h3>
+    <h3 data-lang="zh">图、节点与边</h3>
+    <p class="method-desc" data-lang="en">A network is a graph: nodes (actors) and edges (relationships). Key distinctions: (1) <strong>Directed vs. undirected</strong> — does the edge have a direction? "A follows B" is directed (asymmetric). "A and B are friends" is undirected (symmetric). (2) <strong>Weighted vs. binary</strong> — is there a number attached? Trade volume between countries is weighted; co-sponsorship is often binary (yes or no). (3) <strong>Bipartite</strong> — are there two types of nodes? A board network (people on committees) is bipartite: people on one side, committees on the other.</p>
+    <p class="method-desc" data-lang="zh">网络是图：节点（行动者）和边（关系）。关键区分：（1）<strong>有向 vs. 无向</strong>——边有方向吗？"A 关注 B"是有向（不对称）。"A 和 B 是朋友"是无向（对称）。（2）<strong>加权 vs. 二元</strong>——有数字附加吗？国家间贸易量是加权；联署常是二元（是或否）。（3）<strong>二部网络</strong>——有两种节点吗？董事会网络（人在委员会）是二部：一边人，另一边委员会。</p>
+    <p class="method-desc" data-lang="en"><strong>Data formats:</strong> (1) <strong>Edge list</strong> — simple: columns are source, target, (weight). (2) <strong>Adjacency matrix</strong> — square matrix where cell [i,j] = edge weight between i and j. Edge lists are more efficient for sparse networks; adjacency matrices are easier for mathematical operations.</p>
+    <p class="method-desc" data-lang="zh"><strong>数据格式：</strong>（1）<strong>边表</strong>——简单：列是源、目标、（权重）。（2）<strong>邻接矩阵</strong>——方阵，格 [i,j] = i 和 j 间边的权重。边表对稀疏网络更高效；邻接矩阵对数学运算更容易。</p>
+    <p class="method-desc" data-lang="en"><strong>Common network data in social science:</strong> Senate co-sponsorship networks (two senators linked if they co-sponsor bills), international trade networks (countries linked by import/export flows), social media follower graphs (users linked by follows), interlock directorates (companies linked by shared board members), alliance networks in international relations (countries linked by defense alliances).</p>
+    <p class="method-desc" data-lang="zh"><strong>社会科学中常见网络数据：</strong>参议院联署网络（两个参议员如果联署法案则相连），国际贸易网络（国家通过进出口流动相连），社交媒体粉丝图（用户通过关注相连），公司董事交叉任职（公司通过董事会共同成员相连），国际关系同盟网络（国家通过防御同盟相连）。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A network is like a map of roads. Nodes are cities, edges are roads, weight is traffic volume or road quality. Analyzing the map tells you which cities are hubs, which routes handle most traffic, whether some regions are isolated.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>网络像道路地图。节点是城市，边是道路，权重是交通量或道路质量。分析地图告诉你哪些城市是枢纽，哪些路线处理最多交通，某些地区是否孤立。</div>
+    <div class="method-when" data-lang="en"><strong>When to use:</strong> Whenever your data structure is fundamentally relational: social ties, economic flows, collaboration patterns. Not appropriate when observations are independent.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用：</strong>数据结构本质上是关系性时：社交关系、经济流、合作模式。观测独立时不适用。</div>
   </div>
 </div>
 
@@ -83,17 +100,46 @@ next:
 
 <!-- SECTION 2 -->
 <div class="section" id="na-s2">
-  <h2 data-lang="en">Centrality: Identifying Key Actors</h2>
-  <h2 data-lang="zh">中心性：识别关键行动者</h2>
+  <h2 data-lang="en">Who Are the Most Important or Influential Nodes?</h2>
+  <h2 data-lang="zh">谁是最重要或最有影响力的节点？</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> You have 1000 senators, 50000 countries, or millions of social media users. You can't read the network. You need a single number per node that captures its importance. But "importance" is context-dependent: an isolated expert is locally powerful but globally peripheral; a well-connected facilitator is a bridge; a highly respected node has indirect power through status.</p>
+    <p data-lang="zh"><strong>问题：</strong>你有 1000 个参议员、50000 个国家或数百万社交媒体用户。无法读整个网络。需要每个节点一个数字来捕捉其重要性。但"重要性"依赖上下文：孤立专家局部有力全局边缘；联系良好的协调者是桥梁；受尊敬节点通过地位有间接权力。</p>
   </div>
 
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Degree Centrality: Simple Connectivity</h3>
+    <h3 data-lang="zh">度中心性：简单连接</h3>
+    <p class="method-desc" data-lang="en"><strong>Degree</strong> = number of connections. A senator with many co-sponsors has high degree. In directed networks, distinguish in-degree (ties coming in) and out-degree (ties going out). A Twitter influencer has high out-degree (many followers); a viral tweet has high in-degree (many retweets).</p>
+    <p class="method-desc" data-lang="zh"><strong>度</strong> = 连接数。有许多联署人的参议员有高度。在有向网络中，区分入度（进来的关系）和出度（出去的关系）。Twitter 网红有高出度（许多粉丝）；病毒推文有高入度（许多转发）。</p>
+    <p class="method-desc" data-lang="en"><strong>Limitation:</strong> Degree is local — it only counts direct neighbors. A node with few connections might be strategically placed. It's the simplest measure but often misleading as a sole indicator of power.</p>
+    <p class="method-desc" data-lang="zh"><strong>局限：</strong>度是局部的——只数直接邻居。有少数连接的节点可能战略位置好。最简单的测量但作为权力唯一指标常误导。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Betweenness Centrality: The Broker</h3>
+    <h3 data-lang="zh">中介中心性：经纪人</h3>
+    <p class="method-desc" data-lang="en"><strong>Betweenness</strong> = how often this node lies on the shortest path between all pairs of other nodes. High betweenness means "everyone routes through me." Betweenness identifies brokers, gatekeepers, and bridges. A senator with high betweenness connects otherwise divided parties. Removing a high-betweenness node fragments the network.</p>
+    <p class="method-desc" data-lang="zh"><strong>中介性</strong> = 这个节点在其他节点对间最短路上出现多少次。高中介性意味着"每个人都通过我"。中介性识别经纪人、守门人和桥梁。高中介性参议员连接分裂党派。移除高中介性节点分裂网络。</p>
+    <p class="method-desc" data-lang="en">This is crucial for disruption research: removing high-betweenness nodes from a terrorist network is more effective than removing high-degree nodes (Krebs, 2002). A leader with many followers is expendable; a leader who bridges two factions is irreplaceable.</p>
+    <p class="method-desc" data-lang="zh">这对破坏研究至关重要：从恐怖网络移除高中介性节点比移除高度节点更有效（Krebs, 2002）。有许多追随者的领导者可替换；连接两个派系的领导者不可替换。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Eigenvector Centrality and PageRank</h3>
+    <h3 data-lang="zh">特征向量中心性与 PageRank</h3>
+    <p class="method-desc" data-lang="en"><strong>Eigenvector centrality</strong> asks: "Are you connected to important others?" A node's importance depends on its neighbors' importance. It's recursive: you're influential if powerful people listen to you. <strong>PageRank</strong> (the algorithm behind Google's ranking) is a variant: a link from an important page boosts you more than a link from an unimportant page.</p>
+    <p class="method-desc" data-lang="zh"><strong>特征向量中心性</strong>问："你与重要人物相连吗？"节点的重要性取决于邻居的重要性。递归的：有权势的人听你的时你有影响力。<strong>PageRank</strong>（Google 排名背后的算法）是变种：来自重要页面的链接比来自不重要页面的链接更提升你。</p>
+    <p class="method-desc" data-lang="en">In social networks, eigenvector centrality captures prestige: being friends with celebrities makes you more central. In citation networks, PageRank identifies influential papers: papers cited by influential papers are themselves influential.</p>
+    <p class="method-desc" data-lang="zh">在社交网络中，特征向量中心性捕捉声望：与名人交友让你更中心。在引用网络中，PageRank 识别有影响力的论文：被有影响力论文引用的论文本身有影响。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Choosing a Measure</h3>
+    <h3 data-lang="zh">选择一个测量</h3>
+    <p class="method-desc" data-lang="en">Different centrality measures answer different questions. Degree = "Who has many connections?" Betweenness = "Who is a broker or gatekeeper?" Eigenvector = "Who is connected to important others?" Closeness = "Who can quickly reach everyone else?" No single right answer — choose based on your research question.</p>
+    <p class="method-desc" data-lang="zh">不同中心性测量回答不同问题。度 = "谁有许多连接？"中介性 = "谁是经纪人或守门人？"特征向量 = "谁与重要人物相连？"接近性 = "谁能快速接触每个人？"无单一正确答案——基于研究问题选择。</p>
   </div>
 </div>
 
@@ -101,17 +147,46 @@ next:
 
 <!-- SECTION 3 -->
 <div class="section" id="na-s3">
-  <h2 data-lang="en">Community Detection: Finding Clusters</h2>
-  <h2 data-lang="zh">社区发现：寻找聚类</h2>
+  <h2 data-lang="en">Are There Communities or Clusters in My Network?</h2>
+  <h2 data-lang="zh">我的网络中有社区或聚类吗？</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> Real networks are cliquish: friends of friends tend to be friends. Countries cluster into trading blocs. Political parties form echo chambers. You want to detect these clusters algorithmically. Community detection can reveal hidden structure: ideological factions, professional cliques, geographic clusters.</p>
+    <p data-lang="zh"><strong>问题：</strong>真实网络是小团体的：朋友的朋友往往是朋友。国家聚成贸易集团。政党形成回音室。想算法检测这些聚类。社区检测能揭示隐藏结构：意识形态派系、专业小圈子、地理集群。</p>
   </div>
 
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Clustering Coefficient</h3>
+    <h3 data-lang="zh">聚类系数</h3>
+    <p class="method-desc" data-lang="en"><strong>Clustering coefficient</strong> measures cliquishness: if your two friends are also friends with each other, triangles form. High clustering = your neighborhood is tightly knit. Low clustering = your friends don't know each other.</p>
+    <p class="method-desc" data-lang="zh"><strong>聚类系数</strong>测量小团体性：如果你的两个朋友也互为朋友，形成三角形。高聚类 = 你的邻域紧密。低聚类 = 你的朋友互不认识。</p>
+    <p class="method-desc" data-lang="en">Clustering coefficient is descriptive but doesn't partition the network into communities. For that, you need optimization algorithms.</p>
+    <p class="method-desc" data-lang="zh">聚类系数是描述性的但不把网络分成社区。那需要优化算法。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Modularity and the Louvain Algorithm</h3>
+    <h3 data-lang="zh">模块性与 Louvain 算法</h3>
+    <p class="method-desc" data-lang="en"><strong>Modularity</strong> quantifies the quality of a partition: high modularity = dense within-community edges, sparse between-community edges. The <strong>Louvain algorithm</strong> greedily optimizes modularity: start with each node alone, merge nodes into communities that increase modularity, repeat until convergence.</p>
+    <p class="method-desc" data-lang="zh"><strong>模块性</strong>量化分割质量：高模块性 = 社区内边密集，社区间稀疏。<strong>Louvain 算法</strong>贪心地优化模块性：从每个节点单独开始，合并增加模块性的社区，重复直到收敛。</p>
+    <p class="method-desc" data-lang="en">Fast, scalable, and works well in practice. Limitation: doesn't guarantee global optimality, and there's no canonical "right" number of communities — the algorithm finds structure, but you must validate whether it's meaningful.</p>
+    <p class="method-desc" data-lang="zh">快、可扩展、实际运行良好。局限：不保证全局最优，无标准"正确"社区数——算法发现结构，但必须验证是否有意义。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Core-Periphery Structure</h3>
+    <h3 data-lang="zh">核心-外围结构</h3>
+    <p class="method-desc" data-lang="en">Some networks have a <strong>core-periphery</strong> structure: a tightly-knit core and a loosely-attached periphery. Examples: a company board (core decision-makers) and subordinates (periphery); international relations (core: wealthy nations with dense ties; periphery: developing nations with few ties); a criminal network (core: kingpins; periphery: foot soldiers).</p>
+    <p class="method-desc" data-lang="zh">某些网络有<strong>核心-外围</strong>结构：紧密的核心和松散的外围。例子：公司董事会（核心决策者）和下属（外围）；国际关系（核心：富国密集关系；外围：发展中国家少量关系）；犯罪网络（核心：主谋；外围：小喽）。</p>
+    <p class="method-desc" data-lang="en">Unlike modularity (which partitions the network into separate communities), core-periphery structure is a continuum: nodes have a "coreness" score. Identifying the core matters for: policy (who to regulate?), resilience (removing core nodes fragments the network), influence (core controls information flow).</p>
+    <p class="method-desc" data-lang="zh">不像模块性（把网络分成独立社区），核心-外围结构是连续的：节点有"核心性"分数。识别核心关系：政策（规制谁？）、恢复力（移除核心节点分裂网络）、影响力（核心控制信息流）。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Validation and Interpretation</h3>
+    <h3 data-lang="zh">验证与解释</h3>
+    <p class="method-desc" data-lang="en">Just because an algorithm finds communities doesn't mean they're meaningful. Always validate: (1) Do detected communities align with known groupings (political affiliation, industry sector, geographic region)? (2) Are there significant differences in attributes between communities? (3) Do communities make sense theoretically?</p>
+    <p class="method-desc" data-lang="zh">仅因算法发现社区不意味着有意义。总是验证：（1）检测社区是否与已知分组一致（政治立场、行业、地理）？（2）社区间属性有显著差异？（3）社区在理论上有意义？</p>
   </div>
 </div>
 
@@ -119,31 +194,78 @@ next:
 
 <!-- SECTION 4 -->
 <div class="section" id="na-s4">
-  <h2 data-lang="en">Diffusion: How Things Spread Through Networks</h2>
-  <h2 data-lang="zh">扩散：事物如何在网络中传播</h2>
+  <h2 data-lang="en">How Does Information or Behavior Spread Through the Network?</h2>
+  <h2 data-lang="zh">信息或行为如何在网络中传播？</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> A virus spreads differently than a fashion trend. One contact is enough to transmit disease (simple contagion). But adopting a new technology often requires seeing multiple friends use it (complex contagion). You need models of how information, behavior, or innovation cascade through networks — and why some spread while others fizzle.</p>
+    <p data-lang="zh"><strong>问题：</strong>病毒和时尚趋势传播不同。一次接触足以传播疾病（简单传播）。但采用新技术常需看多个朋友用它（复杂传播）。需要信息、行为或创新如何通过网络级联的模型——以及为什么有些传播而其他消失。</p>
   </div>
 
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Simple vs. Complex Contagion</h3>
+    <h3 data-lang="zh">简单 vs. 复杂传播</h3>
+    <p class="method-desc" data-lang="en"><strong>Simple contagion</strong> (epidemiological models) — one exposure is enough. SIR model: Susceptible → Infected → Recovered. One contact with an infected person spreads the disease. Models: infection probability per contact, recovery rate, contact network structure.</p>
+    <p class="method-desc" data-lang="zh"><strong>简单传播</strong>（流行病学模型）——一次接触足够。SIR 模型：易感 → 感染 → 恢复。一次与感染者接触传播疾病。模型：每次接触感染概率、恢复率、接触网络结构。</p>
+    <p class="method-desc" data-lang="en"><strong>Complex contagion</strong> — multiple exposures required. Adoption threshold models (Granovetter, 1978): a person adopts a behavior when a fraction θ of their friends adopt it. Threshold θ varies by person. Innovation diffuses slowly at first (few early adopters), then explosively (tipping point), then saturates.</p>
+    <p class="method-desc" data-lang="zh"><strong>复杂传播</strong>——需多次接触。采取阈值模型（Granovetter, 1978）：人在一定比例 θ 的朋友采取行为时采取。阈值 θ 因人而异。创新开始缓慢（早期采取者少），然后爆炸性（临界点），然后饱和。</p>
+    <p class="method-desc" data-lang="en">Examples: flu is simple contagion (one exposure can infect); protest adoption is complex (need to see threshold of friends protesting before joining); technology adoption is complex (need to see enough users before buying).</p>
+    <p class="method-desc" data-lang="zh">例子：流感是简单传播（一次接触可感染）；抗议采取是复杂的（需看阈值的朋友抗议才加入）；技术采取是复杂的（需看够多用户才购买）。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">The Strength of Weak Ties</h3>
+    <h3 data-lang="zh">弱关系的力量</h3>
+    <p class="method-desc" data-lang="en"><strong>Granovetter's paradox:</strong> weak ties (acquaintances) are more important than strong ties (close friends) for accessing novel information. Why? Close friends share the same information; acquaintances bridge to different information. In network terms: weak ties span "structural holes" — gaps in the network where no direct edge exists.</p>
+    <p class="method-desc" data-lang="zh"><strong>Granovetter 悖论：</strong>弱关系（泛泛之交）比强关系（密友）对获取新信息更重要。为什么？密友共享相同信息；泛泛之交连接不同信息。网络术语：弱关系跨越"结构洞"——网络中无直接边的间隙。</p>
+    <p class="method-desc" data-lang="en">Application: job search (you find jobs through weak ties, not friends); innovation (firms learn from weak ties to competitors); social movements (weak ties connect different activist clusters, enabling broader coalitions).</p>
+    <p class="method-desc" data-lang="zh">应用：求职（通过弱关系找工作，不是朋友）；创新（企业通过与竞争者的弱关系学习）；社会运动（弱关系连接不同活动家聚类，能形成更广泛联盟）。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Cascades and Tipping Points</h3>
+    <h3 data-lang="zh">级联与临界点</h3>
+    <p class="method-desc" data-lang="en"><strong>Information cascades</strong: people make decisions observing others' choices, ignoring private information. If the first 10 people choose A, the 11th person chooses A even if their private signal says B. Result: herds form regardless of truth. Example: bank runs (if everyone thinks the bank will fail, it will fail even if it's solvent).</p>
+    <p class="method-desc" data-lang="zh"><strong>信息级联</strong>：人通过观察他人选择做决定，忽视私人信息。如果前 10 人选 A，第 11 个人选 A 即使私人信号说 B。结果：羊群形成不管真实。例：银行挤兑（如果所有人认为银行会失败，它会失败即使是偿付能力）。</p>
+    <p class="method-desc" data-lang="en"><strong>Tipping points</strong: small changes in network structure or initial conditions trigger large cascades. A minority opinion can suddenly become majority if it crosses a threshold. Network heterogeneity matters: densely connected subgroups can resist cascades. Structural holes can facilitate cascades (information/behavior flows around bridges).</p>
+    <p class="method-desc" data-lang="zh"><strong>临界点</strong>：网络结构或初始条件的小改变引发大级联。少数意见能跨阈值突然变多数。网络异质性重要：密集连接子群能抵抗级联。结构洞能促进级联（信息/行为通过桥梁流动）。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Measuring Diffusion</h3>
+    <h3 data-lang="zh">测量扩散</h3>
+    <p class="method-desc" data-lang="en">In practice: (1) Identify the initial adopter(s). (2) Track who-adopted-when over time. (3) Estimate threshold θ for each individual or group. (4) Compare predicted (network model) vs. observed adoption curves. (5) Identify which network features (density, bridging ties, hierarchy) accelerate or slow diffusion.</p>
+    <p class="method-desc" data-lang="zh">实际上：（1）识别初始采取者。（2）追踪随时间谁采取。（3）估计每个个体或群体的阈值 θ。（4）对比预测（网络模型）vs. 观察采取曲线。（5）识别哪些网络特征（密度、桥接关系、层级）加速或减缓扩散。</p>
   </div>
 </div>
 
 <hr class="section-divider">
 
-
 <!-- RESOURCES -->
-<hr class="section-divider">
 <div class="section" id="na-resources">
   <h2 data-lang="en">Resources</h2>
   <h2 data-lang="zh">资源</h2>
+
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Key references and further reading — coming soon.</p>
-    <p class="method-desc" data-lang="zh">关键参考文献与延伸阅读——整理中。</p>
+    <h3 data-lang="en">Key References</h3>
+    <h3 data-lang="zh">关键参考</h3>
+    <ul style="font-size:14.5px;line-height:1.8;color:var(--ink-faded);margin-left:20px">
+      <li>Wasserman, S., &amp; Faust, K. (1994). <em>Social Network Analysis: Methods and Applications.</em> Cambridge University Press.</li>
+      <li>Krebs, V. E. (2002). Mapping networks of terrorist cells. <em>Connections</em>, 24(3), 43–52.</li>
+      <li>Granovetter, M. (1978). Threshold models of collective behavior. <em>American Journal of Sociology</em>, 83(6), 1420–1443.</li>
+      <li>Burt, R. S. (1992). <em>Structural Holes: The Social Structure of Competition.</em> Harvard University Press.</li>
+      <li>Jackson, M. O. (2008). <em>Social and Economic Networks.</em> Princeton University Press.</li>
+    </ul>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Software Tools</h3>
+    <h3 data-lang="zh">软件工具</h3>
+    <ul style="font-size:14.5px;line-height:1.8;color:var(--ink-faded);margin-left:20px">
+      <li><strong>R:</strong> igraph (network analysis), tidygraph (tidy network workflows), ggraph (network visualization), statnet (ERGMs and network models)</li>
+      <li><strong>Python:</strong> NetworkX (core library), PyGeNIe (community detection), python-igraph (igraph bindings)</li>
+      <li><strong>Specialized tools:</strong> Gephi (interactive visualization), Pajek (centrality measures, blockmodeling)</li>
+    </ul>
   </div>
 </div>
 

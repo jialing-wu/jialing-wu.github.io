@@ -69,13 +69,49 @@ next:
   <h2 data-lang="zh">描述数据：中心、分散与形态</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> You collect survey responses on income from 500 voters, or education levels from a national census. A pile of numbers tells you nothing. You need to describe what these data look like: Where is the center? How much do values vary? Is the distribution symmetric or lopsided? These descriptions determine what statistical methods you can use later.</p>
+    <p data-lang="zh"><strong>问题：</strong>你收集了500个选民的收入调查数据，或国家普查的教育水平数据。一堆数字说不出什么。你需要描述这些数据的样子：中心在哪里？数值变化多大？分布是对称还是偏斜的？这些描述决定了之后能用什么统计方法。</p>
   </div>
 
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Measures of Center: Mean, Median, and Mode</h3>
+    <h3 data-lang="zh">中心度量：平均数、中位数与众数</h3>
+    <p class="method-desc" data-lang="en">The mean is the arithmetic average — sum all values and divide by the count. The median is the middle value when data are sorted. The mode is the most frequent value. Each answers a different question about where the "typical" observation lies.</p>
+    <p class="method-desc" data-lang="zh">平均数是所有数值的算术平均——把所有值加起来除以个数。中位数是排序后的中间值。众数是最频繁出现的值。每个都从不同角度回答"典型"观察值在哪里这个问题。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A weather report tells you "the average temperature is 15°C," but if it was 5°C all morning then 25°C in the afternoon, that average is misleading. The median temperature tells you what half the day was cooler and half was warmer. The mode tells you which hour was most common. You need all three to know what the day actually felt like.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>天气报告说"平均气温15°C"，但如果上午一直是5°C，下午跳到25°C，这个平均数就很误导。中位数告诉你有一半时间更冷，一半时间更热。众数告诉你哪个小时最常见。你需要这三个指标才能知道这一天实际感受。</div>
+    <p class="method-desc" data-lang="en">The mean is sensitive to extreme values (outliers). If your data include one billionaire in a survey of 99 teachers, the mean income skyrockets while the median stays low. The median is resistant to outliers and often better for describing skewed data. Mode matters most for categorical data (the most common religion) or identifying natural clusters.</p>
+    <p class="method-desc" data-lang="zh">平均数对极端值（异常值）很敏感。如果99名教师的调查中包含1个亿万富翁，平均收入会飙升而中位数仍然很低。中位数对异常值有抵抗力，通常更适合描述偏斜数据。众数对分类数据（最常见的宗教）或识别自然聚类最重要。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use the mean when data are roughly symmetric and you're ready to do modeling (regression assumes a mean). Use the median when data are skewed or you're describing what a "typical" person experiences. Avoid reporting only the mean for income, wealth, or other right-skewed variables without also mentioning the median. Report mode for categorical data or when you want to know the most common category.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>当数据大致对称且准备建模时用平均数（回归假设一个平均值）。当数据偏斜或想描述"典型"人的经历时用中位数。避免仅报告收入、财富等右偏变量的平均数，不提中位数。对分类数据或想知道最常见类别时报告众数。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> In a study of political trust, researchers surveyed 1000 citizens on trust in government (0–100 scale). The mean was 52, but the median was 68. This tells you the distribution is left-skewed: most people are moderately trusting, but a tail of very distrustful citizens pulls the mean down. A naive summary using only the mean would miss that most voters actually trust institutions.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>政治信任研究中，研究者调查1000名公民对政府信任度（0-100分）。平均数是52，但中位数是68。这告诉你分布左偏：大多数人适度信任，但一条不信任公民的尾部拉低了平均数。只用平均数的简单总结会遗漏大多数选民其实信任机构这一事实。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Measures of Spread: Variance, Standard Deviation, and Range</h3>
+    <h3 data-lang="zh">分散度量：方差、标准差与极差</h3>
+    <p class="method-desc" data-lang="en">The range is the distance from minimum to maximum. Variance is the average squared distance from the mean. Standard deviation (SD) is the square root of variance, measured in the same units as the original data. These all measure how spread out your data are.</p>
+    <p class="method-desc" data-lang="zh">极差是从最小值到最大值的距离。方差是离平均值距离的平方的平均。标准差（SD）是方差的平方根，单位与原数据相同。这些都衡量数据有多分散。</p>
+    <p class="method-desc" data-lang="en">The range is crude — it depends only on the two most extreme values. One outlier can make it huge. Variance and SD measure spread using all data points, and SD is especially useful because it's in the same units as your original variable. If income is measured in thousands of dollars, SD is too. This makes SD intuitive: if the mean is $50k and SD is $15k, you know a lot of people deviate from the mean by roughly $15k.</p>
+    <p class="method-desc" data-lang="zh">极差很粗糙——仅依赖两个极端值。一个异常值会让它很大。方差和SD用所有数据点衡量分散，SD特别有用因为它与原变量的单位相同。如果收入以千美元计，SD也是。这使SD直观：如果平均收入5万美元，SD是1.5万美元，你就知道很多人偏离平均值约1.5万美元。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always report both the mean and SD together (or median with the interquartile range for skewed data). Range is useful only for noting min/max, never as your main spread measure. High SD relative to the mean suggests heterogeneity; low SD suggests homogeneity. Use this to judge whether a single mean tells the whole story.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>总是一起报告平均数和SD（或对偏斜数据用中位数和四分位距）。极差仅适合注明最小/最大值，不能作为主要分散度量。相对于平均数的高SD表明异质性；低SD表明同质性。用这个判断单一平均数是否讲了全部故事。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Two countries have the same mean life expectancy (75 years) but different SDs. Country A has SD=2 years (most people live 73–77 years). Country B has SD=15 years (some live to 60, others to 90). Same average, very different inequality. SD reveals this. A policy maker in Country B would rightly worry about vulnerability even though the average looks good.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>两个国家有相同的平均寿命（75岁），但SD不同。A国SD=2年（大多数人活73-77岁）。B国SD=15年（有人60岁，有人90岁）。平均数相同，不平等程度非常不同。SD揭示了这点。B国的政策制定者尽管平均数看起来不错，仍应该担心脆弱性。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Distribution Shape: Symmetry and Skewness</h3>
+    <h3 data-lang="zh">分布形态：对称性与偏度</h3>
+    <p class="method-desc" data-lang="en">A symmetric distribution has values balanced around the center. Mean and median are close. Skewness measures asymmetry. Right-skewed (positively skewed) distributions have a tail on the right: some very high values pull the mean above the median. Left-skewed distributions have a tail on the left, pulling the mean below the median.</p>
+    <p class="method-desc" data-lang="zh">对称分布的值围绕中心平衡。平均数和中位数接近。偏度衡量不对称性。右偏（正偏）分布右边有尾：一些很高的值将平均数拉到中位数上方。左偏分布左边有尾，把平均数拉到中位数下方。</p>
+    <p class="method-desc" data-lang="en">Why does this matter? Many statistical tests assume the data are roughly normal (symmetric and bell-shaped). If your data are heavily skewed, those tests may not work well. Income is always right-skewed: most people earn moderate amounts, a few earn huge amounts, nobody earns negative income. Education, when measured as years, is often left-skewed in developed countries: most people finish high school or college, but few don't finish elementary school.</p>
+    <p class="method-desc" data-lang="zh">为什么这重要？许多统计检验假设数据大致正态（对称、钟形）。如果数据严重偏斜，这些检验可能不起作用。收入总是右偏：大多数人赚取中等收入，少数赚取巨额，没人赚负收入。教育，按年数计，在发达国家通常左偏：大多数人完成高中或大学，但几乎没人没完成小学。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always visualize your data's shape (histogram or density plot). If it's heavily skewed, consider transformations (log, square root) or using median-based tests. Kurtosis (how heavy the tails are) also matters for some tests, though it's less critical than skewness. Report skewness as a number if it's relevant to your conclusions, but don't obsess over small departures from normality.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>总是可视化数据形态（直方图或密度图）。如果严重偏斜，考虑转换（对数、平方根）或用中位数检验。峰度（尾部有多重）对某些检验也重要，尽管不如偏度关键。如果偏度与结论相关就报告数值，但别过度关注与正态的小偏差。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A researcher studying wealth inequality collects data on household net worth. The data are heavily right-skewed: the top 1% owns far more than median households. Reporting only the mean ($500k) misleads. The median is $100k. A log transformation reveals the shape better, because on a log scale, skewed data compress and become easier to see. The heavily right-skewed raw distribution hides the bulk of variation among non-wealthy households.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究财富不平等的研究者收集家庭净资产数据。数据严重右偏：最富的1%拥有远多于中位家庭的财富。仅报告平均值（50万美元）会误导。中位数是10万美元。对数变换更好地揭示形态，因为在对数尺度上，偏斜数据会压缩并更易看清。严重右偏的原始分布掩盖了非富有家庭间的大部分变异。</div>
   </div>
 </div>
 
@@ -87,13 +123,36 @@ next:
   <h2 data-lang="zh">推断：从样本到总体</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> You cannot interview all 200 million voters in a country. You draw a sample of 1,500 and ask their opinion. Your sample mean is 55%, but the true population mean is unknown. How close is your estimate? How confident can you be? Sampling theory and the Central Limit Theorem tell you why a modest random sample gives you powerful information about an entire population.</p>
+    <p data-lang="zh"><strong>问题：</strong>你无法采访一个国家的全部2亿选民。你抽取1500人的样本并问他们的意见。样本平均值是55%，但真实总体平均值未知。你的估计有多接近？你能有多自信？抽样理论和中心极限定理告诉你为什么一个适度的随机样本能给你关于整个总体的强大信息。</p>
   </div>
 
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Sampling Distributions and the Standard Error</h3>
+    <h3 data-lang="zh">抽样分布与标准误</h3>
+    <p class="method-desc" data-lang="en">Imagine taking your sample over and over, each time calculating a mean. Those means vary slightly. The distribution of all possible sample means is called the sampling distribution. The standard error (SE) is the standard deviation of the sampling distribution — it tells you how much sample means typically vary from the true population mean.</p>
+    <p class="method-desc" data-lang="zh">想象一遍遍抽取样本，每次计算平均数。这些平均数略有变化。所有可能样本平均数的分布叫做抽样分布。标准误（SE）是抽样分布的标准差——它告诉你样本平均数通常偏离真实总体平均值多少。</p>
+    <p class="method-desc" data-lang="en">The standard error is smaller when you have more data. A sample of 10,000 has a smaller SE than a sample of 100, assuming the same underlying population SD. This is why larger samples are more precise. The formula is SE = SD / √n, where n is sample size. Double your sample size, and SE shrinks by 1/√2.</p>
+    <p class="method-desc" data-lang="zh">当数据更多时，标准误更小。假设相同的总体SD，10000样本的SE小于100的样本。这就是为什么更大样本更精确。公式是SE = SD / √n，n是样本大小。加倍样本大小，SE缩小1/√2。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Drawing marbles from a jar. If you draw 5 marbles, the average color value might be 4.2. Draw 5 different marbles, and you get 3.8. Draw 500 marbles, and you'll get something like 4.0 every time. The larger your sample, the more stable your estimate. SE quantifies this stability.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>从罐子里抽玻璃珠。如果你抽5个珠子，平均颜色值可能是4.2。抽5个不同珠子，你得到3.8。抽500个珠子，你每次都会得到约4.0。样本越大，估计越稳定。SE量化了这种稳定性。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always report SE or confidence intervals when presenting sample estimates. Never report a point estimate alone. The SE tells readers how much sampling variability they should expect. For large samples (n &gt; 30), the sampling distribution is nearly normal even if the population is not, thanks to the Central Limit Theorem — a game changer for inference.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>呈现样本估计时总是报告SE或置信区间。从不单独报告点估计。SE告诉读者应该期望多少抽样变异。对于大样本（n &gt; 30），由于中心极限定理，即使总体不正态，抽样分布也几乎正态——这改变了推断的游戏规则。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A political pollster surveys 1,200 voters and finds 52% support for a ballot measure. The SD of the population is roughly 50% (binary response). SE = 50% / √1200 ≈ 1.4%. So the true support is likely between 49.6% and 54.4% (roughly 52% ± 2 × SE). Reporting "52%" without the margin of error obscures the uncertainty. Reporting "52% ± 1.4%" tells the full story.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>政治民调员调查1200名选民，发现52%支持某议案。总体的SD大约50%（二元回答）。SE = 50% / √1200 ≈ 1.4%。所以真实支持度可能在49.6%到54.4%之间（大约52% ± 2×SE）。仅报告"52%"而不提及误差范围隐蔽了不确定性。报告"52% ± 1.4%"讲述了完整故事。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Confidence Intervals: Quantifying Uncertainty</h3>
+    <h3 data-lang="zh">置信区间：量化不确定性</h3>
+    <p class="method-desc" data-lang="en">A confidence interval (CI) is a range of values likely to contain the true population parameter. A 95% CI means: if we repeated our sampling many times and calculated a CI each time, about 95% of those intervals would contain the true parameter. It is not a probability statement about one interval (the true value is either in it or not), but a long-run frequency statement.</p>
+    <p class="method-desc" data-lang="zh">置信区间（CI）是可能包含真实总体参数的值范围。95% CI意思是：如果我们多次重复抽样并每次计算CI，那么大约95%的这些区间会包含真实参数。这不是关于某个区间的概率陈述（真值要么在里面，要么不在），而是长期频率陈述。</p>
+    <p class="method-desc" data-lang="en">For a sample mean, the 95% CI is approximately: estimate ± (1.96 × SE). The 1.96 comes from the normal distribution; 95% of values in a normal distribution fall within 1.96 standard deviations of the mean. Wider CIs indicate more uncertainty (smaller samples, higher variability). Narrower CIs indicate more precision (larger samples, less variability).</p>
+    <p class="method-desc" data-lang="zh">对于样本平均数，95% CI大约是：估计 ± (1.96 × SE)。1.96来自正态分布；正态分布中95%的值在平均值的1.96个标准差内。更宽的CI表示更多不确定性（较小样本、高变异性）。更窄的CI表示更高精度（更大样本、低变异性）。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always report CIs when you are estimating population parameters from a sample. A 95% CI is standard in social science, but 90% or 99% CIs are defensible depending on the cost of errors. Do not interpret a CI as "there is a 95% chance the true value is in this interval." That interpretation is technically wrong (frequentist) or trivially true (Bayesian). The correct interpretation is harder to state but more accurate: "This interval was constructed by a procedure that captures the true value 95% of the time in repeated sampling."</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>从样本估计总体参数时总是报告CI。95% CI在社会科学中是标准的，但取决于误差成本可以用90%或99%的CI。不要解释CI为"真值在这个区间的概率是95%"。那个解释在技术上是错的（频率主义）或平凡真（贝叶斯）。正确解释更难表述但更准确："这个区间由一个在重复抽样中95%时间捕捉真值的程序构建。"</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A researcher estimates the average years of education in a city. Sample mean is 13.2 years, SE is 0.3 years. The 95% CI is 13.2 ± (1.96 × 0.3) = [12.6, 13.8]. The researcher can report: "The average education is 13.2 years (95% CI: 12.6–13.8)." This conveys both the point estimate and the precision. A 0.2-year CI would suggest a larger, more efficient sample.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究者估计一个城市的平均教育年数。样本平均值13.2年，SE 0.3年。95% CI是13.2 ± (1.96 × 0.3) = [12.6, 13.8]。研究者可以报告："平均教育是13.2年（95% CI: 12.6–13.8）。"这既传达了点估计又传达了精度。一个0.2年的CI会暗示一个更大、更高效的样本。</div>
   </div>
 </div>
 
@@ -105,13 +164,49 @@ next:
   <h2 data-lang="zh">假设检验：信号还是噪声？</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> You observe a difference between two groups. Women's average income is 5% lower than men's in your sample. Is this difference real (a signal of actual inequality) or just random noise from sampling variability? Hypothesis testing is the formal framework for answering this question. But it is widely misused and misunderstood in social science.</p>
+    <p data-lang="zh"><strong>问题：</strong>你观察到两个组之间的差异。女性在你的样本中的平均收入比男性低5%。这个差异是真实的（真实不平等的信号）还是仅仅来自抽样变异的随机噪声？假设检验是正式回答这个问题的框架。但它在社会科学中被广泛误用和误解。</p>
   </div>
 
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">The Null Hypothesis and P-Values</h3>
+    <h3 data-lang="zh">零假设与P值</h3>
+    <p class="method-desc" data-lang="en">The null hypothesis (H₀) is the assumption that there is no effect, no difference, no relationship. The alternative hypothesis (H₁) says there is an effect. You calculate a test statistic (like a t-statistic or chi-square) that measures how far your observed data deviate from what H₀ predicts. The p-value is the probability of observing data as extreme as (or more extreme than) what you actually saw, assuming H₀ is true.</p>
+    <p class="method-desc" data-lang="zh">零假设（H₀）是没有效应、没有差异、没有关系的假设。备择假设（H₁）说有效应。你计算一个检验统计量（如t统计或卡方），衡量观察数据与H₀预测的偏离程度。P值是假设H₀为真时，观察到与实际看到的一样极端（或更极端）的数据的概率。</p>
+    <p class="method-desc" data-lang="en">A p-value of 0.03 does not mean: "There is a 3% chance the null hypothesis is true" or "There is a 97% chance my hypothesis is correct." Those statements are false. The correct meaning is: "If the null hypothesis were true, there would be only a 3% chance of seeing data this extreme due to random sampling alone." Small p-values (p &lt; 0.05) suggest the null is unlikely, but they say nothing about the size or practical importance of an effect.</p>
+    <p class="method-desc" data-lang="zh">P值0.03不表示："零假设为真的概率是3%"或"我的假设正确的概率是97%"。这些说法是错的。正确含义是："如果零假设为真，仅由随机抽样看到这样极端数据的概率只有3%。"小P值（p &lt; 0.05）暗示零假设不可能，但它们对效应的大小或实际重要性什么都没说。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A court trial tests H₀ = "defendant is innocent" versus H₁ = "defendant is guilty." Evidence that is inconsistent with innocence (p &lt; 0.05) leads to conviction. But statistical p &lt; 0.05 is not "beyond a reasonable doubt" in the legal sense. In fact, p &lt; 0.05 in social science often means "unlikely if nothing is happening," but it doesn't mean the effect is large, repeatable, or socially significant. The analogy breaks down because courts care about effect size and social impact; statistics alone do not.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>法庭审判检验H₀ ="被告无罪"对H₁="被告有罪"。与无罪不一致的证据（p &lt; 0.05）导致定罪。但统计p &lt; 0.05不是法律意义的"毫无合理怀疑"。实际上，社会科学中的p &lt; 0.05常常意思是"如果什么都没发生不太可能"，但这不意味着效应很大、可重复或社会上显著。类比在这里断裂，因为法庭关心效应大小和社会影响；统计学本身则不。</div>
+    <p class="method-desc" data-lang="en">There are two ways to be wrong: Type I error (false positive: rejecting H₀ when it is actually true) and Type II error (false negative: failing to reject H₀ when it is false). The p-value controls Type I error at the rate you choose (usually 5%). But it does not control Type II error, which depends on sample size and effect size.</p>
+    <p class="method-desc" data-lang="zh">有两种出错方式：第一类错误（假正：当H₀实际为真时拒绝它）和第二类错误（假负：当H₀为假时不拒绝它）。P值以你选择的速率（通常5%）控制第一类错误。但它不控制第二类错误，这取决于样本大小和效应大小。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use p-values when you genuinely have a null hypothesis to test (e.g., "Does this intervention have any effect?"). Avoid using p &lt; 0.05 as the gold standard for truth. A p-value of 0.051 is not meaningfully different from 0.049. Social science is drowning in p-value worship: researchers hunt for p &lt; 0.05 through multiple testing, data dredging, and questionable practices, leading to a replication crisis. Always pair p-values with effect sizes and confidence intervals. Report effect size — the actual magnitude of the difference or relationship — because it tells readers whether the difference, however statistically significant, actually matters.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>当你确实有零假设要检验时用P值（如"这个干预有任何效应吗？"）。避免把p &lt; 0.05当成真理的黄金标准。P值0.051与0.049没有有意义的不同。社会科学溺于P值崇拜：研究者通过多重检验、数据挖掘和可疑实践寻找p &lt; 0.05，导致复制危机。总是把P值与效应大小和置信区间配对。报告效应大小——差异或关系的实际幅度——因为它告诉读者差异，无论统计显著，是否实际重要。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A study of voter turnout compares a treatment group (receives reminder texts) and a control group (no reminder). Turnout: treatment = 41%, control = 40%, p = 0.04. The p-value is small, so researchers might claim "the treatment works!" But the effect size is only 1 percentage point. If the study cost $50,000 to increase turnout by 1%, the p-value is irrelevant—the real question is whether that 1% gain is worth the cost. Effect size matters more than p-values.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>投票率研究比较处理组（收到提醒短信）和对照组（无提醒）。投票率：处理=41%，对照=40%，p=0.04。P值很小，研究者可能声称"处理有效！"但效应大小只有1个百分点。如果研究花费5万美元才增加投票率1%，P值无关——真实问题是那1%增益值不值得。效应大小比P值更重要。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Statistical Versus Practical Significance</h3>
+    <h3 data-lang="zh">统计显著与实际显著</h3>
+    <p class="method-desc" data-lang="en">A result can be statistically significant (p &lt; 0.05) but not practically significant. With a huge sample size, tiny effects become statistically significant. A correlation of 0.05 between two variables might have p &lt; 0.01 if n = 10,000, but r = 0.05 explains only 0.25% of variance — practically negligible.</p>
+    <p class="method-desc" data-lang="zh">一个结果可以统计显著（p &lt; 0.05）但不实际显著。有巨大样本，微小效应变成统计显著。两个变量间0.05的相关，如果n=10000可能p&lt;0.01，但r=0.05仅解释0.25%方差——实际可忽略。</p>
+    <p class="method-desc" data-lang="en">Conversely, a result can be practically large but not statistically significant if you have a small sample. A job training program that increases annual earnings by $5,000 is practically important. But if your sample has only 50 people and high variance, the p-value might be 0.10, and you cannot confidently claim the effect is real.</p>
+    <p class="method-desc" data-lang="zh">反之，如果样本很小，一个结果可以实际很大但不统计显著。一个每年增加收入5000美元的工作培训计划在实践中很重要。但如果样本仅50人且高方差，P值可能0.10，你无法确信效应是真实的。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always ask "Does this effect size matter to real people?" before celebrating p &lt; 0.05. Report effect sizes in standardized units (correlation, Cohen's d, odds ratios) so readers can compare across studies. A study with p = 0.001 and a tiny effect size is less informative than a study with p = 0.10 and a medium effect size. Journals increasingly demand effect sizes alongside p-values. Use power analysis before running studies to ensure your sample is large enough to detect effects of practical importance.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>在为p &lt; 0.05庆祝前，总是问"这个效应大小对真实人类重要吗？"用标准化单位报告效应大小（相关、Cohen's d、比值比）以便读者能跨研究比较。p=0.001但微小效应的研究不如p=0.10但中等效应的研究有信息量。期刊越来越要求P值旁报告效应大小。运行研究前用幂分析确保样本足够大以检测实际重要的效应。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A large survey (n=5,000) finds that living in an urban area is associated with a 2 percentage point higher voting rate, p = 0.001. Statistically significant, yes. But a 2% difference is small—other factors surely matter far more for explaining voting behavior. A smaller study (n=300) finds that being a poll worker increases voting among election staff by 15 percentage points, p = 0.07. Not statistically significant at the 0.05 level, but the effect size is large and practically meaningful. The second study is more valuable for understanding what really moves voting behavior.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>大型调查（n=5000）发现住在城市地区与投票率高2个百分点相关，p=0.001。统计显著，是的。但2%差异很小——其他因素肯定对解释投票行为重要得多。一个较小研究（n=300）发现做投票工作者在选举工作人员中增加15个百分点投票，p=0.07。在0.05水平不统计显著，但效应大小很大且实际有意义。第二项研究对理解真正推动投票行为的因素更有价值。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Multiple Testing and False Discoveries</h3>
+    <h3 data-lang="zh">多重检验与虚假发现</h3>
+    <p class="method-desc" data-lang="en">If you run 20 tests at p &lt; 0.05, you expect one false positive by chance alone. Researchers who test many hypotheses without correction are likely to find spurious effects. This is the multiple comparisons problem. Solutions include Bonferroni correction (divide 0.05 by the number of tests), pre-registration (commit to one hypothesis before seeing data), and being honest about exploratory analysis (results that are not pre-registered are suggestive, not confirmatory).</p>
+    <p class="method-desc" data-lang="zh">如果你在p &lt; 0.05进行20次检验，仅由机会就预期一个假正。测试许多假设而不纠正的研究者可能找到虚假效应。这是多重比较问题。解决方案包括Bonferroni纠正（把0.05除以检验数），预注册（看数据前承诺一个假设），以及诚实对待探索性分析（非预注册结果是暗示性的，不是确认性的）。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Pre-register your hypotheses whenever possible. If you are doing exploratory analysis (asking "what relationships exist?" rather than "does this specific relationship exist?"), use lower thresholds (p &lt; 0.01 or even p &lt; 0.001), apply Bonferroni or other corrections, or clearly label results as exploratory. Do not report p-values for exploratory findings as if they were confirmatory.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>尽可能预注册你的假设。如果做探索性分析（问"存在什么关系？"而不是"这个特定关系存在吗？"），用更低阈值（p &lt; 0.01甚至p &lt; 0.001），应用Bonferroni或其他纠正，或清楚标记结果为探索性。不要把探索性发现的P值报告得像是确认性的。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A researcher tests whether 30 demographic variables predict political party affiliation. By chance, about 1–2 of these 30 tests will be "significant" at p &lt; 0.05, even if no true relationships exist. The correct approach: pre-register the 5 hypotheses you care most about, test those, and label the other 25 as exploratory. Or apply Bonferroni: 0.05/30 = 0.0017, so only test results with p &lt; 0.0017 count as significant. This avoids mining data for spurious patterns.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究者测试30个人口变量是否预测政治党派。机会上，这30个测试中约1-2个会在p &lt; 0.05"显著"，即使不存在真实关系。正确方法：预注册你最关心的5个假设，测试那些，标记其他25个为探索性。或应用Bonferroni：0.05/30=0.0017，所以仅p &lt; 0.0017的测试结果计为显著。这避免了为虚假模式挖掘数据。</div>
   </div>
 </div>
 
@@ -123,28 +218,71 @@ next:
   <h2 data-lang="zh">双变量关系：相关与关联</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> You have data on two variables: education level and income, or temperature and ice cream sales. Do they move together? How strongly? Correlation measures the strength and direction of linear relationships between continuous variables. Chi-square tests association between categorical variables. But finding a strong correlation does not prove causation — a critical mistake in social science.</p>
+    <p data-lang="zh"><strong>问题：</strong>你有两个变量的数据：教育水平和收入，或温度和冰淇淋销量。它们一起变动吗？有多强？相关衡量连续变量间线性关系的强度和方向。卡方检验分类变量间的关联。但发现强相关不证明因果——社会科学中的关键错误。</p>
   </div>
 
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Pearson Correlation and Spearman's Rank Correlation</h3>
+    <h3 data-lang="zh">皮尔逊相关与斯皮尔曼秩相关</h3>
+    <p class="method-desc" data-lang="en">Pearson correlation (r) ranges from −1 (perfect negative relationship) to +1 (perfect positive relationship), with 0 indicating no linear relationship. It measures how closely two continuous variables move together in a straight-line pattern. Spearman's rank correlation (ρ) does the same thing but for ranked data, making it robust to outliers and monotonic (not necessarily linear) relationships.</p>
+    <p class="method-desc" data-lang="zh">皮尔逊相关（r）范围从−1（完美负相关）到+1（完美正相关），0表示无线性关系。它衡量两个连续变量在直线模式中一起移动有多紧密。斯皮尔曼秩相关（ρ）对排序数据做同样事，对异常值稳健且单调（不一定线性）关系。</p>
+    <p class="method-desc" data-lang="en">An r = 0.7 indicates a strong positive correlation: as one variable increases, the other tends to increase. But r does not tell you the slope or the magnitude of change. Correlation is scale-free: r of 0.7 looks the same whether you measure height in meters or feet. This makes correlation useful for comparing relationships across different units. However, correlation can hide important patterns: a relationship might be perfectly nonlinear (e.g., U-shaped), producing r ≈ 0 even though the relationship is very strong.</p>
+    <p class="method-desc" data-lang="zh">r=0.7表示强正相关：当一个变量增加时，另一个倾向于增加。但r不告诉你斜率或变化幅度。相关是无标度的：r=0.7无论你用米还是英尺衡量高度看起来一样。这使相关对比较不同单位的关系有用。然而，相关可以隐藏重要模式：关系可能完全非线性（如U形），产生r≈0尽管关系很强。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Two musicians play simultaneously. Pearson correlation is like asking "Do they start and stop together? Do louder passages align?" If they do, correlation is high. But correlation doesn't ask "Does one cause the other to play?" Maybe both are following a conductor. Spearman correlation is useful when you only care about whether one is "higher" than the other in a monotonic sense, not the precise agreement.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>两个音乐家同时演奏。皮尔逊相关像问"他们一起开始和停止吗？更响亮段落对齐吗？"如果对齐，相关高。但相关不问"一个导致另一个演奏吗？"也许两者都在跟随指挥。斯皮尔曼相关当你仅关心一个是否在单调意义上"高于"另一个时有用，不是精确一致。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use Pearson r for continuous data that are roughly linear and normally distributed. Use Spearman ρ for ordinal data or when you suspect outliers or nonlinearity. Do not use correlation alone to measure relationships — always visualize with a scatter plot. A strong correlation tells you two variables move together, nothing more. To claim causation, you need theory, experimental design, or causal inference methods (like instrumental variables or regression discontinuity).</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>对大致线性和正态的连续数据用皮尔逊r。对有序数据或疑似异常值或非线性时用斯皮尔曼ρ。不要仅用相关衡量关系——总是用散点图可视化。强相关告诉你两个变量一起移动，仅此而已。要声称因果，你需要理论、实验设计或因果推断方法（如工具变量或回归断点）。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A researcher finds a correlation of r = 0.6 between years of education and annual income. This is a moderate positive relationship: more education tends to associate with higher income. But this correlation does not prove education causes higher income. Confounding variables could be at work: wealthier families both have more educated parents (who model education) and have more resources for college. An experiment that randomly assigns education to some people and not others would provide causal evidence, but that is infeasible for education. Instead, researchers use methods like regression with control variables to try to isolate education's causal effect.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究者发现教育年数和年收入间的相关r=0.6。这是中等正相关：更多教育倾向于关联更高收入。但这个相关不证明教育导致更高收入。混淆变量可能起作用：更富裕家庭既有更受教育的父母（建模教育）又有更多大学资源。随机分配教育给某些人而不给其他人的实验会提供因果证据，但对教育不可行。反而，研究者用带控制变量的回归等方法尝试隔离教育的因果效应。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Correlation Is Not Causation: The Ice Cream and Drowning Example</h3>
+    <h3 data-lang="zh">相关不是因果：冰淇淋与溺水的例子</h3>
+    <p class="method-desc" data-lang="en">Ice cream sales and drowning deaths are strongly correlated (both increase in summer). But ice cream does not cause drowning. A third variable — warm weather — causes both. This is confounding. A correlation can exist because (a) X causes Y, (b) Y causes X, (c) a third variable Z causes both, (d) X and Y influence each other in feedback loops, or (e) it is pure coincidence. Correlation alone cannot distinguish these cases.</p>
+    <p class="method-desc" data-lang="zh">冰淇淋销量和溺水死亡强相关（两者都在夏季增加）。但冰淇淋不导致溺水。第三变量——温暖天气——导致两者。这是混淆。相关可以存在因为(a)X导致Y，(b)Y导致X，(c)第三变量Z导致两者，(d)X和Y在反馈循环中相互影响，或(e)纯巧合。相关单独不能区分这些情况。</p>
+    <p class="method-desc" data-lang="en">Social science relationships are almost always confounded. Does heavy TV watching make children aggressive? Or do aggressive children prefer aggressive shows? Or do both stem from parenting quality? Researchers control for confounders by including them in regression models, but they can only control for variables they measure. Unmeasured confounding is a persistent threat. Randomized experiments (where you randomly assign a treatment) and natural experiments (where randomization happens "naturally") can break confounding, but they are often impractical or unethical in social science.</p>
+    <p class="method-desc" data-lang="zh">社会科学关系几乎总是混淆的。看重电视使孩子好斗吗？还是好斗孩子喜欢好斗节目？还是两者源于养育质量？研究者通过在回归模型中包含它们来控制混淆，但只能控制他们测量的变量。未测量混淆是持久威胁。随机实验（你随机分配处理）和自然实验（随机化"自然"发生）能打破混淆，但在社会科学中通常不实用或不道德。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Never claim causation from observational correlation without very strong theoretical justification and careful control for plausible confounders. If a large body of evidence points in the same direction (via many studies, different designs, different contexts), you can be more confident. But even strong correlations are consistent with multiple causal stories. Be explicit about what you can and cannot conclude from observational data.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>没有很强理论理由和对可信混淆的仔细控制，从观察相关声称因果。如果大量证据指向同一方向（通过多项研究、不同设计、不同背景），你可以更自信。但即使强相关与多个因果故事一致。要明确关于观察数据能和不能得出什么。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Research finds that countries with more religious citizens have higher crime rates. Correlation might be positive. But this reflects confounding: wealthier, more developed nations have lower religiosity (secularization) and also lower crime rates for reasons unrelated to religion (stronger institutions, police, courts). Controlling for development level, the "religion causes crime" relationship may vanish. The initial correlation was real but misleading about causation. This is why researchers must think carefully about what confounders matter before collecting data.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究发现宗教公民更多的国家有更高犯罪率。相关可能正。但这反映混淆：更富有、更发达的国家有较低宗教（世俗化）且因与宗教无关的原因也有更低犯罪率（更强机构、警察、法院）。控制发展水平，"宗教导致犯罪"关系可能消失。初始相关是真实但对因果误导。这是研究者必须在收集数据前仔细思考什么混淆重要的原因。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Chi-Square Tests for Categorical Data</h3>
+    <h3 data-lang="zh">分类数据的卡方检验</h3>
+    <p class="method-desc" data-lang="en">When both variables are categorical (religion, party affiliation, employment status), Pearson correlation is inappropriate. Instead, use a chi-square test to assess whether the distribution of one variable differs across levels of the other. The test compares observed counts in a cross-tabulation to the counts you would expect if the variables were independent. A large chi-square statistic (small p-value) suggests the variables are associated.</p>
+    <p class="method-desc" data-lang="zh">当两个变量都是分类的（宗教、政党、就业状态），皮尔逊相关不合适。反而，用卡方检验评估一个变量的分布是否在另一个的各水平间不同。检验比较交叉表中观察计数与变量独立时预期的计数。大卡方统计（小P值）暗示变量关联。</p>
+    <p class="method-desc" data-lang="en">Chi-square assumes you have large enough sample sizes (typically at least 5 observed counts in each cell of the table). If samples are too small, use Fisher's exact test instead. Chi-square tells you whether an association exists, but not the strength. For effect size with categorical data, use Cramér's V (ranges 0 to 1) or the odds ratio (how many times more likely an outcome is in one group versus another).</p>
+    <p class="method-desc" data-lang="zh">卡方假设样本大小足够大（通常每个表格单元至少5个观察计数）。样本太小，改用Fisher精确检验。卡方告诉你关联是否存在，但不告诉强度。对分类数据效应大小，用Cramér's V（范围0到1）或比值比（在一个组而不是另一个组的结果可能性多少倍）。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use chi-square for categorical variables. Always report effect size (Cramér's V or odds ratios), not just the p-value. Be careful with small sample sizes: the test becomes unreliable. If many cells have small counts, you may need to collapse categories, but this sacrifices information. Document your decisions.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>对分类变量用卡方。总是报告效应大小（Cramér's V或比值比），不仅仅P值。小心样本大小：检验变成不可靠。如果许多单元有小计数，可能需要折叠类别，但这牺牲信息。记录你的决定。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A researcher tests whether political party affiliation (Democrat, Republican, Independent) is associated with opinion on climate policy (supports, opposes, undecided). They construct a 3×3 table and run a chi-square test. χ² = 45.2, p &lt; 0.001. The association is statistically significant. But what is the effect size? Cramér's V = 0.25, indicating a small-to-moderate association. This nuance — that the association exists but is not enormous — is lost if only the p-value is reported.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究者测试政治党派关联（民主党、共和党、独立）是否与气候政策意见（支持、反对、未定）相关。他们构建3×3表并运行卡方检验。χ² = 45.2，p &lt; 0.001。关联统计显著。但效应大小是什么？Cramér's V = 0.25，表示小至中等关联。这种细微差别——关联存在但不巨大——如果仅报告P值就丢失了。</div>
   </div>
 </div>
 
 <hr class="section-divider">
-
 
 <!-- RESOURCES -->
 <hr class="section-divider">
 <div class="section" id="rf-resources">
   <h2 data-lang="en">Resources</h2>
   <h2 data-lang="zh">资源</h2>
-  <div class="method-section">
-    <p class="method-desc" data-lang="en">Key references and further reading — coming soon.</p>
-    <p class="method-desc" data-lang="zh">关键参考文献与延伸阅读——整理中。</p>
-  </div>
+  <h3 data-lang="en">Key References</h3>
+  <h3 data-lang="zh">关键参考</h3>
+  <ul class="resource-list">
+    <li data-lang="en"><strong>Kühnel, S. M. (2013).</strong> "The Root of All Evil: Omitted Variable Bias in Regression Analysis." <em>Applied Regression Analysis</em>, SAGE Publications.</li>
+    <li data-lang="zh"><strong>库内尔(2013)。</strong>"万恶之源：回归分析中遗漏变量偏差。" <em>应用回归分析</em>，SAGE出版社。</li>
+    <li data-lang="en"><strong>McElreath, R. (2020).</strong> <em>Statistical Rethinking: A Bayesian Course with Examples in R and Stan (2nd ed.)</em>. CRC Press.</li>
+    <li data-lang="zh"><strong>麦克尔瑞思(2020)。</strong><em>统计反思：R和Stan中的贝叶斯课程(第2版)</em>。CRC出版社。</li>
+    <li data-lang="en"><strong>Tukey, J. W. (1977).</strong> <em>Exploratory Data Analysis.</em> Addison-Wesley.</li>
+    <li data-lang="zh"><strong>图基(1977)。</strong><em>探索性数据分析。</em>艾迪生-韦斯利。</li>
+    <li data-lang="en"><strong>Gelman, A., & Stern, H. (2006).</strong> "The Difference Between 'Significant' and 'Not Significant' is not Itself Statistically Significant." <em>The American Statistician</em>, 60(4), 328–331.</li>
+    <li data-lang="zh"><strong>格尔曼与斯特恩(2006)。</strong>"'显著'与'不显著'之差本身不统计显著。" <em>美国统计学家</em>，60(4)，328–331。</li>
+  </ul>
 </div>
 
 <!-- PAGE NAV -->

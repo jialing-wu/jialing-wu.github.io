@@ -69,13 +69,36 @@ next:
   <h2 data-lang="zh">路径分析：建模因果链</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> A simple effect of X on Y hides intermediate steps. Education affects income directly. But education also increases knowledge, which increases earning potential—a different pathway. Does education boost wages mostly through knowledge or through credentials (signaling)? Running separate regressions misses these indirect routes. Path analysis models multiple causal pathways simultaneously, separating direct effects from indirect (mediated) effects.</p>
+    <p data-lang="zh"><strong>问题：</strong>X 对 Y 的简单效应隐藏中间步骤。教育直接影响收入。但教育也增加知识，知识增加赚钱潜力——不同路径。教育是否主要通过知识或通过证书（信号）提高工资？运行单独回归漏掉这些间接路由。路径分析同时建模多个因果路径，将直接效应与间接（中介）效应分离。</p>
   </div>
 
+  <!-- Subsection 1: Direct, Indirect, and Total Effects -->
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Direct, Indirect, and Total Effects</h3>
+    <h3 data-lang="zh">直接、间接与总效应</h3>
+    <p class="method-desc" data-lang="en">Path analysis decomposes effects into three types. <strong>Direct effect:</strong> X → Y (unmediated). <strong>Indirect effect:</strong> X → M → Y, where M is a mediator. <strong>Total effect:</strong> direct + indirect. Example: education → knowledge → income. X=education, M=knowledge (measured by test scores), Y=income. Direct effect: education's impact on income net of knowledge (e.g., returns to credentials). Indirect effect: education's impact on income through increased knowledge. Total effect: overall impact of education on income. Path analysis requires two regressions: (1) Regress M on X: M = α₀ + αX. (2) Regress Y on both X and M: Y = β₀ + cX + βM. The direct effect is c (X's effect controlling for M). The indirect effect is α × β (X's effect on M, times M's effect on Y). Total effect is c + αβ.</p>
+    <p class="method-desc" data-lang="zh">路径分析将效应分解为三种类型。<strong>直接效应：</strong>X → Y（未中介）。<strong>间接效应：</strong>X → M → Y，其中 M 是中介。<strong>总效应：</strong>直接+间接。例子：教育 → 知识 → 收入。X=教育，M=知识（由测试成绩测量），Y=收入。直接效应：教育对收入的影响净化知识（例如，证书的回报）。间接效应：教育通过增加知识对收入的影响。总效应：教育对收入的总体影响。路径分析需要两个回归：(1) 将 M 回归到 X：M = α₀ + αX。(2) 将 Y 回归到 X 和 M：Y = β₀ + cX + βM。直接效应是 c（X 对 Y 的效应控制 M）。间接效应是 α × β（X 对 M 的效应乘以 M 对 Y 的效应）。总效应是 c + αβ。</p>
+    <div class="method-analogy" data-lang="en">A student's success on a college entrance exam depends on preparation. Direct path: more preparation → higher scores (direct effect of prep). Indirect path: more prep → greater test anxiety → lower scores (mediated through anxiety). Total effect is the sum. Without path analysis, you see only total effect (confusing if direct and indirect go opposite ways).</div>
+    <div class="method-analogy" data-lang="zh">学生在大学入学考试上的成功取决于准备。直接路径：更多准备 → 更高分数（准备的直接效应）。间接路径：更多准备 → 更大测试焦虑 → 更低分数（通过焦虑中介）。总效应是总和。没有路径分析，你只看到总效应（如果直接和间接反向混淆）。</div>
+  </div>
+
+  <!-- Subsection 2: Why Separate Regressions Are Wrong -->
+  <div class="method-section">
+    <h3 data-lang="en">Why Separate OLS Regressions Cannot Estimate Paths Correctly</h3>
+    <h3 data-lang="zh">为什么单独 OLS 回归不能正确估计路径</h3>
+    <p class="method-desc" data-lang="en">It's tempting to run: (1) Regress M on X. (2) Regress Y on M. (3) Regress Y on X. Then cobble together the coefficients. This fails because: (a) <strong>Omitted variable bias:</strong> In step (3), you omit M. If M affects Y and is correlated with X (which it is, since X causes M), then Y's coefficient in step (3) is biased. (b) <strong>Correlated residuals:</strong> The residuals from step (2) (Y on M) and step (3) (Y on X) are correlated—they're from the same outcome Y. A proper path analysis model (or full SEM, below) accounts for this residual covariance. (c) <strong>No standard errors for indirect effects:</strong> Computing the indirect effect α × β requires propagating uncertainty through both stages. OLS-stage-by-stage doesn't do this cleanly. Solution: use SEM framework or bootstrapping to properly estimate standard errors on indirect effects.</p>
+    <p class="method-desc" data-lang="zh">有誘惑运行：(1) 将 M 回归到 X。(2) 将 Y 回归到 M。(3) 将 Y 回归到 X。然后拼凑系数。这失败因为：(a) <strong>遗漏变量偏差：</strong>在第 (3) 步，你遗漏 M。如果 M 影响 Y 且与 X 相关（它确实，因为 X 导致 M），则第 (3) 步 Y 的系数有偏差。(b) <strong>相关残差：</strong>第 (2) 步（Y 对 M）和第 (3) 步（Y 对 X）的残差相关——它们来自同样结果 Y。适当的路径分析模型（或完整 SEM，下）说明这个残差协方差。(c) <strong>间接效应无标准误：</strong>计算间接效应 α × β 需要通过两个阶段传播不确定性。OLS 逐阶段不能干净地做。解决方案：使用 SEM 框架或自举来适当估计间接效应的标准误。</p>
+    <div class="method-example" data-lang="en"><strong>Political participation example:</strong> Education → political knowledge → political participation. Run three separate regressions and naively compute the indirect effect. But knowledge's error term is correlated with participation's error term (both depend on unobserved interest in politics). Proper SEM accounts for this, giving more accurate standard errors and thus correct confidence intervals on the indirect effect.</div>
+    <div class="method-example" data-lang="zh"><strong>政治参与例子：</strong>教育 → 政治知识 → 政治参与。运行三个单独回归且简单地计算间接效应。但知识的误差项与参与的误差项相关（两者都取决于未观测对政治的兴趣）。适当的 SEM 说明这个，给出更精确的标准误因此正确的间接效应置信区间。</div>
+  </div>
+
+  <!-- Subsection 3: Recursive vs. Non-Recursive Models -->
+  <div class="method-section">
+    <h3 data-lang="en">Recursive vs. Non-Recursive (Feedback) Models</h3>
+    <h3 data-lang="zh">递归与非递归（反馈）模型</h3>
+    <p class="method-desc" data-lang="en"><strong>Recursive models:</strong> Causal arrows flow in one direction; no loops. X → M → Y → Z. Easy to estimate with OLS (or SEM software). <strong>Non-recursive models:</strong> Variables affect each other; feedback loops exist. Y affects M, which affects Y. Example: trust and participation—more participation increases trust, which encourages more participation. Non-recursive models require special treatment (instrumental variables or simultaneous equation methods, see Empirical Modeling section). Most social science applications are recursive, but be aware that feedback can occur.</p>
+    <p class="method-desc" data-lang="zh"><strong>递归模型：</strong>因果箭头单向流动；无循环。X → M → Y → Z。易于用 OLS（或 SEM 软件）估计。<strong>非递归模型：</strong>变量互相影响；反馈循环存在。Y 影响 M，M 影响 Y。例子：信任与参与——更多参与增加信任，鼓励更多参与。非递归模型需要特殊处理（工具变量或联立方程方法，见经验建模部分）。大多数社会科学应用是递归的，但意识到反馈可能发生。</p>
   </div>
 </div>
 
@@ -87,13 +110,42 @@ next:
   <h2 data-lang="zh">验证性因子分析：测量模型</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> Your key theoretical construct—trust, authoritarianism, social capital—is not directly measurable. You have multiple survey items, each an imperfect indicator. A simple approach is to average the items (a sum score). But averaging assumes all items measure the same underlying thing with equal weight and equal error—rarely true. Confirmatory Factor Analysis (CFA) estimates how well each item reflects the latent construct and accounts for measurement error in the causal model.</p>
+    <p data-lang="zh"><strong>问题：</strong>你的关键理论构念——信任、专制主义、社会资本——不能直接测量。你有多个调查项目，每个是不完美的指标。简单方法是平均项目（求和分数）。但平均假设所有项目相同权重和相同误差地测量同样底层东西——很少为真。确认性因子分析 (CFA) 估计每个项目反映潜变量的好程度并说明测量误差在因果模型中。</p>
   </div>
 
+  <!-- Subsection 1: The Latent Variable Concept -->
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Latent Variables and How They Are Measured</h3>
+    <h3 data-lang="zh">潜变量及其测量方式</h3>
+    <p class="method-desc" data-lang="en">A <strong>latent variable</strong> (factor) is an unobservable construct. "Intelligence" is latent—you measure it through IQ tests, grades, SAT scores. None of these IS intelligence; each is a fallible reflection. Formally, each <strong>indicator (item)</strong> is modeled as: Indicator_j = λ_j × Latent + Error_j. The <strong>loading (λ_j)</strong> tells you how strongly the indicator relates to the latent variable. A loading of 0.8 means the indicator captures 80% of the latent variable's variation. A loading of 0.3 means the indicator is weak and carries mostly noise. The <strong>error term (Error_j)</strong> captures measurement error—all the ways the indicator diverges from the latent variable. In CFA, you specify a measurement model: latent construct → multiple indicators. Estimation finds the loadings and error variances that best fit the data.</p>
+    <p class="method-desc" data-lang="zh"><strong>潜变量</strong>（因子）是不可观察的构念。"智力"是潜在的——你通过智商测试、成绩、SAT 分数测量。这些都不是智力；每个是容错反射。形式上，每个<strong>指标（项目）</strong>建模为：Indicator_j = λ_j × Latent + Error_j。<strong>载荷 (λ_j)</strong> 告诉你指标与潜变量关系有多强。载荷 0.8 意味着指标捕捉潜变量变异的 80%。载荷 0.3 意味着指标很弱且携带主要噪声。<strong>误差项 (Error_j)</strong> 捕捉测量误差——指标背离潜变量的所有方式。在 CFA 中，你指定一个测量模型：潜构念 → 多个指标。估计找到最好适配数据的载荷和误差方差。</p>
+    <div class="method-analogy" data-lang="en">Imagine measuring "workload stress." You ask employees: "How often do you work past 5 PM?" (item 1), "How many hours sleep do you get?" (item 2), "Do you feel overwhelmed?" (item 3). None of these IS workload stress, but together they reflect it. CFA estimates how much each item reflects the true underlying stress level.</div>
+    <div class="method-analogy" data-lang="zh">想象测量"工作压力"。你问员工："你多经常工作到下午 5 点后？"（项目 1），"你睡多少小时？"（项目 2），"你感到不知所措吗？"（项目 3）。这些都不是工作压力，但一起反映。CFA 估计每个项目反映真正底层压力水平多少。</div>
+  </div>
+
+  <!-- Subsection 2: Reflective vs. Formative Indicators -->
+  <div class="method-section">
+    <h3 data-lang="en">Reflective vs. Formative Indicators</h3>
+    <h3 data-lang="zh">反射性与形成性指标</h3>
+    <p class="method-desc" data-lang="en">A critical but often-overlooked distinction. <strong>Reflective indicators:</strong> Items are caused by the latent variable. "Trust → reports of trusting neighbors" (higher trust causes more reports). You estimate with CFA. <strong>Formative indicators:</strong> Items cause (or constitute) the latent variable. Example: "Education, income, home ownership → socioeconomic status." These don't come from a latent SES; rather, they define it. If you treated SES as reflective, you'd be claiming all three are caused by an underlying SES—conceptually wrong. Formative models are estimated differently (sometimes using simple averages or principal components, sometimes with special regression methods). Most social science applications use reflective models (which CFA handles), but be intentional about which assumption fits your theory.</p>
+    <p class="method-desc" data-lang="zh">关键但常被忽视的区别。<strong>反射性指标：</strong>项目由潜变量引起。"信任 → 信任邻近报告"（更高信任导致更多报告）。你用 CFA 估计。<strong>形成性指标：</strong>项目导致（或构成）潜变量。例子："教育、收入、房屋所有权 → 社会经济地位。"这些不来自潜在 SES；相反，它们定义它。如果你视 SES 为反射性，你声称所有三个由底层 SES 引起——概念上错误。形成性模型的估计方式不同（有时使用简单平均或主成分，有时用特殊回归方法）。大多数社会科学应用使用反射性模型（CFA 处理），但有意图地选择适配你理论的假设。</p>
+  </div>
+
+  <!-- Subsection 3: Factor Loadings and Interpretation -->
+  <div class="method-section">
+    <h3 data-lang="en">Standardized vs. Unstandardized Loadings</h3>
+    <h3 data-lang="zh">标准化与非标准化载荷</h3>
+    <p class="method-desc" data-lang="en"><strong>Unstandardized loadings</strong> are on the original scale of the variable. Useful for prediction ("a 1-unit increase in the latent variable predicts a 0.6-unit increase in item 1"). <strong>Standardized loadings</strong> range from −1 to 1 and represent correlations. A standardized loading of 0.85 means item and latent variable correlate at 0.85. Standard practice in exploratory work: report standardized loadings because they're scale-free and easier to compare across items. Items with loadings < 0.4 are typically dropped as too weak. After estimation, high loadings indicate good measurement; low loadings indicate the item is poorly related to the latent variable (high measurement error).</p>
+    <p class="method-desc" data-lang="zh"><strong>非标准化载荷</strong>在变量的原始尺度上。对预测有用（"潜变量单位增加预测项目 1 增加 0.6 单位"）。<strong>标准化载荷</strong>范围从 -1 到 1 并代表相关性。标准化载荷 0.85 意味着项目与潜变量相关 0.85。探索工作标准做法：报告标准化载荷因为它们无尺度且跨项目更容易比较。载荷 < 0.4 的项目通常因太弱而删除。估计后，高载荷指示好测量；低载荷指示项目与潜变量关系差（高测量误差）。</p>
+  </div>
+
+  <!-- Subsection 4: Error Variance and Reliability -->
+  <div class="method-section">
+    <h3 data-lang="en">Error Variance and Construct Reliability</h3>
+    <h3 data-lang="zh">误差方差与构念可靠性</h3>
+    <p class="method-desc" data-lang="en">For each indicator, CFA estimates two quantities: (1) <strong>Indicator error variance:</strong> How much noise is in each item? A high error variance means the item is unreliable. (2) <strong>Construct reliability (Cronbach's α or composite reliability):</strong> Across all items, how reliably do they measure the latent construct? Composite reliability above 0.70 is standard. Below 0.60, the latent variable is poorly measured. Interpretation: if reliability is 0.75, you have 75% "true signal" and 25% "noise" in your measurement. This matters for downstream analysis (see section 3): measurement error in your predictors leads to attenuated (downward-biased) regression coefficients if you ignore the error. Full SEM accounts for this.</p>
+    <p class="method-desc" data-lang="zh">对每个指标，CFA 估计两个量：(1) <strong>指标误差方差：</strong>每个项目有多少噪声？高误差方差意味着项目不可靠。(2) <strong>构念可靠性（Cronbach's α 或复合可靠性）：</strong>跨所有项目，它们多可靠地测量潜构念？复合可靠性高于 0.70 是标准。低于 0.60，潜变量测量很差。解释：如果可靠性 0.75，你有 75% "真信号"和 25% "噪声"在测量中。这对下游分析很重要（见第 3 部分）：你预测变量的测量误差导致衰减（向下偏差）回归系数如果你忽视误差。完整 SEM 说明。</p>
   </div>
 </div>
 
@@ -105,13 +157,34 @@ next:
   <h2 data-lang="zh">完整 SEM：合并测量与结构</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> A full SEM solves a key problem: measurement error in predictors. Suppose you use sum scores (averaging survey items) as a predictor in a regression. These sum scores are noisy—they contain measurement error. Standard OLS regression on these noisy scores underestimates the true effect size (attenuation bias). A full SEM simultaneously estimates the measurement model (how items reflect latent variables) and the structural model (how latent variables affect outcomes), properly accounting for measurement error in the causal estimates.</p>
+    <p data-lang="zh"><strong>问题：</strong>完整 SEM 解决关键问题：预测变量中的测量误差。假设你使用求和分数（平均调查项目）作为回归中的预测变量。这些求和分数很嘈杂——它们含有测量误差。标准 OLS 对这些嘈杂分数的回归低估真实效应大小（衰减偏差）。完整 SEM 同时估计测量模型（项目如何反映潜变量）和结构模型（潜变量如何影响结果），适当地说明因果估计中的测量误差。</p>
   </div>
 
+  <!-- Subsection 1: The Two-Model Structure -->
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">SEM = Measurement Model + Structural Model</h3>
+    <h3 data-lang="zh">SEM = 测量模型 + 结构模型</h3>
+    <p class="method-desc" data-lang="en"><strong>Measurement model:</strong> Maps observed variables (survey items) to latent variables (constructs). Example: political trust is a latent variable measured by 4 survey items. <strong>Structural model:</strong> Specifies causal relationships among latent variables (and sometimes observed variables). Example: political trust → voting behavior. A full SEM estimates both simultaneously. The advantage: when estimating the structural path (trust → voting), the model accounts for the fact that trust is measured imperfectly. It does not force you to use noisy sum scores. Instead, it leverages all the information in the individual items and their error structure to estimate the structural path more accurately.</p>
+    <p class="method-desc" data-lang="zh"><strong>测量模型：</strong>将观测变量（调查项目）映射到潜变量（构念）。例子：政治信任是由 4 个调查项目测量的潜变量。<strong>结构模型：</strong>指定潜变量之间（有时是观测变量）的因果关系。例子：政治信任 → 投票行为。完整 SEM 同时估计两者。优势：估计结构路径（信任 → 投票）时，模型说明信任测量不完美的事实。它不强制你使用嘈杂的求和分数。相反，它利用单个项目和它们的误差结构中的所有信息来更准确地估计结构路径。</p>
+    <div class="method-analogy" data-lang="en">Imagine diagnosing a disease (the latent construct) from multiple imperfect blood tests (the indicators). Separately, you estimate how the disease affects treatment outcome. The best approach: use all blood test data together to infer the disease more accurately, then estimate the disease-outcome relationship. This is what SEM does—uses measurement information to improve structural inference.</div>
+    <div class="method-analogy" data-lang="zh">想象从多个不完美血液测试（指标）诊断疾病（潜构念）。分别地，你估计疾病如何影响治疗结果。最好方法：一起使用所有血液测试数据来更准确地推断疾病，然后估计疾病-结果关系。这是 SEM 所做——使用测量信息来改进结构推断。</div>
+  </div>
+
+  <!-- Subsection 2: Identification -->
+  <div class="method-section">
+    <h3 data-lang="en">Identification: Do You Have Enough Information to Estimate the Model?</h3>
+    <h3 data-lang="zh">识别：你有足够信息来估计模型吗？</h3>
+    <p class="method-desc" data-lang="en">A necessary condition for SEM estimation: the model must be <strong>identified</strong>. Informally: you have enough information (data) to uniquely estimate all parameters. Formally: degrees of freedom (df) must be non-negative. df = number of observed variances/covariances − number of parameters to estimate. A model is <strong>just-identified</strong> if df = 0 (perfect fit, no test of model). <strong>Over-identified</strong> if df > 0 (can test fit; preferred). <strong>Under-identified</strong> if df < 0 (impossible to estimate). Example: a latent variable measured by 2 items. You have 3 covariances (item 1—item 2, item 1—outcome, item 2—outcome). You estimate 2 loadings + 2 error variances + 1 latent variance + 1 path to outcome = 6 parameters. df = 3 − 6 = −3. The model is under-identified; estimation fails. Add a third measurement item: now you have 6 covariances and can identify the model.</p>
+    <p class="method-desc" data-lang="zh">SEM 估计的必要条件：模型必须被<strong>识别</strong>。非正式地：你有足够信息（数据）来唯一地估计所有参数。形式上：自由度 (df) 必须非负。df = 观测方差/协方差数 − 参数数估计。模型是<strong>恰好识别</strong>如果 df = 0（完美拟合，无模型检验）。<strong>过度识别</strong>如果 df > 0（可以检验拟合；优先）。<strong>不识别</strong>如果 df < 0（不可能估计）。例子：潜变量由 2 个项目测量。你有 3 个协方差（项目 1—项目 2，项目 1—结果，项目 2—结果）。你估计 2 个载荷 + 2 个误差方差 + 1 个潜方差 + 1 条路径到结果 = 6 个参数。df = 3 − 6 = −3。模型不被识别；估计失败。添加第三个测量项目：现在你有 6 个协方差并可以识别模型。</p>
+  </div>
+
+  <!-- Subsection 3: Model-Implied Covariance Matrix -->
+  <div class="method-section">
+    <h3 data-lang="en">The Model-Implied Covariance Matrix and Model Fitting</h3>
+    <h3 data-lang="zh">模型隐含的协方差矩阵与模型拟合</h3>
+    <p class="method-desc" data-lang="en">SEM estimation works by comparing two covariance matrices: (1) <strong>Observed covariance matrix:</strong> computed from your data (how variables actually correlate). (2) <strong>Model-implied covariance matrix:</strong> computed from your hypothesized model (predicted correlations given the model parameters). The fitting function minimizes the discrepancy between observed and model-implied covariances. When fit is good, predicted correlations match actual correlations (model reproduces the data). When fit is poor, the model fails to explain observed patterns. Software (lavaan in R, sem in Stata) automatically computes these matrices and searches for parameters that minimize the fit function, producing parameter estimates, standard errors, and model-fit indices (next section).</p>
+    <p class="method-desc" data-lang="zh">SEM 估计通过比较两个协方差矩阵：(1) <strong>观测协方差矩阵：</strong>从你的数据计算（变量实际如何相关）。(2) <strong>模型隐含协方差矩阵：</strong>从你的假设模型计算（给定模型参数的预测相关性）。拟合函数最小化观测与模型隐含协方差之间的差异。当拟合好时，预测相关与实际相关匹配（模型复制数据）。当拟合差时，模型无法解释观测模式。软件（R 中的 lavaan、Stata 中的 sem）自动计算这些矩阵并搜索最小化拟合函数的参数，产生参数估计、标准误和模型拟合指标（下部分）。</p>
   </div>
 </div>
 
@@ -123,13 +196,44 @@ next:
   <h2 data-lang="zh">模型拟合：指标、修正与比较</h2>
 
   <div class="challenge-overview">
-    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
-    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+    <p data-lang="en"><strong>The problem:</strong> Once you estimate an SEM, how do you know if it's good? Does the model adequately fit the data? Should you modify it by adding or removing paths? If you have two competing theories, which SEM fits the data better? Fortunately, a battery of fit indices exist—though interpreting them requires care.</p>
+    <p data-lang="zh"><strong>问题：</strong>一旦你估计 SEM，你怎样知道它是好的？模型是否充分适配数据？你应该通过添加或删除路径修改它吗？如果你有两个竞争理论，哪个 SEM 更好地适配数据？幸运地，一套拟合指标存在——尽管解释它们需要小心。</p>
   </div>
 
+  <!-- Subsection 1: Chi-Square Test and Its Limitations -->
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Content coming soon.</p>
-    <p class="method-desc" data-lang="zh">内容整理中。</p>
+    <h3 data-lang="en">Chi-Square Test: Significance But Not Practical Significance</h3>
+    <h3 data-lang="zh">卡方检验：显著性但非实际显著性</h3>
+    <p class="method-desc" data-lang="en">The chi-square test (χ²) formally tests: does the model fit perfectly? It compares the observed covariance matrix to the model-implied covariance matrix. A large χ² indicates a big difference (poor fit). But χ² has a critical flaw: with large samples, even tiny deviations between observed and model-implied covariances produce statistically significant χ² (reject the model). With large samples, almost all models are rejected as "not fitting exactly." This is why most researchers don't rely solely on χ²—it's overly stringent. Instead, they use fit indices that consider model complexity: how well the model fits relative to a more complex baseline.</p>
+    <p class="method-desc" data-lang="zh">卡方检验 (χ²) 正式检验：模型是否完美拟合？它比较观测协方差矩阵与模型隐含协方差矩阵。大 χ² 表示大差异（不良拟合）。但 χ² 有关键缺陷：随大样本，观测与模型隐含协方差的甚至微小偏差产生统计显著 χ²（拒绝模型）。随大样本，几乎所有模型被拒绝为"不完美拟合"。这是为什么大多数研究者不仅仅依赖 χ²——它过度严格。相反，他们使用考虑模型复杂性的拟合指标：模型相对于更复杂基线拟合好程度。</p>
+  </div>
+
+  <!-- Subsection 2: Comparative Fit Indices: CFI, TLI, RMSEA -->
+  <div class="method-section">
+    <h3 data-lang="en">Comparative Fit Indices: CFI, TLI, RMSEA, and SRMR</h3>
+    <h3 data-lang="zh">比较拟合指标：CFI、TLI、RMSEA 与 SRMR</h3>
+    <p class="method-desc" data-lang="en"><strong>CFI (Comparative Fit Index):</strong> Compares your model to a baseline independence model (no correlations). CFI ranges 0–1. CFI > 0.95 = good fit; CFI > 0.90 = acceptable fit. <strong>TLI (Tucker-Lewis Index):</strong> Similar to CFI but penalizes model complexity. TLI > 0.95 = good fit; TLI > 0.90 = acceptable fit. <strong>RMSEA (Root Mean Square Error of Approximation):</strong> Measures average discrepancy between observed and model-implied covariances, adjusted for model complexity. RMSEA < 0.06 = good fit; RMSEA < 0.08 = acceptable fit. Report a 90% confidence interval for RMSEA; wide intervals indicate uncertainty. RMSEA > 0.10 = poor fit. <strong>SRMR (Standardized Root Mean Square Residual):</strong> Average absolute standardized discrepancy between observed and implied covariances. SRMR < 0.08 = good fit. These four indices provide a comprehensive picture: if all four suggest good fit, your model is likely solid. If one differs (e.g., CFI > 0.95 but RMSEA > 0.08), look more closely at the model's misspecifications.</p>
+    <p class="method-desc" data-lang="zh"><strong>CFI（比较拟合指标）：</strong>将你的模型与基线独立模型比较（无相关性）。CFI 范围 0–1。CFI > 0.95 = 良好拟合；CFI > 0.90 = 可接受拟合。<strong>TLI（Tucker-Lewis 指标）：</strong>与 CFI 相似但惩罚模型复杂性。TLI > 0.95 = 良好拟合；TLI > 0.90 = 可接受拟合。<strong>RMSEA（近似均方根误差）：</strong>测量观测与模型隐含协方差间平均差异，调整模型复杂性。RMSEA < 0.06 = 良好拟合；RMSEA < 0.08 = 可接受拟合。报告 RMSEA 的 90% 置信区间；宽区间指示不确定性。RMSEA > 0.10 = 差拟合。<strong>SRMR（标准化均方根残差）：</strong>观测与隐含协方差间平均绝对标准化差异。SRMR < 0.08 = 良好拟合。这四个指标提供全面图景：如果所有四个建议良好拟合，你的模型可能坚实。如果一个不同（例如，CFI > 0.95 但 RMSEA > 0.08），更仔细地看模型误设。</p>
+    <div class="method-analogy" data-lang="en">Model fit is like checking if a skeleton matches a body outline. Chi-square checks if every bone is exactly right (almost always fails with real bodies). CFI/TLI check if the overall shape is right. RMSEA/SRMR check average discrepancies. Together, they give you confidence that the model captures the essential structure.</div>
+    <div class="method-analogy" data-lang="zh">模型拟合就像检查骨骼是否匹配身体轮廓。卡方检查每块骨头是否完全正确（几乎总是对真实身体失败）。CFI/TLI 检查整体形状是否正确。RMSEA/SRMR 检查平均差异。一起，它们给你信心模型捕捉本质结构。</div>
+  </div>
+
+  <!-- Subsection 3: Modification Indices and Overfitting -->
+  <div class="method-section">
+    <h3 data-lang="en">Modification Indices: When to Modify and When to Stop</h3>
+    <h3 data-lang="zh">修改指标：何时修改与何时停止</h3>
+    <p class="method-desc" data-lang="en">If fit is poor, software reports <strong>modification indices</strong> (MIs): estimates of how much χ² would decrease if you add or free (remove constraints on) specific parameters. A high MI suggests adding a path or covariance would improve fit substantially. But <strong>caution:</strong> modification indices are purely data-driven; they don't care about theory. Modifying your model based solely on MIs is textbook overfitting—you're fitting the sample, not the population. Best practice: (1) Start with a theory-driven model. (2) If fit is acceptable, stop. (3) If fit is poor, look at modification indices AND residuals to understand what the data are saying. (4) Only modify if the modification makes theoretical sense. (5) Once modified, pre-register or validate on a new sample to avoid overfitting.</p>
+    <p class="method-desc" data-lang="zh">如果拟合差，软件报告<strong>修改指标</strong> (MIs)：如果添加或自由（删除限制）特定参数 χ² 会减少多少的估计。高 MI 建议添加路径或协方差会实质性改进拟合。但<strong>谨慎：</strong>修改指标纯数据驱动；它们不关心理论。仅基于 MIs 修改你的模型是教科书过度拟合——你在拟合样本，不是人口。最佳做法：(1) 从理论驱动模型开始。(2) 如果拟合可接受，停止。(3) 如果拟合差，看修改指标和残差来理解数据说什么。(4) 仅在修改有理论意义时修改。(5) 一旦修改，预先注册或在新样本验证以避免过度拟合。</p>
+  </div>
+
+  <!-- Subsection 4: Comparing Nested Models -->
+  <div class="method-section">
+    <h3 data-lang="en">Comparing Models: Nested Models (LRT) and Non-Nested Models (AIC/BIC)</h3>
+    <h3 data-lang="zh">比较模型：嵌套模型 (LRT) 与非嵌套模型 (AIC/BIC)</h3>
+    <p class="method-desc" data-lang="en"><strong>Nested models:</strong> One model is a special case of another (fewer constraints). Example: Model A has no correlation between two latent variables; Model B allows correlation. Model A is nested in Model B. Use a <strong>likelihood-ratio test (LRT):</strong> χ²_diff = χ²_A − χ²_B, with df = parameter difference. If χ²_diff is significant, Model B fits better. <strong>Non-nested models:</strong> Neither is a special case of the other. Use <strong>AIC or BIC:</strong> AIC = χ² + 2k (lower = better fit). BIC = χ² + k×log(N) (penalizes larger models more). Compare across models: the model with lowest AIC/BIC is preferred. This is especially useful when comparing competing theories (different causal structures) that both fit reasonably well.</p>
+    <p class="method-desc" data-lang="zh"><strong>嵌套模型：</strong>一个模型是另一个特殊情形（更少限制）。例子：模型 A 在两个潜变量间没有相关性；模型 B 允许相关性。模型 A 嵌套在模型 B 中。使用<strong>似然比检验 (LRT)：</strong>χ²_diff = χ²_A − χ²_B，df = 参数差。如果 χ²_diff 显著，模型 B 拟合更好。<strong>非嵌套模型：</strong>都不是另一个的特殊情形。使用<strong>AIC 或 BIC：</strong>AIC = χ² + 2k（更低 = 更好拟合）。BIC = χ² + k×log(N)（更多惩罚更大模型）。跨模型比较：最低 AIC/BIC 的模型优先。这在比较竞争理论（不同因果结构）时特别有用，都相当好地拟合。</p>
+    <div class="method-example" data-lang="en"><strong>Democratic backsliding theory comparison:</strong> Theory 1: Erosion of democratic norms → institutional weakness → backsliding. Theory 2: Economic inequality → institutional weakness → backsliding. Both are SEMs with different causal structures. If both fit the data reasonably (CFI > 0.90), compare with AIC/BIC. The theory with lower AIC is more parsimonious (simpler model, better fit given complexity). This guides theory development without claiming one is "true."</div>
+    <div class="method-example" data-lang="zh"><strong>民主退化理论比较：</strong>理论 1：民主规范侵蚀 → 制度弱 → 退化。理论 2：经济不平等 → 制度弱 → 退化。两者都是具有不同因果结构的 SEMs。如果两者都相当好地拟合数据（CFI > 0.90），用 AIC/BIC 比较。具有较低 AIC 的理论更简洁（更简单模型，给定复杂性更好拟合）。这指导理论发展而不声称一个是"真的"。</div>
   </div>
 </div>
 
@@ -142,8 +246,22 @@ next:
   <h2 data-lang="en">Resources</h2>
   <h2 data-lang="zh">资源</h2>
   <div class="method-section">
-    <p class="method-desc" data-lang="en">Key references and further reading — coming soon.</p>
-    <p class="method-desc" data-lang="zh">关键参考文献与延伸阅读——整理中。</p>
+    <p class="method-desc" data-lang="en"><strong>SEM theory and foundations:</strong></p>
+    <p class="method-desc" data-lang="zh"><strong>SEM 理论与基础：</strong></p>
+    <ul style="margin-left:20px;line-height:1.8;color:var(--ink-faded)">
+      <li><strong>Kline, R. B. (2016).</strong> <em>Principles and Practice of Structural Equation Modeling</em> (4th ed.). — Comprehensive textbook; excellent on path analysis (Chapter 6), measurement models (Chapter 7), fit indices (Chapter 9).</li>
+      <li><strong>Putnam, R. D. (2000).</strong> <em>Bowling Alone: The Collapse and Revival of American Community</em> — Chapter 2 uses path analysis to decompose social capital effects. Exemplar of causal decomposition in social science.</li>
+      <li><strong>Jackman, S. (2001).</strong> "Multidimensional Analysis of Roll Call Data via Bayesian Ideal-Point Estimation." <em>Political Analysis</em>, 9(3), 227-241. — Models latent ideology from voting; demonstrates measurement and structural models combined.</li>
+      <li><strong>Hu, L. T., & Bentler, P. M. (1999).</strong> "Cutoff Criteria for Fit Indices in Covariance Structure Analysis." <em>Structural Equation Modeling</em>, 6(1), 1-55. — Canonical reference for fit index cutoffs (CFI, RMSEA, SRMR); required reading before interpreting fit.</li>
+    </ul>
+    <p class="method-desc" data-lang="en"><strong>Software and implementation:</strong></p>
+    <p class="method-desc" data-lang="zh"><strong>软件与实现：</strong></p>
+    <ul style="margin-left:20px;line-height:1.8;color:var(--ink-faded)">
+      <li><strong>lavaan (R):</strong> Latent Variable Analysis. Intuitive formula syntax: <code>model &lt;- 'latent_var =~ item1 + item2 + item3; outcome ~ latent_var'</code>. Free, powerful, well-documented. Produces all standard fit indices and modification indices.</li>
+      <li><strong>semPlot (R):</strong> Visualize SEM path diagrams. Essential for communicating results.</li>
+      <li><strong>Stata sem:</strong> Built-in SEM command; integrates with broader Stata workflow.</li>
+      <li><strong>Mplus:</strong> Gold standard for complex SEMs, mixture models, multilevel SEMs. Expensive but powerful. Good for publication-quality confirmatory analyses.</li>
+    </ul>
   </div>
 </div>
 
