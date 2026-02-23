@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang="en">Interaction Effects &amp; Marginal Effects | Empirical Modeling</title>
+    <title data-lang="zh">交互效应与边际效应 | 经验建模</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="guide-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="zh">
+    <div class="guide-layout">
+        <div class="guide-topbar">
+            <div class="guide-breadcrumb">
+                <a href="../empirical-modeling.html" data-lang="en">Empirical Modeling</a>
+                <a href="../empirical-modeling.html" data-lang="zh">经验建模</a>
+                <span class="sep">/</span>
+                <span data-lang="en">Interaction Effects & Marginal Effects</span>
+                <span data-lang="zh">交互效应与边际效应</span>
+            </div>
+            <div class="guide-lang-toggle">
+                <button class="guide-lang-btn active" data-lang="zh">中文</button>
+                <button class="guide-lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+
+        <div class="guide-content-wrapper">
+            <div class="guide-content">
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="en">Back to Empirical Modeling</a>
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="zh">返回经验建模</a>
+
+                <div class="guide-header">
+                    <div class="guide-tag">
+                        <span data-lang="en">ZERO-BASE FRIENDLY · FROM FIRST PRINCIPLES</span>
+                        <span data-lang="zh">零基础友好 · 从首原理</span>
+                    </div>
+                    <h1>
+                        <span data-lang="en">Interaction Effects & Marginal Effects</span>
+                        <span data-lang="zh">交互效应与边际效应</span>
+                    </h1>
+                    <p>
+                        <span data-lang="en">Understanding how one variable's effect depends on another — with concrete examples and step-by-step math.</span>
+                        <span data-lang="zh">理解一个变量的效应如何取决于另一个变量——通过具体例子和逐步数学推导。</span>
+                    </p>
+                </div>
+
+                <section class="guide-section">
+                <h2 data-lang="en">1. What is "Context Dependence"?</h2>
+                <h2 data-lang="zh">1. 什么是"条件依赖性"？</h2>
+
+                <div class="content" data-lang="en">
+                    <p>
+                        An <strong>interaction effect</strong> occurs when the effect of one variable depends on the value of another variable. This is called <strong>context dependence</strong>.
+                    </p>
+                    <p>
+                        Think about medicine: a drug might work well for some people but poorly for others. Why? Because the effect of the drug depends on the patient's health condition, age, or genetics. The same dose doesn't produce the same outcome for everyone.
+                    </p>
+                    <p>
+                        In econometrics, this means:
+                    </p>
+                    <ul>
+                        <li><strong>Without interaction:</strong> If education increases earnings by $5,000 per year for everyone, the effect is the same for men and women.</li>
+                        <li><strong>With interaction:</strong> Education might increase earnings by $5,000 for men but $3,000 for women. The effect of education <em>depends on</em> gender.</li>
+                    </ul>
+                    <p>
+                        This is the essence of interaction effects: <em>The effect of X depends on Z.</em>
+                    </p>
+                </div>
+
+                <div class="content" data-lang="zh">
+                    <p>
+                        当一个变量的效应取决于另一个变量的值时，就会出现<strong>交互效应</strong>。这称为<strong>条件依赖性</strong>。
+                    </p>
+                    <p>
+                        想象医学中的例子：一种药物对某些人效果很好，但对其他人效果不佳。为什么？因为药物的效应取决于患者的健康状况、年龄或基因。同样的剂量对所有人的效果都不同。
+                    </p>
+                    <p>
+                        在计量经济学中，这意味着：
+                    </p>
+                    <ul>
+                        <li><strong>没有交互：</strong>如果教育对所有人的收益增长都是每年5000美元，那么男性和女性的效应是相同的。</li>
+                        <li><strong>有交互：</strong>教育可能对男性的收益增长5000美元，但对女性只增长3000美元。教育效应<em>取决于</em>性别。</li>
+                    </ul>
+                    <p>
+                        这是交互效应的本质：<em>X的效应取决于Z。</em>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section 2 -->
+            <section class="guide-section">
+                <h2 data-lang="en">2. The Simple Model Without Interaction</h2>
+                <h2 data-lang="zh">2. 没有交互项的简单模型</h2>
+
+                <div class="content" data-lang="en">
+                    <p>
+                        When there is <strong>no interaction</strong>, we use the standard linear regression model:
+                    </p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_1 X + \beta_2 Z + u$$
+                    </div>
+                    <p>
+                        <strong>What does this mean?</strong>
+                    </p>
+                    <ul>
+                        <li>$\beta_1$ is "the effect of X on Y" — it's the same for everyone, regardless of the value of Z.</li>
+                        <li>$\beta_2$ is "the effect of Z on Y" — also constant.</li>
+                        <li>The effect of X and the effect of Z are <strong>independent</strong>.</li>
+                    </ul>
+                    <p>
+                        <strong>Numerical example:</strong>
+                    </p>
+                    <table class="numeric-table">
+                        <thead>
+                            <tr>
+                                <th>Suppose:</th>
+                                <th colspan="2">Model: Y = 10,000 + 5,000×Education + 2,000×Male</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Woman (Male = 0), Education = 10 years</td>
+                                <td>Y = 10,000 + 5,000(10) + 2,000(0) = 60,000</td>
+                            </tr>
+                            <tr>
+                                <td>Man (Male = 1), Education = 10 years</td>
+                                <td>Y = 10,000 + 5,000(10) + 2,000(1) = 62,000</td>
+                            </tr>
+                            <tr>
+                                <td>Key insight:</td>
+                                <td><strong>Education effect = 5,000 for both</strong> (same for men and women)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="content" data-lang="zh">
+                    <p>
+                        当<strong>没有交互</strong>时，我们使用标准线性回归模型：
+                    </p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_1 X + \beta_2 Z + u$$
+                    </div>
+                    <p>
+                        <strong>这意味着什么？</strong>
+                    </p>
+                    <ul>
+                        <li>$\beta_1$ 是"X对Y的效应"——它对所有人都是相同的，不管Z的值如何。</li>
+                        <li>$\beta_2$ 是"Z对Y的效应"——也是常数。</li>
+                        <li>X的效应和Z的效应是<strong>独立的</strong>。</li>
+                    </ul>
+                    <p>
+                        <strong>数值示例：</strong>
+                    </p>
+                    <table class="numeric-table">
+                        <thead>
+                            <tr>
+                                <th>假设：</th>
+                                <th colspan="2">模型: Y = 10,000 + 5,000×教育年限 + 2,000×男性</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>女性 (Male = 0), 教育年限 = 10年</td>
+                                <td>Y = 10,000 + 5,000(10) + 2,000(0) = 60,000</td>
+                            </tr>
+                            <tr>
+                                <td>男性 (Male = 1), 教育年限 = 10年</td>
+                                <td>Y = 10,000 + 5,000(10) + 2,000(1) = 62,000</td>
+                            </tr>
+                            <tr>
+                                <td>关键见解：</td>
+                                <td><strong>教育效应 = 5,000对两者都是</strong>（男性和女性相同）</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section 3 -->
+            <section class="guide-section">
+                <h2 data-lang="en">3. Adding the Interaction Term</h2>
+                <h2 data-lang="zh">3. 加入交互项</h2>
+
+                <div class="content" data-lang="en">
+                    <p>
+                        Now we <strong>add an interaction term</strong>. This is simply the product of two variables:
+                    </p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_1 X + \beta_2 Z + \beta_3(X \times Z) + u$$
+                    </div>
+                    <p>
+                        <strong>What does $X \times Z$ mean?</strong> Literally multiply them together. Nothing fancy. If $X = 5$ and $Z = 2$, then $X \times Z = 10$.
+                    </p>
+                    <p>
+                        <strong>Why does this create an interaction?</strong> Rearrange the equation:
+                    </p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_2 Z + (\beta_1 + \beta_3 Z) X + u$$
+                    </div>
+                    <p>
+                        Now look at the coefficient on X: it's $\beta_1 + \beta_3 Z$. This is not constant—it <strong>depends on Z</strong>!
+                    </p>
+                    <p>
+                        <strong>This means:</strong>
+                    </p>
+                    <ul>
+                        <li>The effect of X on Y is no longer simply $\beta_1$.</li>
+                        <li>The effect of X is now $\beta_1 + \beta_3 Z$, which <em>changes</em> with the value of Z.</li>
+                        <li>$\beta_3$ is the "interaction coefficient" — it measures how the effect of X changes as Z changes.</li>
+                    </ul>
+                </div>
+
+                <div class="content" data-lang="zh">
+                    <p>
+                        现在我们<strong>加入交互项</strong>。这只是两个变量的乘积：
+                    </p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_1 X + \beta_2 Z + \beta_3(X \times Z) + u$$
+                    </div>
+                    <p>
+                        <strong>$X \times Z$是什么意思？</strong> 字面上就是把它们相乘。没有什么花哨的。如果 $X = 5$ 和 $Z = 2$，那么 $X \times Z = 10$。
+                    </p>
+                    <p>
+                        <strong>为什么这会创建交互？</strong> 重新排列方程：
+                    </p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_2 Z + (\beta_1 + \beta_3 Z) X + u$$
+                    </div>
+                    <p>
+                        现在看X的系数：它是 $\beta_1 + \beta_3 Z$。这不是常数——它<strong>取决于Z</strong>！
+                    </p>
+                    <p>
+                        <strong>这意味着：</strong>
+                    </p>
+                    <ul>
+                        <li>X对Y的效应不再简单地是 $\beta_1$。</li>
+                        <li>X的效应现在是 $\beta_1 + \beta_3 Z$，它随Z的值<em>改变</em>。</li>
+                        <li>$\beta_3$ 是"交互系数"——它衡量当Z改变时，X的效应如何变化。</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 4 -->
+            <section class="guide-section">
+                <h2 data-lang="en">4. Concrete Example With Numbers</h2>
+                <h2 data-lang="zh">4. 含具体数字的例子</h2>
+
+                <div class="content" data-lang="en">
+                    <p>
+                        <strong>Scenario:</strong> We want to predict earnings (Y, in dollars) based on:
+                    </p>
+                    <ul>
+                        <li>Education (X, in years)</li>
+                        <li>Gender (Z: 1 = Male, 0 = Female)</li>
+                    </ul>
+                    <p>
+                        <strong>With interaction model:</strong>
+                    </p>
+                    <div class="equation">
+                        $$\text{Earnings} = 25,000 + 4,000 \times \text{Education} + 3,000 \times \text{Male} + 500 \times (\text{Education} \times \text{Male})$$
+                    </div>
+                    <p>
+                        <strong>Interpretation of coefficients:</strong>
+                    </p>
+                    <ul>
+                        <li>$\beta_0 = 25,000$: Base earnings (intercept)</li>
+                        <li>$\beta_1 = 4,000$: Effect of education <strong>for women</strong> (when Male = 0)</li>
+                        <li>$\beta_2 = 3,000$: Gender wage gap at 0 education</li>
+                        <li>$\beta_3 = 500$: Additional return to education <strong>for men</strong></li>
+                    </ul>
+
+                    <p><strong>Calculate predicted earnings:</strong></p>
+                    <table class="numeric-table">
+                        <thead>
+                            <tr>
+                                <th>Person</th>
+                                <th>Education</th>
+                                <th>Male</th>
+                                <th>Education × Male</th>
+                                <th>Predicted Earnings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Woman, 12 years school</td>
+                                <td>12</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>25,000 + 4,000(12) + 3,000(0) + 500(0) = <strong>73,000</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Man, 12 years school</td>
+                                <td>12</td>
+                                <td>1</td>
+                                <td>12</td>
+                                <td>25,000 + 4,000(12) + 3,000(1) + 500(12) = <strong>79,000</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Woman, 16 years school</td>
+                                <td>16</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>25,000 + 4,000(16) + 3,000(0) + 500(0) = <strong>89,000</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Man, 16 years school</td>
+                                <td>16</td>
+                                <td>1</td>
+                                <td>16</td>
+                                <td>25,000 + 4,000(16) + 3,000(1) + 500(16) = <strong>99,000</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p><strong>Effect of education by gender:</strong></p>
+                    <table class="numeric-table">
+                        <thead>
+                            <tr>
+                                <th>Comparison</th>
+                                <th>Calculation</th>
+                                <th>Effect</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>For women: 16 vs 12 years</td>
+                                <td>89,000 − 73,000</td>
+                                <td><strong>+16,000 per 4 years = +4,000 per year</strong></td>
+                            </tr>
+                            <tr>
+                                <td>For men: 16 vs 12 years</td>
+                                <td>99,000 − 79,000</td>
+                                <td><strong>+20,000 per 4 years = +5,000 per year</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>
+                        <strong>Key insight:</strong> The effect of education is $4,000 for women but $5,000 for men. Why? Because $\beta_3 = 500 > 0$, meaning men earn an additional $500 per year of education.
+                    </p>
+                    <p>
+                        <strong>What if $\beta_3$ were negative?</strong> If $\beta_3 = -500$, then men would earn <em>less</em> per additional year of education than women — education would be less rewarding for men.
+                    </p>
+                </div>
+
+                <div class="content" data-lang="zh">
+                    <p>
+                        <strong>场景：</strong> 我们想根据以下因素预测收益（Y，以美元计）：
+                    </p>
+                    <ul>
+                        <li>教育 (X，以年计)</li>
+                        <li>性别 (Z: 1 = 男性, 0 = 女性)</li>
+                    </ul>
+                    <p>
+                        <strong>交互模型：</strong>
+                    </p>
+                    <div class="equation">
+                        $$\text{收益} = 25,000 + 4,000 \times \text{教育} + 3,000 \times \text{男性} + 500 \times (\text{教育} \times \text{男性})$$
+                    </div>
+                    <p>
+                        <strong>系数解释：</strong>
+                    </p>
+                    <ul>
+                        <li>$\beta_0 = 25,000$: 基础收益（截距）</li>
+                        <li>$\beta_1 = 4,000$: <strong>女性</strong>的教育效应（当 Male = 0）</li>
+                        <li>$\beta_2 = 3,000$: 教育为0时的性别工资差距</li>
+                        <li>$\beta_3 = 500$: <strong>男性</strong教育的额外回报</li>
+                    </ul>
+
+                    <p><strong>计算预测收益：</strong></p>
+                    <table class="numeric-table">
+                        <thead>
+                            <tr>
+                                <th>人物</th>
+                                <th>教育</th>
+                                <th>男性</th>
+                                <th>教育×男性</th>
+                                <th>预测收益</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>女性，12年教育</td>
+                                <td>12</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>25,000 + 4,000(12) + 3,000(0) + 500(0) = <strong>73,000</strong></td>
+                            </tr>
+                            <tr>
+                                <td>男性，12年教育</td>
+                                <td>12</td>
+                                <td>1</td>
+                                <td>12</td>
+                                <td>25,000 + 4,000(12) + 3,000(1) + 500(12) = <strong>79,000</strong></td>
+                            </tr>
+                            <tr>
+                                <td>女性，16年教育</td>
+                                <td>16</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>25,000 + 4,000(16) + 3,000(0) + 500(0) = <strong>89,000</strong></td>
+                            </tr>
+                            <tr>
+                                <td>男性，16年教育</td>
+                                <td>16</td>
+                                <td>1</td>
+                                <td>16</td>
+                                <td>25,000 + 4,000(16) + 3,000(1) + 500(16) = <strong>99,000</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p><strong>按性别分类的教育效应：</strong></p>
+                    <table class="numeric-table">
+                        <thead>
+                            <tr>
+                                <th>比较</th>
+                                <th>计算</th>
+                                <th>效应</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>女性：16年 vs 12年</td>
+                                <td>89,000 − 73,000</td>
+                                <td><strong>4年增加16,000 = 每年+4,000</strong></td>
+                            </tr>
+                            <tr>
+                                <td>男性：16年 vs 12年</td>
+                                <td>99,000 − 79,000</td>
+                                <td><strong>4年增加20,000 = 每年+5,000</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>
+                        <strong>关键见解：</strong> 教育的效应对女性是4,000，对男性是5,000。为什么？因为 $\beta_3 = 500 > 0$，意味着男性每多一年教育额外赚取500美元。
+                    </p>
+                    <p>
+                        <strong>如果 $\beta_3$ 是负数呢？</strong> 如果 $\beta_3 = -500$，那么男性每多一年教育赚取的钱会<em>少于</em>女性——对男性来说，教育的回报会更低。
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section 5 -->
+            <section class="guide-section">
+                <h2 data-lang="en">5. Marginal Effects and Partial Derivatives</h2>
+                <h2 data-lang="zh">5. 边际效应和偏导数</h2>
+
+                <div class="content" data-lang="en">
+                    <p>
+                        The <strong>marginal effect</strong> answers: "If X goes up by 1, how much does Y go up?"
+                    </p>
+                    <p>
+                        In calculus, we compute this using the partial derivative:
+                    </p>
+                    <div class="equation">
+                        $$\frac{\partial Y}{\partial X} = \text{"the effect of a small change in X on Y"}$$
+                    </div>
+
+                    <p><strong>For the simple model (no interaction):</strong></p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_1 X + \beta_2 Z + u$$
+                    </div>
+                    <div class="equation">
+                        $$\frac{\partial Y}{\partial X} = \beta_1$$
+                    </div>
+                    <p>
+                        The effect is always $\beta_1$, no matter what Z is.
+                    </p>
+
+                    <p><strong>For the interaction model:</strong></p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_1 X + \beta_2 Z + \beta_3(X \times Z) + u$$
+                    </div>
+                    <div class="equation">
+                        $$\frac{\partial Y}{\partial X} = \beta_1 + \beta_3 Z$$
+                    </div>
+                    <p>
+                        <strong>The effect of X now depends on Z!</strong> If Z changes, the effect changes too.
+                    </p>
+
+                    <p><strong>Back to our earnings example:</strong></p>
+                    <p>
+                        $\frac{\partial \text{Earnings}}{\partial \text{Education}} = 4,000 + 500 \times \text{Male}$
+                    </p>
+                    <ul>
+                        <li>For women (Male = 0): effect = 4,000 + 500(0) = $4,000</li>
+                        <li>For men (Male = 1): effect = 4,000 + 500(1) = $5,000</li>
+                    </ul>
+                    <p>
+                        The partial derivative automatically gives us the different effects for men and women!
+                    </p>
+                </div>
+
+                <div class="content" data-lang="zh">
+                    <p>
+                        <strong>边际效应</strong>回答的是："如果X增加1，Y增加多少？"
+                    </p>
+                    <p>
+                        在微积分中，我们使用偏导数来计算这个：
+                    </p>
+                    <div class="equation">
+                        $$\frac{\partial Y}{\partial X} = \text{"X的小变化对Y的影响"}$$
+                    </div>
+
+                    <p><strong>对于简单模型（没有交互）：</strong></p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_1 X + \beta_2 Z + u$$
+                    </div>
+                    <div class="equation">
+                        $$\frac{\partial Y}{\partial X} = \beta_1$$
+                    </div>
+                    <p>
+                        效应总是 $\beta_1$，无论Z是什么。
+                    </p>
+
+                    <p><strong>对于交互模型：</strong></p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_1 X + \beta_2 Z + \beta_3(X \times Z) + u$$
+                    </div>
+                    <div class="equation">
+                        $$\frac{\partial Y}{\partial X} = \beta_1 + \beta_3 Z$$
+                    </div>
+                    <p>
+                        <strong>X的效应现在取决于Z！</strong> 如果Z改变，效应也改变。
+                    </p>
+
+                    <p><strong>回到我们的收益例子：</strong></p>
+                    <p>
+                        $\frac{\partial \text{收益}}{\partial \text{教育}} = 4,000 + 500 \times \text{男性}$
+                    </p>
+                    <ul>
+                        <li>对于女性 (Male = 0): 效应 = 4,000 + 500(0) = $4,000</li>
+                        <li>对于男性 (Male = 1): 效应 = 4,000 + 500(1) = $5,000</li>
+                    </ul>
+                    <p>
+                        偏导数自动为我们给出了男性和女性不同的效应！
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section 6 -->
+            <section class="guide-section">
+                <h2 data-lang="en">6. Plotting Interaction Effects</h2>
+                <h2 data-lang="zh">6. 绘制交互效应</h2>
+
+                <div class="content" data-lang="en">
+                    <p>
+                        The best way to visualize an interaction is to plot two lines: one for each value of Z.
+                    </p>
+                    <p>
+                        <strong>Example: Earnings by Education, by Gender</strong>
+                    </p>
+                    <div style="text-align: center; margin: 20px 0; padding: 20px; background: #f5f5f5; border-radius: 5px; font-family: monospace; font-size: 12px;">
+                        <pre>
+Earnings ($1000s)
+      |
+  100 |                    ___Men
+      |                 __/
+      |              __/
+   80 |           __/
+      |        __/
+      |     __/ ___Women
+      |  __/  __/
+   60 |  ___/
+      |/
+   40 +----+----+----+----+----+
+        10   12   14   16   18
+                Education (years)
+
+Men:   Earnings = 25 + 5 × Education (slope = 5)
+Women: Earnings = 25 + 4 × Education (slope = 4)
+                        </pre>
+                    </div>
+
+                    <p><strong>What to notice:</strong></p>
+                    <ul>
+                        <li><strong>Different slopes:</strong> The lines have different steepness. Men's line is steeper.</li>
+                        <li><strong>They don't intersect:</strong> In this example, men earn more at all education levels.</li>
+                        <li><strong>The gap widens:</strong> As education increases, the gender wage gap gets larger (because men benefit more from education).</li>
+                    </ul>
+
+                    <p><strong>Crossover effects:</strong></p>
+                    <p>
+                        Sometimes the lines <em>do</em> cross. For example, if the interaction were very large and negative, one group might benefit more from X at low values, but the other group at high values. This is called a <strong>crossover interaction</strong> or <strong>ordinal interaction</strong>.
+                    </p>
+                </div>
+
+                <div class="content" data-lang="zh">
+                    <p>
+                        可视化交互的最佳方式是绘制两条线：一条用于Z的每个值。
+                    </p>
+                    <p>
+                        <strong>例子：按教育和性别的收益</strong>
+                    </p>
+                    <div style="text-align: center; margin: 20px 0; padding: 20px; background: #f5f5f5; border-radius: 5px; font-family: monospace; font-size: 12px;">
+                        <pre>
+收益（$1000s）
+      |
+  100 |                    ___男性
+      |                 __/
+      |              __/
+   80 |           __/
+      |        __/
+      |     __/ ___女性
+      |  __/  __/
+   60 |  ___/
+      |/
+   40 +----+----+----+----+----+
+        10   12   14   16   18
+               教育年限
+
+男性:   收益 = 25 + 5 × 教育 (斜率 = 5)
+女性: 收益 = 25 + 4 × 教育 (斜率 = 4)
+                        </pre>
+                    </div>
+
+                    <p><strong>要注意的地方：</strong></p>
+                    <ul>
+                        <li><strong>不同的斜率：</strong> 这两条线的陡峭程度不同。男性的线更陡。</li>
+                        <li><strong>它们不相交：</strong> 在此示例中，男性在所有教育水平上的收入更高。</li>
+                        <li><strong>差距扩大：</strong> 随着教育增加，性别工资差距变大（因为男性从教育中获益更多）。</li>
+                    </ul>
+
+                    <p><strong>交叉点效应：</strong></p>
+                    <p>
+                        有时这两条线<em>确实</em>相交。例如，如果交互非常大且为负，一个群体可能在X的低值时从中获益更多，但在高值时另一个群体获益更多。这称为<strong>交叉交互</strong>或<strong>序数交互</strong>。
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section 7 -->
+            <section class="guide-section">
+                <h2 data-lang="en">7. Common Mistakes</h2>
+                <h2 data-lang="zh">7. 常见错误</h2>
+
+                <div class="content" data-lang="en">
+                    <h3>Mistake 1: Forgetting the Main Effects</h3>
+                    <p>
+                        <strong>Wrong:</strong>
+                    </p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_3(X \times Z) + u$$
+                    </div>
+                    <p>
+                        This omits the individual effects of X and Z. <strong>Always include main effects first.</strong>
+                    </p>
+                    <p>
+                        <strong>Right:</strong>
+                    </p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_1 X + \beta_2 Z + \beta_3(X \times Z) + u$$
+                    </div>
+
+                    <h3>Mistake 2: Misinterpreting $\beta_1$ When There's an Interaction</h3>
+                    <p>
+                        <strong>Wrong interpretation:</strong> "$\beta_1$ is the effect of X on Y."
+                    </p>
+                    <p>
+                        <strong>Correct interpretation:</strong> "$\beta_1$ is the effect of X on Y <em>when Z = 0</em>."
+                    </p>
+                    <p>
+                        In our earnings example:
+                    </p>
+                    <ul>
+                        <li>$\beta_1 = 4,000$ is the effect of education <strong>for women</strong> (because women are coded as 0).</li>
+                        <li>If you want the effect for men, you must compute $\beta_1 + \beta_3 = 4,000 + 500 = 5,000$.</li>
+                    </ul>
+
+                    <h3>Mistake 3: Not Centering Variables (Optional, But Helpful)</h3>
+                    <p>
+                        When X = 0 or Z = 0 is not meaningful (e.g., education can't be zero), the interpretation of $\beta_1$ becomes awkward. One solution: <strong>center</strong> your variables before creating the interaction.
+                    </p>
+                    <p>
+                        <strong>Centering means:</strong> Subtract the mean from each variable.
+                    </p>
+                    <div class="equation">
+                        X_{\text{centered}} = X - \overline{X}
+                    </div>
+                    <p>
+                        If you center education at its mean (say, 12 years), then:
+                    </p>
+                    <ul>
+                        <li>$\beta_1$ becomes "the effect of education for the average education level, for women."</li>
+                        <li>This is more interpretable than "the effect when education = 0."</li>
+                    </ul>
+                    <p>
+                        <em>Centering doesn't change the interaction term's meaning, but it makes $\beta_1$ and $\beta_2$ more interpretable.</em>
+                    </p>
+                </div>
+
+                <div class="content" data-lang="zh">
+                    <h3>错误1：忘记主效应</h3>
+                    <p>
+                        <strong>错误：</strong>
+                    </p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_3(X \times Z) + u$$
+                    </div>
+                    <p>
+                        这遗漏了X和Z的单个效应。<strong>始终先包括主效应。</strong>
+                    </p>
+                    <p>
+                        <strong>正确：</strong>
+                    </p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_1 X + \beta_2 Z + \beta_3(X \times Z) + u$$
+                    </div>
+
+                    <h3>错误2：当有交互时误解 $\beta_1$</h3>
+                    <p>
+                        <strong>错误解释：</strong> "$\beta_1$ 是X对Y的效应。"
+                    </p>
+                    <p>
+                        <strong>正确解释：</strong> "$\beta_1$ 是X对Y的效应<em>当 Z = 0时</em>。"
+                    </p>
+                    <p>
+                        在我们的收益例子中：
+                    </p>
+                    <ul>
+                        <li>$\beta_1 = 4,000$ 是教育<strong>对女性</strong>的效应（因为女性编码为0）。</li>
+                        <li>如果你想要男性的效应，你必须计算 $\beta_1 + \beta_3 = 4,000 + 500 = 5,000$。</li>
+                    </ul>
+
+                    <h3>错误3：不居中变量（可选，但有帮助）</h3>
+                    <p>
+                        当X = 0或Z = 0没有意义时（例如，教育不能为零），$\beta_1$ 的解释变得尴尬。一个解决方案：在创建交互之前<strong>居中</strong>你的变量。
+                    </p>
+                    <p>
+                        <strong>居中意味着：</strong> 从每个变量中减去平均值。
+                    </p>
+                    <div class="equation">
+                        X_{\text{centered}} = X - \overline{X}
+                    </div>
+                    <p>
+                        如果你在平均值（比如12年）处居中教育，那么：
+                    </p>
+                    <ul>
+                        <li>$\beta_1$ 变成"在平均教育水平处，对女性的教育效应。"</li>
+                        <li>这比"当教育=0时的效应"更可解释。</li>
+                    </ul>
+                    <p>
+                        <em>居中不改变交互项的意义，但它使 $\beta_1$ 和 $\beta_2$ 更可解释。</em>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section 8 -->
+            <section class="guide-section">
+                <h2 data-lang="en">8. Nonlinear Interactions (Logit/Probit)</h2>
+                <h2 data-lang="zh">8. 非线性交互（Logit/Probit）</h2>
+
+                <div class="content" data-lang="en">
+                    <p>
+                        Things get trickier when your model is <strong>nonlinear</strong> (logit, probit, Poisson, etc.).
+                    </p>
+                    <div class="equation">
+                        $$P(Y=1 \mid X, Z) = \Lambda(\beta_0 + \beta_1 X + \beta_2 Z + \beta_3(X \times Z))$$
+                    </div>
+                    <p>
+                        where $\Lambda$ is the logistic function (for logit) or normal CDF (for probit).
+                    </p>
+
+                    <p><strong>The problem:</strong> The interaction effect is <strong>NOT</strong> simply $\beta_3$!</p>
+                    <p>
+                        The marginal effect of X is:
+                    </p>
+                    <div class="equation">
+                        $$\frac{\partial P}{\partial X} = \lambda(\cdot) \times (\beta_1 + \beta_3 Z)$$
+                    </div>
+                    <p>
+                        where $\lambda(\cdot)$ depends on all the X and Z values in your data.
+                    </p>
+
+                    <p><strong>Bottom line:</strong></p>
+                    <ul>
+                        <li>You still include the interaction term $X \times Z$ in the model.</li>
+                        <li>But to interpret it, you must compute <strong>marginal effects at representative values</strong> (e.g., at the mean, or for a typical man vs. woman).</li>
+                        <li>Don't just look at $\beta_3$ — that's not the full story in nonlinear models.</li>
+                    </ul>
+                </div>
+
+                <div class="content" data-lang="zh">
+                    <p>
+                        当你的模型是<strong>非线性的</strong>（logit、probit、泊松等）时，事情变得更复杂。
+                    </p>
+                    <div class="equation">
+                        $$P(Y=1 \mid X, Z) = \Lambda(\beta_0 + \beta_1 X + \beta_2 Z + \beta_3(X \times Z))$$
+                    </div>
+                    <p>
+                        其中 $\Lambda$ 是逻辑函数（对于logit）或正态CDF（对于probit）。
+                    </p>
+
+                    <p><strong>问题：</strong> 交互效应<strong>不是</strong>简单的 $\beta_3$！</p>
+                    <p>
+                        X的边际效应是：
+                    </p>
+                    <div class="equation">
+                        $$\frac{\partial P}{\partial X} = \lambda(\cdot) \times (\beta_1 + \beta_3 Z)$$
+                    </div>
+                    <p>
+                        其中 $\lambda(\cdot)$ 取决于你的数据中的所有X和Z值。
+                    </p>
+
+                    <p><strong>底线：</strong></p>
+                    <ul>
+                        <li>你仍然在模型中包括交互项 $X \times Z$。</li>
+                        <li>但要解释它，你必须在代表性值处计算<strong>边际效应</strong>（例如，在平均值处，或对于典型的男性vs.女性）。</li>
+                        <li>不要只看 $\beta_3$——在非线性模型中这不是全部内容。</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 9 -->
+            <section class="guide-section">
+                <h2 data-lang="en">9. Three-Way Interactions</h2>
+                <h2 data-lang="zh">9. 三元交互</h2>
+
+                <div class="content" data-lang="en">
+                    <p>
+                        Sometimes the effect of X on Y depends on both Z <em>and</em> W. This requires a <strong>three-way interaction</strong>:
+                    </p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_1 X + \beta_2 Z + \beta_3 W + \beta_4(X \times Z) + \beta_5(X \times W) + \beta_6(Z \times W) + \beta_7(X \times Z \times W) + u$$
+                    </div>
+
+                    <p><strong>The interpretation is messy:</strong></p>
+                    <ul>
+                        <li>The effect of X depends on both Z and W: $\frac{\partial Y}{\partial X} = \beta_1 + \beta_4 Z + \beta_5 W + \beta_7(Z \times W)$</li>
+                        <li>If Z and W don't interact, just use $\beta_4$ and $\beta_5$.</li>
+                        <li>But if they do, you must account for the $\beta_7$ term.</li>
+                    </ul>
+
+                    <p><strong>When is this needed?</strong></p>
+                    <ul>
+                        <li><strong>Rarely in practice.</strong> Three-way interactions become very hard to interpret.</li>
+                        <li><strong>Use only if you have a strong theoretical reason.</strong> For example: "I believe the return to education depends on both experience and gender, and all three interact together."</li>
+                        <li>Usually, a two-way interaction is enough. Adding a third interaction often just adds noise.</li>
+                    </ul>
+
+                    <p>
+                        <strong>Rule of thumb:</strong> Start simple (main effects), add two-way interactions if there's evidence of context dependence, and only venture into three-way interactions if you have a compelling theoretical argument.
+                    </p>
+                </div>
+
+                <div class="content" data-lang="zh">
+                    <p>
+                        有时X对Y的效应取决于Z<em>和</em>W。这需要<strong>三元交互</strong>：
+                    </p>
+                    <div class="equation">
+                        $$Y = \beta_0 + \beta_1 X + \beta_2 Z + \beta_3 W + \beta_4(X \times Z) + \beta_5(X \times W) + \beta_6(Z \times W) + \beta_7(X \times Z \times W) + u$$
+                    </div>
+
+                    <p><strong>解释很复杂：</strong></p>
+                    <ul>
+                        <li>X的效应取决于Z和W：$\frac{\partial Y}{\partial X} = \beta_1 + \beta_4 Z + \beta_5 W + \beta_7(Z \times W)$</li>
+                        <li>如果Z和W不交互，只需使用 $\beta_4$ 和 $\beta_5$。</li>
+                        <li>但如果它们交互，你必须考虑 $\beta_7$ 项。</li>
+                    </ul>
+
+                    <p><strong>何时需要这个？</strong></p>
+                    <ul>
+                        <li><strong>在实践中很少。</strong> 三元交互变得非常难以解释。</li>
+                        <li><strong>只有在有强理论原因时才使用。</strong> 例如："我相信教育回报取决于经验和性别，这三者都相互作用。"</li>
+                        <li>通常，两元交互就足够了。添加第三个交互通常只是增加噪音。</li>
+                    </ul>
+
+                    <p>
+                        <strong>经验法则：</strong>从简单开始（主效应），如果有条件依赖的证据就添加两元交互，只有当你有令人信服的理论论证时才涉及三元交互。
+                    </p>
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section class="guide-section">
+                <h2 data-lang="en">Summary: The Key Takeaways</h2>
+                <h2 data-lang="zh">总结：关键要点</h2>
+
+                <div class="content" data-lang="en">
+                    <ol>
+                        <li><strong>Interactions exist when:</strong> The effect of X depends on the value of Z.</li>
+                        <li><strong>The model includes:</strong> Main effects for X and Z, plus the interaction term $X \times Z$.</li>
+                        <li><strong>The effect of X is:</strong> $\beta_1 + \beta_3 Z$ (not just $\beta_1$).</li>
+                        <li><strong>$\beta_3$ tells you:</strong> How the effect of X changes as Z changes.</li>
+                        <li><strong>Visualize with:</strong> Two lines (one for each value of Z), showing different slopes.</li>
+                        <li><strong>Common mistake:</strong> Forgetting main effects, or misinterpreting $\beta_1$ when an interaction is present.</li>
+                        <li><strong>In nonlinear models:</strong> The interaction effect is more complex — use marginal effects.</li>
+                        <li><strong>Three-way interactions:</strong> Possible, but rarely needed. Keep it simple unless theory demands it.</li>
+                    </ol>
+                </div>
+
+                <div class="content" data-lang="zh">
+                    <ol>
+                        <li><strong>交互存在于：</strong> X的效应取决于Z的值时。</li>
+                        <li><strong>模型包括：</strong> X和Z的主效应，加上交互项 $X \times Z$。</li>
+                        <li><strong>X的效应是：</strong> $\beta_1 + \beta_3 Z$（不仅仅是 $\beta_1$）。</li>
+                        <li><strong>$\beta_3$ 告诉你：</strong> 当Z改变时，X的效应如何变化。</li>
+                        <li><strong>可视化：</strong> 两条线（每个Z值一条），显示不同的斜率。</li>
+                        <li><strong>常见错误：</strong> 遗漏主效应，或在交互存在时误解 $\beta_1$。</li>
+                        <li><strong>在非线性模型中：</strong> 交互效应更复杂——使用边际效应。</li>
+                        <li><strong>三元交互：</strong> 可能，但很少需要。除非理论要求，否则保持简单。</li>
+                    </ol>
+                </div>
+            </section></section>
+
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langBtns = document.querySelectorAll('.guide-lang-btn');
+        // Exclude buttons from content elements
+        const enElements = document.querySelectorAll('.guide-content [data-lang="en"], .guide-breadcrumb [data-lang="en"], a.guide-back[data-lang="en"], .guide-header [data-lang="en"], .guide-tag [data-lang="en"]');
+        const zhElements = document.querySelectorAll('.guide-content [data-lang="zh"], .guide-breadcrumb [data-lang="zh"], a.guide-back[data-lang="zh"], .guide-header [data-lang="zh"], .guide-tag [data-lang="zh"]');
+        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        setLanguage(savedLang);
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                localStorage.setItem('preferred-lang', lang);
+                setLanguage(lang);
+            });
+        });
+        function setLanguage(lang) {
+            langBtns.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('.guide-lang-btn[data-lang="' + lang + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            if (lang === 'en') {
+                enElements.forEach(el => { el.style.display = ''; });
+                zhElements.forEach(el => { el.style.display = 'none'; });
+                document.body.className = 'en';
+            } else {
+                enElements.forEach(el => { el.style.display = 'none'; });
+                zhElements.forEach(el => { el.style.display = ''; });
+                document.body.className = 'zh';
+            }
+        }
+    });
+    </script>
+
+</body>
+</html>

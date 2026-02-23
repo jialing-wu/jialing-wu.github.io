@@ -1,0 +1,364 @@
+---
+layout: methods-course
+title: "Time Series & Panel Data"
+breadcrumb: "Statistics"
+bilingual: true
+prev:
+  url: reg-measurement.html
+  title: "Measurement & Scaling"
+next:
+  url: reg-robustness.html
+  title: "Evaluating Model Robustness"
+---
+
+<style>
+.problem-index{margin:0 0 8px;padding:16px 20px;border:1px solid var(--parchment);border-radius:4px;background:var(--warm)}
+.problem-index-title{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.problem-index a{display:block;font-size:14.5px;line-height:2;color:var(--ink-faded);text-decoration:none;transition:color .2s}
+.problem-index a:hover{color:var(--red)}
+.problem-index a .pi-arrow{font-family:var(--sans);font-size:11px;color:var(--gold);margin-left:6px}
+</style>
+
+<!-- HEADER -->
+<div class="method-header">
+  <h1>Time Series, Panel &amp; Longitudinal Data Analysis</h1>
+  <div class="method-meta">Statistics &middot; Intermediate 07</div>
+</div>
+
+<!-- INTRO CARDS -->
+<div class="intro-cards">
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">What Is This?</div>
+    <div class="card-label" data-lang="zh">这一页讲什么？</div>
+    <div data-lang="en"><p>Politics, economics, and society unfold over time. When your data has a time dimension — whether a single country tracked across decades, or hundreds of countries tracked annually — standard regression breaks down. This page covers how to model data that moves through time.</p></div>
+    <div data-lang="zh"><p>政治、经济和社会随时间展开。当你的数据有时间维度——无论是一个国家跨越数十年，还是数百个国家按年追踪——标准回归就会失效。本页介绍如何对随时间变化的数据建模。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Prerequisites</div>
+    <div class="card-label" data-lang="zh">前置知识</div>
+    <div data-lang="en"><p>Regression Analysis. Basic OLS assumptions.</p></div>
+    <div data-lang="zh"><p>回归分析。基础 OLS 假设。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Software &amp; Tools</div>
+    <div class="card-label" data-lang="zh">软件工具</div>
+    <div data-lang="en"><p>R (tseries, plm, lme4) or Stata (tsset, xtset, arima).</p></div>
+    <div data-lang="zh"><p>R（tseries、plm、lme4）或 Stata（tsset、xtset、arima）。</p></div>
+  </div>
+</div>
+
+<!-- PROBLEM INDEX -->
+<div class="problem-index">
+  <div class="problem-index-title" data-lang="en">What problem are you facing?</div>
+  <div class="problem-index-title" data-lang="zh">你遇到了什么问题？</div>
+  <a href="#ts-s1" data-lang="en">My data is a single variable tracked over time — what are the basics? <span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#ts-s1" data-lang="zh">我的数据是单个变量随时间变化——基础是什么？<span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#ts-s2" data-lang="en">How do I model trends, seasonality, and lagged effects? <span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#ts-s2" data-lang="zh">我怎么建模趋势、季节性和滞后效应？<span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#ts-s3" data-lang="en">I have multiple units each observed over time (panel data) <span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#ts-s3" data-lang="zh">我有多个单位各自随时间观测的数据（面板数据）<span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#ts-s4" data-lang="en">Do two variables have a dynamic causal relationship? <span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#ts-s4" data-lang="zh">两个变量之间有动态因果关系吗？<span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#ts-s5" data-lang="en">My variables trend together — is this spurious or a real long-run relationship? <span class="pi-arrow">&rarr; &sect;5</span></a>
+  <a href="#ts-s5" data-lang="zh">我的变量一起趋势——这是虚假的还是真实的长期关系？<span class="pi-arrow">&rarr; &sect;5</span></a>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 1 -->
+<div class="section" id="ts-s1">
+  <h2 data-lang="en">Time Series Basics: Stationarity, Autocorrelation, and Trends</h2>
+  <h2 data-lang="zh">时间序列基础：平稳性、自相关与趋势</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You have a variable measured over time — stock prices, unemployment, approval ratings, inflation. Standard regression assumes observations are independent, but time series data isn't: today's value depends on yesterday's. Violate this assumption and you get spurious correlations, misleading significance tests, and wrong predictions.</p>
+    <p data-lang="zh"><strong>问题：</strong>你有一个随时间测量的变量——股票价格、失业率、支持率、通货膨胀。标准回归假设观测值是独立的，但时间序列数据不是：今天的值取决于昨天的。违反这个假设，你会得到虚假的相关性、误导性的显著性检验和错误的预测。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Stationarity: Why Order Matters</h3>
+    <h3 data-lang="zh">平稳性：为什么顺序很重要</h3>
+    <p class="method-desc" data-lang="en">A time series is <strong>stationary</strong> if its mean, variance, and autocorrelation structure are constant over time. Non-stationary series have trends, changing volatility, or structural breaks. This matters because ordinary regression on non-stationary data produces nonsense results — coefficients appear significant when they're actually just tracking coincidental movements.</p>
+    <p class="method-desc" data-lang="zh"><strong>平稳</strong>时间序列是指其均值、方差和自相关结构在整个时间段内保持常数。非平稳序列有趋势、波动性变化或结构断裂。这很重要，因为对非平稳数据进行普通回归会产生无意义的结果——系数看起来显著，但实际上只是追踪巧合的运动。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A stationary series is like a lake's water level — it fluctuates seasonally and randomly but returns to equilibrium. A non-stationary series is like a river — it has a direction, flowing downhill. If you ignore the trend (river's flow), you'll mistake random variations in the river's width for a real relationship with rainfall.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>平稳序列就像一个湖的水位——季节性和随机波动，但始终回到均衡。非平稳序列像一条河——有方向，向下流动。如果你忽视趋势（河流的流向），你会把河宽的随机变化误解为与降雨的真实关系。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Check stationarity on any time series before modeling. Use it to diagnose why your regression might be giving weird results. Don't assume your series is stationary just because it looks relatively stable — apply formal tests (Augmented Dickey-Fuller test). Some series are non-stationary by design (e.g., stock prices follow a random walk); you must difference them before regressing.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>在建模前对任何时间序列检查平稳性。用它来诊断你的回归为什么可能给出奇怪的结果。不要仅因为你的序列看起来相对稳定就假设它是平稳的——应用正式检验（Augmented Dickey-Fuller 检验）。某些序列在设计上是非平稳的（例如，股票价格遵循随机游走）；你必须在回归前进行差分。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> U.S. presidential approval ratings over a 20-year span. The series clearly trends downward during scandal periods and upward during rallies. A naive regression of approval on economic growth ignores this trend, producing spurious significance. First, test for unit roots using the ADF test. If you find non-stationarity, difference the series (month-to-month changes in approval) and rerun. Now the test is valid.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>美国总统支持率在 20 年内的变化。该序列在丑闻期间明显向下趋势，在集会期间向上。将支持率与经济增长进行朴素回归会忽视这种趋势，产生虚假显著性。首先，使用 ADF 检验检查单位根。如果发现非平稳性，对序列进行差分（月度支持率变化），然后重新运行。现在检验是有效的。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Unit Roots and the Augmented Dickey-Fuller Test</h3>
+    <h3 data-lang="zh">单位根与 Augmented Dickey-Fuller 检验</h3>
+    <p class="method-desc" data-lang="en">A <strong>unit root</strong> is a specific form of non-stationarity where today's value equals yesterday's value plus random noise: Y_t = Y_{t-1} + ε_t. This is a random walk. The Augmented Dickey-Fuller (ADF) test checks whether a unit root exists. The null hypothesis is "unit root present (non-stationary)"; if you reject the null (p < 0.05), your series is stationary. If you fail to reject, difference the series and test again.</p>
+    <p class="method-desc" data-lang="zh"><strong>单位根</strong>是非平稳性的特定形式，其中今天的值等于昨天的值加随机噪声：Y_t = Y_{t-1} + ε_t。这是随机游走。Augmented Dickey-Fuller（ADF）检验检查是否存在单位根。零假设是"单位根存在（非平稳）"；如果你拒绝零假设（p < 0.05），你的序列是平稳的。如果你未能拒绝，对序列进行差分并再次检验。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A unit root process is like a drunk person's position on a street — where he ends up tomorrow depends entirely on random steps today, with no tendency to return to a starting point. A stationary process is like a person with a rubber band attached — they can wander randomly but get pulled back toward center.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>单位根过程就像一个醉汉在街道上的位置——他明天的位置完全取决于今天的随机步数，没有回到起点的倾向。平稳过程就像一个人系着橡皮筋——他们可以随机游走，但被拉回中心。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always run ADF test before any serious time series modeling. Essential for I(1) series (integrated of order 1 — require one differencing). If p-value > 0.05, you have a unit root; difference the series and test the differenced series. Repeat until the series is I(0) (stationary). Typically, economic and social indicators require one or two differencings.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>在任何严肃的时间序列建模前，总是运行 ADF 检验。对 I(1) 序列（阶数为 1 的积分——需要一次差分）至关重要。如果 p 值 > 0.05，你有一个单位根；对序列进行差分并检验差分序列。重复直到序列是 I(0)（平稳）。通常，经济和社会指标需要一或两次差分。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Crime rates across a city from 1980–2020. A raw ADF test likely fails to reject the null (unit root), so the raw series is non-stationary. Difference it: crime_change_t = crime_t - crime_{t-1}. Retest; usually it's now stationary. Now you can build models predicting crime changes from police funding, demographic shifts, or policy interventions without spurious results.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>城市犯罪率从 1980-2020。原始 ADF 检验可能无法拒绝零假设（单位根），所以原始序列是非平稳的。对其进行差分：crime_change_t = crime_t - crime_{t-1}。重新检验；通常现在是平稳的。现在你可以构建预测犯罪变化的模型，来自警察资金、人口变化或政策干预，而不会产生虚假结果。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Autocorrelation: Past Values Predicting the Present</h3>
+    <h3 data-lang="zh">自相关：过去的值预测现在</h3>
+    <p class="method-desc" data-lang="en">Autocorrelation means a time series is correlated with its own past values. The Autocorrelation Function (ACF) plots this correlation at different lags (1 period, 2 periods, etc.). Partial Autocorrelation (PACF) shows correlation after removing the effect of intermediate lags. High autocorrelation violates the OLS independence assumption and produces underestimated standard errors.</p>
+    <p class="method-desc" data-lang="zh">自相关意味着时间序列与其自身的过去值相关。自相关函数（ACF）绘制不同滞后（1 个周期、2 个周期等）的相关性。偏自相关（PACF）显示移除中间滞后影响后的相关性。高自相关违反 OLS 独立性假设，产生低估的标准误。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A stationary series with high autocorrelation is like a smoothed-out chart — because adjacent points are similar, the series feels "sticky." Low autocorrelation series jump around more; consecutive values are less predictable from the previous one. Looking at ACF/PACF plots is like checking how much yesterday's weather predicts today's.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>具有高自相关的平稳序列就像一个平滑的图表——因为相邻点相似，序列感觉很"粘"。低自相关序列跳跃更多；连续值从前一个值的可预测性更低。查看 ACF/PACF 图就像检查昨天的天气对今天有多大预测力。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always examine ACF/PACF plots for time series data. They're diagnostic tools, not models themselves. Use them to decide between AR(p) and MA(q) or ARIMA models. If ACF decays slowly, you likely need differencing. If PACF cuts off at lag p, you likely need AR(p). Conversely, don't over-interpret a single large spike — look at the overall pattern.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>始终为时间序列数据检查 ACF/PACF 图。它们是诊断工具，本身不是模型。用它们来决定 AR(p) 和 MA(q) 或 ARIMA 模型。如果 ACF 缓慢衰减，你可能需要差分。如果 PACF 在滞后 p 处截断，你可能需要 AR(p)。反之，不要过度解释单个大峰值——查看整体模式。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Monthly voter turnout in a district from 2000–2023. The ACF plot shows significant autocorrelation at lags 1–12 (a year), suggesting seasonal turnout patterns and recent elections predict the next month's turnout. PACF cuts off at lag 1. This suggests AR(1) or seasonal ARIMA(p,d,q)(P,D,Q)_12 model might fit well. A simple OLS ignoring this autocorrelation would underestimate uncertainty in turnout predictions.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>2000-2023 年某地区的月度投票率。ACF 图显示滞后 1-12（一年）的显著自相关，提示季节性投票率和最近选举预测下个月的投票率。PACF 在滞后 1 处截断。这表明 AR(1) 或季节性 ARIMA(p,d,q)(P,D,Q)_12 模型可能很好地拟合。忽视这种自相关的简单 OLS 会低估投票率预测的不确定性。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 2 -->
+<div class="section" id="ts-s2">
+  <h2 data-lang="en">ARIMA and Lagged Variables</h2>
+  <h2 data-lang="zh">ARIMA 与滞后变量</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You need to predict a time series outcome while accounting for its autocorrelation. Standard regression ignores that today depends on yesterday. ARIMA models do this automatically, but require specifying p (lag order), d (differencing), and q (moving average order). For policy effects, you need to know not just whether a policy works, but how long it takes — distributed lag models address this directly.</p>
+    <p data-lang="zh"><strong>问题：</strong>你需要预测时间序列结果，同时考虑其自相关。标准回归忽视了今天取决于昨天这一点。ARIMA 模型自动处理这个问题，但需要指定 p（滞后阶数）、d（差分）和 q（移动平均阶数）。对于政策效应，你需要知道不仅仅是政策是否有效，还有它需要多长时间才能生效——分布式滞后模型直接处理这个问题。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">ARIMA: Autoregressive Integrated Moving Average</h3>
+    <h3 data-lang="zh">ARIMA：自回归积分移动平均</h3>
+    <p class="method-desc" data-lang="en">ARIMA(p,d,q) combines three components: AR(p) uses past values to predict the present, MA(q) uses past errors, and I(d) means "difference d times to make stationary." Identify p and q from ACF/PACF plots. Run ADF test to find d (usually 0 or 1 for economic data). Use information criteria (AIC/BIC) to choose among candidate models. Seasonal series use ARIMA(p,d,q)(P,D,Q)_s with seasonal lags.</p>
+    <p class="method-desc" data-lang="zh">ARIMA(p,d,q) 结合三个分量：AR(p) 使用过去值预测现在，MA(q) 使用过去的误差，I(d) 表示"差分 d 次以使其平稳"。从 ACF/PACF 图中识别 p 和 q。运行 ADF 检验找到 d（经济数据通常为 0 或 1）。使用信息准则（AIC/BIC）在候选模型中选择。季节性序列使用具有季节性滞后的 ARIMA(p,d,q)(P,D,Q)_s。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> An AR(1) model predicting tomorrow's temperature from today's is like saying "tomorrow will be about as warm as today, plus or minus random variation." MA(1) is like "today's surprise (deviation from average) affects tomorrow." ARIMA's I component is like acknowledging your thermometer was badly calibrated (needs differencing) before making predictions.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>从今天的温度预测明天的 AR(1) 模型就像说"明天的温度大约和今天一样，加或减随机变化"。MA(1) 就像"今天的意外（偏离平均值）影响明天"。ARIMA 的 I 分量就像承认你的温度计校准不好（需要差分）然后进行预测。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use ARIMA for univariate forecasting of stationary (or differenced) time series with clear autocorrelation. Don't use ARIMA if you have external covariates predicting Y; use ARIMAX instead (ARIMA with exogenous variables). Don't specify complex seasonal patterns without enough historical data (need at least 2–3 full cycles). Don't use ARIMA for forecasting far into the future — confidence intervals widen and predictions revert to the mean.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>对具有明显自相关的平稳（或差分）时间序列进行单变量预测时使用 ARIMA。如果你有外部协变量预测 Y，不要使用 ARIMA；改用 ARIMAX（带外生变量的 ARIMA）。没有足够历史数据的情况下不要指定复杂的季节性模式（需要至少 2-3 个完整周期）。不要使用 ARIMA 来预测遥远的未来——置信区间会扩大，预测会回归平均值。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Monthly count of new political parties registering in a country, 2005–2023. Plot shows seasonal peaks (registration deadlines) and a trend upward. ACF decays slowly, PACF spikes at lag 1 and 12. Difference once (d=1), try ARIMA(1,1,1)(1,1,1)_12. This captures the upward trend, seasonal registration patterns, and recent momentum. Forecasting three months ahead shows expected registrations; a sharp deviation from this forecast signals a political event or policy change.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>2005-2023 年一个国家新政党注册数量的月度计数。图表显示季节性峰值（注册截止期）和向上趋势。ACF 缓慢衰减，PACF 在滞后 1 和 12 处出现峰值。差分一次（d=1），尝试 ARIMA(1,1,1)(1,1,1)_12。这捕捉到上升趋势、季节性注册模式和最近的势头。预测前三个月显示预期注册数；偏离此预测的急剧变化表示政治事件或政策变化。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Distributed Lag Models: When Policy Effects Take Time</h3>
+    <h3 data-lang="zh">分布式滞后模型：当政策效应需要时间</h3>
+    <p class="method-desc" data-lang="en">A distributed lag model allows X to affect Y not just contemporaneously but also at future periods: Y_t = α + β_0*X_t + β_1*X_{t-1} + β_2*X_{t-2} + ε_t. Each lag has its own coefficient. β_0 is the immediate effect; β_1, β_2, etc. are delayed effects. The sum of all lags is the long-run cumulative effect. This directly models the substantive reality that policies (fiscal stimulus, interest rate changes, regulations) take time to affect behavior.</p>
+    <p class="method-desc" data-lang="zh">分布式滞后模型允许 X 不仅在同期影响 Y，还在未来时期影响：Y_t = α + β_0*X_t + β_1*X_{t-1} + β_2*X_{t-2} + ε_t。每个滞后有其自己的系数。β_0 是立即效应；β_1, β_2 等是延迟效应。所有滞后的总和是长期累积效应。这直接建模政策（财政刺激、利率变化、法规）需要时间来影响行为这一实质性现实。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Predicting ice cream sales from temperature is immediate — hot day, sell more ice cream today. Predicting employment from a stimulus check takes longer — people need time to decide to change jobs, spend money, or increase hours. A distributed lag captures this: the stimulus check affects employment today a little (hiring anticipation), tomorrow more (spending begins), and next month even more (new hiring fully realized).</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>从温度预测冰淇淋销售是立即的——热天，今天卖更多冰淇淋。从刺激支票预测就业需要更长时间——人们需要时间来决定是否改变工作、支出金钱或增加小时数。分布式滞后捕捉这个：刺激支票今天对就业的影响有点（招聘预期），明天更多（支出开始），下个月甚至更多（新招聘充分实现）。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use distributed lag models when theory or prior research suggests delayed effects (almost all policy effects in social science!). Include enough lags to capture the full adjustment period — typically 6–12 months for economic/political variables. Use Almon lag (polynomial lag) to reduce parameters if you have many lags. Don't use if you have few time periods relative to lags (leads to multicollinearity). Always check autocorrelation in residuals — you may need ARIMA residuals.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>当理论或先前研究表明延迟效应时使用分布式滞后模型（社会科学中几乎所有政策效应都是这样！）。包括足够的滞后以捕捉完整的调整期——对于经济/政治变量通常为 6-12 个月。如果你有许多滞后，使用 Almon 滞后（多项式滞后）来减少参数。如果相对于滞后的时间段很少，不要使用（导致多重共线性）。始终检查残差中的自相关——你可能需要 ARIMA 残差。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> How does unemployment rate affect presidential approval? Approval may depend on recent unemployment (last quarter), not-so-recent (last year), and cumulative experience (entire term). Fit: Approval_t = α + β_0*Unemployment_t + β_1*Unemployment_{t-1} + ... + β_11*Unemployment_{t-11} + ε_t. β_0 might be small (voters don't blame the president for sudden shocks), β_3 larger (people adjust expectations), β_11 captures effects of sustained joblessness. Summing coefficients gives total effect — "each 1% unemployment point reduces approval by 0.8% after full adjustment".</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>失业率如何影响总统支持率？支持率可能取决于近期失业（上一季度）、不那么近期（去年）和累积经验（整个任期）。拟合：Approval_t = α + β_0*Unemployment_t + β_1*Unemployment_{t-1} + ... + β_11*Unemployment_{t-11} + ε_t。β_0 可能很小（选民不会为突然的冲击责怪总统），β_3 更大（人们调整预期），β_11 捕捉持续失业的效应。求和系数给出总效应——"每 1% 失业率点在充分调整后将支持率降低 0.8%"。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Seasonal Adjustment</h3>
+    <h3 data-lang="zh">季节调整</h3>
+    <p class="method-desc" data-lang="en">Many social and economic series have strong seasonal patterns (retail sales spike before Christmas, unemployment falls during summer employment, voting turnout varies by election type). Seasonal adjustment removes this predictable component, leaving trend and irregular variation. X-13ARIMA-SEATS is the U.S. standard; simpler approaches include computing year-over-year changes or using seasonal dummies in regression. Seasonally adjusted data makes it easier to spot real changes from cyclical noise.</p>
+    <p class="method-desc" data-lang="zh">许多社会和经济序列有强烈的季节性模式（圣诞节前零售销售激增，夏季就业期间失业率下降，投票率因选举类型而变化）。季节调整移除这个可预测的分量，保留趋势和不规则变化。X-13ARIMA-SEATS 是美国标准；更简单的方法包括计算年度变化或在回归中使用季节虚拟变量。季节调整后的数据使得从周期性噪声中识别真实变化变得更容易。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Seasonal adjustment is like removing the effect of time-of-day from electricity usage — industrial demand varies predictably throughout the day, but the important signal is whether demand is growing or shrinking beyond the seasonal pattern.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>季节调整就像从电力使用中去除时间段的影响——工业需求在一整天内可预测地变化，但重要的信号是需求在超越季节性模式的情况下是否增长或收缩。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use seasonal adjustment when your data has regular intra-year patterns and you want to focus on trend/cyclical changes. Use government-provided seasonally adjusted data (e.g., BLS employment figures) when available. If you adjust yourself, document your method; don't over-adjust or the data loses information. Don't discard original data; keep both raw and adjusted for robustness checks.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>当你的数据有定期的年内模式，并且你想关注趋势/周期性变化时，使用季节调整。在可用时使用政府提供的季节调整后数据（例如，BLS 就业数据）。如果你自己调整，请记录你的方法；不要过度调整，否则数据会丢失信息。不要丢弃原始数据；保留原始数据和调整后数据以进行稳健性检查。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Monthly count of immigration applications by type (work, family, humanitarian). Raw data shows sharp peaks in certain months (application deadlines, bureaucratic cycles). Compare an analysis of "immigration is increasing" using raw vs. seasonally adjusted data — the adjusted version reveals whether the trend is real or merely reflecting seasonal bulges. Policy impacts are more visible in adjusted data.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>按类型（工作、家庭、人道主义）分类的移民申请的月度计数。原始数据显示某些月份的急剧高峰（申请截止期、官僚周期）。比较使用原始数据与季节调整后数据分析"移民在增加"——调整后的版本显示趋势是否真实，还是仅反映季节性激增。政策影响在调整后的数据中更明显。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 3 -->
+<div class="section" id="ts-s3">
+  <h2 data-lang="en">Panel Data: Fixed Effects and Random Effects</h2>
+  <h2 data-lang="zh">面板数据：固定效应与随机效应</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You observe multiple units (countries, states, firms, individuals) over multiple time periods. Standard regression ignores both dimensions of the data — that observations within a unit are correlated, and that you can estimate within-unit changes. Panel data methods decompose variance into within-unit and between-unit components. Fixed effects exploits within-unit variation, eliminating all time-invariant confounders automatically. The cost: you cannot estimate effects of time-invariant variables (race, gender, geography).</p>
+    <p data-lang="zh"><strong>问题：</strong>你观察多个单位（国家、州、公司、个人）在多个时间段内。标准回归忽视了数据的两个维度——同一单位内的观测相关，以及你可以估计单位内变化。面板数据方法将方差分解为单位内和单位间分量。固定效应利用单位内变化，自动消除所有时间不变的混淆变量。成本：你无法估计时间不变变量（种族、性别、地理）的效应。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Panel Data Structure and the Three Estimators</h3>
+    <h3 data-lang="zh">面板数据结构与三个估计器</h3>
+    <p class="method-desc" data-lang="en">Panel data has i (unit) and t (time) subscripts: Y_{it}. You can estimate three models: (1) Pooled OLS treats all observations as independent, ignoring structure; (2) Random Effects assumes unit effects are uncorrelated with X, using both within and between variation; (3) Fixed Effects (FE) includes a separate intercept for each unit, exploiting only within-unit variation. Fixed effects removes all time-invariant confounders (unobserved heterogeneity) by demeaning variables within each unit: Y_{it} - Ȳ_i = β(X_{it} - X̄_i) + (ε_{it} - ε̄_i).</p>
+    <p class="method-desc" data-lang="zh">面板数据有 i（单位）和 t（时间）下标：Y_{it}。你可以估计三个模型：(1) 池化 OLS 将所有观测视为独立，忽视结构；(2) 随机效应假设单位效应与 X 不相关，使用单位内和单位间变化；(3) 固定效应（FE）为每个单位包括单独的截距，仅利用单位内变化。固定效应通过在每个单位内对变量进行均值修正来消除所有时间不变的混淆变量：Y_{it} - Ȳ_i = β(X_{it} - X̄_i) + (ε_{it} - ε̄_i)。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Imagine comparing wage growth across 50 students tracked for 4 years. Pooled OLS treats all 200 observations as independent students — nonsense, since they're the same people. Fixed effects is like tracking each person's change over time and comparing "did person A grow faster than their own average?" This removes all stable differences (ability, background, preferences). Random effects is a middle ground: assumes stable differences are random noise, not systematic (rarely true in social science).</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>想象比较 50 个学生在 4 年内的工资增长情况。池化 OLS 将所有 200 个观测视为独立学生——这是荒谬的，因为他们是同一个人。固定效应就像追踪每个人的随时间变化并比较"个人 A 是否比他们自己的平均增长得更快？"这消除了所有稳定的差异（能力、背景、偏好）。随机效应是一个中间立场：假设稳定的差异是随机噪声，而不是系统性的（在社会科学中很少真实）。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use pooled OLS only if units are truly independent (rare in panel data). Use RE if time-invariant confounders are uncorrelated with X (hard to justify). Use FE when confounders exist (most realistic). FE is robust to all time-invariant unobserved heterogeneity but cannot estimate effects of time-invariant variables. Run Hausman test (H0: RE is consistent) to choose between FE and RE; usually reject H0 and use FE. Always cluster standard errors by unit.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>只有当单位真正独立时才使用池化 OLS（面板数据中很少见）。如果时间不变混淆变量与 X 不相关，使用 RE（难以证明）。当混淆变量存在时使用 FE（最现实）。FE 对所有时间不变未观察到的异质性都是稳健的，但无法估计时间不变变量的效应。运行 Hausman 检验（H0：RE 一致）以在 FE 和 RE 之间选择；通常拒绝 H0 并使用 FE。始终按单位聚类标准误。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Effect of unemployment on crime rates across U.S. states (2000–2020, 51 units × 21 years = 1,071 observations). Each state has different baseline crime rates due to geography, culture, institutions — time-invariant confounders. Pooled OLS comparing states ignores these, producing biased estimates. Fixed effects demeaning removes these stable differences and estimates "when state i's unemployment rises by 1%, does crime rise?" The Hausman test rejects RE, supporting FE. Result: within each state, 1% unemployment increase → 2.3% crime increase (controlling for time trends with year dummies).</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>失业对美国各州犯罪率的影响（2000-2020，51 个单位 × 21 年 = 1,071 个观测）。由于地理、文化、制度，每个州有不同的基线犯罪率——时间不变的混淆变量。池化 OLS 比较州会忽视这些，产生有偏估计。固定效应均值修正移除这些稳定的差异，估计"当州 i 的失业率上升 1% 时，犯罪是否上升？"Hausman 检验拒绝 RE，支持 FE。结果：在每个州内，1% 失业率增加 → 2.3% 犯罪增加（使用年份虚拟变量控制时间趋势）。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Two-Way Fixed Effects and Time Trends</h3>
+    <h3 data-lang="zh">双向固定效应与时间趋势</h3>
+    <p class="method-desc" data-lang="en">Standard fixed effects (one-way) includes a unit dummy for each of i units. Two-way FE adds time dummies: Y_{it} = μ_i + γ_t + β*X_{it} + ε_{it}. The μ_i absorbs all time-invariant unit differences; γ_t absorbs all unit-invariant time shocks (recessions, wars, policy changes affecting all units). This is powerful: you're identifying effects from within-unit, within-time variation. Estimate with least-squares dummy variable (LSDV) regression or equivalently demeaning (within-group transformation).</p>
+    <p class="method-desc" data-lang="zh">标准固定效应（单向）为每个 i 单位包括一个单位虚拟变量。双向 FE 添加时间虚拟变量：Y_{it} = μ_i + γ_t + β*X_{it} + ε_{it}。μ_i 吸收所有时间不变的单位差异；γ_t 吸收所有单位不变的时间冲击（衰退、战争、影响所有单位的政策变化）。这很强大：你从单位内、时间内的变化中识别效应。用最小二乘虚拟变量（LSDV）回归或等价的均值修正（组内变换）估计。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> One-way FE is like asking "does a student learn more when teacher improves?" by comparing the same student over years. Two-way FE also accounts for "was 2009 worse than 2010 for all students?" (recession effects). You're now estimating the teacher effect controlling for macroeconomic shocks.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>单向 FE 就像通过比较同一学生在不同年份来问"当老师改进时学生学得更多吗？"。双向 FE 还考虑了"2009 年对所有学生都比 2010 年差吗？"（衰退效应）。你现在在控制宏观经济冲击的情况下估计教师效应。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use two-way FE when time effects are important (most panel data contexts). Include year dummies or time trend. Don't include both dummies and a linear time trend (collinearity). With few time periods, two-way FE costs many degrees of freedom; consider one-way FE or differencing. Watch for high multicollinearity between X and time dummies if X trends over time.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>当时间效应很重要时使用双向 FE（大多数面板数据情况）。包括年份虚拟变量或时间趋势。不要同时包括虚拟变量和线性时间趋势（共线性）。时间周期少时，双向 FE 花费许多自由度；考虑单向 FE 或差分。如果 X 随时间趋势，要注意 X 与时间虚拟变量之间的高多重共线性。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Effect of electoral competitiveness on voter turnout across districts (1996–2020). Turnout varies by district (safe vs. competitive) and by year (presidential vs. midterm). Two-way FE: Turnout_{it} = μ_i + γ_t + β*Competitiveness_{it} + ε_{it}. μ_i controls for stable district differences (geography, demographics). γ_t controls for cycle differences (presidential elections have higher turnout). β estimates whether competitive races boost turnout within the same district, net of all these controls. Result: moving from safe to competitive increases turnout by 3.7 percentage points.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>选举竞争性对各地区投票率的影响（1996-2020）。投票率因地区而异（安全与竞争）并因年份而异（总统与中期）。双向 FE：Turnout_{it} = μ_i + γ_t + β*Competitiveness_{it} + ε_{it}。μ_i 控制稳定的地区差异（地理、人口统计）。γ_t 控制周期差异（总统选举投票率更高）。β 估计在同一地区内，竞争性竞选是否增加投票率，净所有这些控制。结果：从安全改为竞争增加投票率 3.7 个百分点。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Clustered Standard Errors</h3>
+    <h3 data-lang="zh">聚类标准误</h3>
+    <p class="method-desc" data-lang="en">Panel data violates the OLS independence assumption within units: observations from the same unit are correlated. Standard OLS standard errors are too small. Always cluster standard errors at the unit level (or possibly both unit and time, for two-way clustering). Clustering adjusts standard errors and confidence intervals upward, making hypothesis tests more conservative. This is essential — many published results become insignificant when standard errors are properly clustered.</p>
+    <p class="method-desc" data-lang="zh">面板数据在单位内违反 OLS 独立性假设：来自同一单位的观测相关。标准 OLS 标准误太小。始终在单位级别聚类标准误（或可能两向聚类，用于两向聚类）。聚类会向上调整标准误和置信区间，使假设检验更保守。这是必要的——当正确聚类标准误时，许多已发布的结果变为不显著。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Ignoring clustering is like surveying 100 people, but 50 are married couples — you don't have 100 independent opinions, closer to 75. Clustering adjusts inference to acknowledge the real degrees of freedom.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>忽视聚类就像调查 100 人，但 50 人是已婚夫妇——你没有 100 个独立意见，接近 75 个。聚类调整推论以承认真实的自由度。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always cluster standard errors in panel data. Cluster by the unit dimension (units observed repeatedly). If analyzing spatial or temporal correlation beyond units, use two-way clustering (by unit and time). Use the bootstrap to check robustness of clustered standard errors, especially with few clusters.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>在面板数据中始终聚类标准误。按单位维度聚类（重复观察的单位）。如果分析超出单位的空间或时间相关性，使用两向聚类（按单位和时间）。使用自助法检查聚类标准误的稳健性，尤其是聚类很少时。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Analyzing 50 countries over 10 years (500 observations) using FE regression. OLS standard errors show t-stat = 2.8 (p < 0.01), appearing highly significant. Clustering by country: t-stat = 1.3 (p > 0.10), not significant. The first result was an artifact of ignoring within-country dependence. Always report clustered standard errors; your readers will thank you.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>使用 FE 回归分析 50 个国家在 10 年间（500 个观测）。OLS 标准误显示 t 统计量 = 2.8（p < 0.01），显示高度显著。按国家聚类：t 统计量 = 1.3（p > 0.10），不显著。第一个结果是忽视国家内依赖的假象。始终报告聚类标准误；你的读者会感谢你。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 4 -->
+<div class="section" id="ts-s4">
+  <h2 data-lang="en">Granger Causality and Vector Autoregression</h2>
+  <h2 data-lang="zh">Granger 因果与向量自回归</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You have two or more time series that move together (unemployment and crime, inflation and interest rates, political polarization and legislative gridlock). Does one cause the other, or are they jointly responding to a shock? Granger causality tests whether lagged values of X help predict Y beyond Y's own history. Vector Autoregression (VAR) extends this to a system where each variable predicts every other variable — capturing feedback loops and dynamic relationships.</p>
+    <p data-lang="zh"><strong>问题：</strong>你有两个或多个时间序列一起移动（失业和犯罪、通货膨胀和利率、政治两极分化和立法僵局）。一个会导致另一个，还是它们对冲击的共同反应？Granger 因果检验 X 的滞后值是否有助于预测 Y 超过 Y 自己的历史。向量自回归（VAR）将其扩展到一个每个变量预测所有其他变量的系统——捕捉反馈循环和动态关系。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Granger Causality: Predictive Precedence</h3>
+    <h3 data-lang="zh">Granger 因果：预测优先</h3>
+    <p class="method-desc" data-lang="en">Granger causality tests whether lagged X improves prediction of Y beyond Y's own lags. Technically: regress Y_t on lags of Y only, then on lags of both Y and X. If adding X lags significantly reduces residual sum of squares, X "Granger-causes" Y. Important: this is not true causation — it's predictive precedence. X must precede Y and help forecast Y, but this doesn't prove X causes Y. Confounders, omitted variables, or bidirectional causality can create false results.</p>
+    <p class="method-desc" data-lang="zh">Granger 因果检验 X 的滞后值是否改进 Y 的预测超过 Y 自己的滞后。技术上：仅对 Y 的滞后回归 Y_t，然后对 Y 和 X 的滞后都回归。如果添加 X 滞后显著减少残差平方和，X "Granger-导致" Y。重要：这不是真正的因果——它是预测优先。X 必须先于 Y 并有助于预测 Y，但这不能证明 X 导致 Y。混淆变量、遗漏变量或双向因果关系可能产生错误结果。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Just because rooster crowing precedes sunrise doesn't mean the rooster causes the sunrise. Granger causality is like saying "the rooster's crow helps predict sunrise" — true, but not causal. In social science, lag-X improving forecast of Y is suggestive but not conclusive.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>仅仅因为公鸡啼鸣先于日出并不意味着公鸡导致日出。Granger 因果就像说"公鸡的啼鸣有助于预测日出"——真的，但不是因果。在社会科学中，滞后 X 改进 Y 的预测是暗示性的，但不是结论性的。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use Granger causality to assess whether X helps forecast Y, useful for predictive models. Don't interpret as causal without theory; use it to generate hypotheses, not prove them. Test bidirectionality (does Y also Granger-cause X?), which is common. Include enough lags (4–12 months, or 4–8 quarters for macro data) but don't over-fit. Use AIC/BIC to select lag length.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>使用 Granger 因果来评估 X 是否有助于预测 Y，对预测模型很有用。没有理论的情况下不要解释为因果；用它生成假设，而不是证明它们。检验双向性（Y 是否也 Granger-导致 X？），这很常见。包括足够的滞后（4-12 个月，或宏观数据为 4-8 个季度），但不要过度拟合。使用 AIC/BIC 选择滞后长度。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Does unemployment Granger-cause crime rates? Regress monthly crime on 12 months of lagged crime; R²=0.88. Now add 12 months of lagged unemployment; R² improves to 0.91. F-test for whether the 12 unemployment lags jointly differ from zero: p=0.003. Unemployment Granger-causes crime. But check: does crime also Granger-cause unemployment (reverse causality)? If yes, their relationship is bidirectional feedback — unemployment leads to crime, which may signal neighborhood decline, further damaging economic prospects. VAR captures this mutual dynamics.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>失业是否 Granger-导致犯罪率？对 12 个月的滞后犯罪回归月度犯罪；R²=0.88。现在添加 12 个月的滞后失业；R² 改进到 0.91。失业滞后是否共同不同于零的 F 检验：p=0.003。失业 Granger-导致犯罪。但检查：犯罪是否也 Granger-导致失业（反向因果）？如果是，它们的关系是双向反馈——失业导致犯罪，这可能表示社区衰退，进一步损害经济前景。VAR 捕捉这种相互动态。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Vector Autoregression (VAR)</h3>
+    <h3 data-lang="zh">向量自回归（VAR）</h3>
+    <p class="method-desc" data-lang="en">VAR is a system of equations where each endogenous variable is regressed on its own lags and lags of all other variables: Y_t = A_1*Y_{t-1} + A_2*Y_{t-2} + ... + ε_t. A VAR(p) has p lags. Each equation has the same lag structure (balanced panel assumption). You estimate it by running OLS on each equation separately (if errors are uncorrelated across equations, equivalent to GLS). Main appeal: captures feedback loops and dynamic interactions. Impulse response functions show what happens to all variables when one gets a one-time shock.</p>
+    <p class="method-desc" data-lang="zh">VAR 是一个方程组，其中每个内生变量按其自身的滞后和所有其他变量的滞后进行回归：Y_t = A_1*Y_{t-1} + A_2*Y_{t-2} + ... + ε_t。VAR(p) 有 p 个滞后。每个方程有相同的滞后结构（平衡面板假设）。你通过对每个方程分别运行 OLS 来估计它（如果跨方程的误差不相关，等价于 GLS）。主要吸引力：捕捉反馈循环和动态交互。脉冲响应函数显示当一个变量获得一次性冲击时所有变量发生的事情。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A conversation between two people — what you say affects what I say next, which affects what you say after that. A bivariate VAR captures this mutual influence. Adding more variables (group conversation) extends the analogy: each speaker's next contribution depends on all recent speakers, and everyone responds to external shocks (news).</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>两个人之间的对话——你说的话影响我接下来说的话，这影响你之后说的话。双变量 VAR 捕捉这种相互影响。添加更多变量（群组对话）扩展类比：每个发言人的下一个贡献取决于所有最近的发言人，每个人都对外部冲击（新闻）做出反应。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use VAR to model dynamic interactions among multiple time series, each endogenous. VAR assumes all variables are stationary (difference non-stationary variables first). For forecasting, VAR can be useful. For causal inference, identify the structural VAR (SVAR) to impose economic/political theory on the ordering and contemporaneous effects; this requires assumptions about causality direction. Don't use VAR if you have exogenous variables (policy announcements, external prices) — use ARIMAX or dynamic regression instead.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>使用 VAR 建模多个时间序列的动态交互，每个都是内生的。VAR 假设所有变量都是平稳的（先对非平稳变量进行差分）。对于预测，VAR 可能很有用。对于因果推论，识别结构 VAR（SVAR）以对排序和同期效应强加经济/政治理论；这需要对因果方向的假设。如果你有外生变量（政策公告、外部价格），不要使用 VAR——改用 ARIMAX 或动态回归。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> VAR(4) of inflation and unemployment (Phillips curve dynamics). The two equations: Inflation_t = a_1*Inflation_{t-1} + a_2*Unemployment_{t-1} + ε1_t and Unemployment_t = b_1*Inflation_{t-1} + b_2*Unemployment_{t-1} + ε2_t. Impulse response: a positive unemployment shock increases inflation initially (labor shortage pushes wages), then both adjust. Forecast error variance decomposition: how much of inflation's forecast variance is due to unemployment shocks vs. inflation shocks? VAR answers these dynamic questions that single-equation regressions cannot.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>通货膨胀和失业的 VAR(4)（菲利普斯曲线动态）。两个方程：Inflation_t = a_1*Inflation_{t-1} + a_2*Unemployment_{t-1} + ε1_t 和 Unemployment_t = b_1*Inflation_{t-1} + b_2*Unemployment_{t-1} + ε2_t。脉冲响应：正失业冲击初始增加通货膨胀（劳动力短缺推动工资），然后两者都调整。预测误差方差分解：通货膨胀预测方差中有多少是由于失业冲击与通货膨胀冲击？VAR 回答这些单方程回归无法回答的动态问题。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Impulse Response Functions and Structural VAR</h3>
+    <h3 data-lang="zh">脉冲响应函数与结构 VAR</h3>
+    <p class="method-desc" data-lang="en">An impulse response function (IRF) traces the dynamic effect of a one-time shock to one variable on all variables in the system. Shock unemployment by 1 percentage point; track how inflation, interest rates, investment respond over 12 months. Structural VAR (SVAR) imposes theory-based restrictions on contemporaneous relationships (how variables respond within the same period). A reduced-form VAR estimates what the data show; SVAR recovers causal effects if you make identifying assumptions (e.g., "monetary policy affects unemployment contemporaneously, but unemployment doesn't affect policy within the quarter").</p>
+    <p class="method-desc" data-lang="zh">脉冲响应函数（IRF）追踪对一个变量的一次性冲击对系统中所有变量的动态效应。失业冲击增加 1 个百分点；追踪通货膨胀、利率、投资在 12 个月内的反应。结构 VAR（SVAR）对同期关系（变量在同一时期内的反应方式）施加基于理论的限制。简化形式 VAR 估计数据显示的内容；如果你进行识别假设，SVAR 恢复因果效应（例如，"货币政策在同期影响失业，但失业不会在季度内影响政策"）。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> An IRF is like asking "what happens in a town after a hurricane?" — track recovery path for weeks/months. Order matters: did the hurricane destroy homes, reducing housing supply and raising prices (one causal path)? Or did it destroy the factory, raising unemployment and reducing demand (different path)? SVAR imposes the correct causal order.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>IRF 就像问"飓风后城镇发生什么？"——追踪数周/数月的恢复路径。顺序很重要：飓风摧毁了房屋，减少了住房供应并提高了价格（一个因果路径）？或者它摧毁了工厂，增加了失业和减少了需求（不同的路径）？SVAR 施加了正确的因果顺序。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> IRFs are descriptive — always informative for understanding dynamic system behavior. SVAR requires strong identifying assumptions; only use if you have economic/political theory justifying the causal ordering. Avoid data-mining the causal order. Document your identifying assumptions clearly and test robustness to alternative orderings. Prefer impulse response analysis over point estimates when your goal is understanding dynamics rather than precise parameter values.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>IRF 是描述性的——对理解动态系统行为总是有用的。SVAR 需要强大的识别假设；只有在你有经济/政治理论证明因果顺序时才使用。避免数据挖掘因果顺序。清楚地记录你的识别假设并测试对替代顺序的稳健性。当你的目标是理解动态而不是精确的参数值时，倾向于脉冲响应分析而不是点估计。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Political polarization and legislative effectiveness. A shock to polarization (sudden rise) — does this reduce the bill passage rate (gridlock)? An IRF shows: initial decline in bills passed (lag 0–2 quarters), gradual recovery as new norms adjust (lag 3–8 quarters), possibly settling at lower equilibrium. Structural assumptions: assume polarization can shock legislation contemporaneously (senators refuse to cooperate), but legislation doesn't shift polarization within a quarter (needs time). This causal ordering is plausible given legislative timing.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>政治两极分化和立法有效性。对两极分化的冲击（突然上升）——这是否会减少法案通过率（僵局）？IRF 显示：初始下降法案通过（滞后 0-2 季度），随着新规范调整逐步恢复（滞后 3-8 季度），可能在较低的均衡处结算。结构假设：假设两极分化可以同期冲击立法（参议员拒绝合作），但立法不会在季度内改变两极分化（需要时间）。鉴于立法时间，这个因果顺序是合理的。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 5 -->
+<div class="section" id="ts-s5">
+  <h2 data-lang="en">Cointegration and Error Correction: When Trends Are Real</h2>
+  <h2 data-lang="zh">协整与误差修正：当趋势是真实的</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> GDP and government spending both trend upward. Regressing one on the other shows a strong relationship — but is it real or just two rising lines? Differencing removes the relationship entirely, losing long-run information. Cointegration offers a third way: if two non-stationary series share a common trend (their difference is stationary), they have a genuine long-run equilibrium relationship. Error correction models capture both the long-run link and short-run adjustment dynamics.</p>
+    <p data-lang="zh"><strong>问题：</strong>GDP 和政府支出都向上趋势。一个对另一个的回归显示很强的关系——但这是真实的还是只是两条上升的线？差分完全移除了关系，丢失了长期信息。协整提供了第三种方式：如果两个非平稳序列共享共同趋势（它们的差是平稳的），它们有真正的长期均衡关系。误差修正模型捕捉长期联系和短期调整动态。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Spurious Regression vs. Cointegration</h3>
+    <h3 data-lang="zh">虚假回归与协整</h3>
+    <p class="method-desc" data-lang="en">Regressing two independent random walks produces significant-looking but meaningless results (spurious regression). R² is high, t-statistics are large, but the relationship is fiction — two unrelated trends happen to go the same direction. The Engle-Granger test checks: regress Y on X, take residuals, and test whether those residuals are stationary (ADF test). If residuals are stationary, Y and X are cointegrated — they share a long-run equilibrium. Deviations from this equilibrium are temporary; the system self-corrects. The Johansen test extends this to multiple variables, testing how many cointegrating relationships exist in a system.</p>
+    <p class="method-desc" data-lang="zh">对两个独立随机游走进行回归会产生看似显著但毫无意义的结果（虚假回归）。R² 很高，t 统计量很大，但关系是虚构的——两个无关趋势碰巧朝同一方向。Engle-Granger 检验：对 X 回归 Y，取残差，检验残差是否平稳（ADF 检验）。如果残差平稳，Y 和 X 是协整的——共享长期均衡。偏离均衡是暂时的；系统自我修正。Johansen 检验将此扩展到多个变量，检验系统中存在多少个协整关系。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Two dogs on separate leashes can wander independently — that's spurious correlation (both happen to walk right). Two dogs on the same leash wander but can't get too far apart — that's cointegration. The leash (equilibrium relationship) pulls them back together whenever they drift apart. The error correction is the tug of the leash.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>两只分别牵着的狗可以独立游走——这是虚假相关（两只都碰巧向右走）。两只在同一条皮带上的狗游走但不能离太远——这是协整。皮带（均衡关系）在它们漂移分开时把它们拉回来。误差修正就是皮带的拉扯。</div>
+    <div class="method-when" data-lang="en"><strong>When to use:</strong> When both series are I(1) (non-stationary, have unit roots) and theory suggests a long-run equilibrium (income and consumption, government spending and revenue, imports and exports). <strong>When NOT to use:</strong> When series are I(0) (already stationary) — just use standard regression. When series have different orders of integration (I(1) and I(2)) — cointegration doesn't apply in the standard sense.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用：</strong>当两个序列都是 I(1)（非平稳，有单位根）且理论暗示长期均衡时（收入与消费、政府支出与收入、进口与出口）。<strong>何时不用：</strong>当序列是 I(0)（已平稳）——直接用标准回归。当序列有不同积分阶数（I(1) 和 I(2)）——协整在标准意义上不适用。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Error Correction Models: Short-Run and Long-Run Together</h3>
+    <h3 data-lang="zh">误差修正模型：短期与长期共存</h3>
+    <p class="method-desc" data-lang="en">Once you've established cointegration, the Error Correction Model (ECM) captures both dynamics. The ECM regresses the change in Y on: (1) lagged changes in X (short-run effects), and (2) the lagged error correction term — the residual from the cointegrating regression (how far the system was from equilibrium last period). The coefficient on the error correction term (α) should be negative: when the system is above equilibrium, it adjusts downward. A larger |α| means faster adjustment. ECM lets you answer: "How much of a shock persists?" and "How quickly does the system return to equilibrium?"</p>
+    <p class="method-desc" data-lang="zh">建立协整后，误差修正模型（ECM）同时捕捉两种动态。ECM 对 Y 的变化回归于：（1）X 的滞后变化（短期效应），和（2）滞后误差修正项——协整回归的残差（上一期系统偏离均衡多远）。误差修正项的系数（α）应为负：当系统高于均衡时，它向下调整。|α| 越大意味着调整越快。ECM 让你回答："冲击有多少持续？"和"系统多快回到均衡？"</p>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Government spending and tax revenue in a country (1960–2020). Both are I(1). Engle-Granger test finds cointegration (residuals are stationary). ECM: ΔRevenue_t = α(Revenue_{t-1} − β*Spending_{t-1}) + γ*ΔSpending_t + ε_t. The α = −0.35 means 35% of the gap between revenue and spending is corrected each year. γ = 0.20 means a sudden spending increase immediately raises revenue by 20% of the increase (short-run fiscal multiplier). The long-run multiplier β = 0.85 says that for every dollar of permanent spending increase, revenue eventually rises by 85 cents.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>一个国家的政府支出和税收收入（1960-2020）。两者都是 I(1)。Engle-Granger 检验发现协整（残差平稳）。ECM：ΔRevenue_t = α(Revenue_{t-1} − β*Spending_{t-1}) + γ*ΔSpending_t + ε_t。α = −0.35 意味着收入和支出之间的差距每年修正 35%。γ = 0.20 意味着突然的支出增加立即使收入提高增加额的 20%（短期财政乘数）。长期乘数 β = 0.85 说每一美元永久支出增加，收入最终增加 85 美分。</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
+<!-- GUIDES -->
+<div class="section" id="ts-guides">
+  <h2 data-lang="en">Guides</h2>
+  <h2 data-lang="zh">配套指南</h2>
+  <div class="m-list">
+    <a class="m-card" href="/methods/guides/reg-ts-panel.html">
+      <div class="m-num">▶</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Panel Data in R: plm & fixest</div>
+        <div class="m-title" data-lang="zh">面板数据 R 实战：plm &amp; fixest</div>
+        <div class="m-desc" data-lang="en">Fixed effects, random effects, and Hausman test — complete R workflow with real data.</div>
+        <div class="m-desc" data-lang="zh">固定效应、随机效应与 Hausman 检验——完整 R 工作流加真实数据。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
+    <a class="m-card" href="/methods/guides/reg-ts-arima.html">
+      <div class="m-num">▶</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Time Series Decomposition & ARIMA</div>
+        <div class="m-title" data-lang="zh">时间序列分解与 ARIMA</div>
+        <div class="m-desc" data-lang="en">Interactive visualizer: decompose trend, seasonality, and noise — then build ARIMA models step by step.</div>
+        <div class="m-desc" data-lang="zh">交互可视化：分解趋势、季节性和噪声——然后逐步构建 ARIMA 模型。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<hr class="section-divider">
+<!-- RESOURCES -->
+<div class="section" id="ts-resources">
+  <h2 data-lang="en">Resources</h2>
+  <h2 data-lang="zh">资源</h2>
+  <div class="method-section">
+    <p class="method-desc" data-lang="en"><strong>Textbooks:</strong> Hamilton (1994) <em>Time Series Analysis</em> is comprehensive but technical. Wooldridge (2010) <em>Econometric Analysis of Cross Section and Panel Data</em> covers panel methods accessibly. Gujarati & Porter (2009) for practical guidance on ARIMA and diagnostics.</p>
+    <p class="method-desc" data-lang="zh"><strong>教科书：</strong>Hamilton (1994) <em>时间序列分析</em>很全面但很技术性。Wooldridge (2010) <em>截面和面板数据的计量经济学分析</em>可达地覆盖面板方法。Gujarati & Porter (2009) 对 ARIMA 和诊断的实际指导。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Software Tutorials:</strong> R package <code>forecast</code> (auto.arima, ggplot for ACF) is user-friendly. Stata's <code>tsset</code> and <code>xtset</code> commands for time series setup. <code>plm</code> package in R for panel FE/RE models. <code>vars</code> package for VAR and Granger tests.</p>
+    <p class="method-desc" data-lang="zh"><strong>软件教程：</strong>R 包 <code>forecast</code>（auto.arima、ACF 的 ggplot）很易用。Stata 的 <code>tsset</code> 和 <code>xtset</code> 命令用于时间序列设置。<code>plm</code> R 包用于面板 FE/RE 模型。<code>vars</code> 包用于 VAR 和 Granger 检验。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Key Papers:</strong> Hausman (1978) on FE vs. RE specification test. Newey &amp; West (1987) on HAC standard errors. Engle &amp; Granger (1987) on cointegration and error correction. Jorda (2005) on local projections as alternative to SVAR. De Boef &amp; Keele (2008) on dynamic models in political science — essential for ADL and ECM interpretation.</p>
+    <p class="method-desc" data-lang="zh"><strong>关键论文：</strong>Hausman (1978) 关于 FE 与 RE 规范检验。Newey &amp; West (1987) 关于 HAC 标准误。Engle &amp; Granger (1987) 关于协整与误差修正。Jorda (2005) 关于作为 SVAR 替代的本地投影。De Boef &amp; Keele (2008) 关于政治科学中的动态模型——ADL 和 ECM 解释的必读。</p>
+  </div>
+</div>
+
+<!-- PAGE NAV -->
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/reg-measurement.html">
+    <span class="pn-arrow">&larr;</span>
+    <span><span class="pn-title">Measurement & Scaling</span></span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/reg-robustness.html">
+    <span><span class="pn-title">Evaluating Model Robustness</span></span>
+    <span class="pn-arrow">&rarr;</span>
+  </a>
+</div>

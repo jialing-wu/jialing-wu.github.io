@@ -1,0 +1,34 @@
+{% assign current_file = page.url | split: '/' | last %}<aside class="sidebar" id="sidebar">
+  <a class="sb-brand" href="/methods/index.html"><h2>Methods <span>Notebook</span></h2><div class="sb-sub">Jialing Wu</div></a>
+
+  {% for group in site.data.methods_nav %}
+    {% if group.category == "__home__" %}
+
+      <a class="sb-home-entry{% if current_file == 'index.html' %} active{% endif %}" href="/methods/index.html">Home</a>
+      {% for item in group.items %}
+        <a class="sb-link sb-child{% if current_file == item.url %} active{% endif %}" href="/methods/{{ item.url }}">{{ item.title }}</a>
+      {% endfor %}
+
+    {% else %}
+
+      <div class="sb-cat"><span data-lang="en">{{ group.category }}</span>{% if group.category_zh %}<span data-lang="zh">{{ group.category_zh }}</span>{% endif %}</div>
+      {% if group.items %}
+        {% for item in group.items %}
+          <a class="sb-link{% if current_file == item.url %} active{% endif %}" href="/methods/{{ item.url }}"{% if item.hidden %} style="display:none"{% endif %}><span class="sb-num">{{ item.num }}</span> <span data-lang="en">{{ item.title }}</span>{% if item.title_zh %}<span data-lang="zh">{{ item.title_zh }}</span>{% endif %}</a>
+        {% endfor %}
+      {% endif %}
+      {% if group.subcategories %}
+        {% for sub in group.subcategories %}
+          <div class="sb-subcat"><span data-lang="en">{{ sub.name }}</span>{% if sub.name_zh %}<span data-lang="zh">{{ sub.name_zh }}</span>{% endif %}</div>
+          {% for item in sub.items %}
+            <a class="sb-link{% if current_file == item.url %} active{% endif %}" href="/methods/{{ item.url }}"{% if item.hidden %} style="display:none"{% endif %}><span class="sb-num">{{ item.num }}</span> <span data-lang="en">{{ item.title }}</span>{% if item.title_zh %}<span data-lang="zh">{{ item.title_zh }}</span>{% endif %}</a>
+          {% endfor %}
+        {% endfor %}
+      {% endif %}
+
+    {% endif %}
+  {% endfor %}
+
+  <div class="sb-footer"><a href="https://jialing-wu.github.io">&larr; My Website</a></div>
+</aside>
+<div class="sidebar-overlay" id="overlay" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"></div>

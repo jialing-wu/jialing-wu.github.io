@@ -1,0 +1,101 @@
+Statistical Methods Guide Pages - Complete Build
+================================================
+
+Created: February 23, 2026
+Location: /sessions/friendly-beautiful-ride/mnt/methods/guides/
+
+FILE MANIFEST:
+--------------
+
+1. reg-meas-irt.html
+   Title: Item Response Theory: Interactive ICC Explorer
+   Title (ZH): 项目反应理论：ICC 交互演示
+   Lines: 714
+   Size: 25 KB
+   Type: Interactive Simulation
+   Features: Chart.js 4-item ICC simulator, sliders, probability calculator
+   Parent: Measurement & Scaling (reg-measurement.html)
+
+2. reg-meas-efa.html
+   Title: Factor Analysis in R: EFA and CFA Step-by-Step
+   Title (ZH): R 语言因子分析：EFA 与 CFA 全流程
+   Lines: 566
+   Size: 21 KB
+   Type: Code Walkthrough
+   Features: 6-step methodology, data tables, code blocks, warning boxes
+   Parent: Measurement & Scaling (reg-measurement.html)
+
+3. reg-mlm-icc.html
+   Title: Multilevel Models in R: lme4 Step-by-Step
+   Title (ZH): R 语言多层模型：lme4 全流程
+   Lines: 570
+   Size: 21 KB
+   Type: Code Walkthrough
+   Features: 6-step methodology, ICC formulas, model comparison table
+   Parent: Multilevel Models (reg-multilevel.html)
+
+4. reg-emp-interact.html
+   Title: Interaction Effects: Visual Guide and R Code
+   Title (ZH): 交互效应：可视化指南与 R 代码
+   Lines: 713
+   Size: 24 KB
+   Type: Interactive Guide
+   Features: Chart.js 2-tab scenario simulator, code examples
+   Parent: Empirical Modeling (reg-empirical.html)
+
+TOTAL: 4 files, 2,563 lines, ~91 KB
+
+QUALITY ASSURANCE:
+------------------
+
+✓ Jekyll front matter present on all files
+✓ Bilingual support (English and Simplified Chinese)
+✓ CSS variables used throughout (--paper, --parchment, --warm, etc.)
+✓ data-lang attributes on all text blocks
+✓ Insight boxes (gold border, cream background)
+✓ Math note blocks (monospace, parchment background)
+✓ Method headers with meta span, h1, subtitle
+✓ Code blocks with syntax highlighting
+✓ Chart.js 4.4.0 interactive visualizations
+✓ Responsive tables with proper styling
+✓ Warning boxes for common errors
+✓ Step-by-step organization
+✓ R code examples with proper formatting
+✓ Parent URLs correctly specified
+
+CONTENT BREAKDOWN:
+
+Guide 1 (IRT): 3 sections
+  - Theory section with 2PL model
+  - Interactive ICC simulator (4 items)
+  - R code for IRT modeling (ltm, mirt libraries)
+
+Guide 2 (EFA/CFA): 6 steps
+  - Data preparation & KMO/Bartlett tests
+  - Factor determination (parallel analysis)
+  - EFA with promax rotation
+  - Reliability (alpha, omega)
+  - CFA validation
+  - Measurement invariance testing
+
+Guide 3 (MLM): 6 steps
+  - Null model & ICC interpretation
+  - Level-1 predictors
+  - Level-2 predictors
+  - Random slopes (contextual moderation)
+  - Cross-level interactions
+  - Three-level models
+
+Guide 4 (Interactions): 4 sections
+  - Theory & marginal effects
+  - Interactive visualization (2 tabs)
+  - R code (lm, margins, marginaleffects)
+  - Common mistakes
+
+R CODE SNIPPETS: 40+ examples
+DATA TABLES: 2 (EFA items, MLM models)
+INTERACTIVE CHARTS: 3 (Chart.js implementations)
+INSIGHT BOXES: 20+
+WARNING BOXES: 12+
+
+All files are production-ready and follow Jekyll conventions.

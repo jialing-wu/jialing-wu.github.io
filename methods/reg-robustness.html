@@ -1,0 +1,318 @@
+---
+layout: methods-course
+title: "Evaluating Model Robustness"
+breadcrumb: "Statistics"
+bilingual: true
+prev:
+  url: reg-timeseries.html
+  title: "Time Series & Panel Data"
+next:
+  url: reg-multilevel.html
+  title: "Multilevel Models"
+---
+
+<style>
+.problem-index{margin:0 0 8px;padding:16px 20px;border:1px solid var(--parchment);border-radius:4px;background:var(--warm)}
+.problem-index-title{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.problem-index a{display:block;font-size:14.5px;line-height:2;color:var(--ink-faded);text-decoration:none;transition:color .2s}
+.problem-index a:hover{color:var(--red)}
+.problem-index a .pi-arrow{font-family:var(--sans);font-size:11px;color:var(--gold);margin-left:6px}
+</style>
+
+<!-- HEADER -->
+<div class="method-header">
+  <h1>Evaluating Model Robustness</h1>
+  <div class="method-meta">Statistics &middot; Intermediate 08</div>
+</div>
+
+<!-- INTRO CARDS -->
+<div class="intro-cards">
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">What Is This?</div>
+    <div class="card-label" data-lang="zh">这一页讲什么？</div>
+    <div data-lang="en"><p>You ran your regression and got a statistically significant result. But is it real — or a fragile artifact of the choices you made? Robustness evaluation is the systematic practice of stress-testing your conclusions to see how much they depend on your modeling decisions.</p></div>
+    <div data-lang="zh"><p>你跑了回归，得到了统计显著的结果。但它是真实的——还是你做出的选择造成的脆弱假象？稳健性评估是系统性地对你的结论进行压力测试，看它们在多大程度上依赖于你的建模决策。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Prerequisites</div>
+    <div class="card-label" data-lang="zh">前置知识</div>
+    <div data-lang="en"><p>Regression Analysis. Causal Inference helpful.</p></div>
+    <div data-lang="zh"><p>回归分析。了解因果推断会有帮助。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Software &amp; Tools</div>
+    <div class="card-label" data-lang="zh">软件工具</div>
+    <div data-lang="en"><p>R (sensemakr, rbounds, car) or Stata equivalents.</p></div>
+    <div data-lang="zh"><p>R（sensemakr、rbounds、car）或 Stata 对应命令。</p></div>
+  </div>
+</div>
+
+<!-- PROBLEM INDEX -->
+<div class="problem-index">
+  <div class="problem-index-title" data-lang="en">What problem are you facing?</div>
+  <div class="problem-index-title" data-lang="zh">你遇到了什么问题？</div>
+  <a href="#rb-s1" data-lang="en">Is my model's functional form correctly specified? <span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#rb-s1" data-lang="zh">我的模型函数形式设定正确吗？<span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#rb-s2" data-lang="en">Could an omitted variable be driving my result? <span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#rb-s2" data-lang="zh">遗漏变量可能在驱动我的结果吗？<span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#rb-s3" data-lang="en">Could measurement error be distorting my estimates? <span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#rb-s3" data-lang="zh">测量误差可能在扭曲我的估计吗？<span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#rb-s4" data-lang="en">Do my results hold across different subgroups or specifications? <span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#rb-s4" data-lang="zh">我的结果在不同子群或设定中成立吗？<span class="pi-arrow">&rarr; &sect;4</span></a>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 1 -->
+<div class="section" id="rb-s1">
+  <h2 data-lang="en">Functional Form: Is Your Model Correctly Specified?</h2>
+  <h2 data-lang="zh">函数形式：你的模型设定正确吗？</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You fit a linear model: Y = β_0 + β_1*X + ε. But what if the true relationship is curved (quadratic, exponential, logarithmic)? A misspecified functional form biases your coefficients, produces poor predictions, and generates spurious interactions. Diagnostics like residual plots and the RESET test reveal whether your linear assumption is adequate.</p>
+    <p data-lang="zh"><strong>问题：</strong>你拟合了一个线性模型：Y = β_0 + β_1*X + ε。但如果真实关系是曲线呢（二次、指数、对数）？错误指定的函数形式会偏置你的系数，产生差的预测，生成虚假的交互。残差图和 RESET 检验等诊断揭示你的线性假设是否足够。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Testing Functional Form with the RESET Test</h3>
+    <h3 data-lang="zh">使用 RESET 检验函数形式</h3>
+    <p class="method-desc" data-lang="en">The Ramsey RESET test (Regression Equation Specification Error Test) checks whether omitting nonlinear combinations of fitted values biases your model. It regresses Y on X and also on Ŷ² and Ŷ³ (powers of fitted values). If these higher powers significantly improve fit (F-test p < 0.05), your linear model is misspecified. The test doesn't tell you which functional form is correct, just that linear isn't sufficient.</p>
+    <p class="method-desc" data-lang="zh">Ramsey RESET 检验（回归方程规范误检验）检查是否遗漏拟合值的非线性组合会偏置你的模型。它对 X 以及 Ŷ² 和 Ŷ³（拟合值的幂）进行回归 Y。如果这些高阶幂显著改进拟合（F 检验 p < 0.05），你的线性模型规范有误。检验不告诉你哪个函数形式是正确的，只是线性不足。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Fitting a straight ruler to a curved road — the fit looks okay at first glance, but residuals systematically deviate: underestimate in the middle, overestimate at the ends. RESET detects these systematic residual patterns, signaling "your model is too simple."</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>将直尺拟合到弯曲的道路——乍一看拟合看起来还可以，但残差系统性地偏离：在中间低估，在末端高估。RESET 检测这些系统性的残差模式，标志"你的模型太简单"。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always run RESET on your final model as a specification check. If it rejects (p < 0.05), your linear model may be inadequate. Check residual plots (residuals vs. fitted values) visually for curvature. Don't over-interpret a marginal RESET result (0.05 < p < 0.10) — consider sample size (RESET is more powerful in large samples). RESET is most informative when combined with visual diagnostics.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>始终对你的最终模型运行 RESET 作为规范检查。如果它拒绝（p < 0.05），你的线性模型可能不足。目视检查残差图（残差与拟合值）的曲率。不要过度解释边际 RESET 结果（0.05 < p < 0.10）——考虑样本大小（RESET 在大样本中更有力）。当与视觉诊断相结合时，RESET 最信息丰富。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Regressing income on years of education. Linear model: Income = β_0 + β_1*Education + ε. RESET test adds (Ŷ)² and (Ŷ)³: p = 0.002 (rejects linearity). Visual inspection of residuals vs. fitted values shows curve — overpredicting low-income individuals, underpredicting high-income. Try log transformation: log(Income) = β_0 + β_1*Education. RESET now p = 0.43 (accepts). Interpretation: education's effect on income is nonlinear (logarithmic) — each additional year boosts income by a decreasing percentage (common in human capital models).</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>将收入回归到教育年限。线性模型：Income = β_0 + β_1*Education + ε。RESET 检验添加 (Ŷ)² 和 (Ŷ)³：p = 0.002（拒绝线性）。残差对拟合值的视觉检查显示曲线——过度预测低收入个体，低估高收入。尝试对数变换：log(Income) = β_0 + β_1*Education。RESET 现在 p = 0.43（接受）。解释：教育对收入的影响是非线性的（对数）——每额外一年按递减百分比增加收入（人力资本模型中常见）。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Added Variable Plots and Residual Diagnostics</h3>
+    <h3 data-lang="zh">添加变量图与残差诊断</h3>
+    <p class="method-desc" data-lang="en">An added variable plot (partial regression plot) shows the relationship between Y and X after removing the effects of all other variables. It reveals whether the relationship is linear, curved, or nonmonotonic. Residual plots show errors (Y - Ŷ) vs. fitted values (Ŷ). Healthy residuals scatter randomly around zero with no pattern. Curvature in residuals indicates nonlinearity; funnel patterns (wider spread at high fitted values) indicate heteroskedasticity; clusters indicate unmodeled structure.</p>
+    <p class="method-desc" data-lang="zh">添加变量图（偏回归图）显示在移除所有其他变量效应后 Y 和 X 之间的关系。它揭示关系是否是线性的、弯曲的或非单调的。残差图显示误差（Y - Ŷ）对拟合值（Ŷ）。健康的残差围绕零随机散布，没有模式。残差中的曲率表示非线性；漏斗模式（高拟合值处更宽的散布）表示异方差；聚类表示未建模的结构。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Residual plots are like an X-ray of your model's assumptions. A clean scatter (no pattern) means you're healthy; curvature means there's a tumor (nonlinearity) you missed; a funnel means blood pressure variability (heteroskedasticity).</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>残差图就像你的模型假设的 X 射线。干净的散布（无模式）意味着你很健康；曲率意味着有一个肿瘤（非线性）你错过了；漏斗意味着血压可变性（异方差）。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always plot residuals vs. fitted values for any regression. Added variable plots are particularly useful when deciding whether to include a variable as linear or nonlinear. Don't ignore outliers in these plots — they can indicate data errors or genuine special cases. Robust regression or weighted least squares may be needed if patterns appear.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>始终为任何回归绘制残差对拟合值。添加变量图在决定是否以线性或非线性方式包含变量时特别有用。不要忽视这些图中的离群值——它们可能表示数据错误或真实的特殊情况。如果出现模式，可能需要稳健回归或加权最小二乘。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Model predicting voter turnout from campaign spending. Added variable plot shows: relationship between turnout and spending is flat at low spending (diminishing returns to $100 campaign ad), then accelerates (breakthrough at $10k), then flattens again (saturation at $500k+). Clear nonlinearity. Include spending as both linear and quadratic terms, or use polynomial or spline regression. Residual plot of linear-only model shows clear funnel — heteroskedasticity worse at high spending where dynamics are more complex.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>从竞选支出预测投票率的模型。添加变量图显示：投票率与支出之间的关系在低支出时平坦（$100 竞选广告的边际收益递减），然后加速（$10k 的突破），然后再次平坦（$500k+ 的饱和）。明显的非线性。将支出作为线性和二次项包括，或使用多项式或样条回归。仅线性模型的残差图显示明确的漏斗——异方差在高支出处更差，其中动态更复杂。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Log Transformations and Box-Cox</h3>
+    <h3 data-lang="zh">对数变换与 Box-Cox</h3>
+    <p class="method-desc" data-lang="en">Taking logarithms (natural log) of skewed variables often improves model fit and interpretation. log(X) is useful when X cannot be negative (income, population, prices), has skewed distribution (right tail), or when elasticity (percent change in Y per percent change in X) is of interest. Box-Cox transformation is a more general approach: apply power λ to Y, choosing λ via maximum likelihood to maximize normality and homoskedasticity. λ = 1 is linear (no transformation); λ = 0 is log transformation; λ = 0.5 is square root.</p>
+    <p class="method-desc" data-lang="zh">取对数（自然对数）的偏斜变量通常改进模型拟合和解释。log(X) 当 X 不能为负（收入、人口、价格）、有偏斜分布（右尾）或当弹性（Y 的百分比变化每 X 的百分比变化）很重要时有用。Box-Cox 变换是更一般的方法：对 Y 应用幂 λ，通过最大似然选择 λ 以最大化正态性和同方差。λ = 1 是线性的（无变换）；λ = 0 是对数变换；λ = 0.5 是平方根。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Log transformation is like listening to a song on a logarithmic volume scale — small increases at high volumes feel like the same change as larger increases at low volumes. Useful for data where the same percentage change matters, not the same absolute change.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>对数变换就像在对数音量刻度上听歌——高音量处的小增加感觉像是与低音量处较大增加相同的变化。对于相同百分比变化很重要，而不是相同绝对变化的数据很有用。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use log if X is positive and right-skewed (income, prices, firm size). Use Box-Cox if you're unsure about transformation — it optimizes λ for you. After transforming, interpret coefficients carefully: a 1-unit increase in log(X) ≈ 1% increase in X, so β_1 ≈ percent change in Y per 1% change in X. Don't transform outcome Y if your goal is predicting the level (untransform predictions afterward). Log-log models (both Y and X logged) estimate elasticities directly.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>如果 X 为正且右偏（收入、价格、公司规模），使用对数。如果你不确定变换，使用 Box-Cox——它为你优化 λ。变换后，仔细解释系数：log(X) 中的 1 单位增加 ≈ X 的 1% 增加，所以 β_1 ≈ Y 每 1% X 变化的百分比变化。如果你的目标是预测水平，不要变换结果 Y（之后取消变换预测）。对数-对数模型（Y 和 X 都记录）直接估计弹性。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Analyzing effect of GDP per capita on democratization. Raw GDP ranges $500–$100,000, highly right-skewed. Linear model: Democracy ~ GDP produces curvature in residuals (RESET p < 0.01). Log-transform: Democracy ~ log(GDP) produces cleaner residuals and more interpretable coefficient (β = 0.15: a 1% increase in GDP → 0.15% increase in democracy score). Box-Cox suggests λ = 0.2, very close to log(λ=0). The log transformation reveals diminishing returns: doubling income from $5k to $10k matters much more for democracy than doubling from $50k to $100k.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>分析人均 GDP 对民主化的影响。原始 GDP 范围 $500-$100,000，高度右偏。线性模型：Democracy ~ GDP 产生残差中的曲率（RESET p < 0.01）。对数变换：Democracy ~ log(GDP) 产生更干净的残差和更可解释的系数（β = 0.15：GDP 的 1% 增加 → 民主分数的 0.15% 增加）。Box-Cox 建议 λ = 0.2，非常接近 log(λ=0)。对数变换揭示边际收益递减：将收入从 $5k 增加到 $10k 对民主化的影响远大于从 $50k 到 $100k。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 2 -->
+<div class="section" id="rb-s2">
+  <h2 data-lang="en">Omitted Variable Bias and Sensitivity Analysis</h2>
+  <h2 data-lang="zh">遗漏变量偏误与敏感性分析</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You estimate β_1 (effect of X on Y), but a confounder Z exists that you didn't measure or include. The estimated β_1 is biased — it conflates the true effect of X with the effect of Z. Omitted Variable Bias (OVB) depends on two things: how much Z correlates with X, and how much Z affects Y. You can't avoid OVB without observing Z, but sensitivity analysis quantifies how much unmeasured confounding would need to exist to overturn your conclusion.</p>
+    <p data-lang="zh"><strong>问题：</strong>你估计 β_1（X 对 Y 的影响），但存在你未测量或未包含的混淆变量 Z。估计的 β_1 是有偏的——它混淆了 X 的真实效应与 Z 的效应。遗漏变量偏误（OVB）取决于两个因素：Z 与 X 的相关程度，以及 Z 对 Y 的影响程度。没有观察到 Z，你无法避免 OVB，但敏感性分析量化需要多少未测量混淆才能推翻你的结论。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Understanding OVB Mechanics</h3>
+    <h3 data-lang="zh">理解 OVB 机制</h3>
+    <p class="method-desc" data-lang="en">Omitted Variable Bias formula: bias(β_1) = γ × δ, where γ is the coefficient of Z in a regression of X on Z (correlation of Z with X), and δ is the partial effect of Z on Y controlling for X. If Z is uncorrelated with X (γ = 0) or doesn't affect Y (δ = 0), there's no bias. If both are nonzero, bias can be positive or negative depending on signs. Example: regress earnings on schooling without controlling for ability. Ability correlates with both schooling (smarter people choose more school) and earnings (smarter earn more). Bias is positive: you overestimate schooling's effect.</p>
+    <p class="method-desc" data-lang="zh">遗漏变量偏误公式：bias(β_1) = γ × δ，其中 γ 是 X 对 Z 回归的 Z 系数（Z 与 X 的相关），δ 是 Z 对 Y 的偏效应控制 X。如果 Z 与 X 不相关（γ = 0）或不影响 Y（δ = 0），则没有偏误。如果两者都非零，偏误可以是正的或负的取决于符号。示例：对工资回归到教育而不控制能力。能力与教育和收入都相关（更聪明的人选择更多教育）和收入（更聪明赚更多）。偏误是正的：你高估了教育的效应。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A detective investigating whether a suspect caused a crime but ignoring the actual culprit nearby. The evidence points to the suspect, but only because the real culprit was acting through them (confounding). The suspected effect is inflated.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>侦探调查嫌疑人是否导致了犯罪，但忽视了附近的真实罪犯。证据指向嫌疑人，但只是因为真实罪犯通过他们起作用（混淆）。怀疑的效应被夸大了。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use OVB reasoning whenever you make a causal claim. Always ask: "What unmeasured variables might be driving this result?" Include measured controls for the most plausible confounders. If you're unsure whether a control is necessary, erring toward including it (unless it's a mediator, which would downward-bias treatment effects). Use sensitivity analysis to quantify robustness to unmeasured confounding.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>每当你进行因果声明时，都使用 OVB 推理。始终问："什么未测量的变量可能在驱动这个结果？"为最合理的混淆变量包括测量控制。如果你不确定是否需要控制，倾向于包含它（除非它是中介，这会向下偏置处理效应）。使用敏感性分析量化对未测量混淆的稳健性。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Studying effect of incarceration on recidivism. Naive regression: Recidivism ~ Prison_Sentence, positive coefficient β = 0.15 (longer sentences increase recidivism!). But unobserved confounder: crime severity or criminal history (determines sentence length and recidivism independently). When controlling for offense type and priors, β drops to 0.02 (now shows longer sentences reduce recidivism slightly). The original OVB severely overstated sentence length's harmful effect.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究监禁对再犯的影响。朴素回归：Recidivism ~ Prison_Sentence，正系数 β = 0.15（更长刑期增加再犯！）。但未观察到的混淆：犯罪严重性或犯罪历史（独立确定刑期和再犯）。当控制罪行类型和先前记录时，β 降至 0.02（现在显示更长刑期略微减少再犯）。原始 OVB 严重高估了刑期的有害影响。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Sensitivity Analysis: Oster's δ and Rosenbaum Bounds</h3>
+    <h3 data-lang="zh">敏感性分析：Oster 的δ与 Rosenbaum 界</h3>
+    <p class="method-desc" data-lang="en">Oster (2019) develops a sensitivity measure δ that quantifies: "How much stronger does an unmeasured confounder need to be than observed confounders for it to explain away the result?" Compare R² from a model with observed controls to R² from a hypothetical saturated model (all variance explained). If adding observed controls increased R² by much (from 0.10 to 0.50), observed confounders matter. If an unmeasured confounder would need to be twice as important (δ = 2) to explain away your effect, your result is fairly robust. Rosenbaum bounds (for matched studies) ask: "How much must hidden bias exist to change the conclusion?"</p>
+    <p class="method-desc" data-lang="zh">Oster (2019) 开发了一个敏感性度量 δ，量化："未测量的混淆变量需要比观察到的混淆变量强多少倍才能解释结果？"比较有观察控制的模型的 R² 与假设饱和模型的 R²（所有方差被解释）。如果添加观察控制显著增加 R²（从 0.10 到 0.50），观察到的混淆变量很重要。如果未测量的混淆变量需要两倍重要（δ = 2）来解释你的效应，你的结果相当稳健。Rosenbaum 界（对于匹配研究）问："需要多少隐藏偏差来改变结论？"</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Your result is a boat floating downstream. Observed controls stabilize the boat somewhat. Oster's δ asks: "How big a boulder (hidden confounder) would it take to sink us?" If δ = 0.5, even a small boulder drowns you. If δ = 3, only a massive boulder matters — your result is robust.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>你的结果是一条顺流而下的船。观察到的控制在某种程度上稳定了船。Oster 的 δ 问："需要多大的巨石（隐藏混淆变量）才能沉没我们？"如果 δ = 0.5，即使是一块小巨石也会淹没你。如果 δ = 3，只有巨大的巨石很重要——你的结果是稳健的。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Apply Oster's δ to any observational study claiming causal effects. Report it alongside your main results — it documents robustness to unmeasured confounding. Rule of thumb: δ > 1 is concerning; δ > 2.2 suggests result is fairly robust (Oster & Soundarajan 2022). Use Rosenbaum bounds if you've matched on observables. Don't treat sensitivity analysis as a substitute for causal design (RCTs, natural experiments) — it complements them.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>对任何声称因果效应的观察研究应用 Oster 的 δ。与主要结果一起报告——它记录了对未测量混淆的稳健性。经验法则：δ > 1 令人担忧；δ > 2.2 表明结果相当稳健（Oster & Soundarajan 2022）。如果你已在可观测量上匹配，使用 Rosenbaum 界。不要将敏感性分析视为因果设计（RCT、自然实验）的替代品——它补充它们。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Study of effect of immigrant population size on native-born unemployment. Model controls for education, industry composition, timing of automation. Coefficient: 1% immigrant share → 0.15% unemployment increase (statistically significant). Oster's δ = 1.8: an unmeasured confounder (e.g., regional quality-of-life decline) would need to be 1.8 times as important as observed controls to eliminate the effect. This is moderate robustness — plausible but not certain. Report δ = 1.8 and let readers judge.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>移民人口规模对本土出生失业率影响的研究。模型控制了教育、产业构成、自动化时间。系数：1% 移民份额 → 0.15% 失业增加（统计显著）。Oster 的 δ = 1.8：未测量的混淆变量（例如，地区生活质量下降）需要比观察到的控制重要 1.8 倍才能消除效应。这是中等稳健性——可信但不确定。报告 δ = 1.8，让读者判断。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Placebo Tests and Falsification</h3>
+    <h3 data-lang="zh">安慰剂检验与伪证</h3>
+    <p class="method-desc" data-lang="en">A placebo test regresses your outcome on a variable that theoretically should have no effect (yet might if confounding exists). If your effect of X on Y is real and causal, X should not affect a placebo outcome that shares confounders with Y. Example: studying effect of classroom size on test scores. If small classes truly improve learning, small class size should not affect lagged test scores (scores from before the class size policy). If lagged scores do correlate with class size, confounding is present. Falsification tests strengthen causal inference by showing your mechanism is specific, not spurious.</p>
+    <p class="method-desc" data-lang="zh">安慰剂检验对理论上应该没有效应的变量回归你的结果（但如果存在混淆可能有）。如果你的 X 对 Y 的效应是真实且因果的，X 不应该影响与 Y 共享混淆变量的安慰剂结果。例如：研究课堂规模对测试分数的影响。如果小班级确实改进学习，小班级规模不应该影响滞后的测试分数（课堂规模政策之前的分数）。如果滞后分数与班级规模相关，混淆存在。伪证检验通过显示你的机制是特定的而不是虚假的来加强因果推论。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A surgeon testing a new knee surgery might also measure changes in eyesight (which shouldn't be affected). If eyesight improves with the surgery, something confounded is happening (pain relief improves mood, leading to better vision-test performance). If eyesight stays the same, the surgery's effect on mobility is likely real.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>一个测试新膝盖手术的外科医生可能也会测量视力变化（这不应该受影响）。如果视力随着手术改进，一些混淆的事情正在发生（疼痛缓解改善心情，导致更好的视力测试表现）。如果视力保持不变，手术对活动能力的影响可能是真实的。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use placebo tests whenever claiming causal effects from observational data. Good placebos are outcomes that shouldn't be affected by your mechanism but might be if confounding is severe. Choose placebos thoughtfully — random "outcomes" can appear significant by chance (multiple testing). Pre-specify your placebo outcomes before analyzing. Don't use placebos if theory predicts secondary effects — those aren't falsifications, they're predictions.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>当从观察数据声称因果效应时，使用安慰剂检验。好的安慰剂是不应该受你的机制影响但如果混淆严重可能受影响的结果。仔细选择安慰剂——随机"结果"可能偶然显示为显著（多重检验）。在分析前预先指定你的安慰剂结果。如果理论预测次要效应，不要使用安慰剂——那些不是伪证，它们是预测。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Studying effect of campaign advertising spending on election outcomes. Main result: 1 million dollars TV ads → 2.3% vote share increase. Placebo tests: (1) Does TV spending correlate with historical turnout from previous cycles (before ads ran)? No (p=0.65) — good. (2) Does TV spending correlate with unrelated ballot measures on the same election (property tax, local referenda)? No — suggests confounding by general campaign professionalism is unlikely. (3) Does TV spending predict politician's future divorce rate? No — rules out reverse causality (winners spend more because they're winning). Passing placebos increases confidence in causal interpretation.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究竞选广告支出对选举结果的影响。主要结果：100 万美元电视广告 → 2.3% 选票份额增加。安慰剂检验：(1) 电视支出是否与广告运行前的先前周期的历史投票率相关？否（p=0.65）——好。(2) 电视支出是否与同一选举的不相关投票措施（财产税、地方公投）相关？否——表示通过总体竞选专业精神的混淆不太可能。(3) 电视支出是否预测政治家的未来离婚率？否——排除反向因果（获胜者因为他们获胜而花费更多）。通过安慰剂增加了对因果解释的信心。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 3 -->
+<div class="section" id="rb-s3">
+  <h2 data-lang="en">Measurement Robustness: Alternative Indicators</h2>
+  <h2 data-lang="zh">测量稳健性：替代指标</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Your key variables are measured with error. Political ideology measured by a single survey question, income reported with recall error, "inequality" operationalized as Gini coefficient when you could use income ratios. Classical measurement error (random, uncorrelated with truth) in X attenuates coefficients toward zero — you underestimate true effects. Systematic measurement error (correlated with truth) produces bias in any direction. Testing robustness requires measuring the same construct multiple ways and checking whether conclusions hold.</p>
+    <p data-lang="zh"><strong>问题：</strong>你的关键变量测量有误差。政治意识形态由单个调查问题测量，收入有回忆误差报告，"不等式"操作化为基尼系数，当你可以使用收入比率时。经典测量误差（随机、与真实值不相关）在 X 中衰减系数趋向零——你低估了真实效应。系统测量误差（与真实值相关）产生任何方向的偏差。检验稳健性需要以多种方式测量相同的构念，并检查结论是否成立。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Classical Measurement Error in X</h3>
+    <h3 data-lang="zh">X 中的经典测量误差</h3>
+    <p class="method-desc" data-lang="en">Classical measurement error means X_observed = X_true + u, where u is random noise uncorrelated with X_true or Y. When you regress Y on X_observed, the coefficient is biased toward zero: β_observed = β_true × (Var(X_true) / (Var(X_true) + Var(u))). The "attenuation factor" is the ratio of true variance to total variance. If measurement error is large (u has high variance), the attenuation is severe — you might find a near-zero coefficient when the true effect is substantial. Solution: use instrumental variables (if available) or multiple indicators, and report bounds on the true effect.</p>
+    <p class="method-desc" data-lang="zh">经典测量误差意味着 X_observed = X_true + u，其中 u 是与 X_true 或 Y 不相关的随机噪声。当你对 X_observed 回归 Y 时，系数向零偏倚：β_observed = β_true × (Var(X_true) / (Var(X_true) + Var(u)))。"衰减因子"是真实方差与总方差的比率。如果测量误差很大（u 有高方差），衰减是严重的——当真实效应很大时，你可能找到接近零的系数。解决方案：使用工具变量（如果可用）或多个指标，并报告真实效应的界。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Measuring height with a ruler that jiggles — on average the measurement is correct, but the noise makes everyone look more similar than they actually are. Correlations between height and arm length appear weaker than true.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>用一把摇晃的尺子测量身高——平均而言测量是正确的，但噪声使每个人看起来比实际更相似。身高和臂长之间的相关性看起来比真实更弱。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always acknowledge measurement error in your main variables. If you suspect classical error in X, report bounds on the true effect: β_true ≥ β_observed × (Var(X_total) / Var(X_true)) — but this requires estimating reliability. Use latent variable models (structural equation modeling) to model measurement error explicitly if you have multiple indicators. Don't ignore this source of bias; even acknowledging it improves credibility.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>始终承认你的主要变量中的测量误差。如果你怀疑 X 中有经典误差，报告真实效应的界：β_true ≥ β_observed × (Var(X_total) / Var(X_true))——但这需要估计可靠性。如果你有多个指标，使用潜在变量模型（结构方程建模）显式建模测量误差。不要忽视这个偏差来源；即使承认它也会提高可信度。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Effect of poverty on civic participation, measured as single survey question ("Do you participate in local organizations? Yes/No"). Measurement is crude; some truly active people say no (fatigue), some inactive say yes (social desirability). Classical error attenuates the coefficient. If observed coefficient is 0.12 (p < 0.05), but measurement reliability is 0.60 (moderate), the true effect might be as large as 0.12 / 0.60 = 0.20. Reporting both estimates (observed and bounds) indicates measurement limitations while maintaining caution.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>贫困对公民参与的影响，测量为单个调查问题（"你参与地方组织吗？是/否"）。测量很粗糙；一些真正活跃的人说不（疲劳），一些不活跃的人说是（社会期望性）。经典误差衰减系数。如果观察到的系数是 0.12（p < 0.05），但测量可靠性是 0.60（中等），真实效应可能大至 0.12 / 0.60 = 0.20。报告两个估计（观察和界）表示测量限制，同时保持谨慎。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Measurement Error in Y and Differential Error by Group</h3>
+    <h3 data-lang="zh">Y 中的测量误差与按组的差异性误差</h3>
+    <p class="method-desc" data-lang="en">Measurement error in the outcome Y (not in X) is less problematic for unbiased estimation of β — it just inflates standard errors (less precision). More serious is differential error: measurement error that varies across groups. Example: self-reported income may be less accurate for high-income vs. low-income people (high earners less likely to report honestly). If X = income_group and measurement error correlates with income, the relationship between reported income and actual outcomes is distorted. This creates spurious interactions or group differences.</p>
+    <p class="method-desc" data-lang="zh">结果 Y 中的测量误差（而不是 X）对 β 的无偏估计不太成问题——它只是夸大标准误（较低精度）。更严肃的是差异性误差：在组中变化的测量误差。例如：自报收入可能对高收入与低收入人群的准确性较低（高收入者不太可能诚实报告）。如果 X = 收入组，测量误差与收入相关，所报收入与实际结果之间的关系被扭曲。这会产生虚假的交互或群体差异。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A survey asking "How much did you spend on groceries last month?" — low-income respondents may carefully track and report accurately, while high-income respondents estimate vaguely ("About $2,000?"). Differential error by income creates a spurious relationship between income and reported spending accuracy.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>一项调查问"上个月你在杂货店花了多少？"——低收入受访者可能会仔细追踪并准确报告，而高收入受访者模糊估计（"大约 $2,000？"）。按收入的差异性误差在收入和报告支出准确性之间产生虚假关系。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Check for differential measurement error whenever testing heterogeneous effects (effects by subgroup). If error is systematic by group, interactions may be artifacts. Use multiple indicators of the outcome Y when possible (e.g., self-reported health plus biomarkers). Validate self-reports against objective records (survey income against tax records) if you suspect differential error. Document measurement quality by group.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>当测试异质效应（按子群的效应）时，检查差异性测量误差。如果误差按组是系统性的，交互可能是假象。如果可能，对结果 Y 使用多个指标（例如，自报健康加上生物标志物）。如果你怀疑差异性误差，根据客观记录验证自报（调查收入对税务记录）。记录按组的测量质量。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Testing whether education's effect on health varies by gender. Outcome: self-reported health. Women may report health more accurately (greater health literacy, more medical contact), while men underreport symptoms. If measurement error is higher for men, a spurious gender interaction emerges: "education predicts health more for women than men" could be an artifact of measurement, not true heterogeneity. Validate with biomarkers (BMI, blood pressure, health tests) to rule out differential error.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>测试教育对健康的影响是否因性别而异。结果：自报健康。女性可能更准确地报告健康（更大的健康素养、更多医学接触），而男性低报症状。如果男性的测量误差更高，会出现虚假的性别交互："教育对女性的健康预测比男性更多"可能是测量的假象，而不是真实的异质性。使用生物标志物（BMI、血压、健康测试）验证以排除差异性误差。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Construct Validity and Multiple Operationalizations</h3>
+    <h3 data-lang="zh">构念有效性与多重操作化</h3>
+    <p class="method-desc" data-lang="en">Construct validity asks: does your measure actually measure what you claim it measures? Many social science constructs (inequality, trust, polarization, wellbeing) can be operationalized multiple ways. Inequality can be Gini coefficient, income share of top 1%, or ratio of 90th to 10th percentile. Trust can be survey questions, experimental behaviors, or willingness to invest. Robustness requires showing results are similar across operationalizations. If results change dramatically when you switch from one measure to another, either one is invalid or the relationship is measurement-specific (artifact).</p>
+    <p class="method-desc" data-lang="zh">构念有效性问：你的测量是否确实测量了你声称的东西？许多社会科学构念（不等式、信任、两极分化、幸福感）可以以多种方式操作化。不等式可以是基尼系数、收入占比的 top 1%，或 90 分位数与 10 分位数的比率。信任可以是调查问题、实验行为或投资意愿。稳健性需要显示结果在操作化中相似。如果你从一个测量切换到另一个时结果变化很大，要么一个无效，要么关系是特定于测量的（假象）。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Measuring "intelligence" by height vs. by test scores — if both predict academic success equally, your measure doesn't matter. If height predicts success but test scores don't (or vice versa), you're measuring different things, and conclusions are construct-dependent.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>通过身高与通过测试分数测量"智力"——如果两者都同样预测学术成功，你的测量无关紧要。如果身高预测成功但测试分数不预测（反之亦然），你正在测量不同的东西，结论取决于构念。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always report results using multiple indicators of key constructs. Don't cherry-pick the operationalization that gives the strongest result. If your main finding is robust to alternative measures, confidence increases. If results are fragile (reversal, sign changes, loss of significance), the effect may not be construct-independent — it's hypothesis-dependent on measurement choice. Transparency about this limitation is important.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>始终使用关键构念的多个指标报告结果。不要挑选给出最强结果的操作化。如果你的主要发现对替代测量稳健，信心增加。如果结果很脆弱（反转、符号变化、显著性丧失），效应可能不是构念独立的——它对测量选择很有假设依赖。对这一限制的透明度很重要。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Does economic inequality reduce social cohesion? Measure inequality as Gini: significant negative effect (r = -0.45, p < 0.01). Measure as top 1% income share: weaker effect (r = -0.22, p = 0.08). Measure as 90/10 ratio: no effect (r = 0.01, p = 0.92). Results flip depending on operationalization. This suggests: (1) some measures capture something real (Gini is sensitive), (2) others are noisy or measure different aspects of inequality, or (3) the relationship is not robust. Reporting all three strengthens credibility by documenting this heterogeneity.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>经济不等式是否减少社会凝聚力？将不等式衡量为基尼：显著的负效应（r = -0.45，p < 0.01）。衡量为 top 1% 收入份额：较弱的效应（r = -0.22，p = 0.08）。衡量为 90/10 比率：没有效应（r = 0.01，p = 0.92）。结果根据操作化而翻转。这表明：(1) 一些测量捕捉真实的东西（基尼敏感），(2) 其他是嘈杂的或测量不等式的不同方面，或 (3) 关系不稳健。报告全部三个通过记录这种异质性来加强可信度。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 4 -->
+<div class="section" id="rb-s4">
+  <h2 data-lang="en">Heterogeneity: Subgroup Analysis and Specification Curves</h2>
+  <h2 data-lang="zh">异质性：子群分析与设定曲线</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You report a single estimate: "X increases Y by 0.5." But the effect may vary across subgroups (age, gender, geography, initial conditions) or depend on which variables you include in the model. A cherry-picked specification or subgroup can exaggerate results; reporting only favorable specifications is HARKing (Hypothesizing After Results are Known). Robustness requires showing the full landscape of estimates across defensible choices.</p>
+    <p data-lang="zh"><strong>问题：</strong>你报告单个估计："X 增加 Y 0.5。"但效应可能在子群中变化（年龄、性别、地理、初始条件）或取决于你在模型中包含的变量。精心挑选的规范或子群可以夸大结果；只报告有利的规范是 HARKing（已知结果后假设）。稳健性需要显示可防守选择中的完整估计景观。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Subgroup Analysis and Effect Heterogeneity</h3>
+    <h3 data-lang="zh">子群分析与效应异质性</h3>
+    <p class="method-desc" data-lang="en">Subgroup analysis tests whether an effect differs across groups: does education increase earnings more for men than women? Does a policy work better in high-income vs. low-income areas? Estimate via interaction terms (X × Group) or by fitting separate models for each group. Important: don't overstate significance of small subgroup differences without sufficient sample size. If n=1000 overall but n=100 per subgroup, standard errors for subgroup effects are 3x larger. Pre-specify subgroups of interest; post-hoc snooping across many subgroups inflates false positives. Multiple comparison corrections (Bonferroni, FDR) are appropriate when testing many subgroups.</p>
+    <p class="method-desc" data-lang="zh">子群分析检验效应是否在群体中不同：教育是否为男性增加收入比女性更多？政策在高收入与低收入地区是否更好地运作？通过交互项（X × Group）或为每个群体拟合单独模型来估计。重要：在没有充分样本量的情况下不要高估小子群差异的显著性。如果 n=1000 整体但每个子群 n=100，子群效应的标准误大 3 倍。预先指定感兴趣的子群；在多个子群中的事后窥探增加假阳性。多重比较修正（Bonferroni、FDR）在测试许多子群时适当。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Finding a main effect is like finding gold; reporting a subgroup difference without caution is like splitting that gold among many miners — the more miners, the thinner each share. With k subgroups tested, expect (k × α) false positives by chance alone. Corrections account for this.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>找到主效应就像找到黄金；不谨慎地报告子群差异就像在许多矿工之间分割黄金——矿工越多，每份份额越薄。测试 k 个子群，预期仅由机会而产生 (k × α) 假阳性。修正考虑了这个。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Subgroup analysis is appropriate when theory predicts heterogeneity. Pre-specify subgroups before analyzing. If you discover unexpected subgroup differences post-hoc, label them as exploratory and require confirmation in a new sample. Always report the main effect and test for statistical interaction (is the subgroup difference itself significant?). Don't test dozens of subgroups and report only the significant ones — that's HARKing. Report the full matrix of effects or use FDR correction.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>当理论预测异质性时，子群分析是合适的。在分析前预先指定子群。如果你事后发现意外的子群差异，将其标记为探索性的，并需要在新样本中确认。始终报告主效应并检验统计交互（子群差异本身是否显著？）。不要测试数十个子群并仅报告显著的——那是 HARKing。报告完整的效应矩阵或使用 FDR 修正。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Evaluating a job training program's effect on earnings. Overall effect: +$3,000/year (p < 0.01). Subgroup analysis (pre-specified): Men +$4,500; Women +$1,200 (interaction p = 0.08, not significant at 0.05). Interaction p = 0.08 means the gender difference in program effects is borderline, not statistically different. Don't overstate: "the program is more effective for men" without strong evidence. Better framing: "Effects appear larger for men, but the difference is not significant (p=0.08); larger samples needed to confirm heterogeneity."</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>评估工作培训计划对收入的影响。总体效应：+$3,000/年（p < 0.01）。子群分析（预先指定）：男性 +$4,500；女性 +$1,200（交互 p = 0.08，在 0.05 不显著）。交互 p = 0.08 意味着计划效应中的性别差异是边界的，在统计上不同。不要高估："计划对男性更有效"没有强大证据。更好的表述："效应对男性似乎更大，但差异不显著（p=0.08）；需要更大样本来确认异质性。"</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Specification Curve Analysis</h3>
+    <h3 data-lang="zh">设定曲线分析</h3>
+    <p class="method-desc" data-lang="en">Specification curve analysis (Simonsohn et al. 2020) maps all "defensible" analysis choices: which variables to include, which subsamples to use, which functional forms. For each combination, estimate the effect and plot it as a point. A specification curve shows the distribution of estimates across all defensible models. If 95% of specifications yield positive effects (all p < 0.05), the result is robust. If only 30% are significant, the result is fragile. This approach prevents cherry-picking: you pre-specify all defensible variants, estimate them all, and report the full landscape. Multiverse analysis extends this by documenting dependent (analytic) choices as a tree of possibilities.</p>
+    <p class="method-desc" data-lang="zh">设定曲线分析（Simonsohn 等 2020）映射所有"可防守"的分析选择：包含哪些变量、使用哪些子样本、哪些函数形式。对于每个组合，估计效应并将其绘制为一个点。设定曲线显示所有可防守模型中的估计分布。如果 95% 的规范产生正效应（所有 p < 0.05），结果是稳健的。如果只有 30% 显著，结果很脆弱。这种方法防止了樱桃挑选：你预先指定所有可防守的变体，估计所有这些，并报告完整景观。多元宇宙分析通过将依赖（分析）选择记录为可能性树来扩展这个。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A specification curve is like showing all possible routes from home to work — some take highways (sparse controls), others local roads (dense controls), some go north (include demographic variables), others south (exclude them). If you reach work faster on 95% of routes, your destination is reachable. If only 10% of routes work, the destination is fragile.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>设定曲线就像显示从家到工作的所有可能路线——一些走高速公路（稀疏控制），其他走当地道路（密集控制），一些向北走（包含人口统计变量），其他向南（排除它们）。如果你在 95% 的路线上更快到达工作，你的目的地是可达的。如果只有 10% 的路线有效，目的地很脆弱。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use specification curve analysis for important claims, especially in observational research. Define "defensible" choices clearly and broadly (multiple control sets, functional form variations, subsamples). Estimate all combinations (can be 50–500+). Plot the curve: estimate on y-axis, specification number on x-axis, colored by significance. If the curve is mostly significant and concentrated, you have a robust result. If scattered or mostly non-significant, the result is fragile. Don't report only the peak of the curve (cherry-picking). Include the full curve in supplementary materials.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>对重要声明使用设定曲线分析，尤其是在观察研究中。清晰地定义"可防守"的选择范围（多个控制集、函数形式变化、子样本）。估计所有组合（可以是 50-500+）。绘制曲线：y 轴上的估计、x 轴上的规范编号、按显著性着色。如果曲线大多显著且集中，你有稳健的结果。如果分散或大多不显著，结果很脆弱。不要仅报告曲线的峰值（樱桃挑选）。将完整曲线包含在补充材料中。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Effect of immigrant inflows on crime rates. Pre-specify defensible choices: (1) Control sets: minimal, with demographics, with economic variables, with neighborhood fixed effects. (2) Crime outcomes: violent crime, property crime, total crime. (3) Immigration measures: total inflow, high-skill inflow, low-skill inflow. (4) Samples: all years, 1990–2010, 2000–2020. Estimate all 3 × 3 × 3 × 3 = 81 models. Specification curve: 65 coefficients are negative (immigration reduces crime), 16 positive, 70 significant at p < 0.05. Most defensible specifications suggest immigration's crime effect is negative or zero, but heterogeneity exists across outcome and time period definitions. Report the full curve + median effect + bounds.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>移民流入对犯罪率的影响。预先指定可防守的选择：(1) 控制集：最小、带人口统计、带经济变量、带社区固定效应。(2) 犯罪结果：暴力犯罪、财产犯罪、总犯罪。(3) 移民措施：总流入、高技能流入、低技能流入。(4) 样本：所有年份、1990-2010、2000-2020。估计所有 3 × 3 × 3 × 3 = 81 个模型。设定曲线：65 个系数是负的（移民减少犯罪），16 个正的，70 个在 p < 0.05 显著。大多数可防守规范表明移民的犯罪效应是负的或零，但跨结果和时间周期定义存在异质性。报告完整曲线 + 中位数效应 + 界。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Pre-Specification and Guarding Against HARKing</h3>
+    <h3 data-lang="zh">预先指定与防守 HARKing</h3>
+    <p class="method-desc" data-lang="en">HARKing (Hypothesizing After Results are Known) occurs when you observe the data, find a pattern, then construct a hypothesis post-hoc and test it as if it were pre-specified. This inflates false positives: with enough data exploration, you'll find spurious patterns by chance. The solution: pre-register your analysis before looking at results. Specify: primary outcome, control variables, subgroups of interest, hypothesis tests, decision rules. Document any deviations from the plan (with transparent explanation) as exploratory. Most journals now encourage pre-registration via OSF (Open Science Framework) or AEA Registry for economics/social science.</p>
+    <p class="method-desc" data-lang="zh">HARKing（已知结果后假设）在你观察数据、找到模式，然后事后构建假设并测试为预先指定的假设时发生。这增加假阳性：有足够的数据探索，你会偶然发现虚假模式。解决方案：在查看结果之前预先注册你的分析。指定：主要结果、控制变量、感兴趣的子群、假设检验、决策规则。记录计划的任何偏差（透明说明）作为探索性。现在大多数期刊通过 OSF（开放科学框架）或 AEA 注册处鼓励预先注册，用于经济学/社会科学。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> HARKing is like a archer shooting arrows at a wall, then drawing a bullseye around wherever they landed. Pre-specification is drawing the bullseye before shooting. The second is much harder to fake.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>HARKing 就像弓箭手向墙射箭，然后在他们着陆的任何地方画一个靶心。预先指定是在射箭前画靶心。第二个更难伪造。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Pre-register primary analyses before accessing data. Post-hoc analyses are fine but must be labeled exploratory and held to a higher bar (larger effect, multiple confirmation, etc.). If your field doesn't yet use pre-registration, document your analysis plan in your methods section and stick to it. If you deviate, explain why transparently. Don't report every hypothesis you tested — specify which tests are confirmatory (pre-registered) vs. exploratory (post-hoc). Readers will weight these differently, as they should.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>在访问数据前预先注册主要分析。事后分析可以，但必须标记为探索性并要求更高标准（更大效应、多次确认等）。如果你的领域还没有使用预先注册，在方法部分记录你的分析计划并坚持它。如果你偏离，透明地解释为什么。不要报告你测试的每个假设——指定哪些测试是确认性的（预先注册）对比探索性的（事后）。读者会以不同的权重加权这些，因为他们应该。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Study of minimum wage effects on employment. Pre-registered analysis: outcome = employment in directly affected industries, treatment = state × time of policy, controls = lagged employment, region FE, year FE, main sample = 2005–2020. Secondary (exploratory) analyses: other industries, different time windows, alternative definitions. Paper reports: primary result (negative effect on target industries, significant), then secondary results with caveats. A journal reviewer can trust the primary result was pre-specified; secondary results are clearly labeled as exploratory. This transparency is valuable — it's not data fraud, just more honest research.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>最低工资对就业影响的研究。预先注册分析：结果 = 直接受影响行业的就业、处理 = 政策的州 × 时间、控制 = 滞后就业、区域 FE、年份 FE、主要样本 = 2005-2020。次要（探索性）分析：其他行业、不同时间窗口、替代定义。论文报告：主要结果（对目标行业的负效应，显著），然后是带有告诫的次要结果。期刊审稿人可以信任主要结果是预先注册的；次要结果清楚地标记为探索性。这种透明度很有价值——这不是数据欺诈，只是更诚实的研究。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+<!-- GUIDES -->
+<div class="section" id="rb-guides">
+  <h2 data-lang="en">Guides</h2>
+  <h2 data-lang="zh">配套指南</h2>
+  <div class="m-list">
+    <a class="m-card" href="/methods/guides/reg-robust-boot.html">
+      <div class="m-num">▶</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Bootstrap & Robust SE</div>
+        <div class="m-title" data-lang="zh">自助法与稳健标准误</div>
+        <div class="m-desc" data-lang="en">Bootstrap visualizer comparing OLS SE vs bootstrap SE, plus sandwich and clustered SE in R.</div>
+        <div class="m-desc" data-lang="zh">自助法可视化对比 OLS SE 与 Bootstrap SE，含 sandwich 和聚类 SE R 代码。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<hr class="section-divider">
+<!-- RESOURCES -->
+<div class="section" id="rb-resources">
+  <h2 data-lang="en">Resources</h2>
+  <h2 data-lang="zh">资源</h2>
+  <div class="method-section">
+    <p class="method-desc" data-lang="en"><strong>Key Papers:</strong> Simonsohn, Simmons, & Nelson (2020) "Specification Curve Analysis" — foundational for multiverse/specification robustness. Oster (2019) on sensitivity to unmeasured confounding with δ-method, now standard for assessing OVB. Rosenbaum & Rubin (1983) on matching and sensitivity (Rosenbaum bounds). Cinelli & Hazlett (2020) on sensemakr R package for sensitivity analysis.</p>
+    <p class="method-desc" data-lang="zh"><strong>关键论文：</strong>Simonsohn、Simmons 和 Nelson (2020) "设定曲线分析"——多元宇宙/规范稳健性的基础。Oster (2019) 关于未测量混淆敏感性与 δ 方法，现在是评估 OVB 的标准。Rosenbaum & Rubin (1983) 关于匹配和敏感性（Rosenbaum 界）。Cinelli & Hazlett (2020) 关于 sensemakr R 包进行敏感性分析。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Diagnostics & Software:</strong> R package <code>car</code> for RESET test, added variable plots, residual diagnostics. <code>sensemakr</code> for OVB sensitivity (computes δ). <code>wooldridge</code> R package contains datasets for examples. Stata: <code>resettest</code>, <code>ovtest</code>, <code>linktest</code> for specification diagnostics.</p>
+    <p class="method-desc" data-lang="zh"><strong>诊断与软件：</strong>R 包 <code>car</code> 用于 RESET 检验、添加变量图、残差诊断。<code>sensemakr</code> 用于 OVB 敏感性（计算 δ）。<code>wooldridge</code> R 包包含示例数据集。Stata：<code>resettest</code>、<code>ovtest</code>、<code>linktest</code> 用于规范诊断。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Pre-Registration:</strong> OSF (https://osf.io) for general research; AEA Randomized Controlled Trial Registry (https://www.socialscienceregistry.org) for economics/policy studies. Documenting pre-registration increases credibility and lets readers distinguish confirmatory from exploratory results.</p>
+    <p class="method-desc" data-lang="zh"><strong>预先注册：</strong>OSF（https://osf.io）用于一般研究；AEA 随机对照试验注册表（https://www.socialscienceregistry.org）用于经济学/政策研究。记录预先注册增加了可信度，让读者区分确认性与探索性结果。</p>
+  </div>
+</div>
+
+<!-- PAGE NAV -->
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/reg-timeseries.html">
+    <span class="pn-arrow">&larr;</span>
+    <span><span class="pn-title">Time Series & Panel Data</span></span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/reg-multilevel.html">
+    <span><span class="pn-title">Multilevel Models</span></span>
+    <span class="pn-arrow">&rarr;</span>
+  </a>
+</div>

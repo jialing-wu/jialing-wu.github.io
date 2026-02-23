@@ -1,0 +1,600 @@
+---
+layout: methods-guide
+title: "Bootstrap & Robust SE"
+title_zh: "自助法与稳健标准误"
+parent_title: "Robustness & Sensitivity"
+parent_title_zh: "稳健性与敏感性分析"
+parent_url: "reg-robustness.html"
+bilingual: true
+mathjax: true
+---
+
+<h2 id="boot-concept">
+  <span data-lang="en">Why Robust Standard Errors?</span>
+  <span data-lang="zh">为什么需要稳健标准误？</span>
+</h2>
+
+<p data-lang="en">
+Classical OLS assumes homoskedasticity: the variance of errors is constant across observations. But real data often violates this assumption. Heteroskedasticity—unequal error variance—biases standard errors, making confidence intervals and hypothesis tests unreliable.
+</p>
+
+<p data-lang="zh">
+经典OLS假设同方差性：误差的方差在观测中是恒定的。但实际数据经常违反这一假设。异方差——不等的误差方差——会使标准误出现偏差，使置信区间和假设检验不可靠。
+</p>
+
+<p data-lang="en">
+<strong>Common sources of heteroskedasticity:</strong>
+</p>
+
+<p data-lang="zh">
+<strong>异方差的常见来源：</strong>
+</p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Variance grows with X:</strong> Income variance is higher in wealthy regions. Larger firms have more volatile earnings.</li>
+  <li data-lang="zh"><strong>方差随 X 增长：</strong>收入方差在富裕地区更高。较大的公司有更不稳定的收益。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Clustered errors:</strong> Observations within groups (students within schools, workers within firms) are correlated. Standard errors are underestimated.</li>
+  <li data-lang="zh"><strong>聚类误差：</strong>群体内的观测（学校内的学生、公司内的工人）相关。标准误被低估。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Non-normal errors:</strong> Heavy tails, outliers, or bounded dependent variables violate normality assumption. Standard errors may be badly biased.</li>
+  <li data-lang="zh"><strong>非正态误差：</strong>重尾、离群值或有界因变量违反正态性假设。标准误可能严重偏差。</li>
+</ul>
+
+<p data-lang="en">
+Three robust solutions:
+</p>
+
+<p data-lang="zh">
+三种稳健解决方案：
+</p>
+
+<ol style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Heteroskedasticity-Consistent (HC) Standard Errors:</strong> "Sandwich" estimator (Huber-White) adjusts for arbitrary heteroskedasticity without modeling its form. Works well with large samples.</li>
+  <li data-lang="zh"><strong>异方差一致（HC）标准误：</strong>"三明治"估计量（Huber-White）调整任意异方差，无需建立其形式的模型。在大样本中效果很好。</li>
+</ol>
+
+<ol style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Clustered Standard Errors:</strong> Accounts for correlation within clusters (e.g., students in same school). Adjusts SE upward when within-cluster correlation is high.</li>
+  <li data-lang="zh"><strong>聚类标准误：</strong>考虑群体内的相关性（例如，同一学校的学生）。当群体内相关性高时，向上调整SE。</li>
+</ol>
+
+<ol style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Bootstrap:</strong> Resamples data with replacement, recomputes estimator thousands of times, constructs SE from empirical distribution. Distribution-free, requires no assumptions.</li>
+  <li data-lang="zh"><strong>自助法：</strong>有放回地重新采样数据，重新计算估计量数千次，从经验分布构建SE。无分布、无需假设。</li>
+</ol>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="boot-sim">
+  <span data-lang="en">Bootstrap Visualizer</span>
+  <span data-lang="zh">自助法可视化器</span>
+</h2>
+
+<p data-lang="en">
+Below: a fixed scatter plot of 30 data points. Click "Run Bootstrap" to generate 1,000 bootstrap samples, each time resampling with replacement and recomputing the OLS slope. The histogram shows the distribution of slopes; the standard deviation of this distribution is the bootstrap SE.
+</p>
+
+<p data-lang="zh">
+下面：30个数据点的固定散点图。单击"运行自助法"生成1,000个自助法样本，每次有放回地重新采样并重新计算OLS斜率。直方图显示斜率的分布；该分布的标准差是自助法SE。
+</p>
+
+<div class="sim-panel" style="background: var(--parchment); padding: 1.5rem; border-radius: 0.5rem; margin: 1.5rem 0;">
+  <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 300px;">
+      <h3 style="margin-top: 0;">
+        <span data-lang="en">Original Data & OLS Fit</span>
+        <span data-lang="zh">原始数据与OLS拟合</span>
+      </h3>
+      <canvas id="scatter-canvas" width="350" height="300" style="border: 1px solid var(--ink); background: white; border-radius: 0.3rem; display: block;"></canvas>
+      <div style="margin-top: 1rem; font-size: 0.9em;">
+        <p data-lang="en"><strong>OLS Slope:</strong> <span id="ols-slope">0.000</span></p>
+        <p data-lang="zh"><strong>OLS斜率：</strong> <span id="ols-slope-zh">0.000</span></p>
+        <p data-lang="en"><strong>OLS SE:</strong> <span id="ols-se">0.000</span></p>
+        <p data-lang="zh"><strong>OLS SE：</strong> <span id="ols-se-zh">0.000</span></p>
+        <p data-lang="en"><strong>Bootstrap SE:</strong> <span id="boot-se">—</span></p>
+        <p data-lang="zh"><strong>自助法 SE：</strong> <span id="boot-se-zh">—</span></p>
+      </div>
+    </div>
+
+    <div style="flex: 1; min-width: 300px;">
+      <h3 style="margin-top: 0;">
+        <span data-lang="en">Bootstrap Distribution</span>
+        <span data-lang="zh">自助法分布</span>
+      </h3>
+      <canvas id="hist-canvas" width="350" height="300" style="border: 1px solid var(--ink); background: white; border-radius: 0.3rem; display: block;"></canvas>
+      <p id="boot-status" style="font-size: 0.9em; margin-top: 0.5rem;"></p>
+    </div>
+  </div>
+
+  <div style="margin-top: 1.5rem; text-align: center;">
+    <button class="sim-btn" onclick="runBootstrap()" style="background: var(--warm); color: white; padding: 0.8rem 2rem; border: none; border-radius: 0.3rem; cursor: pointer; font-weight: bold; margin-right: 0.5rem;">
+      <span data-lang="en">Run Bootstrap (1000 samples)</span>
+      <span data-lang="zh">运行自助法（1000个样本）</span>
+    </button>
+    <button class="sim-btn" onclick="resetBootstrap()" style="background: var(--ink-faded); color: white; padding: 0.8rem 2rem; border: none; border-radius: 0.3rem; cursor: pointer; font-weight: bold;">
+      <span data-lang="en">Reset</span>
+      <span data-lang="zh">重置</span>
+    </button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+// Generate fixed dataset: 30 points with y = 2.5*x + noise
+const data = generateData(30);
+
+function generateData(n) {
+  const points = [];
+  for (let i = 0; i < n; i++) {
+    const x = Math.random() * 10;
+    const noise = (Math.random() - 0.5) * 8;
+    const y = 2.5 * x + noise;
+    points.push({ x, y });
+  }
+  return points;
+}
+
+function computeOLS(points) {
+  const n = points.length;
+  let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+
+  points.forEach(p => {
+    sumX += p.x;
+    sumY += p.y;
+    sumXY += p.x * p.y;
+    sumX2 += p.x * p.x;
+  });
+
+  const meanX = sumX / n;
+  const meanY = sumY / n;
+
+  const slope = (sumXY - n * meanX * meanY) / (sumX2 - n * meanX * meanX);
+  const intercept = meanY - slope * meanX;
+
+  // Compute residual SE
+  let sse = 0;
+  points.forEach(p => {
+    const pred = intercept + slope * p.x;
+    sse += Math.pow(p.y - pred, 2);
+  });
+  const rmse = Math.sqrt(sse / (n - 2));
+
+  // OLS SE of slope
+  const varX = sumX2 / n - meanX * meanX;
+  const olsSE = rmse / Math.sqrt(n * varX);
+
+  return { slope, intercept, rmse, olsSE };
+}
+
+function drawScatter() {
+  const canvas = document.getElementById('scatter-canvas');
+  const ctx = canvas.getContext('2d');
+  const ols = computeOLS(data);
+
+  // Clear
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const padding = 40;
+  const plotWidth = canvas.width - 2 * padding;
+  const plotHeight = canvas.height - 2 * padding;
+
+  // Axes
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(padding, canvas.height - padding);
+  ctx.lineTo(canvas.width - padding, canvas.height - padding);
+  ctx.moveTo(padding, padding);
+  ctx.lineTo(padding, canvas.height - padding);
+  ctx.stroke();
+
+  // Draw data points
+  ctx.fillStyle = 'steelblue';
+  data.forEach(p => {
+    const px = padding + (p.x / 10) * plotWidth;
+    const py = canvas.height - padding - (p.y / 30) * plotHeight;
+    ctx.beginPath();
+    ctx.arc(px, py, 3, 0, 2 * Math.PI);
+    ctx.fill();
+  });
+
+  // Draw OLS line
+  ctx.strokeStyle = 'red';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  const y0 = ols.intercept;
+  const y10 = ols.intercept + ols.slope * 10;
+  const px0 = padding;
+  const py0 = canvas.height - padding - (y0 / 30) * plotHeight;
+  const px10 = canvas.width - padding;
+  const py10 = canvas.height - padding - (y10 / 30) * plotHeight;
+  ctx.moveTo(px0, py0);
+  ctx.lineTo(px10, py10);
+  ctx.stroke();
+
+  // Update stats
+  document.getElementById('ols-slope').textContent = ols.slope.toFixed(3);
+  document.getElementById('ols-slope-zh').textContent = ols.slope.toFixed(3);
+  document.getElementById('ols-se').textContent = ols.olsSE.toFixed(4);
+  document.getElementById('ols-se-zh').textContent = ols.olsSE.toFixed(4);
+}
+
+function runBootstrap() {
+  const B = 1000;
+  const slopes = [];
+
+  for (let b = 0; b < B; b++) {
+    // Resample with replacement
+    const bootSample = [];
+    for (let i = 0; i < data.length; i++) {
+      const idx = Math.floor(Math.random() * data.length);
+      bootSample.push(data[idx]);
+    }
+
+    // Compute slope on boot sample
+    const ols = computeOLS(bootSample);
+    slopes.push(ols.slope);
+
+    if ((b + 1) % 100 === 0) {
+      document.getElementById('boot-status').innerHTML =
+        `<span data-lang="en">Completed ${b + 1} / ${B} samples...</span>
+         <span data-lang="zh">已完成 ${b + 1} / ${B} 个样本...</span>`;
+    }
+  }
+
+  // Compute bootstrap SE
+  const meanSlope = slopes.reduce((a, b) => a + b, 0) / slopes.length;
+  const variance = slopes.reduce((sum, s) => sum + Math.pow(s - meanSlope, 2), 0) / slopes.length;
+  const bootSE = Math.sqrt(variance);
+
+  document.getElementById('boot-se').textContent = bootSE.toFixed(4);
+  document.getElementById('boot-se-zh').textContent = bootSE.toFixed(4);
+  document.getElementById('boot-status').innerHTML =
+    `<span data-lang="en">Bootstrap complete! Compare OLS SE with Bootstrap SE above.</span>
+     <span data-lang="zh">自助法完成！比较上面的OLS SE和自助法SE。</span>`;
+
+  // Draw histogram
+  drawHistogram(slopes);
+}
+
+function drawHistogram(slopes) {
+  const canvas = document.getElementById('hist-canvas');
+  const ctx = canvas.getContext('2d');
+  const padding = 40;
+
+  // Clear
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Axes
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(padding, canvas.height - padding);
+  ctx.lineTo(canvas.width - padding, canvas.height - padding);
+  ctx.moveTo(padding, padding);
+  ctx.lineTo(padding, canvas.height - padding);
+  ctx.stroke();
+
+  // Histogram
+  const minSlope = Math.min(...slopes);
+  const maxSlope = Math.max(...slopes);
+  const bins = 30;
+  const binWidth = (maxSlope - minSlope) / bins;
+  const counts = new Array(bins).fill(0);
+
+  slopes.forEach(s => {
+    const binIdx = Math.floor((s - minSlope) / binWidth);
+    if (binIdx >= 0 && binIdx < bins) counts[binIdx]++;
+  });
+
+  const maxCount = Math.max(...counts);
+  const barWidth = (canvas.width - 2 * padding) / bins;
+
+  ctx.fillStyle = 'rgba(70, 130, 180, 0.7)';
+  counts.forEach((count, i) => {
+    const x = padding + i * barWidth;
+    const barHeight = (count / maxCount) * (canvas.height - 2 * padding);
+    const y = canvas.height - padding - barHeight;
+    ctx.fillRect(x, y, barWidth - 2, barHeight);
+  });
+
+  // Mean line
+  const meanSlope = slopes.reduce((a, b) => a + b, 0) / slopes.length;
+  const meanX = padding + ((meanSlope - minSlope) / (maxSlope - minSlope)) * (canvas.width - 2 * padding);
+  ctx.strokeStyle = 'red';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(meanX, padding);
+  ctx.lineTo(meanX, canvas.height - padding);
+  ctx.stroke();
+}
+
+function resetBootstrap() {
+  document.getElementById('boot-se').textContent = '—';
+  document.getElementById('boot-se-zh').textContent = '—';
+  document.getElementById('boot-status').textContent = '';
+
+  const canvas = document.getElementById('hist-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+// Initialize
+drawScatter();
+</script>
+
+<div class="insight-box" style="background: var(--warm); color: white; padding: 1rem; border-radius: 0.3rem; margin-top: 1rem;">
+  <p data-lang="en"><strong>Insight:</strong> Bootstrap lets the data speak for itself. No distributional assumptions required. The empirical distribution of bootstrap slopes approximates the sampling distribution of the true parameter. This method works even under heteroskedasticity, non-normality, and other violations.</p>
+  <p data-lang="zh"><strong>洞察：</strong>自助法让数据说话。无需分布假设。自助法斜率的经验分布近似真实参数的抽样分布。即使存在异方差、非正态性和其他违反，此方法也有效。</p>
+</div>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="boot-r">
+  <span data-lang="en">Bootstrap in R</span>
+  <span data-lang="zh">R 中的自助法</span>
+</h2>
+
+<p data-lang="en">
+The <code>boot</code> package automates bootstrap inference:
+</p>
+
+<p data-lang="zh">
+<code>boot</code> 包自动化自助法推理：
+</p>
+
+<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
+library(boot)
+library(tidyverse)
+
+# Load data
+mydata &lt;- read.csv("mydata.csv")
+
+# Define statistic function (takes data and indices)
+boot_slope &lt;- function(data, indices) {
+  d &lt;- data[indices, ]
+  fit &lt;- lm(y ~ x, data = d)
+  coef(fit)["x"]  # Return slope only
+}
+
+# Run bootstrap
+set.seed(42)
+boot_results &lt;- boot(data = mydata,
+                      statistic = boot_slope,
+                      R = 1000)  # R = number of bootstrap samples
+
+# Summary
+boot_results
+plot(boot_results)
+
+# Bootstrap confidence intervals (multiple methods)
+boot.ci(boot_results, type = c("perc", "bca"))
+
+# Percentile CI: empirical percentiles of bootstrap slopes
+# BCa CI: bias-corrected, accelerated (more robust to skewness)
+
+# Bootstrap for multiple parameters
+boot_coefs &lt;- function(data, indices) {
+  d &lt;- data[indices, ]
+  fit &lt;- lm(y ~ x1 + x2, data = d)
+  coef(fit)[-1]  # All slopes (exclude intercept)
+}
+
+boot_results_multi &lt;- boot(data = mydata,
+                            statistic = boot_coefs,
+                            R = 1000)
+
+# Confidence intervals for each coefficient
+for (i in 1:2) {
+  ci &lt;- boot.ci(boot_results_multi, index = i, type = "perc")
+  print(paste("Coef", i, "CI:", ci$percent[4], "to", ci$percent[5]))
+}
+</pre>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="robust-se">
+  <span data-lang="en">Heteroskedasticity-Consistent Standard Errors</span>
+  <span data-lang="zh">异方差一致标准误</span>
+</h2>
+
+<p data-lang="en">
+The <code>sandwich</code> package computes the Huber-White sandwich estimator, accounting for heteroskedasticity:
+</p>
+
+<p data-lang="zh">
+<code>sandwich</code> 包计算Huber-White三明治估计量，考虑异方差：
+</p>
+
+<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
+library(sandwich)
+library(lmtest)
+library(tidyverse)
+
+# Fit OLS
+fit &lt;- lm(y ~ x1 + x2, data = mydata)
+
+# Standard OLS SE (assumes homoskedasticity)
+summary(fit)
+
+# HC3 robust SE (recommended for small samples)
+coeftest(fit, vcov = vcovHC(fit, type = "HC3"))
+
+# Other HC variants:
+# HC0: original White (1980) - consistent but biased in small samples
+# HC1: HC0 with finite-sample correction
+# HC3: HC1 with additional bias correction (best for small n)
+# HC4: further refinement for extreme leverage points
+
+# Compare SEs
+se_ols &lt;- sqrt(diag(vcov(fit)))
+se_hc3 &lt;- sqrt(diag(vcovHC(fit, type = "HC3")))
+
+data.frame(Coefficient = names(coef(fit)),
+           OLS_SE = se_ols,
+           HC3_SE = se_hc3,
+           Ratio = se_hc3 / se_ols) %&gt;%
+  print()
+
+# If Ratio > 1, OLS underestimated SE (heteroskedasticity present)
+</pre>
+
+<h3 id="clustered-se">
+  <span data-lang="en">Clustered Standard Errors</span>
+  <span data-lang="zh">聚类标准误</span>
+</h3>
+
+<p data-lang="en">
+When observations are grouped (e.g., students in schools), errors within groups are correlated. OLS SE underestimates true SE. Adjust using cluster-robust SE:
+</p>
+
+<p data-lang="zh">
+当观测被分组（例如，学校的学生）时，组内的误差相关。OLS SE低估了真实SE。使用聚类稳健SE调整：
+</p>
+
+<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
+library(sandwich)
+library(lmtest)
+
+# Data: students nested in schools
+# Columns: student_id, school_id, score, study_hours, school_funding
+
+mydata &lt;- read.csv("students.csv")
+
+# OLS ignoring clustering
+fit &lt;- lm(score ~ study_hours + school_funding, data = mydata)
+summary(fit)
+
+# Cluster-robust SE (cluster by school_id)
+coeftest(fit, vcov = vcovCL(fit, cluster = ~school_id))
+
+# If cluster-robust SE &gt;&gt; OLS SE, within-cluster correlation is strong
+# Rule of thumb: if avg cluster size &gt; 10 and ICC &gt; 0.05, use clustered SE
+
+# Multi-way clustering (e.g., students nested in both schools and districts)
+coeftest(fit, vcov = vcovCL(fit, cluster = ~school_id + district_id))
+
+# For very large datasets, use fixest package (faster)
+library(fixest)
+
+fit_fe &lt;- feols(score ~ study_hours + school_funding | school_id,
+                 data = mydata)
+
+# Clustered SE automatically
+summary(fit_fe, se = "cluster")
+</pre>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="robust-when">
+  <span data-lang="en">When to Use What: Decision Guide</span>
+  <span data-lang="zh">何时使用什么：决策指南</span>
+</h2>
+
+<table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9em;">
+  <tr style="background: var(--gold);">
+    <th style="padding: 0.7rem; border: 1px solid var(--ink); text-align: left;">Situation</th>
+    <th style="padding: 0.7rem; border: 1px solid var(--ink); text-align: left;">Recommended SE</th>
+    <th style="padding: 0.7rem; border: 1px solid var(--ink); text-align: left;">R Function</th>
+  </tr>
+  <tr style="background: var(--cream);">
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">Homoskedastic, normal errors (rare)</td>
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">OLS SE</td>
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">summary(fit)</td>
+  </tr>
+  <tr style="background: var(--parchment);">
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">Heteroskedasticity suspected</td>
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">HC3 (robust)</td>
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">coeftest(fit, vcov = vcovHC(fit, "HC3"))</td>
+  </tr>
+  <tr style="background: var(--cream);">
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">Observations clustered in groups</td>
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">Clustered SE</td>
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">coeftest(fit, vcov = vcovCL(fit, cluster = ~group_id))</td>
+  </tr>
+  <tr style="background: var(--parchment);">
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">Both hetero. and clustering</td>
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">Multi-way clustered</td>
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">coeftest(fit, vcov = vcovCL(fit, cluster = ~cluster1 + cluster2))</td>
+  </tr>
+  <tr style="background: var(--cream);">
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">Small sample, non-normal</td>
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">Bootstrap</td>
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">boot() + boot.ci()</td>
+  </tr>
+  <tr style="background: var(--parchment);">
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">Time series, autocorrelation</td>
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">Newey-West</td>
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">coeftest(fit, vcov = NeweyWest(fit, lag = 4))</td>
+  </tr>
+  <tr style="background: var(--cream);">
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">Logit/Probit (binary outcome)</td>
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">Robust or Bootstrap</td>
+    <td style="padding: 0.7rem; border: 1px solid var(--ink);">coeftest(fit_logit, vcov = vcovHC(fit_logit, "HC3"))</td>
+  </tr>
+</table>
+
+<h3 id="modern-tools">
+  <span data-lang="en">Modern Tools: lm_robust &amp; feols</span>
+  <span data-lang="zh">现代工具：lm_robust 和 feols</span>
+</h3>
+
+<p data-lang="en">
+Two newer R packages simplify robust SE:
+</p>
+
+<p data-lang="zh">
+两个较新的R包简化了稳健SE：
+</p>
+
+<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
+library(estimatr)  # lm_robust
+
+# Robust SE with one line
+fit_robust &lt;- lm_robust(y ~ x1 + x2,
+                         data = mydata,
+                         se_type = "HC3")
+summary(fit_robust)
+
+# Clustered SE
+fit_clustered &lt;- lm_robust(y ~ x1 + x2,
+                            data = mydata,
+                            clusters = school_id,
+                            se_type = "CR2")
+summary(fit_clustered)
+
+# CR0, CR1, CR2: variants of cluster-robust SE
+# CR2 recommended (analog of HC3)
+
+library(fixest)  # feols
+
+# Fast OLS with multiple SEs
+fit_fe &lt;- feols(y ~ x1 + x2,
+                 data = mydata)
+
+# Summary with different SE types
+summary(fit_fe, se = "iid")      # Standard OLS SE
+summary(fit_fe, se = "hetero")   # HC1 robust
+summary(fit_fe, se = "cluster")  # Clustered (requires cluster specification in feols)
+
+# feols is much faster for large datasets and handles fixed effects natively
+fit_fe2 &lt;- feols(y ~ x1 + x2 | school_id + district_id,
+                  data = mydata,
+                  cluster = ~school_id)
+summary(fit_fe2)  # Clustered by school_id, FE for school and district
+</pre>
+
+<div class="insight-box" style="background: var(--warm); color: white; padding: 1rem; border-radius: 0.3rem; margin-top: 1rem;">
+  <p data-lang="en"><strong>Best Practice:</strong> Always report robust SE by default. OLS SE is rarely appropriate in real applications. For clustered data, always use cluster-robust SE. For small samples with non-normal errors, bootstrap. Modern packages (lm_robust, feols) make robustness easy—no excuse to ignore it.</p>
+  <p data-lang="zh"><strong>最佳实践：</strong>默认始终报告稳健SE。OLS SE在真实应用中很少合适。对于聚类数据，始终使用聚类稳健SE。对于具有非正态误差的小样本，使用自助法。现代包（lm_robust、feols）使稳健性变得容易——没有理由忽视它。</p>
+</div>
+

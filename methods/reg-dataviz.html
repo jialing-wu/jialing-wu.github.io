@@ -1,0 +1,336 @@
+---
+layout: methods-course
+title: "Data Visualization"
+breadcrumb: "Statistics"
+bilingual: true
+prev:
+  url: reg-foundations.html
+  title: "Statistical Foundations"
+next:
+  url: reg-ols.html
+  title: "Regression Analysis"
+---
+
+<style>
+.problem-index{margin:0 0 8px;padding:16px 20px;border:1px solid var(--parchment);border-radius:4px;background:var(--warm)}
+.problem-index-title{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.problem-index a{display:block;font-size:14.5px;line-height:2;color:var(--ink-faded);text-decoration:none;transition:color .2s}
+.problem-index a:hover{color:var(--red)}
+.problem-index a .pi-arrow{font-family:var(--sans);font-size:11px;color:var(--gold);margin-left:6px}
+</style>
+
+<!-- HEADER -->
+<div class="method-header">
+  <h1>Data Visualization</h1>
+  <div class="method-meta">Statistics &middot; Foundations 02</div>
+</div>
+
+<!-- INTRO CARDS -->
+<div class="intro-cards">
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">What Is This?</div>
+    <div class="card-label" data-lang="zh">这一页讲什么？</div>
+    <div data-lang="en"><p>A table of numbers tells you almost nothing. A well-designed chart tells you everything — fast. This page covers the principles of effective data visualization and how to produce publication-quality graphics in R.</p></div>
+    <div data-lang="zh"><p>一张数字表格几乎什么都说明不了。一张设计好的图表能快速说明一切。本页介绍有效数据可视化的原则，以及如何在 R 中制作发表级图表。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Prerequisites</div>
+    <div class="card-label" data-lang="zh">前置知识</div>
+    <div data-lang="en"><p>Basic familiarity with data and R helpful but not required.</p></div>
+    <div data-lang="zh"><p>对数据和 R 有基本了解会有帮助，但非必须。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Software &amp; Tools</div>
+    <div class="card-label" data-lang="zh">软件工具</div>
+    <div data-lang="en"><p>R (ggplot2). A tiny bit of JavaScript for interactive charts.</p></div>
+    <div data-lang="zh"><p>R（ggplot2）。少量 JavaScript 用于交互图表。</p></div>
+  </div>
+</div>
+
+<!-- PROBLEM INDEX -->
+<div class="problem-index">
+  <div class="problem-index-title" data-lang="en">What problem are you facing?</div>
+  <div class="problem-index-title" data-lang="zh">你遇到了什么问题？</div>
+  <a href="#dv-s1" data-lang="en">How do I show what my single variable looks like? <span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#dv-s1" data-lang="zh">我怎么展示单个变量的分布？<span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#dv-s2" data-lang="en">How do I compare distributions or values across groups? <span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#dv-s2" data-lang="zh">我怎么比较不同组之间的分布或数值？<span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#dv-s3" data-lang="en">How do I show the relationship between two variables? <span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#dv-s3" data-lang="zh">我怎么展示两个变量之间的关系？<span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#dv-s4" data-lang="en">How do I make my charts clear and publication-ready? <span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#dv-s4" data-lang="zh">我怎么让图表清晰、适合发表？<span class="pi-arrow">&rarr; &sect;4</span></a>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 1 -->
+<div class="section" id="dv-s1">
+  <h2 data-lang="en">Showing One Variable: Histograms, Density Plots, and Boxplots</h2>
+  <h2 data-lang="zh">展示单个变量：直方图、密度图与箱线图</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You have income data from 500 households. You want to show what the distribution looks like. A table of 500 numbers is useless. You need a visual that lets someone see at a glance: Is it symmetric or skewed? Where is the center? Are there outliers? Different chart types reveal different aspects of the distribution, and choosing the right one matters.</p>
+    <p data-lang="zh"><strong>问题：</strong>你有500个家庭的收入数据。你想展示分布看起来像什么。500个数字的表格没用。你需要一个视觉效果让人一眼看到：对称还是偏斜？中心在哪里？有异常值吗？不同的图表类型揭示分布的不同方面，选择正确的很重要。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Histograms: Showing the Frequency Distribution</h3>
+    <h3 data-lang="zh">直方图：展示频率分布</h3>
+    <p class="method-desc" data-lang="en">A histogram divides the range of a continuous variable into bins (intervals) and counts how many observations fall in each bin. The height of each bar represents frequency. Histograms are intuitive and widely understood, making them the most common choice for showing distributions to general audiences.</p>
+    <p class="method-desc" data-lang="zh">直方图将连续变量的范围分成箱（区间）并计数每个箱中有多少观察。每个条的高代表频率。直方图直观且广为理解，使其成为向普通受众展示分布最常见的选择。</p>
+    <p class="method-desc" data-lang="en">The critical choice is bin width. Too few bins (wide bins) and you flatten the distribution, hiding important structure. Too many bins (narrow bins) and you create noise. A common rule is to use around 30–40 bins, but this depends on the data and sample size. Always experiment: plot the same data with different bin widths and choose the one that best reveals the shape without being jagged or overly smooth.</p>
+    <p class="method-desc" data-lang="zh">关键选择是箱宽。太少箱（宽箱）你会压平分布，隐藏重要结构。太多箱（窄箱）你创建噪声。常见规则是使用约30-40箱，但这取决于数据和样本大小。总是试验：用不同箱宽绘制相同数据并选择最好地揭示形状而不是锯齿或过度平滑的。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A histogram is like sorting people by height into groups. If groups are too broad (bins: 0–200 cm), everyone fits in one bar and you learn nothing. If groups are too narrow (bins: 1 cm intervals), the bar heights jitter randomly and the overall pattern is hard to see. The right bin width shows you where people cluster naturally (e.g., distinct peaks around 160 cm and 180 cm for different populations).</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>直方图像把人按身高分组。如果组太宽（箱：0-200厘米），所有人放一个条，你什么都学不到。如果组太窄（箱：1厘米间隔），条的高度随机抖动，整体模式难以看清。正确的箱宽向你展示人们自然聚集的地方（如不同人群在160厘米和180厘米周围的不同峰）。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use histograms for continuous data when you want to show the full distribution. Avoid histograms when sample sizes are very small (n &lt; 30) because the distribution looks too jagged. Do not use histograms for categorical data (use bar charts instead). Never use 3D histograms; they distort perception. Always include a title, axis labels, and units.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>对连续数据想展示完整分布时用直方图。样本很小（n &lt; 30）时避免，因为分布看起来太锯齿。不要对分类数据用直方图（改用条形图）。永不用3D直方图；它们扭曲知觉。总是包括标题、坐标轴标签和单位。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A researcher plots income distribution for workers in a developing country. With 30-bin histogram, the shape is clear: a long right tail (high earners are rare and earn much more than the median). With 100-bin histogram, the distribution looks spiky and noisy. With 10-bin histogram, the tail is hidden and the distribution appears more symmetric than it actually is. The 30-bin choice best reveals the inequality that policy makers need to see.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究者绘制发展中国家工作者的收入分布。用30箱直方图，形状清晰：长右尾（高收入者稀有且赚得远多于中位数）。用100箱直方图，分布看起来尖刺且嘈杂。用10箱直方图，尾部被隐藏，分布比实际看起来更对称。30箱选择最好地揭示政策制定者需要看到的不平等。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Density Plots: Smooth Alternatives to Histograms</h3>
+    <h3 data-lang="zh">密度图：直方图的平滑替代</h3>
+    <p class="method-desc" data-lang="en">A density plot is a smooth version of a histogram. It estimates the probability density function by treating each observation as a small bell curve and summing them. The result is a smooth line that avoids the bin-width problem. Density plots look more polished and are useful for overlaying multiple distributions to compare them.</p>
+    <p class="method-desc" data-lang="zh">密度图是直方图的平滑版本。它通过把每个观察当作小钟形曲线并求和来估计概率密度函数。结果是避免箱宽问题的平滑线。密度图看起来更精细，对叠加多个分布以比较它们有用。</p>
+    <p class="method-desc" data-lang="en">Density plots have their own parameter: bandwidth. Too small a bandwidth creates wiggles (overfitting). Too large a bandwidth over-smooths, hiding real structure. Density plots are less intuitive than histograms for audiences unfamiliar with statistics — people understand "count" better than "density." Use density plots when you want polish and are presenting to statistically sophisticated audiences, or when overlaying distributions.</p>
+    <p class="method-desc" data-lang="zh">密度图有自己的参数：带宽。太小的带宽创建摆动（过度拟合）。太大的带宽过度平滑，隐藏真实结构。对不熟悉统计的受众，密度图不如直方图直观——人们理解"计数"胜过"密度"。当你想要精细且向统计上先进的受众呈现，或当叠加分布时用密度图。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use density plots for publication and for academic presentations. Use histograms for clarity and public communication. Combine both: overlay a density plot on a histogram to show smoothness while retaining the intuitive frequency interpretation. Avoid density plots when explaining statistics to newcomers; stick with histograms.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>对发表和学术演示用密度图。对清晰性和公众交流用直方图。结合两者：在直方图上叠加密度图以展示平滑性同时保留直观频率解释。向新人解释统计时避免密度图；坚持直方图。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Boxplots: Showing Quartiles and Outliers</h3>
+    <h3 data-lang="zh">箱线图：展示四分位数与异常值</h3>
+    <p class="method-desc" data-lang="en">A boxplot shows five key values: the minimum, first quartile (Q1, 25th percentile), median (Q2, 50th percentile), third quartile (Q3, 75th percentile), and maximum. The "box" spans from Q1 to Q3, with a line inside at the median. "Whiskers" extend to extreme values, or to a cutoff (typically 1.5 × interquartile range beyond Q1 or Q3), with dots marking outliers beyond that.</p>
+    <p class="method-desc" data-lang="zh">箱线图展示五个关键值：最小值、第一四分位（Q1，25百分位）、中位数（Q2，50百分位）、第三四分位（Q3，75百分位）和最大值。"箱"从Q1跨到Q3，中间一条线在中位数。"须"延伸到极端值，或到截断（通常1.5×四分位距超过Q1或Q3），点标记那之外的异常值。</p>
+    <p class="method-desc" data-lang="en">Boxplots are compact and excellent for comparing distributions across many groups, but they hide the actual shape of the distribution. A bimodal distribution (two peaks) and a uniform distribution both look like a line inside a box. Use boxplots when comparing many groups side-by-side or when space is limited. For understanding a single distribution's shape, histograms or density plots are better.</p>
+    <p class="method-desc" data-lang="zh">箱线图紧凑且擅长比较许多组的分布，但隐藏分布的实际形状。双峰分布（两个峰）和均匀分布都看起来像箱内的一条线。当并排比较许多组或空间有限时用箱线图。对理解单个分布的形状，直方图或密度图更好。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A boxplot is a highly compressed summary, like describing a person's height range as "shortest 25%, middle 50%, tallest 25%." You know the spread, but you lose information about whether heights cluster in two groups or spread evenly. A histogram or density plot shows you the actual clustering.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>箱线图是高度压缩的总结，像描述一个人的身高范围为"最矮25%、中间50%、最高25%"。你知道分散，但丧失关于身高是否聚集在两组或均匀分散的信息。直方图或密度图向你展示实际聚集。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use boxplots when comparing 4+ groups on the same variable. Use them to identify outliers visually. Do not rely on boxplots alone to understand a single distribution; always pair with a histogram. Avoid overlapping or nested boxplots; they become hard to read. Violin plots (which combine boxplots with density plots) are a good modern alternative when you want both compression and shape information.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>比较4+个组在同一变量上时用箱线图。用来直观识别异常值。不要仅依赖箱线图理解单个分布；总是与直方图配对。避免重叠或嵌套箱线图；它们变得难以阅读。提琴图（结合箱线图和密度图）是当你想要压缩和形状信息时的好现代替代。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A researcher compares test scores across 8 countries. A boxplot for each country shows median, quartiles, and outliers side by side, letting viewers instantly see which countries have lower/higher scores, more/less variability, and more/fewer outliers. Overlaying eight histograms would be cluttered and hard to compare. Boxplots are the right choice here because the goal is cross-country comparison, not understanding the detailed shape of each distribution.</div>
+    <div data-lang="zh"><strong>社会科学例子：</strong>研究者比较8个国家的测试分数。每个国家的箱线图展示中位数、四分位和异常值并排，让观众快速看到哪些国家分数低/高、变异少/多、异常值少/多。叠加8个直方图会混乱且难以比较。箱线图在这里是正确选择因为目标是跨国家比较，不是理解每个分布的详细形状。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 2 -->
+<div class="section" id="dv-s2">
+  <h2 data-lang="en">Comparing Groups: Bar Charts, Dot Plots, and Error Bars</h2>
+  <h2 data-lang="zh">比较组间：条形图、点图与误差棒</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You have data on women in parliament across 20 countries, and you want to show how they rank. A table of 20 numbers is unreadable. You need a visual that makes rankings obvious and lets the viewer quickly spot the highest and lowest values. Different chart types make comparison easier or harder, and aesthetic choices matter more than you might think.</p>
+    <p data-lang="zh"><strong>问题：</strong>你有20个国家的议会中妇女的数据，想展示他们的排名。20个数字的表格无法阅读。你需要一个视觉效果让排名明显，让观众快速发现最高和最低值。不同的图表类型让比较更容易或更难，美学选择比你想象的更重要。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Bar Charts: Standard But Often Misused</h3>
+    <h3 data-lang="zh">条形图：标准但经常被滥用</h3>
+    <p class="method-desc" data-lang="en">A bar chart has a categorical axis (countries, religions, parties) and a numeric axis showing the value for each category. The chart is simple to understand: longer bars = larger values. Bars should always start at zero (or a stated baseline), otherwise they distort the magnitude of differences. Avoid 3D bar charts, which distort perception and waste space. Keep bars vertical (not horizontal) only if you have few categories; horizontal bars are easier to read when you have many categories or long labels.</p>
+    <p class="method-desc" data-lang="zh">条形图有分类轴（国家、宗教、政党）和展示每个类别的值的数值轴。图表简单易懂：更长的条=更大值。条应该总是从零开始（或一个陈述的基线），否则它们扭曲差异幅度。避免3D条形图，它们扭曲知觉并浪费空间。仅当你有少量类别时保持条垂直（不是水平）；当你有许多类别或长标签时水平条更易阅读。</p>
+    <p class="method-desc" data-lang="en">A common mistake: truncating the y-axis to exaggerate small differences. If your y-axis runs from 0 to 100 but you only show 40 to 60, a 5-unit difference looks enormous. Truncating is misleading unless you have a very good reason (and you should always note it explicitly). Save space by using alternative charts: pie charts should almost never be used (humans are bad at judging angles and areas), and they hide actual numbers from viewers.</p>
+    <p class="method-desc" data-lang="zh">常见错误：截断y轴以夸大小差异。如果y轴从0到100但你仅展示40到60，5单位差异看起来巨大。截断是误导的除非你有很好的理由（你应该总是明确注明）。通过用替代图表节省空间：饼图几乎不应该用（人类判断角和面积不好），它们隐蔽看观众的实际数字。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use bar charts for comparing 4–8 categories. For more than 8, consider a sorted dot plot (see below). Never truncate axes without a compelling reason and explicit labeling. Always include axis labels, units, and a meaningful title. Use color to highlight a specific category (e.g., highlight your country in a cross-national comparison), but do not use color arbitrarily — it should encode information.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>比较4-8个类别时用条形图。超过8个，考虑排序点图（下文见）。没有令人信服的理由和明确标签，永不截断坐标轴。总是包括坐标轴标签、单位和有意义标题。用颜色突出特定类别（如在跨国比较中突出你的国家），但不要任意用颜色——它应该编码信息。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Dot Plots and Cleveland Dot Plots: Often Better Than Bars</h3>
+    <h3 data-lang="zh">点图与克利夫兰点图：常常好于条形</h3>
+    <p class="method-desc" data-lang="en">A dot plot (or Cleveland dot plot) shows the same information as a bar chart but replaces bars with dots connected by a line to the axis. The dots make it easier to compare values (the human eye is better at comparing positions than comparing bar lengths). Dot plots work especially well when categories are sorted by value, letting viewers instantly see the ranking.</p>
+    <p class="method-desc" data-lang="zh">点图（或克利夫兰点图）展示与条形图相同的信息但用点代替条，点用线连到轴。点使比较值更容易（人眼比较位置好于比较条长）。当类别按值排序时点图特别好，让观众快速看到排名。</p>
+    <p class="method-desc" data-lang="en">Dot plots are less "familiar" than bar charts to some audiences but are actually clearer once people see them. They occupy less visual space, making them ideal for publications with space constraints. The lack of a bar (which is "ink" not encoding data) follows the principle of data-ink ratio: maximize information per unit of ink. Dot plots work beautifully for 10–30 categories, whereas bar charts become crowded.</p>
+    <p class="method-desc" data-lang="zh">对某些受众，点图不如条形图"熟悉"但一旦人们看到它们实际上更清晰。它们占据较少视觉空间，对空间有限的出版物理想。缺乏条（这是"墨水"不编码数据）遵循数据墨水比原则：最大化每单位墨水的信息。点图对10-30个类别美妙地起作用，而条形图变得拥挤。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A bar chart is like describing a runner's position as "The runner reached mile 3.2 in the race." A dot plot is like showing the runner's placement on a ruler. You see the position directly without interpreting bar height. Both convey the same information, but the dot plot lets your eye assess positions faster.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>条形图像描述跑者的位置为"跑者在比赛中到达里程3.2。"点图像在标尺上展示跑者的位置。你直接看到位置无需解释条高。两者传达相同信息，但点图让你的眼睛更快评估位置。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use dot plots when you have 8+ categories and want to show rankings. Sort categories by value for maximum impact. Dot plots work in print and presentations. They are less intuitive than bar charts for audiences seeing them for the first time, so briefly explain what you are showing. Use dot plots over bar charts in academic and policy contexts where clarity is paramount.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>有8+个类别想展示排名时用点图。按值排序类别以获得最大影响。点图在印刷和演示中起作用。对第一次看到它们的受众，它们不如条形图直观，所以简要解释你展示什么。在学术和政策背景中用点图而非条形图，那里清晰是最重要的。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A researcher compares women's representation in parliament across 24 countries. A bar chart with 24 bars is crowded and hard to scan. A Cleveland dot plot with countries sorted by percentage lets viewers instantly see that Rwanda leads (~61%), Seychelles is second (~49%), and many African and Nordic countries rank high. The sorted ranking is the key insight, and a dot plot brings this out instantly. A bar chart would require viewers to scan and mentally sort the bars themselves.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究者比较24个国家的议会中妇女代表。24条的条形图拥挤且难以扫描。按百分比排序国家的克利夫兰点图让观众快速看到卢旺达领先（~61%），塞舌尔第二（~49%），许多非洲和北欧国家排名高。排序排名是关键洞察，点图立即带出这点。条形图需要观众自己扫描和心理排序条。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Error Bars and Confidence Intervals</h3>
+    <h3 data-lang="zh">误差棒与置信区间</h3>
+    <p class="method-desc" data-lang="en">When comparing groups, always show uncertainty. Error bars extend above and below a point estimate (bar top or dot) to show confidence intervals, standard error, or standard deviation. The length of the error bar tells viewers how precise the estimate is. Wide error bars signal low precision (small sample, high variability). Narrow error bars signal high precision.</p>
+    <p class="method-desc" data-lang="zh">比较组时，总是展示不确定性。误差棒在点估计（条顶或点）上下延伸以展示置信区间、标准误或标准差。误差棒的长度告诉观众估计有多精确。宽误差棒表示低精度（小样本、高变异性）。窄误差棒表示高精度。</p>
+    <p class="method-desc" data-lang="en">The standard choice is a 95% confidence interval, but document what you are showing (SE, SD, 68% CI, 95% CI, etc.) in a figure note. Different choices lead to different visual impressions: 68% CIs (±1 SE) look much tighter than 95% CIs (±1.96 SE). This is not misleading if you are clear about what you are plotting, but it is confusing if readers assume a standard 95% CI when you are showing something else.</p>
+    <p class="method-desc" data-lang="zh">标准选择是95%置信区间，但在图注中记录你展示什么（SE、SD、68% CI、95% CI等）。不同选择导致不同视觉印象：68% CI（±1 SE）看起来比95% CI（±1.96 SE）紧得多。如果你清楚关于你绘制什么，这不是误导，但如果读者假设标准95% CI而你展示其他则混淆。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always include error bars when showing sample estimates. If comparing estimates from experiments or surveys, error bars are essential — they tell readers which differences are "real" (non-overlapping bars) versus within noise (overlapping bars). Use consistent error bar widths across all figures in a paper. Document what the error bars represent in the caption.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>展示样本估计时总是包括误差棒。如比较实验或调查的估计，误差棒是必需的——它们告诉读者哪个差异"真实"（不重叠条）对比在噪声内（重叠条）。在论文的所有图中使用一致的误差棒宽度。在说明文字中记录误差棒代表什么。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A study compares voter approval ratings for two candidates in three polls. Candidate A: 45% ± 3%, Candidate B: 48% ± 3%. The point estimates differ by 3 percentage points, but the error bars overlap substantially. Viewers can see that this difference is within sampling noise — we cannot confidently say Candidate B is more popular. A bar chart without error bars might suggest a clear difference. Error bars reveal the truth: the difference is not significant.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究比较三项民调中两个候选人的选民赞成率。候选人A：45% ± 3%，候选人B：48% ± 3%。点估计差异3个百分点，但误差棒实质重叠。观众可以看到这个差异在抽样噪声内——我们不能确信候选人B更受欢迎。无误差棒的条形图可能暗示清晰差异。误差棒揭示真相：差异不显著。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 3 -->
+<div class="section" id="dv-s3">
+  <h2 data-lang="en">Showing Relationships: Scatter Plots and Trend Lines</h2>
+  <h2 data-lang="zh">展示关系：散点图与趋势线</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You want to show how two continuous variables relate: GDP per capita and life expectancy, education and income, temperature and crop yield. A correlation coefficient (r = 0.72) tells you there is a strong relationship, but it does not let viewers see it. Visualizing the relationship is crucial for understanding patterns, spotting outliers, and communicating findings to non-technical audiences.</p>
+    <p data-lang="zh"><strong>问题：</strong>你想展示两个连续变量如何关联：人均GDP和预期寿命、教育和收入、温度和产量。相关系数（r=0.72）告诉你有强关系，但不让观众看到它。可视化关系对理解模式、发现异常值和与非技术受众沟通发现至关重要。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Scatter Plots: The Foundation</h3>
+    <h3 data-lang="zh">散点图：基础</h3>
+    <p class="method-desc" data-lang="en">A scatter plot has one variable on the x-axis, another on the y-axis, with each observation plotted as a point. Scatter plots immediately reveal the relationship: positive slope (points drift upward to the right), negative slope (points drift downward to the right), or no clear relationship (points scattered randomly). Scatter plots also reveal outliers, clusters, and nonlinear patterns that a single correlation coefficient cannot capture.</p>
+    <p class="method-desc" data-lang="zh">散点图在x轴有一个变量，y轴有另一个，每个观察绘制为一个点。散点图立即揭示关系：正斜率（点向右上方漂移）、负斜率（点向右下方漂移）或无明确关系（点随机散布）。散点图也揭示单个相关系数不能捕获的异常值、聚类和非线性模式。</p>
+    <p class="method-desc" data-lang="en">Use color or shape to encode a third variable (e.g., region, treatment group) to show how the relationship differs across groups. Use transparency (alpha) to show overplotting — when many points lie in the same location, making a dense cloud. Transparency reveals density: darker areas have more points, lighter areas have fewer. This is far more effective than jittering (adding random noise) or small-point size.</p>
+    <p class="method-desc" data-lang="zh">用颜色或形状编码第三变量（如地区、处理组）以展示关系如何跨组不同。用透明度（alpha）展示过度绘制——许多点在同一位置，形成密集云。透明度揭示密度：更暗区域有更多点，更亮区域更少。这远有效于抖动（加随机噪声）或小点大小。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A correlation is like saying "tall people tend to be heavier." A scatter plot shows you the actual people: You see most tall people are heavier, but there are exceptions (a tall basketball player, a short but obese person), and you see the relationship is roughly linear with some scatter. The visual makes the pattern intuitive in a way a number cannot.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>相关像说"高个子倾向于较重。"散点图向你展示实际的人：你看到大多数高个子更重，但有例外（高篮球运动员、矮但肥胖的人），你看到关系大致线性带一些散布。视觉以数字不能的方式使模式直观。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always use scatter plots to visualize bivariate relationships. A scatter plot should precede any regression or correlation analysis — it may reveal nonlinearity or outliers that violate regression assumptions. Use scatter plots for continuous or mixed variables (one continuous, one categorical is awkward; use boxplots or violins instead). With large samples (n &gt; 1000), add a smoother or transparent colors to avoid over-plotting.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>总是用散点图可视化双变量关系。散点图应该先于任何回归或相关分析——它可能揭示违反回归假设的非线性或异常值。对连续或混合变量用散点图（一个连续、一个分类很尴尬；改用箱线图或提琴图）。对大样本（n &gt; 1000），加一个平滑器或透明颜色以避免过度绘制。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Adding Smoothers: LOESS and Regression Lines</h3>
+    <h3 data-lang="zh">添加平滑器：LOESS与回归线</h3>
+    <p class="method-desc" data-lang="en">Overlaying a trend line on a scatter plot helps viewers see the overall pattern, especially with noisy data. A regression line shows the linear relationship (the line that minimizes squared errors). A LOESS smoother (locally weighted scatterplot smoothing) is more flexible: it traces the local trend at each point, revealing nonlinear relationships. LOESS is ideal when you do not want to assume linearity.</p>
+    <p class="method-desc" data-lang="zh">在散点图上叠加趋势线帮助观众看到整体模式，特别是有嘈杂数据时。回归线展示线性关系（最小化平方误差的线）。LOESS平滑器（局部加权散点图平滑）更灵活：它在每个点追踪局部趋势，揭示非线性关系。当你不想假设线性时LOESS理想。</p>
+    <p class="method-desc" data-lang="en">Always add a confidence band (shaded area) around the line to show uncertainty. The band widens where data are sparse (low precision) and narrows where data are dense (high precision). This visual cue tells viewers how much to trust the smoother. Do not add a line unless the relationship is meaningful — if there is no relationship, adding a regression line is misleading.</p>
+    <p class="method-desc" data-lang="zh">总是在线周围添加置信带（阴影区域）以展示不确定性。在数据稀疏处带加宽（低精度）和在数据密集处变窄（高精度）。这个视觉提示告诉观众多少信任平滑器。除非关系有意义，否则不要添加线——如果没有关系，添加回归线是误导。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use a regression line to show linear relationships or when the dependent variable is the focus of a regression analysis. Use LOESS when exploring data and looking for nonlinear patterns. Do not use curved lines (polynomials) without good reason; they overfit and hide patterns. Always include a 95% confidence band. If bands are very wide, it signals that your confidence in the trend is low — be honest about this in your text.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>用回归线展示线性关系或当因变量是回归分析焦点时。用LOESS当探索数据寻找非线性模式时。没有好理由不要用曲线（多项式）；它们过度拟合和隐蔽模式。总是包括95%置信带。如果带很宽，它表示你对趋势的信心低——在文本中诚实对待这点。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A researcher plots GDP per capita (x-axis) versus life expectancy (y-axis) for 180 countries, colored by region. A linear regression line shows the overall trend (higher GDP → higher life expectancy). But a LOESS smoother reveals an important nonlinearity: the relationship is steep at low GDP (each additional dollar buys more life), but flattens at high GDP (diminishing returns). A regression line alone would hide this crucial insight. The combination of scatter plot, LOESS smoother, and regional coloring tells the full story about global development and inequality.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究者绘制人均GDP（x轴）对预期寿命（y轴）180个国家的关系，按地区着色。线性回归线展示整体趋势（更高GDP→更高寿命）。但LOESS平滑器揭示重要非线性：关系在低GDP处陡峭（每额外美元购买更多生活），但在高GDP处平坦（收益递减）。仅回归线会隐蔽这个关键洞察。散点图、LOESS平滑器和地区着色的组合讲述关于全球发展和不平等的完整故事。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Faceting: Showing Relationships Across Groups</h3>
+    <h3 data-lang="zh">分面：展示跨组的关系</h3>
+    <p class="method-desc" data-lang="en">When relationships differ across groups (countries, time periods, treatment vs. control), use faceting: create small, identical scatter plots for each group, arranged in a grid. Faceting lets viewers see the same relationship for each group and spot differences. It is far clearer than overlaying many scatter plots in one chart (which becomes cluttered) or using color alone (which is hard to track across multiple groups).</p>
+    <p class="method-desc" data-lang="zh">当关系跨组不同（国家、时期、处理对照）时，用分面：为每个组创建小的、相同的散点图，排列在网格中。分面让观众看到每个组的相同关系和发现差异。这远清晰于在一个图中叠加许多散点图（会变得混乱）或仅用颜色（难以跨多个组追踪）。</p>
+    <p class="method-desc" data-lang="en">Use consistent axis scales across facets (same x-range and y-range for all panels) to make comparison fair. If you use different scales, viewers may think differences are larger or smaller than they actually are. The only exception: if the variables naturally have very different ranges across groups, you may use flexible scales, but clearly note this in the caption.</p>
+    <p class="method-desc" data-lang="zh">跨分面用一致的坐标轴尺度（所有面板相同的x范围和y范围）以公平比较。如果用不同尺度，观众可能认为差异比实际更大或更小。唯一例外：如果变量在组间自然有很不同的范围，你可能用灵活尺度，但在说明文字中清楚注明。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use faceting when you have 3–9 groups and want to show within-group relationships. Faceting works best in wide-format publications. With more than 9 groups, the facets become too small. With only 1–2 groups, use color-coding in a single plot instead. Faceting is underused in social science — many researchers default to color, which is harder to interpret than separate plots.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>有3-9个组想展示组内关系时用分面。分面在宽格式出版中最好。超过9个组，分面变得太小。仅1-2个组，改用单个图的颜色编码。分面在社会科学中未充分利用——许多研究者默认使用颜色，这比分开图更难解释。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A study examines whether economic growth increases government approval in democracies versus autocracies. Faceting creates two side-by-side scatter plots: democracies on the left (GDP growth vs. approval), autocracies on the right. Both scatter plots use the same axis scales. This instantly reveals: in democracies, the relationship is strong and positive; in autocracies, it is weaker or nonexistent. A single scatter plot with points colored by regime type would obscure this difference. Faceting makes the comparison obvious.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究检验经济增长是否在民主制与独裁制中增加政府赞成。分面创建两个并排散点图：民主制在左（GDP增长对赞成），独裁制在右。两个散点图用相同坐标轴尺度。这立即揭示：在民主制中，关系强且正；在独裁制中，它更弱或不存在。一个用点按体制类型着色的单个散点图会隐蔽这个差异。分面使比较明显。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 4 -->
+<div class="section" id="dv-s4">
+  <h2 data-lang="en">Design Principles: Color, Labels, and Layout</h2>
+  <h2 data-lang="zh">设计原则：配色、标签与排版</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You have accurate data and a sensible chart type, but poor design choices undermine your message. Colors that are not colorblind-friendly alienate readers. Axes without units confuse interpretation. Clutter obscures the data. Design is not decoration — it either enables or obstructs understanding. This section covers the principles that separate clear from misleading charts.</p>
+    <p data-lang="zh"><strong>问题：</strong>你有准确的数据和合理的图表类型，但糟糕的设计选择破坏你的信息。非色盲友好的颜色疏远读者。没有单位的坐标轴混淆解释。混乱模糊数据。设计不是装饰——它要么启用要么阻碍理解。这部分介绍清晰和误导性图表的原则。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">The Data-Ink Ratio: Remove the Clutter</h3>
+    <h3 data-lang="zh">数据墨水比：移除混乱</h3>
+    <p class="method-desc" data-lang="en">Edward Tufte's data-ink ratio is the proportion of chart ink dedicated to representing data versus decoration. Every element in a chart should encode information or aid understanding. Grid lines are useful if they help reading values; ornamental 3D effects waste space and distort perception. Background colors should be white or very light gray, not bright colors that compete for attention. Remove borders around the chart — they are redundant and add visual noise.</p>
+    <p class="method-desc" data-lang="zh">爱德华·图夫特的数据墨水比是用于表示数据的图表墨水比例对比装饰。图表中每个元素应该编码信息或帮助理解。网格线如果有助于阅读值很有用；装饰性3D效果浪费空间和扭曲知觉。背景颜色应该是白色或非常浅灰色，不是竞争注意的亮色。移除图表周围的边框——它们是冗余的并添加视觉噪声。</p>
+    <p class="method-desc" data-lang="en">Minimize the "chartjunk": elements that look nice but do not aid understanding. A background image of mountains behind a chart about elevation is charming but uninformative. Stock photography in infographics is often more distraction than help. On the other hand, annotations (textual labels pointing to specific data points or features) are not clutter — they are helpful. Good design draws your eye to the important patterns without making you work to understand them.</p>
+    <p class="method-desc" data-lang="zh">最小化"图表垃圾"：看起来好但不帮助理解的元素。关于海拔的图表背后的山的背景图像很迷人但无信息。信息图中的库存摄影常常比帮助更分散。另一方面，注释（指向特定数据点或特征的文本标签）不是混乱——它们有帮助。好设计不需要你工作理解就把你的眼睛吸引到重要模式。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use light, unobtrusive backgrounds. Remove unnecessary borders and axes. Use gridlines only if they aid value reading; remove them if the data labels are clear. Favor simplicity over aesthetics. A chart that is slightly less "pretty" but far clearer is a success. Annotations (arrows, labels, highlighting) are encouraged when they direct attention to key findings.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>使用淡色、不引人注目的背景。移除不必要的边框和坐标轴。仅在有助于值读取时用网格线；如果数据标签清晰移除。偏好简洁胜过美学。一个稍微不那么"漂亮"但清晰得多的图表是成功。当它们引导注意到关键发现时鼓励注释（箭头、标签、突出）。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Color: Accessibility and Information</h3>
+    <h3 data-lang="zh">颜色：无障碍与信息</h3>
+    <p class="method-desc" data-lang="en">Color is powerful but is easily misused. About 8% of men and 0.5% of women have red-green colorblindness. Charts that rely on red versus green to distinguish categories alienate these readers. Use colorblind-friendly palettes: the Viridis palette (perceptually uniform across the spectrum) or Color Brewer palettes are safe choices. Always test your plots in grayscale — if they are unreadable in black and white, color alone is not solving your problem.</p>
+    <p class="method-desc" data-lang="zh">颜色强大但容易误用。约8%男性和0.5%女性有红-绿色盲。依赖红对绿以区分类别的图表疏远这些读者。用色盲友好的调色板：Viridis调色板（感知上均匀跨光谱）或Color Brewer调色板是安全选择。总是在灰度中测试图——如果它们在黑白中无法读取，颜色单独不解决问题。</p>
+    <p class="method-desc" data-lang="en">Use color to encode information, not as random decoration. If a chart has 5 bars and each is a different arbitrary color, that is clutter. If you are showing two groups (treatment vs. control, men vs. women) and use blue and orange, that encodes information: color corresponds to group. Use sequential colors (light to dark) to show ordered data (income categories, temperature). Use diverging colors (blue-white-red) to show deviations from a midpoint (more vs. less than average). Use categorical colors only for unordered categories.</p>
+    <p class="method-desc" data-lang="zh">用颜色编码信息，不是随机装饰。如果图表有5条且各是不同任意颜色，那是混乱。如果你展示两个组（处理对控制、男对女）且用蓝和橙，那编码信息：颜色对应组。用顺序颜色（浅到暗）展示有序数据（收入类别、温度）。用分散颜色（蓝-白-红）展示与中点的偏差（多于或少于平均）。仅对无序类别用分类颜色。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Color should guide your reader like a map legend. Red for "hot" and blue for "cold" feels natural. Random colors are like a map with no legend — readers are lost. Colorblind readers are like people trying to read a map in red and green only when there are no other cues — they are shut out.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>颜色应该像地图图例引导你的读者。红"热"蓝"冷"感觉自然。随机颜色像没有图例的地图——读者迷路。色盲读者像试图仅用红和绿读取地图且没有其他提示的人——他们被关在外。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always use colorblind-friendly palettes. Limit palettes to 3–5 colors for clarity. Never use red and green as the only distinction. Use color consistently across all figures in a paper (the same color for "treatment" in every chart). Provide a legend or caption explaining what colors represent. Test in grayscale.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>总是用色盲友好的调色板。限制调色板3-5种颜色清晰。永不仅用红和绿作为唯一区分。跨论文所有图一致地用颜色（在每个图表中相同颜色的"处理"）。提供图例或说明解释颜色代表。在灰度中测试。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Labels, Legends, and Annotations</h3>
+    <h3 data-lang="zh">标签、图例与注释</h3>
+    <p class="method-desc" data-lang="en">Every axis should have a clear label and units. "Income" is vague; "Household Income (USD, thousands)" is precise. Legends should explain colors, shapes, or line types. Legends should be placed within the plot area if there is space (rather than outside), reducing the need to look back and forth. Annotations — text labels pointing to specific features — are powerful. Rather than forcing readers to find a point and decode a legend, label it directly: "Ghana (40% women in parliament)" is clearer than a dot on a scatter plot with a legend somewhere else.</p>
+    <p class="method-desc" data-lang="zh">每个坐标轴应该有清晰标签和单位。"收入"是模糊的；"家庭收入（美元，千）"是精确的。图例应该解释颜色、形状或线型。图例应该在图表区域内放置（而不是外部），减少来回看的需要。注释——指向特定特征的文本标签——强大。与其强制读者找到一个点并解码图例，直接标记它："加纳（40%妇女在议会）"比散点图上的点加别处的图例更清晰。</p>
+    <p class="method-desc" data-lang="en">Titles should be informative, not generic. "Figure 1: Income Distribution" is weak. "U.S. Income Distribution, 2022: Median $55k, Top 1% Earns 10× More" tells the story in the title itself. Readers skim figures; a good title can convey the key takeaway before they read the axes. Figure captions should briefly explain what the reader is seeing and highlight the important pattern (e.g., "Note the steeper slope in democracies, indicating that economic growth translates more directly to approval in accountable systems").</p>
+    <p class="method-desc" data-lang="zh">标题应该是信息性的，不是通用的。"图1：收入分布"很弱。"美国收入分布，2022年：中位数55000美元，最富1%赚10倍多"在标题本身就讲了故事。读者跳过图；好标题能在他们读坐标轴前传达关键要点。图表说明应该简要解释读者看到什么并突出重要模式（如"注意民主制中更陡峭的斜率，表明经济增长更直接地转化为负责系统中的赞成"）。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always label axes with units. Use direct labels (text on the plot) over legends when space permits. Legends are acceptable for overlaid lines or small multiples. Provide a descriptive title and caption for every figure. In papers, captions should stand alone — readers should understand the figure without reading the surrounding text.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>总是用单位标记坐标轴。当空间允许时用直接标签（图上的文本）而非图例。图例对叠加线或小倍数可接受。为每个图提供描述性标题和说明。在论文中，说明应该独立——读者应该理解图而不读周围文本。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A policy brief compares voter turnout across election types. A chart with three bars (local elections, national elections, referenda) would benefit from direct annotation: "Local: 52%" written above each bar rather than a legend showing what colors mean. A caption could note: "Voter turnout is highest in national elections (68%), suggesting that voters prioritize decisions with broader scope." This directs attention to the policy-relevant finding without making readers work.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>政策简报比较选举类型间的投票率。有三个条的图（地方选举、全国选举、公投）会受益于直接注释："地方：52%"写在每条上方而非展示颜色代表什么的图例。说明可能注明："投票率在全国选举最高（68%），暗示选民优先考虑更广范围的决定。"这不需要读者工作就把注意力指向政策相关发现。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Common Mistakes: Misleading Truncation and Distortion</h3>
+    <h3 data-lang="zh">常见错误：误导性截断与扭曲</h3>
+    <p class="method-desc" data-lang="en">Truncating axes (showing only a narrow range of values) exaggerates differences. If you are comparing two unemployment rates (4.5% vs. 5.2%) and your y-axis runs from 0 to 10%, the difference looks small (as it should). But if the y-axis runs from 4% to 6%, the 0.7% difference looks like a 50% increase. Truncation is not always wrong — sometimes space is limited — but you must always explicitly note it (e.g., "y-axis starts at 4%") and have a good justification.</p>
+    <p data-lang="zh">截断坐标轴（仅展示值的狭窄范围）夸大差异。如果比较两个失业率（4.5%对5.2%）且y轴从0到10%，差异看起来小（如应该）。但如果y轴从4%到6%，0.7%差异看起来像50%增加。截断不总是错——有时空间有限——但你必须总是明确注明（如"y轴从4%开始"）且有好理由。</p>
+    <p class="method-desc" data-lang="en">3D effects, pie charts, and dual y-axes are common sources of distortion. 3D bar charts make bars in the back look smaller than they are. Pie charts are hard to interpret — humans are poor at judging angles. Dual y-axes (two different scales on left and right) let you cherry-pick scales to exaggerate correlations that may not exist. Avoid all three unless you have a very compelling reason.</p>
+    <p class="method-desc" data-lang="zh">3D效果、饼图和双y轴是常见扭曲来源。3D条形图使后面的条看起来比实际更小。饼图难解释——人类判断角很差。双y轴（左右两个不同尺度）让你挑选尺度以夸大可能不存在的相关。除非有非常令人信服的理由，避免全部三个。</p>
+    <p class="method-desc" data-lang="en">A responsible chart maker asks: "Would someone from the opposite political view see the same pattern in my chart?" If the answer is no, you may have inadvertently misled readers. Test your charts by asking colleagues, especially those inclined to disagree, whether they see the patterns you intend.</p>
+    <p class="method-desc" data-lang="zh">负责任的图表制作者问："来自相反政治观点的人会在我的图中看到相同模式吗？"如果答案是不，你可能无意中误导了读者。通过问同事，尤其是倾向于不同意的，是否看到你打算的模式，测试你的图。</p>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Start y-axes at zero whenever possible, especially for bar charts. If you truncate, explain why and note it prominently. Avoid 3D effects entirely. Never use pie charts; use bar charts or dot plots instead. Do not use dual y-axes unless both axes are on the same scale (which defeats the purpose). Design for honesty: a chart that fairly represents data may be less dramatic, but it maintains reader trust.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>尽可能在零处开始y轴，特别是对条形图。如果截断，解释为什么和突出注明。完全避免3D效果。永不用饼图；改用条形或点图。除非两个坐标轴都在相同尺度（这破坏目的），不要用双y轴。为诚实设计：公平代表数据的图可能不那么戏剧性，但它维护读者信任。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> During an election, a politician's campaign shows a chart of their approval ratings over four weeks. The y-axis goes from 38% to 44% (truncated). A 3% increase looks like a 50% jump. The campaign claims momentum. An independent fact-checker redraws the chart with a y-axis from 0% to 100% — the same 3% increase now looks modest. The same data, two different visual messages. The truncated version was not technically false but was deliberately misleading. Good policy communication avoids this trap.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>在选举期间，政治家的竞选展示他们四周的赞成率图。y轴从38%到44%（截断）。3%增加看起来像50%跳跃。竞选声称势头。独立事实检查者用0%到100%的y轴重画图——同样3%增加现在看起来温和。相同数据，两个不同视觉信息。截断版本在技术上不假但故意误导。好的政策交流避免这个陷阱。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+<!-- GUIDES -->
+<div class="section" id="dv-guides">
+  <h2 data-lang="en">Guides</h2>
+  <h2 data-lang="zh">配套指南</h2>
+  <div class="m-list">
+    <a class="m-card" href="/methods/guides/reg-dataviz-code.html">
+      <div class="m-num">▶</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Data Visualization in R (ggplot2 Cookbook)</div>
+        <div class="m-title" data-lang="zh">R 数据可视化实战（ggplot2 手册）</div>
+        <div class="m-desc" data-lang="en">Interactive chart type selector plus ggplot2 patterns for scatter, heatmap, facets, and more.</div>
+        <div class="m-desc" data-lang="zh">交互式图表类型选择器，加上散点图、热图、分面等 ggplot2 常用模式。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<hr class="section-divider">
+<!-- RESOURCES -->
+<div class="section" id="dv-resources">
+  <h2 data-lang="en">Resources</h2>
+  <h2 data-lang="zh">资源</h2>
+  <div class="method-section">
+    <p class="method-desc" data-lang="en"><strong>Tufte, E. R. (1983).</strong> <em>The Visual Display of Quantitative Information.</em> Graphics Press. — Foundational text on data visualization principles and the data-ink ratio; essential reading for understanding how design choices shape perception.</p>
+    <p class="method-desc" data-lang="zh"><strong>图夫特（1983）。</strong><em>定量信息的视觉展示。</em>Graphics Press。——关于数据可视化原则和数据墨水比的基础文本；对理解设计选择如何塑造知觉至关重要。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Cleveland, W. S. (1985).</strong> <em>The Elements of Graphing Data.</em> Wadsworth Advanced Books and Software. — Classic guide on designing effective statistical graphics; covers dot plots, bar charts, and common pitfalls in visualization.</p>
+    <p class="method-desc" data-lang="zh"><strong>克利夫兰（1985）。</strong><em>数据制图元素。</em>沃茨沃斯高等书籍和软件。——设计有效统计图表的经典指南；涵盖点图、条形图和可视化中的常见陷阱。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Wickham, H. (2016).</strong> <em>ggplot2: Elegant Graphics for Data Analysis (2nd ed.)</em>. Springer. — Comprehensive guide to ggplot2 in R, with grammar of graphics philosophy and extensive examples for publication-ready visualizations.</p>
+    <p class="method-desc" data-lang="zh"><strong>威克汉（2016）。</strong><em>ggplot2：数据分析的优雅图形（第2版）</em>。施普林格。——R 中 ggplot2 的综合指南，具有图形语法哲学和用于发表级可视化的广泛示例。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Healy, K. (2018).</strong> <em>Data Visualization: A Practical Introduction.</em> Princeton University Press. — Modern practical guide integrating design principles with R code; excellent for learning to see and critique visualizations critically.</p>
+    <p class="method-desc" data-lang="zh"><strong>希利（2018）。</strong><em>数据可视化：实用介绍。</em>普林斯顿大学出版社。——整合设计原则与R代码的现代实践指南；极好地学习以批判眼光看待和评论可视化。</p>
+  </div>
+</div>
+
+<!-- PAGE NAV -->
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/reg-foundations.html">
+    <span class="pn-arrow">&larr;</span>
+    <span><span class="pn-title">Statistical Foundations</span></span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/reg-ols.html">
+    <span><span class="pn-title">Regression Analysis</span></span>
+    <span class="pn-arrow">&rarr;</span>
+  </a>
+</div>

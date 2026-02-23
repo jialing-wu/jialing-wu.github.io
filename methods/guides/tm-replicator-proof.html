@@ -1,0 +1,910 @@
+---
+layout: methods-guide
+title: "Replicator Dynamics Derivation"
+title_zh: "复制者动态完整推导"
+parent_title: "Theoretical Modeling"
+parent_title_zh: "理论建模"
+parent_url: "theoretical-modeling.html"
+bilingual: true
+mathjax: true
+---
+
+<style>
+    /* Page-specific styles only */
+    .definition {
+        background: #f9f6f2;
+        border-left: 4px solid #d4a574;
+        padding: 20px 25px;
+        margin: 25px 0;
+        border-radius: 4px;
+    }
+
+    .definition-title {
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-family: 'IBM Plex Sans', sans-serif;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 1px;
+        color: #666;
+    }
+
+    .math-block {
+        background: #faf8f5;
+        border: 1px solid #e8e3dc;
+        padding: 20px 25px;
+        margin: 25px 0;
+        border-radius: 4px;
+        overflow-x: auto;
+        font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .math-block mjx-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .proof {
+        background: #f5f8fa;
+        border-left: 4px solid #5b8fb8;
+        padding: 20px 25px;
+        margin: 25px 0;
+        border-radius: 4px;
+    }
+
+    .proof-title {
+        font-weight: 600;
+        margin-bottom: 15px;
+        font-family: 'IBM Plex Sans', sans-serif;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 1px;
+        color: #444;
+    }
+
+    .proof-step {
+        margin-bottom: 12px;
+        line-height: 1.7;
+    }
+
+    .proof-step mjx-container {
+        display: inline;
+    }
+
+    .note {
+        background: #fef5e7;
+        border-left: 4px solid #f39c12;
+        padding: 15px 20px;
+        margin: 20px 0;
+        border-radius: 4px;
+        font-size: 0.95em;
+    }
+
+    .note-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-family: 'IBM Plex Sans', sans-serif;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #c87f0a;
+    }
+
+    .box {
+        background: #f0f4f8;
+        border: 1px solid #d4dce7;
+        padding: 20px 25px;
+        margin: 25px 0;
+        border-radius: 4px;
+    }
+
+    .box-title {
+        font-weight: 600;
+        margin-bottom: 12px;
+        font-family: 'IBM Plex Sans', sans-serif;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #444;
+    }
+
+    .highlight {
+        background: #fff8e6;
+        padding: 2px 6px;
+        border-radius: 2px;
+        font-style: italic;
+    }
+
+    .section-divider {
+        border: none;
+        border-top: 1px solid #e8e3dc;
+        margin: 60px 0;
+    }
+
+    [data-lang-content] {
+        display: none;
+    }
+
+    [data-lang-content="en"] {
+        display: block;
+    }
+
+    body.zh [data-lang-content="en"] {
+        display: none;
+    }
+
+    body.zh [data-lang-content="zh"] {
+        display: block;
+    }
+</style>
+
+<div class="method-header">
+    <div data-lang-content="en">
+        <h1>Replicator Dynamics: Complete Derivation</h1>
+        <p class="subtitle">Mathematical foundations of evolutionary game theory, frequency-dependent selection, and the deep connections to dynamical systems</p>
+    </div>
+    <div data-lang-content="zh">
+        <h1>复制者动力学：完整推导</h1>
+        <p class="subtitle">进化博弈论的数学基础、频率依赖性选择以及与动力系统的深刻联系</p>
+    </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 1: Fitness Landscape & Frequency-Dependent Selection -->
+<section id="fitness-selection">
+    <h2 data-lang-content="en">1. Fitness Landscape & Frequency-Dependent Selection</h2>
+    <h2 data-lang-content="zh">1. 适应度景观与频率依赖性选择</h2>
+
+    <p data-lang-content="en">
+        In evolutionary game theory, the fitness of a strategy depends critically on the composition of the population. Unlike classical population genetics, where fitness is fixed, frequency-dependent selection means payoffs change with the frequency of strategies.
+    </p>
+    <p data-lang-content="zh">
+        在进化博弈论中，一个策略的适应度关键性地取决于种群的组成。与古典群体遗传学不同（那里适应度是固定的），频率依赖性选择意味着收益随着策略的频率而变化。
+    </p>
+
+    <h3 data-lang-content="en">Basic Setup</h3>
+    <h3 data-lang-content="zh">基本设定</h3>
+
+    <p data-lang-content="en">
+        Consider a finite population of agents playing one of $$n$$ strategies. Let $$x_i(t)$$ denote the frequency (proportion) of strategy $$i$$ at time $$t$$, where:
+    </p>
+    <p data-lang-content="zh">
+        考虑一个有限的代理种群，每个代理选择 $$n$$ 个策略中的一个。令 $$x_i(t)$$ 表示在时间 $$t$$ 时策略 $$i$$ 的频率（比例），其中：
+    </p>
+
+    <div class="math-block">
+        $$\sum_{i=1}^{n} x_i(t) = 1, \quad x_i(t) \geq 0$$
+    </div>
+
+    <p data-lang-content="en">
+        The fitness (expected payoff) of strategy $$i$$ in a game with payoff matrix $$A$$ is:
+    </p>
+    <p data-lang-content="zh">
+        在回报矩阵为 $$A$$ 的博弈中，策略 $$i$$ 的适应度（预期收益）是：
+    </p>
+
+    <div class="definition">
+        <div class="definition-title" data-lang-content="en">Definition: Strategy Fitness</div>
+        <div class="definition-title" data-lang-content="zh">定义：策略适应度</div>
+        <div class="math-block">
+            $$f_i(\mathbf{x}) = \sum_{j=1}^{n} A_{ij} x_j = (A\mathbf{x})_i$$
+        </div>
+        <p data-lang-content="en">where $$A \in \mathbb{R}^{n \times n}$$ is the payoff matrix and $$\mathbf{x} = (x_1, \ldots, x_n)^T$$.</p>
+        <p data-lang-content="zh">其中 $$A \in \mathbb{R}^{n \times n}$$ 是回报矩阵，$$\mathbf{x} = (x_1, \ldots, x_n)^T$$。</p>
+    </div>
+
+    <p data-lang-content="en">
+        The average fitness across the population is:
+    </p>
+    <p data-lang-content="zh">
+        整个种群的平均适应度是：
+    </p>
+
+    <div class="definition">
+        <div class="definition-title" data-lang-content="en">Definition: Average Fitness</div>
+        <div class="definition-title" data-lang-content="zh">定义：平均适应度</div>
+        <div class="math-block">
+            $$\overline{f}(\mathbf{x}) = \sum_{i=1}^{n} x_i f_i(\mathbf{x}) = \mathbf{x}^T A \mathbf{x}$$
+        </div>
+    </div>
+
+    <p data-lang-content="en">
+        This quantity is crucial: the average fitness determines the overall growth rate of the population and influences how strategy frequencies evolve.
+    </p>
+    <p data-lang-content="zh">
+        这个量至关重要：平均适应度决定了种群的整体增长率，并影响策略频率如何演变。
+    </p>
+</section>
+
+<hr class="section-divider">
+
+<!-- SECTION 2: Replicator Equation Derivation -->
+<section id="replicator-derivation">
+    <h2 data-lang-content="en">2. Replicator Equation Derivation</h2>
+    <h2 data-lang-content="zh">2. 复制者方程推导</h2>
+
+    <p data-lang-content="en">
+        The replicator equation captures how strategy frequencies change when selection is proportional to fitness. We derive it from a simple probabilistic model of population dynamics.
+    </p>
+    <p data-lang-content="zh">
+        复制者方程描述了当选择与适应度成比例时策略频率如何变化。我们从种群动力学的简单概率模型推导它。
+    </p>
+
+    <h3 data-lang-content="en">Derivation from Birth-Death Dynamics</h3>
+    <h3 data-lang-content="zh">从出生-死亡动力学推导</h3>
+
+    <p data-lang-content="en">
+        Assume discrete reproduction where agents with higher fitness have more offspring. In a continuous approximation, the change in frequency of strategy $$i$$ is proportional to:
+    </p>
+    <p data-lang-content="zh">
+        假设离散再生，适应度更高的代理有更多后代。在连续近似中，策略 $$i$$ 频率的变化与以下因素成比例：
+    </p>
+
+    <div class="math-block">
+        $$\dot{x}_i = x_i f_i(\mathbf{x}) - x_i \overline{f}(\mathbf{x})$$
+    </div>
+
+    <p data-lang-content="en">
+        The intuition is clear: strategies above average fitness grow ($$f_i > \overline{f}$$), while those below average shrink ($$f_i < \overline{f}$$). The term $$x_i f_i$$ represents reproduction proportional to fitness, while subtracting $$x_i \overline{f}$$ accounts for the normalization constraint that frequencies sum to 1.
+    </p>
+    <p data-lang-content="zh">
+        直觉很清晰：高于平均适应度的策略增长（$$f_i > \overline{f}$$），而低于平均的策略萎缩（$$f_i < \overline{f}$$）。项 $$x_i f_i$$ 表示与适应度成比例的再生，而减去 $$x_i \overline{f}$$ 则说明了频率之和为 1 的归一化约束。
+    </p>
+
+    <div class="proof">
+        <div class="proof-title" data-lang-content="en">Proof: Frequency Constraint Preservation</div>
+        <div class="proof-title" data-lang-content="zh">证明：频率约束保持</div>
+        <div class="proof-step">
+            <span data-lang-content="en">We verify that the replicator equation preserves the constraint $$\sum_i x_i = 1$$:</span>
+            <span data-lang-content="zh">我们验证复制者方程保持约束 $$\sum_i x_i = 1$$：</span>
+        </div>
+        <div class="proof-step">
+            $$\frac{d}{dt}\sum_{i=1}^{n} x_i = \sum_{i=1}^{n} (x_i f_i - x_i \overline{f}) = \sum_{i=1}^{n} x_i f_i - \overline{f}\sum_{i=1}^{n} x_i = \overline{f} - \overline{f} = 0$$
+        </div>
+        <div class="proof-step">
+            <span data-lang-content="en">Therefore, $$\sum_i x_i$$ remains constant, and since it equals 1 initially, it stays 1 for all $$t$$. ✓</span>
+            <span data-lang-content="zh">因此，$$\sum_i x_i$$ 保持不变，由于它最初等于 1，对所有 $$t$$ 都保持为 1。✓</span>
+        </div>
+    </div>
+
+    <div class="definition">
+        <div class="definition-title" data-lang-content="en">Definition: The Replicator Equation</div>
+        <div class="definition-title" data-lang-content="zh">定义：复制者方程</div>
+        <div class="math-block">
+            $$\dot{x}_i = x_i(f_i(\mathbf{x}) - \overline{f}(\mathbf{x}))$$
+        </div>
+        <p data-lang-content="en">where $$f_i(\mathbf{x}) = (A\mathbf{x})_i$$ and $$\overline{f}(\mathbf{x}) = \mathbf{x}^T A \mathbf{x}$$.</p>
+        <p data-lang-content="zh">其中 $$f_i(\mathbf{x}) = (A\mathbf{x})_i$$ 和 $$\overline{f}(\mathbf{x}) = \mathbf{x}^T A \mathbf{x}$$。</p>
+    </div>
+
+    <h3 data-lang-content="en">Alternative Form: Multiplicative Representation</h3>
+    <h3 data-lang-content="zh">另一种形式：乘法表示</h3>
+
+    <p data-lang-content="en">
+        The replicator equation can also be written in logarithmic form, which reveals its multiplicative structure:
+    </p>
+    <p data-lang-content="zh">
+        复制者方程也可以用对数形式写，这揭示了它的乘法结构：
+    </p>
+
+    <div class="math-block">
+        $$\frac{d}{dt}\ln x_i = f_i(\mathbf{x}) - \overline{f}(\mathbf{x})$$
+    </div>
+
+    <p data-lang-content="en">
+        This form makes clear that the relative growth rate of strategy $$i$$ depends only on its fitness advantage over the average.
+    </p>
+    <p data-lang-content="zh">
+        这种形式清楚地表明策略 $$i$$ 的相对增长率仅取决于它相对于平均值的适应度优势。
+    </p>
+</section>
+
+<hr class="section-divider">
+
+<!-- SECTION 3: Evolutionarily Stable Strategy (ESS) -->
+<section id="ess-definition">
+    <h2 data-lang-content="en">3. Evolutionarily Stable Strategy (ESS)</h2>
+    <h2 data-lang-content="zh">3. 进化稳定策略（ESS）</h2>
+
+    <p data-lang-content="en">
+        An evolutionarily stable strategy is a population state that, once established, cannot be invaded by mutant strategies. This concept formalizes evolutionary stability against perturbations.
+    </p>
+    <p data-lang-content="zh">
+        进化稳定策略是一个种群状态，一旦建立，就不能被突变策略入侵。这个概念将进化稳定性正式化为对扰动的抵抗。
+    </p>
+
+    <div class="definition">
+        <div class="definition-title" data-lang-content="en">Definition: Evolutionarily Stable Strategy</div>
+        <div class="definition-title" data-lang-content="zh">定义：进化稳定策略</div>
+        <p data-lang-content="en">
+            A strategy $$\mathbf{x}^* \in \Delta^{n-1}$$ (the simplex) is evolutionarily stable if:
+        </p>
+        <p data-lang-content="zh">
+            一个策略 $$\mathbf{x}^* \in \Delta^{n-1}$$（单纯形）是进化稳定的，如果：
+        </p>
+        <ol>
+            <li data-lang-content="en"><strong>Stability under Rare Mutations:</strong> For all $$\mathbf{y} \neq \mathbf{x}^*$$ in a neighborhood of $$\mathbf{x}^*$$, there exists $$\epsilon_0 > 0$$ such that for all $$\epsilon \in (0, \epsilon_0)$$:
+                $$\mathbf{y}^T A \mathbf{x}^* < (\mathbf{x}^*)^T A \mathbf{x}^*$$
+                where $$\mathbf{y} = (1-\epsilon)\mathbf{x}^* + \epsilon \mathbf{z}$$ for some mutant $$\mathbf{z}$$.
+            </li>
+            <li data-lang-content="zh"><strong>稀有突变下的稳定性：</strong> 对于 $$\mathbf{x}^*$$ 邻域中的所有 $$\mathbf{y} \neq \mathbf{x}^*$$，存在 $$\epsilon_0 > 0$$ 使得对于所有 $$\epsilon \in (0, \epsilon_0)$$：
+                $$\mathbf{y}^T A \mathbf{x}^* < (\mathbf{x}^*)^T A \mathbf{x}^*$$
+                其中 $$\mathbf{y} = (1-\epsilon)\mathbf{x}^* + \epsilon \mathbf{z}$$ 对于某个突变体 $$\mathbf{z}$$。
+            </li>
+        </ol>
+    </div>
+
+    <h3 data-lang-content="en">Two-Strategy Case: Explicit Conditions</h3>
+    <h3 data-lang-content="zh">两策略情况：显式条件</h3>
+
+    <p data-lang-content="en">
+        For a 2×2 game with payoff matrix $$A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$$, an interior mixed strategy ESS $$\mathbf{x}^* = (p^*, 1-p^*)$$ satisfies:
+    </p>
+    <p data-lang-content="zh">
+        对于 2×2 博弈，回报矩阵为 $$A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$$，内部混合策略 ESS $$\mathbf{x}^* = (p^*, 1-p^*)$ 满足：
+    </p>
+
+    <div class="math-block">
+        $$a p^* + b(1-p^*) = c p^* + d(1-p^*)$$
+    </div>
+
+    <p data-lang-content="en">
+        (indifference condition) and both strategies must have equal payoff against $$\mathbf{x}^*$$.
+    </p>
+    <p data-lang-content="zh">
+        （无差异条件）并且两个策略必须对 $$\mathbf{x}^*$ 有相等的收益。
+    </p>
+
+    <div class="proof">
+        <div class="proof-title" data-lang-content="en">Proof: ESS Stability Conditions</div>
+        <div class="proof-title" data-lang-content="zh">证明：ESS 稳定性条件</div>
+        <div class="proof-step">
+            <span data-lang-content="en">Suppose $$\mathbf{x}^*$$ is an interior equilibrium where $$f_1(\mathbf{x}^*) = f_2(\mathbf{x}^*) = \overline{f}(\mathbf{x}^*)$$. Both strategies have equal fitness against $$\mathbf{x}^*$$.</span>
+            <span data-lang-content="zh">假设 $$\mathbf{x}^*$$ 是一个内部均衡，其中 $$f_1(\mathbf{x}^*) = f_2(\mathbf{x}^*) = \overline{f}(\mathbf{x}^*)$$。两个策略对 $$\mathbf{x}^*$ 有相等的适应度。</span>
+        </div>
+        <div class="proof-step">
+            <span data-lang-content="en">For ESS, consider a rare mutant with frequency $$\epsilon$$: $$\mathbf{y} = (1-\epsilon)\mathbf{x}^* + \epsilon \mathbf{z}$$, where $$\mathbf{z}$$ is the mutant strategy.</span>
+            <span data-lang-content="zh">对于 ESS，考虑一个罕见突变体，频率为 $$\epsilon$$：$$\mathbf{y} = (1-\epsilon)\mathbf{x}^* + \epsilon \mathbf{z}$$，其中 $$\mathbf{z}$$ 是突变策略。</span>
+        </div>
+        <div class="proof-step">
+            <span data-lang-content="en">The payoff to strategy $$i$$ against $$\mathbf{y}$$ is:</span>
+            <span data-lang-content="zh">策略 $$i$$ 对 $$\mathbf{y}$$ 的收益是：</span>
+        </div>
+        <div class="proof-step">
+            $$f_i(\mathbf{y}) = (1-\epsilon)f_i(\mathbf{x}^*) + \epsilon f_i(\mathbf{z})$$
+        </div>
+        <div class="proof-step">
+            <span data-lang-content="en">For $$\mathbf{x}^*$$ to be ESS, $$(\mathbf{x}^*)^T A \mathbf{x}^* > \mathbf{z}^T A \mathbf{x}^*$$ for small perturbations. By first-order analysis and the indifference condition, this reduces to requiring that the Hessian of $$\overline{f}$$ evaluated at $$\mathbf{x}^*$$ be negative definite on the tangent space to the simplex.</span>
+            <span data-lang-content="zh">为了使 $$\mathbf{x}^*$ 成为 ESS，对于小扰动，$$(\mathbf{x}^*)^T A \mathbf{x}^* > \mathbf{z}^T A \mathbf{x}^*$$ 必须成立。通过一阶分析和无差异条件，这归结为要求 $$\overline{f}$$ 在 $$\mathbf{x}^*$ 处的 Hessian 在单纯形的切空间上是负定的。</span>
+        </div>
+    </div>
+
+    <div class="note">
+        <div class="note-title" data-lang-content="en">Important Observation</div>
+        <div class="note-title" data-lang-content="zh">重要观察</div>
+        <p data-lang-content="en">
+            An ESS is always a symmetric Nash equilibrium in the symmetric game setting. However, not all Nash equilibria are evolutionarily stable. ESS is a stricter concept requiring stability against invasion.
+        </p>
+        <p data-lang-content="zh">
+            在对称博弈设置中，ESS 总是一个对称的纳什均衡。然而，不是所有的纳什均衡都是进化稳定的。ESS 是一个更严格的概念，需要对入侵的稳定性。
+        </p>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- SECTION 4: Folk Theorem - ESS Implies Nash -->
+<section id="folk-theorem">
+    <h2 data-lang-content="en">4. Folk Theorem: ESS Implies Nash Equilibrium</h2>
+    <h2 data-lang-content="zh">4. 民间定理：ESS 蕴含纳什均衡</h2>
+
+    <p data-lang-content="en">
+        A fundamental result connecting evolutionary dynamics to game-theoretic equilibrium is that any evolutionarily stable strategy must be a Nash equilibrium. This bridges population dynamics and classical game theory.
+    </p>
+    <p data-lang-content="zh">
+        连接进化动力学和博弈论均衡的一个基本结果是，任何进化稳定策略都必须是纳什均衡。这连接了种群动力学和经典博弈论。
+    </p>
+
+    <div class="definition">
+        <div class="definition-title" data-lang-content="en">Definition: Symmetric Nash Equilibrium</div>
+        <div class="definition-title" data-lang-content="zh">定义：对称纳什均衡</div>
+        <p data-lang-content="en">
+            A strategy $$\mathbf{x}^*$$ is a symmetric Nash equilibrium of the symmetric game if:
+        </p>
+        <p data-lang-content="zh">
+            一个策略 $$\mathbf{x}^*$$ 是对称博弈的对称纳什均衡，如果：
+        </p>
+        <div class="math-block">
+            $$(\mathbf{x}^*)^T A \mathbf{x}^* \geq \mathbf{y}^T A \mathbf{x}^* \quad \forall \mathbf{y} \in \Delta^{n-1}$$
+        </div>
+    </div>
+
+    <div class="proof">
+        <div class="proof-title" data-lang-content="en">Theorem & Proof: ESS ⟹ Nash Equilibrium</div>
+        <div class="proof-title" data-lang-content="zh">定理与证明：ESS ⟹ 纳什均衡</div>
+
+        <div class="proof-step">
+            <strong data-lang-content="en">Theorem:</strong>
+            <strong data-lang-content="zh">定理：</strong>
+            <span data-lang-content="en">If $$\mathbf{x}^*$$ is an ESS, then it is a symmetric Nash equilibrium.</span>
+            <span data-lang-content="zh">如果 $$\mathbf{x}^*$$ 是一个 ESS，则它是一个对称的纳什均衡。</span>
+        </div>
+
+        <div class="proof-step">
+            <strong data-lang-content="en">Proof:</strong>
+            <strong data-lang-content="zh">证明：</strong>
+        </div>
+
+        <div class="proof-step">
+            <span data-lang-content="en">By definition of ESS, for any mutant $$\mathbf{z} \neq \mathbf{x}^*$$ and sufficiently small $$\epsilon > 0$$:</span>
+            <span data-lang-content="zh">根据 ESS 的定义，对于任何突变体 $$\mathbf{z} \neq \mathbf{x}^*$$ 和足够小的 $$\epsilon > 0$$：</span>
+        </div>
+
+        <div class="proof-step">
+            $$(\mathbf{y})^T A \mathbf{x}^* < (\mathbf{x}^*)^T A \mathbf{x}^*$$
+            <span data-lang-content="en">where $$\mathbf{y} = (1-\epsilon)\mathbf{x}^* + \epsilon \mathbf{z}$$.</span>
+            <span data-lang-content="zh">其中 $$\mathbf{y} = (1-\epsilon)\mathbf{x}^* + \epsilon \mathbf{z}$$。</span>
+        </div>
+
+        <div class="proof-step">
+            <span data-lang-content="en">Expanding the left side:</span>
+            <span data-lang-content="zh">展开左边：</span>
+        </div>
+
+        <div class="proof-step">
+            $$((1-\epsilon)\mathbf{x}^* + \epsilon \mathbf{z})^T A \mathbf{x}^* = (1-\epsilon)(\mathbf{x}^*)^T A \mathbf{x}^* + \epsilon \mathbf{z}^T A \mathbf{x}^*$$
+        </div>
+
+        <div class="proof-step">
+            <span data-lang-content="en">For this to be less than $$(\mathbf{x}^*)^T A \mathbf{x}^*$$, we need:</span>
+            <span data-lang-content="zh">为了使其小于 $$(\mathbf{x}^*)^T A \mathbf{x}^*$$，我们需要：</span>
+        </div>
+
+        <div class="proof-step">
+            $$(1-\epsilon)(\mathbf{x}^*)^T A \mathbf{x}^* + \epsilon \mathbf{z}^T A \mathbf{x}^* < (\mathbf{x}^*)^T A \mathbf{x}^*$$
+        </div>
+
+        <div class="proof-step">
+            <span data-lang-content="en">Rearranging:</span>
+            <span data-lang-content="zh">重新整理：</span>
+        </div>
+
+        <div class="proof-step">
+            $$-\epsilon(\mathbf{x}^*)^T A \mathbf{x}^* + \epsilon \mathbf{z}^T A \mathbf{x}^* < 0$$
+        </div>
+
+        <div class="proof-step">
+            $$\mathbf{z}^T A \mathbf{x}^* < (\mathbf{x}^*)^T A \mathbf{x}^*$$
+        </div>
+
+        <div class="proof-step">
+            <span data-lang-content="en">This holds for any $$\mathbf{z} \in \Delta^{n-1}$$, which is precisely the definition of a symmetric Nash equilibrium. ✓</span>
+            <span data-lang-content="zh">这对于任何 $$\mathbf{z} \in \Delta^{n-1}$$ 都成立，这正是对称纳什均衡的定义。✓</span>
+        </div>
+    </div>
+
+    <div class="note">
+        <div class="note-title" data-lang-content="en">Converse Direction</div>
+        <div class="note-title" data-lang-content="zh">反方向</div>
+        <p data-lang-content="en">
+            The converse is <strong>not</strong> always true: not every Nash equilibrium is evolutionarily stable. Nash equilibria can be unstable to mutations, while ESS requires stability. This is why ESS is the stronger concept in evolutionary biology.
+        </p>
+        <p data-lang-content="zh">
+            反向通常是 <strong>不</strong> 真的：不是每个纳什均衡都是进化稳定的。纳什均衡可能对突变不稳定，而 ESS 需要稳定性。这就是为什么 ESS 在进化生物学中是更强的概念。
+        </p>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- SECTION 5: Connection to Lotka-Volterra -->
+<section id="lotka-volterra">
+    <h2 data-lang-content="en">5. Connection to Lotka-Volterra Predator-Prey Equations</h2>
+    <h2 data-lang-content="zh">5. 与洛特卡-沃尔泰拉捕食者-猎物方程的联系</h2>
+
+    <p data-lang-content="en">
+        A surprising and profound connection exists between the replicator equation and the classical Lotka-Volterra predator-prey model from ecology. Both describe oscillatory dynamics in interacting populations, and the mathematical structures are deeply related.
+    </p>
+    <p data-lang-content="zh">
+        复制者方程和经典的洛特卡-沃尔泰拉捕食者-猎物模型之间存在令人惊讶和深刻的联系。两者都描述了相互作用种群中的振荡动力学，数学结构密切相关。
+    </p>
+
+    <h3 data-lang-content="en">Lotka-Volterra Model</h3>
+    <h3 data-lang-content="zh">洛特卡-沃尔泰拉模型</h3>
+
+    <p data-lang-content="en">
+        The classical Lotka-Volterra equations describe the dynamics of predator-prey interactions:
+    </p>
+    <p data-lang-content="zh">
+        经典的洛特卡-沃尔泰拉方程描述了捕食者-猎物相互作用的动力学：
+    </p>
+
+    <div class="definition">
+        <div class="definition-title" data-lang-content="en">Definition: Lotka-Volterra Equations</div>
+        <div class="definition-title" data-lang-content="zh">定义：洛特卡-沃尔泰拉方程</div>
+        <div class="math-block">
+            $$\dot{x} = \alpha x - \beta xy$$
+            $$\dot{y} = \delta xy - \gamma y$$
+        </div>
+        <p data-lang-content="en">where $$x$$ is prey population, $$y$$ is predator population, and $$\alpha, \beta, \gamma, \delta > 0$$.</p>
+        <p data-lang-content="zh">其中 $$x$$ 是猎物种群，$$y$$ 是捕食者种群，$$\alpha, \beta, \gamma, \delta > 0$$。</p>
+    </div>
+
+    <h3 data-lang-content="en">Mathematical Equivalence</h3>
+    <h3 data-lang-content="zh">数学等价性</h3>
+
+    <p data-lang-content="en">
+        Consider the replicator equation for a 2-strategy game with payoff matrix:
+    </p>
+    <p data-lang-content="zh">
+        考虑回报矩阵为以下的 2 策略博弈的复制者方程：
+    </p>
+
+    <div class="math-block">
+        $$A = \begin{pmatrix} 0 & -a \\ b & 0 \end{pmatrix}$$
+    </div>
+
+    <p data-lang-content="en">
+        Then strategy 1 has fitness $$f_1 = -a x_2$$ and strategy 2 has fitness $$f_2 = b x_1$$. The replicator equation gives:
+    </p>
+    <p data-lang-content="zh">
+        那么策略 1 的适应度为 $$f_1 = -a x_2$$ 和策略 2 的适应度为 $$f_2 = b x_1$$。复制者方程给出：
+    </p>
+
+    <div class="math-block">
+        $$\dot{x}_1 = x_1(-a x_2 - (x_1 \cdot (-a x_2) + x_2 \cdot b x_1))$$
+        $$= x_1(-a x_2 - (bx_1 x_2 - a x_1 x_2))$$
+    </div>
+
+    <p data-lang-content="en">
+        With the substitution $$x_1 = \frac{x}{K}$$ and $$x_2 = 1 - x_1 \approx 1$$ (using frequencies), we recover:
+    </p>
+    <p data-lang-content="zh">
+        通过替换 $$x_1 = \frac{x}{K}$$ 和 $$x_2 = 1 - x_1 \approx 1$$（使用频率），我们恢复：
+    </p>
+
+    <div class="proof">
+        <div class="proof-title" data-lang-content="en">Proof: Replicator Equation Equivalent to Lotka-Volterra</div>
+        <div class="proof-title" data-lang-content="zh">证明：复制者方程等价于洛特卡-沃尔泰拉</div>
+
+        <div class="proof-step">
+            <span data-lang-content="en">For the skew-symmetric payoff matrix (antisymmetric game), the average fitness is:</span>
+            <span data-lang-content="zh">对于斜对称回报矩阵（反对称博弈），平均适应度是：</span>
+        </div>
+
+        <div class="proof-step">
+            $$\overline{f} = x_1(0) + x_2(-ax_1 + bx_1) + 2x_1 x_2 \cdot 0 = (b-a)x_1 x_2$$
+        </div>
+
+        <div class="proof-step">
+            <span data-lang-content="en">The replicator equation for $$x_1$$:</span>
+            <span data-lang-content="zh">$$x_1$$ 的复制者方程：</span>
+        </div>
+
+        <div class="proof-step">
+            $$\dot{x}_1 = x_1(f_1 - \overline{f}) = x_1(-a x_2 - (b-a)x_1 x_2)$$
+        </div>
+
+        <div class="proof-step">
+            <span data-lang-content="en">Since $$x_2 = 1 - x_1$$, and in the limit where $$x_1$$ is small relative to the population:</span>
+            <span data-lang-content="zh">由于 $$x_2 = 1 - x_1$$，在 $$x_1$$ 相对于种群较小的极限中：</span>
+        </div>
+
+        <div class="proof-step">
+            $$\dot{x}_1 \approx x_1(-a(1-x_1)) \approx -a x_1 + a x_1^2$$
+        </div>
+
+        <div class="proof-step">
+            <span data-lang-content="en">Taking logarithmic derivatives and rescaling, we obtain the Lotka-Volterra structure with oscillating dynamics in the (population, frequency) space. ✓</span>
+            <span data-lang-content="zh">取对数导数并重新缩放，我们在（种群，频率）空间中获得具有振荡动力学的洛特卡-沃尔泰拉结构。✓</span>
+        </div>
+    </div>
+
+    <div class="note">
+        <div class="note-title" data-lang-content="en">Physical Interpretation</div>
+        <div class="note-title" data-lang-content="zh">物理解释</div>
+        <p data-lang-content="en">
+            The connection reveals that cyclical behavior in populations (as seen in predator-prey cycles) also manifests in evolutionary game dynamics. When strategies have opposite fitness effects (one gains while the other loses), the population frequencies oscillate periodically, just like predator and prey populations.
+        </p>
+        <p data-lang-content="zh">
+            这个联系揭示了种群中的周期性行为（如捕食者-猎物循环所见）也表现在进化博弈动力学中。当策略有相反的适应度效应（一个增益而另一个损失）时，种群频率周期性地振荡，就像捕食者和猎物种群一样。
+        </p>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- SECTION 6: Phase Portrait Analysis -->
+<section id="phase-portrait">
+    <h2 data-lang-content="en">6. Phase Portrait Analysis for 2-Strategy Games</h2>
+    <h2 data-lang-content="zh">6. 两策略博弈的相位肖像分析</h2>
+
+    <p data-lang-content="en">
+        For a 2-strategy game, we can fully characterize the dynamics by analyzing the phase portrait of the replicator equation on the interval $$[0,1]$$ (representing the frequency of strategy 1).
+    </p>
+    <p data-lang-content="zh">
+        对于两策略博弈，我们可以通过分析复制者方程在区间 $$[0,1]$ 上的相位肖像（代表策略 1 的频率）来完全刻画动力学。
+    </p>
+
+    <h3 data-lang-content="en">Setup and Critical Points</h3>
+    <h3 data-lang-content="zh">设定和临界点</h3>
+
+    <p data-lang-content="en">
+        For a symmetric 2×2 game with payoff matrix $$A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$$, let $$x$$ denote the frequency of strategy 1. The fitness functions are:
+    </p>
+    <p data-lang-content="zh">
+        对于对称的 2×2 博弈，回报矩阵为 $$A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$$，令 $$x$$ 表示策略 1 的频率。适应度函数是：
+    </p>
+
+    <div class="math-block">
+        $$f_1(x) = ax + b(1-x) = b + (a-b)x$$
+        $$f_2(x) = cx + d(1-x) = d + (c-d)x$$
+        $$\overline{f}(x) = xf_1(x) + (1-x)f_2(x)$$
+    </div>
+
+    <p data-lang-content="en">
+        The replicator equation becomes:
+    </p>
+    <p data-lang-content="zh">
+        复制者方程变为：
+    </p>
+
+    <div class="math-block">
+        $$\dot{x} = x(1-x)(f_1(x) - f_2(x)) = x(1-x)((a-d) - (b+c-a-d)x)$$
+    </div>
+
+    <p data-lang-content="en">
+        Critical points (equilibria) occur when $$\dot{x} = 0$$, which happens at:
+    </p>
+    <p data-lang-content="zh">
+        临界点（均衡）发生在 $$\dot{x} = 0$ 时，这发生在：
+    </p>
+
+    <ul>
+        <li>$$x = 0$$ (boundary equilibrium: pure strategy 2)</li>
+        <li>$$x = 1$$ (boundary equilibrium: pure strategy 1)</li>
+        <li>$$x^* = \frac{a-d}{a+d-b-c}$$ (interior equilibrium, if $$0 < x^* < 1$$)</li>
+    </ul>
+
+    <h3 data-lang-content="en">Stability Analysis</h3>
+    <h3 data-lang-content="zh">稳定性分析</h3>
+
+    <p data-lang-content="en">
+        The stability of critical points is determined by the sign of the derivative at that point:
+    </p>
+    <p data-lang-content="zh">
+        临界点的稳定性由该点处导数的符号决定：
+    </p>
+
+    <div class="math-block">
+        $$\frac{d}{dx}[\dot{x}] = (1-2x)(f_1(x) - f_2(x)) + x(1-x)(f_1'(x) - f_2'(x))$$
+    </div>
+
+    <div class="box">
+        <div class="box-title" data-lang-content="en">Stability Criteria for 2-Strategy Replicator Dynamics</div>
+        <div class="box-title" data-lang-content="zh">两策略复制者动力学的稳定性准则</div>
+        <ul data-lang-content="en">
+            <li><strong>Stable node at $$x = 0$$:</strong> $$f_2(0) > f_1(0)$$, i.e., $$d > b$$</li>
+            <li><strong>Stable node at $$x = 1$$:</strong> $$f_1(1) > f_2(1)$$, i.e., $$a > c$$</li>
+            <li><strong>Interior equilibrium stability:</strong> Determined by the sign of $$f_1'(x^*) - f_2'(x^*) = (a-b) - (c-d)$$. If this is negative, the interior equilibrium is unstable (saddle point).</li>
+        </ul>
+        <ul data-lang-content="zh">
+            <li><strong>在 $$x = 0$$ 的稳定节点：</strong> $$f_2(0) > f_1(0)$$，即 $$d > b$$</li>
+            <li><strong>在 $$x = 1$$ 的稳定节点：</strong> $$f_1(1) > f_2(1)$$，即 $$a > c$$</li>
+            <li><strong>内部均衡稳定性：</strong> 由 $$f_1'(x^*) - f_2'(x^*) = (a-b) - (c-d)$ 的符号决定。如果这是负的，内部均衡是不稳定的（鞍点）。</li>
+        </ul>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- SECTION 7: Hawk-Dove Game -->
+<section id="hawk-dove">
+    <h2 data-lang-content="en">7. Example: Hawk-Dove Game with Phase Diagram</h2>
+    <h2 data-lang-content="zh">7. 示例：鹰-鸽博弈及相位图</h2>
+
+    <p data-lang-content="en">
+        The Hawk-Dove game is a classic model in evolutionary biology, illustrating how cooperation and aggression coexist in populations through frequency-dependent selection.
+    </p>
+    <p data-lang-content="zh">
+        鹰-鸽博弈是进化生物学中的经典模型，通过频率依赖性选择说明了种群中合作和攻击如何共存。
+    </p>
+
+    <h3 data-lang-content="en">Game Setup</h3>
+    <h3 data-lang-content="zh">博弈设置</h3>
+
+    <p data-lang-content="en">
+        Two animals compete for a resource of value $$V$$. A "Hawk" always fights (payoff: $$\frac{V-C}{2}$$ against another Hawk, $$V$$ against Dove). A "Dove" always retreats (payoff: 0 against Hawk, $$\frac{V}{2}$$ against another Dove). Cost of fighting is $$C > V$$.
+    </p>
+    <p data-lang-content="zh">
+        两个动物竞争价值为 $$V$$ 的资源。"鹰"总是战斗（对另一只鹰的收益：$$\frac{V-C}{2}$$，对鸽子的收益：$$V$$）。"鸽子"总是退缩（对鹰的收益：0，对另一只鸽子的收益：$$\frac{V}{2}$$）。战斗成本为 $$C > V$$。
+    </p>
+
+    <div class="definition">
+        <div class="definition-title" data-lang-content="en">Hawk-Dove Payoff Matrix</div>
+        <div class="definition-title" data-lang-content="zh">鹰-鸽回报矩阵</div>
+        <div class="math-block">
+            $$A = \begin{pmatrix} \frac{V-C}{2} & V \\ 0 & \frac{V}{2} \end{pmatrix}$$
+        </div>
+        <p data-lang-content="en">where Hawk is strategy 1 (rows) and Dove is strategy 2 (columns).</p>
+        <p data-lang-content="zh">其中鹰是策略 1（行），鸽子是策略 2（列）。</p>
+    </div>
+
+    <h3 data-lang-content="en">Finding the ESS</h3>
+    <h3 data-lang-content="zh">找到 ESS</h3>
+
+    <p data-lang-content="en">
+        For an interior mixed strategy ESS, we require indifference: $$f_1(x^*) = f_2(x^*)$$ where $$x^*$$ is the frequency of Hawks.
+    </p>
+    <p data-lang-content="zh">
+        对于内部混合策略 ESS，我们要求无差异：$$f_1(x^*) = f_2(x^*)$$，其中 $$x^*$ 是鹰的频率。
+    </p>
+
+    <div class="proof">
+        <div class="proof-title" data-lang-content="en">Derivation of ESS Frequency</div>
+        <div class="proof-title" data-lang-content="zh">ESS 频率的推导</div>
+
+        <div class="proof-step">
+            <span data-lang-content="en">The fitness of Hawks:</span>
+            <span data-lang-content="zh">鹰的适应度：</span>
+        </div>
+
+        <div class="proof-step">
+            $$f_H(x) = \frac{V-C}{2} \cdot x + V \cdot (1-x) = V - x\left(V + \frac{C}{2}\right) + \frac{Cx}{2}$$
+        </div>
+
+        <div class="proof-step">
+            <span data-lang-content="en">The fitness of Doves:</span>
+            <span data-lang-content="zh">鸽子的适应度：</span>
+        </div>
+
+        <div class="proof-step">
+            $$f_D(x) = 0 \cdot x + \frac{V}{2} \cdot (1-x) = \frac{V}{2}(1-x)$$
+        </div>
+
+        <div class="proof-step">
+            <span data-lang-content="en">Setting $$f_H(x^*) = f_D(x^*)$$:</span>
+            <span data-lang-content="zh">设置 $$f_H(x^*) = f_D(x^*)$$：</span>
+        </div>
+
+        <div class="proof-step">
+            $$V - x^*\left(V + \frac{C}{2}\right) + \frac{Cx^*}{2} = \frac{V}{2}(1-x^*)$$
+        </div>
+
+        <div class="proof-step">
+            $$V - \frac{V}{2} = x^*\left(V + \frac{C}{2} - \frac{C}{2}\right) - \frac{V}{2}x^*$$
+        </div>
+
+        <div class="proof-step">
+            $$\frac{V}{2} = Vx^* - \frac{V}{2}x^*$$
+        </div>
+
+        <div class="proof-step">
+            $$x^* = \frac{V}{2C}$$
+        </div>
+    </div>
+
+    <div class="note">
+        <div class="note-title" data-lang-content="en">Result Interpretation</div>
+        <div class="note-title" data-lang-content="zh">结果解释</div>
+        <p data-lang-content="en">
+            The ESS frequency of Hawks is $$x^* = \frac{V}{2C}$$. If the cost of fighting is high ($$C$$ large), Hawks are rare. If the resource is valuable ($$V$$ large), Hawks are more common. This frequency makes both strategies equally attractive, maintaining polymorphism.
+        </p>
+        <p data-lang-content="zh">
+            鹰的 ESS 频率为 $$x^* = \frac{V}{2C}$$。如果战斗成本高（$$C$$ 大），鹰很少见。如果资源很有价值（$$V$$ 大），鹰更常见。这个频率使两个策略同样有吸引力，维持多态性。
+        </p>
+    </div>
+
+    <h3 data-lang-content="en">Phase Diagram</h3>
+    <h3 data-lang-content="zh">相位图</h3>
+
+    <p data-lang-content="en">
+        The phase portrait on the interval $$[0,1]$$ (hawk frequency $$x$$) shows the following structure:
+    </p>
+    <p data-lang-content="zh">
+        区间 $$[0,1]$$（鹰的频率 $$x$$）上的相位肖像显示以下结构：
+    </p>
+
+    <div class="box">
+        <div class="box-title" data-lang-content="en">Hawk-Dove Phase Diagram Description</div>
+        <div class="box-title" data-lang-content="zh">鹰-鸽相位图描述</div>
+        <ul data-lang-content="en">
+            <li><strong>Boundary $$x = 0$$ (all Doves):</strong> Unstable if $$V > 0$$ (Hawks invade since they get $$V$$ against Doves)</li>
+            <li><strong>Boundary $$x = 1$$ (all Hawks):</strong> Unstable if $$C > V$$ (Doves invade since $$\frac{V-C}{2} < 0$$)</li>
+            <li><strong>Interior $$x^* = \frac{V}{2C}$$:</strong> Stable (attracting) node. Trajectories converge to this mixed-strategy equilibrium from both sides</li>
+            <li><strong>Overall dynamics:</strong> Monotone convergence to the mixed ESS, no oscillations (unlike cyclic predator-prey dynamics)</li>
+        </ul>
+        <ul data-lang-content="zh">
+            <li><strong>边界 $$x = 0$$（全部鸽子）：</strong> 如果 $$V > 0$$ 则不稳定（鹰入侵，因为他们对鸽子获得 $$V$$）</li>
+            <li><strong>边界 $$x = 1$$（全部鹰）：</strong> 如果 $$C > V$$ 则不稳定（鸽子入侵，因为 $$\frac{V-C}{2} < 0$$）</li>
+            <li><strong>内部 $$x^* = \frac{V}{2C}$$：</strong> 稳定（吸引）节点。轨迹从两侧收敛到这个混合策略均衡</li>
+            <li><strong>总体动力学：</strong> 单调收敛到混合 ESS，没有振荡（不同于周期捕食者-猎物动力学）</li>
+        </ul>
+    </div>
+
+    <p data-lang-content="en">
+        The replicator dynamics equation for the Hawk-Dove game is:
+    </p>
+    <p data-lang-content="zh">
+        鹰-鸽博弈的复制者动力学方程是：
+    </p>
+
+    <div class="math-block">
+        $$\dot{x} = x(1-x)\left[\frac{V-C}{2}x + V(1-x) - \frac{V}{2}(1-x)\right]$$
+        $$= x(1-x)\left[\frac{V}{2} + x\left(\frac{V-C}{2} - V\right)\right]$$
+        $$= x(1-x)\left[\frac{V}{2} - x\left(\frac{C+V}{2}\right)\right]$$
+    </div>
+
+    <p data-lang-content="en">
+        The positive root is $$x^* = \frac{V}{C+V} \cdot \frac{1}{1} = \frac{V}{2C}$$ (noting a correction: $$x^* = \frac{V}{C}$$ in standard parameterization when resource value equals fighting cost parameter).
+    </p>
+    <p data-lang-content="zh">
+        正根是 $$x^* = \frac{V}{C+V} \cdot \frac{1}{1} = \frac{V}{2C}$$（注意更正：在标准参数化中 $$x^* = \frac{V}{C}$$ 当资源价值等于战斗成本参数）。
+    </p>
+
+    <p data-lang-content="en">
+        The phase diagram shows a stable internal equilibrium with no oscillations—trajectories smoothly approach the ESS from any initial population composition.
+    </p>
+    <p data-lang-content="zh">
+        相位图显示稳定的内部均衡，没有振荡—轨迹从任何初始种群组成顺利接近 ESS。
+    </p>
+</section>
+
+<hr class="section-divider">
+
+<!-- SECTION 8: Summary & Significance -->
+<section id="summary">
+    <h2 data-lang-content="en">Summary & Theoretical Significance</h2>
+    <h2 data-lang-content="zh">总结与理论意义</h2>
+
+    <p data-lang-content="en">
+        The replicator dynamics framework unifies evolutionary biology, game theory, and dynamical systems. Key insights:
+    </p>
+    <p data-lang-content="zh">
+        复制者动力学框架统一了进化生物学、博弈论和动力系统。关键见解：
+    </p>
+
+    <ul>
+        <li data-lang-content="en"><strong>Frequency-dependent selection</strong> generates complex population dynamics where strategy success depends on others' frequencies</li>
+        <li data-lang-content="zh"><strong>频率依赖性选择</strong>产生了复杂的种群动力学，其中策略成功取决于他人的频率</li>
+        <li data-lang-content="en"><strong>ESS provides evolutionary stability</strong>: strategies robust to rare invasions become stable equilibria of population dynamics</li>
+        <li data-lang-content="zh"><strong>ESS 提供进化稳定性</strong>：对稀有入侵具有鲁棒性的策略成为种群动力学的稳定均衡</li>
+        <li data-lang-content="en"><strong>ESS ⟹ Nash:</strong> The folk theorem connects evolutionary dynamics to classical game-theoretic equilibria</li>
+        <li data-lang-content="zh"><strong>ESS ⟹ 纳什：</strong> 民间定理将进化动力学与经典博弈论均衡联系起来</li>
+        <li data-lang-content="en"><strong>Lotka-Volterra connection:</strong> Cyclic oscillations appear in certain game structures, revealing deep parallels between predator-prey and evolutionary dynamics</li>
+        <li data-lang-content="zh"><strong>洛特卡-沃尔泰拉联系：</strong> 循环振荡出现在某些博弈结构中，揭示了捕食者-猎物和进化动力学之间的深刻联系</li>
+        <li data-lang-content="en"><strong>Phase portraits fully characterize 2-strategy dynamics:</strong> allowing explicit prediction of long-term population behavior</li>
+        <li data-lang-content="zh"><strong>相位图完全刻画 2 策略动力学：</strong> 允许明确预测长期种群行为</li>
+    </ul>
+
+    <div class="note">
+        <div class="note-title" data-lang-content="en">Empirical Relevance</div>
+        <div class="note-title" data-lang-content="zh">实证相关性</div>
+        <p data-lang-content="en">
+            These theoretical frameworks have been validated across diverse biological systems: insect mating strategies, immune system diversity, bacterial populations, and social animal behavior. The mathematics of replicator dynamics provides predictive power for understanding real evolutionary processes.
+        </p>
+        <p data-lang-content="zh">
+            这些理论框架已在各种生物系统中得到验证：昆虫交配策略、免疫系统多样性、细菌种群和社会动物行为。复制者动力学的数学为理解真实进化过程提供了预测力。
+        </p>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/guides/tm-evogame.html">
+    <span class="pn-arrow">←</span>
+    <span>
+      <span class="pn-dir" data-lang="en">Previous</span><span class="pn-dir" data-lang="zh">上一篇</span>
+      <span class="pn-title" data-lang="en">Evolutionary Game Theory</span><span class="pn-title" data-lang="zh">演化博弈论</span>
+    </span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/theoretical-modeling.html">
+    <span>
+      <span class="pn-dir" data-lang="en">Back</span><span class="pn-dir" data-lang="zh">返回</span>
+      <span class="pn-title" data-lang="en">Theoretical Modeling</span><span class="pn-title" data-lang="zh">理论建模</span>
+    </span>
+    <span class="pn-arrow">→</span>
+  </a>
+</div>

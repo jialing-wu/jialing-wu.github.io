@@ -1,0 +1,654 @@
+---
+layout: methods-guide
+title: "Likelihood & MLE"
+title_zh: "似然函数与最大似然估计"
+parent_title: "Maximum Likelihood Estimation"
+parent_title_zh: "最大似然估计"
+parent_url: "reg-mle.html"
+bilingual: true
+mathjax: true
+---
+
+<h2 id="mle-concept">
+  <span data-lang="en">What is Likelihood?</span>
+  <span data-lang="zh">什么是似然函数？</span>
+</h2>
+
+<p data-lang="en">
+  Likelihood answers a fundamental question: <strong>For which parameter value does the observed data become most probable?</strong>
+  Unlike probability, which asks "what are the odds of observing this data given a parameter?", likelihood asks the inverse: "given this data, which parameter is most likely?"
+</p>
+
+<p data-lang="zh">
+  似然函数回答了一个基本问题：<strong>对于哪个参数值，观察到的数据最有可能出现？</strong>
+  与概率不同——概率问的是"给定参数，观察到这些数据的概率是多少？"——似然函数问的是倒过来的：给定数据，哪个参数最可能？
+</p>
+
+<p data-lang="en">
+  <strong>Intuitive analogy:</strong> You flip a coin 10 times and get 7 heads. What's the probability of heads on each flip?
+  If θ = 0.5, this outcome has probability C(10,7) × 0.5^7 × 0.5^3 ≈ 0.117.
+  If θ = 0.7, this outcome has probability C(10,7) × 0.7^7 × 0.3^3 ≈ 0.267.
+  The second θ makes your data more likely—so the likelihood favors θ = 0.7.
+</p>
+
+<p data-lang="zh">
+  <strong>直观类比：</strong>你抛硬币10次，得到7个正面。每次正面的概率是多少？
+  如果 θ = 0.5，这个结果的概率约为 C(10,7) × 0.5^7 × 0.5^3 ≈ 0.117。
+  如果 θ = 0.7，这个结果的概率约为 C(10,7) × 0.7^7 × 0.3^3 ≈ 0.267。
+  第二个θ使你的数据更可能——所以似然函数倾向于 θ = 0.7。
+</p>
+
+<div class="math-note">
+  <strong data-lang="en">Likelihood function:</strong>
+  <strong data-lang="zh">似然函数：</strong>
+  <div style="margin-top: 10px; font-family: var(--mono);">
+    L(θ | data) = P(data | θ)
+  </div>
+  <div style="margin-top: 8px; font-family: var(--mono);">
+    <span data-lang="en"><strong>Log-likelihood:</strong> ℓ(θ) = log L(θ) = Σ log P(x_i | θ)</span>
+    <span data-lang="zh"><strong>对数似然：</strong> ℓ(θ) = log L(θ) = Σ log P(x_i | θ)</span>
+  </div>
+</div>
+
+<p data-lang="en">
+  We use log-likelihood in practice because: (1) it converts products to sums (easier numerically),
+  (2) it avoids numerical underflow with small probabilities, (3) it's computationally stable.
+</p>
+
+<p data-lang="zh">
+  我们在实践中使用对数似然，因为：(1) 它将乘积转换为和（数值更简单），
+  (2) 它避免了小概率的数值下溢，(3) 它在计算上更稳定。
+</p>
+
+<hr style="border:none; border-top:1px solid var(--ink-ghost); margin:32px 0;">
+
+<h2 id="mle-binomial">
+  <span data-lang="en">Binomial Likelihood Simulator</span>
+  <span data-lang="zh">二项分布似然函数模拟器</span>
+</h2>
+
+<p data-lang="en">
+  Below is an interactive simulator. Adjust the number of trials (n) and successes (k) using the sliders.
+  Watch how the likelihood curve shifts and where the maximum (MLE) appears.
+</p>
+
+<p data-lang="zh">
+  下面是一个交互式模拟器。使用滑块调整试验次数(n)和成功次数(k)。
+  观察似然曲线如何移动以及最大值(MLE)在哪里出现。
+</p>
+
+<div class="sim-panel" style="background: var(--parchment); padding: 20px; border-radius: 8px; margin: 20px 0;">
+  <div class="ctrl-group">
+    <label class="ctrl-label" data-lang="en">Number of trials (n):</label>
+    <label class="ctrl-label" data-lang="zh">试验次数 (n)：</label>
+    <input type="range" id="binomial_n" min="10" max="100" step="5" value="20"
+           style="width:100%; margin: 8px 0;" oninput="updateBinomialPlot()">
+    <span class="ctrl-val" id="binomial_n_display">20</span>
+  </div>
+
+  <div class="ctrl-group" style="margin-top: 16px;">
+    <label class="ctrl-label" data-lang="en">Number of successes (k):</label>
+    <label class="ctrl-label" data-lang="zh">成功次数 (k)：</label>
+    <input type="range" id="binomial_k" min="0" max="20" step="1" value="12"
+           style="width:100%; margin: 8px 0;" oninput="updateBinomialPlot()">
+    <span class="ctrl-val" id="binomial_k_display">12</span>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+  <div>
+    <canvas id="binomialLikelihoodChart" style="max-width: 100%;"></canvas>
+  </div>
+  <div>
+    <canvas id="binomialLogLikelihoodChart" style="max-width: 100%;"></canvas>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0;">
+  <div class="stat-chip">
+    <div class="slabel" data-lang="en">MLE (k/n)</div>
+    <div class="slabel" data-lang="zh">MLE (k/n)</div>
+    <div class="sval" id="binomial_mle">0.60</div>
+  </div>
+  <div class="stat-chip">
+    <div class="slabel" data-lang="en">Log-likelihood at MLE</div>
+    <div class="slabel" data-lang="zh">MLE处的对数似然</div>
+    <div class="sval" id="binomial_loglik">-10.2</div>
+  </div>
+</div>
+
+<div class="insight-box">
+  <p data-lang="en">
+    <strong>Key Insight:</strong> The MLE for a Binomial distribution is simply the sample proportion: θ̂ = k/n.
+    This is the value of θ that makes the observed data most likely. No complex optimization needed!
+  </p>
+  <p data-lang="zh">
+    <strong>关键洞察：</strong>二项分布的MLE就是样本比例：θ̂ = k/n。
+    这是使观察到的数据最可能的θ值。不需要复杂的优化！
+  </p>
+</div>
+
+<hr style="border:none; border-top:1px solid var(--ink-ghost); margin:32px 0;">
+
+<h2 id="mle-normal">
+  <span data-lang="en">Normal Distribution Likelihood Explorer</span>
+  <span data-lang="zh">正态分布似然函数探索器</span>
+</h2>
+
+<p data-lang="en">
+  With the normal distribution, we have two parameters to estimate: μ (mean) and σ (standard deviation).
+  The plot below shows the log-likelihood surface as a heatmap. Move the sliders to explore different parameter combinations.
+</p>
+
+<p data-lang="zh">
+  对于正态分布，我们有两个参数要估计：μ（均值）和σ（标准差）。
+  下面的图表将对数似然曲面显示为热力图。移动滑块来探索不同的参数组合。
+</p>
+
+<p data-lang="en" style="font-size: 13px; color: var(--ink-faded); margin: 16px 0;">
+  <em>Data points (fixed): [2.1, 3.4, 2.8, 3.1, 2.6]</em>
+</p>
+
+<p data-lang="zh" style="font-size: 13px; color: var(--ink-faded); margin: 16px 0;">
+  <em>数据点（固定）：[2.1, 3.4, 2.8, 3.1, 2.6]</em>
+</p>
+
+<div class="sim-panel" style="background: var(--parchment); padding: 20px; border-radius: 8px; margin: 20px 0;">
+  <div class="ctrl-group">
+    <label class="ctrl-label" data-lang="en">Mean (μ):</label>
+    <label class="ctrl-label" data-lang="zh">均值 (μ)：</label>
+    <input type="range" id="normal_mu" min="1" max="5" step="0.1" value="2.8"
+           style="width:100%; margin: 8px 0;" oninput="updateNormalPlot()">
+    <span class="ctrl-val" id="normal_mu_display">2.8</span>
+  </div>
+
+  <div class="ctrl-group" style="margin-top: 16px;">
+    <label class="ctrl-label" data-lang="en">Std Dev (σ):</label>
+    <label class="ctrl-label" data-lang="zh">标准差 (σ)：</label>
+    <input type="range" id="normal_sigma" min="0.5" max="3" step="0.1" value="0.5"
+           style="width:100%; margin: 8px 0;" oninput="updateNormalPlot()">
+    <span class="ctrl-val" id="normal_sigma_display">0.5</span>
+  </div>
+</div>
+
+<div style="margin: 20px 0;">
+  <canvas id="normalHeatmapChart" style="max-width: 100%; max-height: 400px;"></canvas>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 20px 0;">
+  <div class="stat-chip">
+    <div class="slabel" data-lang="en">Log-likelihood</div>
+    <div class="slabel" data-lang="zh">对数似然</div>
+    <div class="sval" id="normal_loglik">-5.2</div>
+  </div>
+  <div class="stat-chip">
+    <div class="slabel" data-lang="en">MLE μ̂</div>
+    <div class="slabel" data-lang="zh">MLE μ̂</div>
+    <div class="sval" id="normal_mle_mu">2.80</div>
+  </div>
+  <div class="stat-chip">
+    <div class="slabel" data-lang="en">MLE σ̂</div>
+    <div class="slabel" data-lang="zh">MLE σ̂</div>
+    <div class="sval" id="normal_mle_sigma">0.45</div>
+  </div>
+</div>
+
+<div class="insight-box">
+  <p data-lang="en">
+    <strong>MLEs for Normal Distribution:</strong>
+    <br>μ̂ = x̄ (sample mean)
+    <br>σ̂² = (1/n) Σ(x_i − x̄)² (sample variance)
+    <br>
+    The heatmap shows the likelihood reaches its peak at these sample values. The optimal parameters are the data's own mean and variance!
+  </p>
+  <p data-lang="zh">
+    <strong>正态分布的MLEs：</strong>
+    <br>μ̂ = x̄（样本均值）
+    <br>σ̂² = (1/n) Σ(x_i − x̄)²（样本方差）
+    <br>
+    热力图显示似然函数在这些样本值处达到峰值。最优参数就是数据本身的均值和方差！
+  </p>
+</div>
+
+<hr style="border:none; border-top:1px solid var(--ink-ghost); margin:32px 0;">
+
+<h2 id="mle-logistic">
+  <span data-lang="en">Logistic Regression Likelihood</span>
+  <span data-lang="zh">逻辑回归似然函数</span>
+</h2>
+
+<p data-lang="en">
+  In logistic regression, we model a binary outcome (0/1) with the probability:
+</p>
+
+<p data-lang="zh">
+  在逻辑回归中，我们用以下概率模型化二元结果（0/1）：
+</p>
+
+<div class="math-note">
+  P(Y=1|X) = 1 / (1 + exp(−β₀ − β₁X))
+</div>
+
+<p data-lang="en">
+  The log-likelihood is:
+</p>
+
+<p data-lang="zh">
+  对数似然为：
+</p>
+
+<div class="math-note">
+  ℓ(β) = Σ [y_i log(p_i) + (1−y_i) log(1−p_i)]
+</div>
+
+<p data-lang="en">
+  This is <strong>non-linear in β</strong>, so we need numerical optimization. Most software uses Newton-Raphson or iteratively reweighted least squares (IRLS).
+</p>
+
+<p data-lang="zh">
+  这在β中是<strong>非线性的</strong>，所以我们需要数值优化。大多数软件使用牛顿-拉夫逊法或迭代重加权最小二乘法(IRLS)。
+</p>
+
+<p data-lang="en" style="margin-top: 16px; font-weight: 500;">
+  <span data-lang="en">R Example: Manual MLE via optim()</span>
+  <span data-lang="zh">R示例：通过optim()手动MLE</span>
+</p>
+
+<pre style="background: var(--cream); padding: 16px; border-radius: 6px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.6; margin: 12px 0;">
+<code>library(tidyverse)
+
+# Binary response data
+data &lt;- tibble(
+  X = c(1, 2, 3, 4, 5),
+  Y = c(0, 0, 1, 1, 1)
+)
+
+# Log-likelihood function
+logit_loglik &lt;- function(beta, X, Y) {
+  p &lt;- 1 / (1 + exp(-(beta[1] + beta[2] * X)))
+  sum(Y * log(p) + (1 - Y) * log(1 - p))
+}
+
+# Optimize
+fit_manual &lt;- optim(
+  c(0, 0),  # starting values for β₀ and β₁
+  logit_loglik,
+  control = list(fnscale = -1),  # maximize, not minimize
+  X = data$X,
+  Y = data$Y
+)
+
+# Compare with glm()
+fit_glm &lt;- glm(Y ~ X, family = binomial, data = data)
+summary(fit_glm)</code>
+</pre>
+
+<p data-lang="en" style="margin-top: 16px;">
+  <strong>Interpretation of coefficients:</strong>
+  <ul style="margin: 12px 0; padding-left: 20px;">
+    <li>β₁ is the <strong>log-odds ratio</strong>: a one-unit increase in X multiplies the odds by exp(β₁).</li>
+    <li>If β₁ = 0.5, then exp(0.5) ≈ 1.65: a one-unit increase in X increases odds by 65%.</li>
+  </ul>
+</p>
+
+<p data-lang="zh" style="margin-top: 16px;">
+  <strong>系数的解释：</strong>
+  <ul style="margin: 12px 0; padding-left: 20px;">
+    <li>β₁是<strong>对数比值比</strong>：X增加一个单位会将比值乘以exp(β₁)。</li>
+    <li>如果β₁ = 0.5，则exp(0.5) ≈ 1.65：X增加一个单位会使比值增加65%。</li>
+  </ul>
+</p>
+
+<hr style="border:none; border-top:1px solid var(--ink-ghost); margin:32px 0;">
+
+<h2 id="mle-properties">
+  <span data-lang="en">Properties of Maximum Likelihood Estimators</span>
+  <span data-lang="zh">最大似然估计的性质</span>
+</h2>
+
+<p data-lang="en">
+  MLEs are prized in statistics because they have several excellent properties (under regularity conditions):
+</p>
+
+<p data-lang="zh">
+  在统计学中，MLE因具有几个优良性质（在正则性条件下）而受重视：
+</p>
+
+<ul style="margin: 16px 0; padding-left: 24px;">
+  <li>
+    <strong data-lang="en">Consistency:</strong>
+    <strong data-lang="zh">一致性：</strong>
+    <span data-lang="en">As n → ∞, θ̂ converges to the true θ in probability.</span>
+    <span data-lang="zh">当n → ∞时，θ̂在概率意义下收敛到真实的θ。</span>
+  </li>
+
+  <li style="margin-top: 12px;">
+    <strong data-lang="en">Asymptotic Efficiency:</strong>
+    <strong data-lang="zh">渐近有效性：</strong>
+    <span data-lang="en">Among consistent estimators, MLE achieves the lowest asymptotic variance (achieves the Cramér-Rao lower bound).</span>
+    <span data-lang="zh">在一致估计量中，MLE实现最低的渐近方差（达到Cramér-Rao下界）。</span>
+  </li>
+
+  <li style="margin-top: 12px;">
+    <strong data-lang="en">Invariance:</strong>
+    <strong data-lang="zh">不变性：</strong>
+    <span data-lang="en">If θ̂ is the MLE of θ, then g(θ̂) is the MLE of g(θ) for any function g. No transformation needed!</span>
+    <span data-lang="zh">如果θ̂是θ的MLE，则g(θ̂)是g(θ)的MLE，对任何函数g都适用。无需转换！</span>
+  </li>
+</ul>
+
+<p data-lang="en" style="margin-top: 24px;">
+  <strong>Standard Errors and Confidence Intervals:</strong>
+</p>
+
+<p data-lang="zh" style="margin-top: 24px;">
+  <strong>标准误和置信区间：</strong>
+</p>
+
+<div class="math-note">
+  SE(θ̂) ≈ 1 / √[−ℓ''(θ̂)]  or  SE(θ̂) ≈ 1 / √[I(θ̂)]
+  <div style="margin-top: 8px; font-size: 12px;">
+    <span data-lang="en">where ℓ''(θ̂) is the observed second derivative (Hessian) and I(θ) is the Fisher Information</span>
+    <span data-lang="zh">其中ℓ''(θ̂)是观察到的二阶导数(Hessian)，I(θ)是Fisher信息</span>
+  </div>
+</div>
+
+<p data-lang="en" style="margin-top: 16px;">
+  A 95% confidence interval is approximately: θ̂ ± 1.96 × SE(θ̂)
+</p>
+
+<p data-lang="zh" style="margin-top: 16px;">
+  一个95%的置信区间约为：θ̂ ± 1.96 × SE(θ̂)
+</p>
+
+<p data-lang="en" style="margin-top: 24px;">
+  <strong>Hypothesis Testing with MLEs:</strong>
+</p>
+
+<p data-lang="zh" style="margin-top: 24px;">
+  <strong>使用MLE进行假设检验：</strong>
+</p>
+
+<ul style="margin: 16px 0; padding-left: 24px;">
+  <li>
+    <strong data-lang="en">Wald Test:</strong>
+    <strong data-lang="zh">Wald检验：</strong>
+    <span data-lang="en">
+      Z = (θ̂ − θ₀) / SE(θ̂) ~ N(0,1) under H₀: θ = θ₀.
+      Or Z² ~ χ²(1).
+    </span>
+    <span data-lang="zh">
+      Z = (θ̂ − θ₀) / SE(θ̂) ~ N(0,1) 在H₀: θ = θ₀下。
+      或 Z² ~ χ²(1)。
+    </span>
+  </li>
+
+  <li style="margin-top: 12px;">
+    <strong data-lang="en">Likelihood Ratio Test:</strong>
+    <strong data-lang="zh">似然比检验：</strong>
+    <span data-lang="en">
+      LR = −2(ℓ₀ − ℓ₁) ~ χ²(df) where df = number of parameters freed under H₁.
+      For H₁ with one extra parameter, df = 1.
+    </span>
+    <span data-lang="zh">
+      LR = −2(ℓ₀ − ℓ₁) ~ χ²(df)，其中df = H₁下释放的参数数量。
+      对于有一个额外参数的H₁，df = 1。
+    </span>
+  </li>
+</ul>
+
+<p data-lang="en" style="margin-top: 24px;">
+  <strong>Model Comparison via Information Criteria:</strong>
+</p>
+
+<p data-lang="zh" style="margin-top: 24px;">
+  <strong>通过信息标准进行模型比较：</strong>
+</p>
+
+<div class="math-note">
+  AIC = −2ℓ + 2k
+  <div style="margin-top: 8px;">
+    BIC = −2ℓ + k log(n)
+  </div>
+  <div style="margin-top: 8px; font-size: 12px;">
+    <span data-lang="en">Lower AIC/BIC indicates a better model. BIC penalizes complexity more heavily.</span>
+    <span data-lang="zh">较低的AIC/BIC表示更好的模型。BIC对复杂性的惩罚更严厉。</span>
+  </div>
+</div>
+
+<div class="insight-box">
+  <p data-lang="en">
+    <strong>Why use MLE?</strong> MLEs are not the only estimators available, but they're asymptotically optimal:
+    if you have enough data, no other method can beat them in terms of efficiency.
+    They also naturally extend to complex models (generalized linear models, hierarchical models, structural equation models).
+  </p>
+  <p data-lang="zh">
+    <strong>为什么使用MLE？</strong>MLE不是唯一可用的估计量，但它们是渐近最优的：
+    如果你有足够的数据，就效率而言，没有其他方法能超越它们。
+    它们也自然扩展到复杂模型（广义线性模型、层次模型、结构方程模型）。
+  </p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Binomial likelihood helper
+function logBinomialLikelihood(n, k, theta) {
+  return k * Math.log(theta + 1e-10) + (n - k) * Math.log(1 - theta + 1e-10);
+}
+
+function binomialLikelihood(n, k, theta) {
+  return Math.exp(logBinomialLikelihood(n, k, theta));
+}
+
+let binomialLChart = null;
+let binomialLogLChart = null;
+
+function updateBinomialPlot() {
+  const n = parseInt(document.getElementById('binomial_n').value);
+  const k = parseInt(document.getElementById('binomial_k').value);
+
+  document.getElementById('binomial_n_display').textContent = n;
+  document.getElementById('binomial_k_display').textContent = k;
+
+  // Generate theta values
+  const thetas = [];
+  const likelihoods = [];
+  const logLikelihoods = [];
+
+  for (let i = 0; i <= 100; i++) {
+    const theta = i / 100;
+    thetas.push(theta.toFixed(2));
+    const L = binomialLikelihood(n, k, theta);
+    const logL = logBinomialLikelihood(n, k, theta);
+    likelihoods.push(L);
+    logLikelihoods.push(logL);
+  }
+
+  const mle = k / n;
+  document.getElementById('binomial_mle').textContent = mle.toFixed(3);
+  document.getElementById('binomial_loglik').textContent =
+    logBinomialLikelihood(n, k, mle).toFixed(3);
+
+  // Likelihood chart
+  if (binomialLChart) binomialLChart.destroy();
+  binomialLChart = new Chart(document.getElementById('binomialLikelihoodChart'), {
+    type: 'line',
+    data: {
+      labels: thetas,
+      datasets: [{
+        label: 'L(θ|data)',
+        data: likelihoods,
+        borderColor: 'var(--warm)',
+        backgroundColor: 'rgba(225, 150, 100, 0.1)',
+        pointRadius: 0,
+        tension: 0.3,
+        fill: true
+      }, {
+        type: 'scatter',
+        label: 'MLE',
+        data: [{ x: mle.toFixed(2), y: binomialLikelihood(n, k, mle) }],
+        pointBackgroundColor: 'var(--red)',
+        pointRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true, position: 'top' },
+        title: { display: true, text: 'Likelihood Function L(θ)' }
+      },
+      scales: {
+        x: { title: { display: true, text: 'θ' } },
+        y: { title: { display: true, text: 'Likelihood' } }
+      }
+    }
+  });
+
+  // Log-likelihood chart
+  if (binomialLogLChart) binomialLogLChart.destroy();
+  binomialLogLChart = new Chart(document.getElementById('binomialLogLikelihoodChart'), {
+    type: 'line',
+    data: {
+      labels: thetas,
+      datasets: [{
+        label: 'ℓ(θ|data)',
+        data: logLikelihoods,
+        borderColor: 'var(--leather)',
+        backgroundColor: 'rgba(150, 100, 80, 0.1)',
+        pointRadius: 0,
+        tension: 0.3,
+        fill: true
+      }, {
+        type: 'scatter',
+        label: 'MLE',
+        data: [{ x: mle.toFixed(2), y: logBinomialLikelihood(n, k, mle) }],
+        pointBackgroundColor: 'var(--red)',
+        pointRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true, position: 'top' },
+        title: { display: true, text: 'Log-Likelihood ℓ(θ)' }
+      },
+      scales: {
+        x: { title: { display: true, text: 'θ' } },
+        y: { title: { display: true, text: 'Log-Likelihood' } }
+      }
+    }
+  });
+}
+
+// Normal distribution likelihood helper
+function logNormalLikelihood(data, mu, sigma) {
+  const n = data.length;
+  let sum = 0;
+  for (let x of data) {
+    sum += -Math.log(sigma) - 0.5 * Math.pow((x - mu) / sigma, 2);
+  }
+  return sum;
+}
+
+let normalChart = null;
+
+function updateNormalPlot() {
+  const mu = parseFloat(document.getElementById('normal_mu').value);
+  const sigma = parseFloat(document.getElementById('normal_sigma').value);
+
+  document.getElementById('normal_mu_display').textContent = mu.toFixed(1);
+  document.getElementById('normal_sigma_display').textContent = sigma.toFixed(1);
+
+  const data = [2.1, 3.4, 2.8, 3.1, 2.6];
+  const mean = data.reduce((a, b) => a + b) / data.length;
+  const variance = data.reduce((a, x) => a + Math.pow(x - mean, 2), 0) / data.length;
+  const sd = Math.sqrt(variance);
+
+  document.getElementById('normal_loglik').textContent =
+    logNormalLikelihood(data, mu, sigma).toFixed(2);
+  document.getElementById('normal_mle_mu').textContent = mean.toFixed(2);
+  document.getElementById('normal_mle_sigma').textContent = sd.toFixed(2);
+
+  // Generate heatmap data
+  const muRange = [];
+  const sigmaRange = [];
+  const logLikGrid = [];
+
+  for (let i = 0; i <= 20; i++) {
+    muRange.push((1 + i * 0.2).toFixed(1));
+    sigmaRange.push((0.5 + i * 0.125).toFixed(2));
+  }
+
+  for (let j = 0; j < sigmaRange.length; j++) {
+    for (let i = 0; i < muRange.length; i++) {
+      const m = parseFloat(muRange[i]);
+      const s = parseFloat(sigmaRange[j]);
+      logLikGrid.push(logNormalLikelihood(data, m, s));
+    }
+  }
+
+  const maxLogLik = Math.max(...logLikGrid);
+  const minLogLik = Math.min(...logLikGrid);
+
+  if (normalChart) normalChart.destroy();
+
+  // Simplified 2D visualization: scatter plot
+  const scatterData = [];
+  for (let i = 0; i < muRange.length; i++) {
+    for (let j = 0; j < sigmaRange.length; j++) {
+      const m = parseFloat(muRange[i]);
+      const s = parseFloat(sigmaRange[j]);
+      const logL = logNormalLikelihood(data, m, s);
+      const normalized = (logL - minLogLik) / (maxLogLik - minLogLik);
+      scatterData.push({ x: m, y: s, logL: logL, norm: normalized });
+    }
+  }
+
+  // Highlight current position
+  const currentLogL = logNormalLikelihood(data, mu, sigma);
+  const currentNorm = (currentLogL - minLogLik) / (maxLogLik - minLogLik);
+
+  normalChart = new Chart(document.getElementById('normalHeatmapChart'), {
+    type: 'bubble',
+    data: {
+      datasets: [{
+        label: 'Log-Likelihood Surface',
+        data: scatterData.map(d => ({ x: d.x, y: d.y, r: 4 + 6 * d.norm })),
+        backgroundColor: scatterData.map(d => {
+          const hue = 240 - d.norm * 120; // blue to red
+          return `hsl(${hue}, 100%, 50%)`;
+        })
+      }, {
+        label: 'Current (μ, σ)',
+        data: [{ x: mu, y: sigma, r: 10 }],
+        backgroundColor: 'white',
+        borderColor: 'var(--ink)',
+        borderWidth: 2
+      }, {
+        label: 'MLE',
+        data: [{ x: mean, y: sd, r: 8 }],
+        backgroundColor: 'var(--gold)',
+        borderColor: 'var(--ink)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true },
+        title: { display: true, text: 'Normal Distribution Log-Likelihood Surface' }
+      },
+      scales: {
+        x: { title: { display: true, text: 'μ (mean)' }, min: 1, max: 5 },
+        y: { title: { display: true, text: 'σ (std dev)' }, min: 0.5, max: 3 }
+      }
+    }
+  });
+}
+
+// Initialize plots on page load
+document.addEventListener('DOMContentLoaded', function() {
+  updateBinomialPlot();
+  updateNormalPlot();
+});
+</script>

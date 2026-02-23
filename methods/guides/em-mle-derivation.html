@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang="en">MLE Derivation &amp; Likelihood Ratio Tests | Empirical Modeling</title>
+    <title data-lang="zh">MLE 推导与似然比检验 | 经验建模</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="guide-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="zh">
+    <div class="guide-layout">
+        <div class="guide-topbar">
+            <div class="guide-breadcrumb">
+                <a href="../empirical-modeling.html" data-lang="en">Empirical Modeling</a>
+                <a href="../empirical-modeling.html" data-lang="zh">经验建模</a>
+                <span class="sep">/</span>
+                <span data-lang="en">MLE Derivation & Likelihood Ratio Tests</span>
+                <span data-lang="zh">MLE 推导与似然比检验</span>
+            </div>
+            <div class="guide-lang-toggle">
+                <button class="guide-lang-btn active" data-lang="zh">中文</button>
+                <button class="guide-lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+
+        <div class="guide-content-wrapper">
+            <div class="guide-content">
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="en">Back to Empirical Modeling</a>
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="zh">返回经验建模</a>
+
+                <div class="guide-header">
+                    <div class="guide-tag">
+                        <span data-lang="en">ZERO-BASE FRIENDLY · FROM FIRST PRINCIPLES</span>
+                        <span data-lang="zh">零基础友好 · 从首原理</span>
+                    </div>
+                    <h1>
+                        <span data-lang="en">MLE Derivation & Likelihood Ratio Tests</span>
+                        <span data-lang="zh">MLE 推导与似然比检验</span>
+                    </h1>
+                    <p>
+                        <span data-lang="en">From first principles to hypothesis testing — maximum likelihood estimation explained from scratch.</span>
+                        <span data-lang="zh">从第一性原理到假设检验——从零开始解释最大似然估计。</span>
+                    </p>
+                </div>
+
+                <!-- Section 1: Probability vs Likelihood -->
+            <div class="section">
+                <div class="section-number">
+                    <span data-lang="en">SECTION 1</span>
+                    <span data-lang="zh">第一部分</span>
+                </div>
+                <h2 class="section-title">
+                    <span data-lang="en">Probability vs Likelihood: What's the Difference?</span>
+                    <span data-lang="zh">概率 vs 似然：有什么区别？</span>
+                </h2>
+
+                <p data-lang="en">
+                    Let's start with a simple coin flip. Imagine you have a coin that comes up heads 70% of the time. If you flip it once, what's the probability of getting heads?
+                </p>
+                <p data-lang="zh">
+                    让我们从一个简单的硬币翻转开始。想象你有一枚硬币，它有70%的概率出现正面。如果你翻转一次，得到正面的概率是多少？
+                </p>
+
+                <div class="definition-box">
+                    <div class="box-title">
+                        <span data-lang="en">Probability: From Parameter to Data</span>
+                        <span data-lang="zh">概率：从参数到数据</span>
+                    </div>
+                    <p data-lang="en">
+                        <strong>Probability</strong> answers: "Given I know the coin is biased (70% heads), what's the chance I'll see heads?" Answer: 0.7 or 70%.
+                    </p>
+                    <p data-lang="zh">
+                        <strong>概率</strong>回答的是："给定我知道硬币有70%的概率是正面，我看到正面的概率是多少？" 答案：0.7或70%。
+                    </p>
+                </div>
+
+                <p data-lang="en">
+                    Now flip the coin 10 times and get 7 heads and 3 tails. A completely different question: "What does this data tell me about the coin?" This is where <strong>likelihood</strong> comes in.
+                </p>
+                <p data-lang="zh">
+                    现在翻转硬币10次，得到7个正面和3个反面。一个完全不同的问题："这个数据告诉我关于硬币的什么信息？" 这就是<strong>似然</strong>出现的地方。
+                </p>
+
+                <div class="definition-box">
+                    <div class="box-title">
+                        <span data-lang="en">Likelihood: From Data to Parameter</span>
+                        <span data-lang="zh">似然：从数据到参数</span>
+                    </div>
+                    <p data-lang="en">
+                        <strong>Likelihood</strong> answers: "If I observed 7 heads out of 10 flips, how likely is it that the true probability of heads is 70%? Or 60%? Or 80%? Which value makes my observation most likely?"
+                    </p>
+                    <p data-lang="zh">
+                        <strong>似然</strong>回答的是："如果我观察到10次翻转中有7个正面，真实正面概率为70%的可能性有多大？或者60%？或者80%？哪个值最有可能产生我的观察？"
+                    </p>
+                </div>
+
+                <div class="note-box">
+                    <div class="box-title">
+                        <span data-lang="en">Key Insight: The Direction Reverses</span>
+                        <span data-lang="zh">关键洞察：方向颠倒了</span>
+                    </div>
+                    <p data-lang="en">
+                        <strong>Probability:</strong> We assume the parameter (70%) is known, and ask about the data. <br/>
+                        <strong>Likelihood:</strong> We observe the data (7 heads out of 10), and ask about the parameter.
+                    </p>
+                    <p data-lang="zh">
+                        <strong>概率：</strong>我们假设参数（70%）是已知的，然后问关于数据的问题。 <br/>
+                        <strong>似然：</strong>我们观察数据（10次中7个正面），然后问关于参数的问题。
+                    </p>
+                </div>
+
+                <div class="example-box">
+                    <div class="box-title">
+                        <span data-lang="en">Simple Example with Numbers</span>
+                        <span data-lang="zh">带数字的简单例子</span>
+                    </div>
+                    <p data-lang="en">
+                        You flip a coin 10 times and observe: H, H, T, H, H, H, T, H, H, T (7 heads, 3 tails)
+                    </p>
+                    <p data-lang="zh">
+                        你翻转硬币10次，观察到：正、正、反、正、正、正、反、正、正、反（7个正面，3个反面）
+                    </p>
+                    <ul>
+                        <li data-lang="en">If the coin is 60% heads: What's the probability of getting exactly 7 heads? (Probability question)</li>
+                        <li data-lang="en">If the coin is 70% heads: What's the probability of getting exactly 7 heads? (Still a probability question)</li>
+                        <li data-lang="en">I observed 7 heads out of 10. Which probability (60% or 70%) makes this data more likely? (Likelihood question)</li>
+                        <li data-lang="zh">如果硬币是60%正面：得到恰好7个正面的概率是多少？（概率问题）</li>
+                        <li data-lang="zh">如果硬币是70%正面：得到恰好7个正面的概率是多少？（仍然是概率问题）</li>
+                        <li data-lang="zh">我观察到10次中有7个正面。哪个概率（60%还是70%）使这个数据最可能？（似然问题）</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section 2: The Likelihood Function -->
+            <div class="section">
+                <div class="section-number">
+                    <span data-lang="en">SECTION 2</span>
+                    <span data-lang="zh">第二部分</span>
+                </div>
+                <h2 class="section-title">
+                    <span data-lang="en">Building the Likelihood Function</span>
+                    <span data-lang="zh">构建似然函数</span>
+                </h2>
+
+                <p data-lang="en">
+                    Now let's be precise. The <strong>likelihood function</strong> is a way to measure how probable your observed data is under different parameter values.
+                </p>
+                <p data-lang="zh">
+                    现在让我们更精确。<strong>似然函数</strong>是一种方式，用来衡量你观察到的数据在不同参数值下的概率。
+                </p>
+
+                <div class="section-subtitle">
+                    <span data-lang="en">Example 1: Coin Flips</span>
+                    <span data-lang="zh">例子1：硬币翻转</span>
+                </div>
+
+                <p data-lang="en">
+                    You flip a coin \(n\) times and observe \(k\) heads. Let's call the true probability of heads \(p\). Under this model, what's the probability of observing \(k\) heads?
+                </p>
+                <p data-lang="zh">
+                    你翻转硬币 \(n\) 次，观察到 \(k\) 个正面。让我们称正面的真实概率为 \(p\)。在这个模型下，观察到 \(k\) 个正面的概率是多少？
+                </p>
+
+                <div class="math-display">
+                    $$P(k \text{ heads} | p) = \binom{n}{k} p^k (1-p)^{n-k}$$
+                </div>
+
+                <p data-lang="en">
+                    This is a standard binomial probability. But now, instead of plugging in a single value of \(p\), we <strong>treat \(p\) as unknown</strong> and view this formula as a function of \(p\) for fixed data (\(k\) heads out of \(n\) flips). This gives us the <strong>likelihood function</strong>:
+                </p>
+                <p data-lang="zh">
+                    这是标准的二项概率。但现在，我们不是代入单个 \(p\) 的值，而是<strong>将 \(p\) 视为未知</strong>，并将此公式视为固定数据（\(n\) 次中 \(k\) 个正面）的 \(p\) 的函数。这给了我们<strong>似然函数</strong>：
+                </p>
+
+                <div class="math-display">
+                    $$L(p | k, n) = \binom{n}{k} p^k (1-p)^{n-k}$$
+                </div>
+
+                <p data-lang="en">
+                    Notice: We can drop the binomial coefficient \(\binom{n}{k}\) because it doesn't depend on \(p\). All that matters for finding the best \(p\) is:
+                </p>
+                <p data-lang="zh">
+                    注意：我们可以去掉二项式系数 \(\binom{n}{k}\)，因为它不依赖于 \(p\)。找到最佳 \(p\) 所需要的只是：
+                </p>
+
+                <div class="math-display">
+                    $$L(p) \propto p^k (1-p)^{n-k}$$
+                </div>
+
+                <div class="note-box">
+                    <div class="box-title">
+                        <span data-lang="en">The Symbol \(\propto\) (Proportional To)</span>
+                        <span data-lang="zh">符号 \(\propto\)（正比于）</span>
+                    </div>
+                    <p data-lang="en">
+                        \(A \propto B\) means "A is proportional to B" — they have the same shape, just scaled by a constant. For maximization, constants don't matter, so \(L(p)\) and \(p^k(1-p)^{n-k}\) have their maximum at the same point.
+                    </p>
+                    <p data-lang="zh">
+                        \(A \propto B\) 意思是"A正比于B"——它们有相同的形状，只是按常数缩放。对于最大化，常数无关紧要，所以 \(L(p)\) 和 \(p^k(1-p)^{n-k}\) 在同一点达到最大值。
+                    </p>
+                </div>
+
+                <div class="section-subtitle">
+                    <span data-lang="en">Example 2: Simple Regression (Just a Peek)</span>
+                    <span data-lang="zh">例子2：简单回归（简单预览）</span>
+                </div>
+
+                <p data-lang="en">
+                    Suppose you have data points \((x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n)\) and you believe they follow a line: \(y_i = a + b \cdot x_i + \text{noise}\). The noise comes from some distribution (let's say normal, centered at 0).
+                </p>
+                <p data-lang="zh">
+                    假设你有数据点 \((x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n)\) 并且你相信它们遵循一条线：\(y_i = a + b \cdot x_i + \text{噪声}\)。噪声来自某个分布（比如正态分布，以0为中心）。
+                </p>
+
+                <p data-lang="en">
+                    The likelihood of observing your data depends on how far each point is from the line. If the line predicts \(\hat{y}_i = a + b \cdot x_i\), but you observe \(y_i\), the error is \(e_i = y_i - \hat{y}_i\). Under a normal distribution, smaller errors are more likely.
+                </p>
+                <p data-lang="zh">
+                    观察到你的数据的似然取决于每个点离直线有多远。如果直线预测 \(\hat{y}_i = a + b \cdot x_i\)，但你观察到 \(y_i\)，误差是 \(e_i = y_i - \hat{y}_i\)。在正态分布下，较小的误差更有可能。
+                </p>
+
+                <p data-lang="en">
+                    The likelihood function multiplies the probability densities of all observations:
+                </p>
+                <p data-lang="zh">
+                    似然函数将所有观察的概率密度相乘：
+                </p>
+
+                <div class="math-display">
+                    $$L(a, b) = \prod_{i=1}^{n} \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(y_i - a - b \cdot x_i)^2}{2\sigma^2}\right)$$
+                </div>
+
+                <p data-lang="en">
+                    Don't let this formula intimidate you. The key idea: each term gets bigger when the error \((y_i - a - b \cdot x_i)^2\) is smaller. So maximizing this likelihood means minimizing the squared errors — which is exactly what ordinary least squares (OLS) does!
+                </p>
+                <p data-lang="zh">
+                    不要被这个公式吓倒。关键思想：当误差 \((y_i - a - b \cdot x_i)^2\) 较小时，每一项都会更大。所以最大化这个似然意味着最小化平方误差——这正是普通最小二乘法(OLS)所做的！
+                </p>
+            </div>
+
+            <!-- Section 3: Why Maximize? -->
+            <div class="section">
+                <div class="section-number">
+                    <span data-lang="en">SECTION 3</span>
+                    <span data-lang="zh">第三部分</span>
+                </div>
+                <h2 class="section-title">
+                    <span data-lang="en">Why Do We Maximize the Likelihood?</span>
+                    <span data-lang="zh">我们为什么要最大化似然？</span>
+                </h2>
+
+                <p data-lang="en">
+                    The answer is deceptively simple: <strong>pick the parameters that make your data least surprising</strong>.
+                </p>
+                <p data-lang="zh">
+                    答案出奇地简单：<strong>选择使你的数据最不奇怪的参数</strong>。
+                </p>
+
+                <p data-lang="en">
+                    Think of it this way. If I tell you "I flipped a coin 10 times and got 7 heads," you might wonder: "Is this coin fair (50%)? Or biased towards heads (70%)?" The maximum likelihood estimate says: "Choose the parameter that makes getting 7 heads most likely."
+                </p>
+                <p data-lang="zh">
+                    这样想：如果我告诉你"我翻转硬币10次，得到7个正面"，你可能想知道："这枚硬币是公平的（50%）？还是倾向于正面（70%）？" 最大似然估计说："选择使得到7个正面最可能的参数。"
+                </p>
+
+                <div class="example-box">
+                    <div class="box-title">
+                        <span data-lang="en">Numerical Example</span>
+                        <span data-lang="zh">数值例子</span>
+                    </div>
+                    <p data-lang="en">
+                        Suppose we observe 7 heads out of 10 flips. Let's compute the likelihood for different values of \(p\):
+                    </p>
+                    <p data-lang="zh">
+                        假设我们观察到10次翻转中有7个正面。让我们计算不同 \(p\) 值的似然：
+                    </p>
+                    <ul>
+                        <li data-lang="en">\(p = 0.5\) (fair coin): \(L(0.5) \propto (0.5)^7 (0.5)^3 = (0.5)^{10} \approx 0.00098\)</li>
+                        <li data-lang="en">\(p = 0.7\) (biased coin): \(L(0.7) \propto (0.7)^7 (0.3)^3 \approx 0.00268\)</li>
+                        <li data-lang="en">\(p = 0.8\) (more biased): \(L(0.8) \propto (0.8)^7 (0.2)^3 \approx 0.00167\)</li>
+                        <li data-lang="zh">\(p = 0.5\)（公平硬币）：\(L(0.5) \propto (0.5)^7 (0.5)^3 = (0.5)^{10} \approx 0.00098\)</li>
+                        <li data-lang="zh">\(p = 0.7\)（有偏硬币）：\(L(0.7) \propto (0.7)^7 (0.3)^3 \approx 0.00268\)</li>
+                        <li data-lang="zh">\(p = 0.8\)（更有偏）：\(L(0.8) \propto (0.8)^7 (0.2)^3 \approx 0.00167\)</li>
+                    </ul>
+                    <p data-lang="en">
+                        The likelihood is highest at \(p = 0.7\), so the MLE estimate is \(\hat{p} = 0.7 = \frac{7}{10}\) (the proportion of heads observed). This makes intuitive sense!
+                    </p>
+                    <p data-lang="zh">
+                        似然在 \(p = 0.7\) 时最高，所以MLE估计是 \(\hat{p} = 0.7 = \frac{7}{10}\)（观察到的正面比例）。这直观上是有意义的！
+                    </p>
+                </div>
+            </div>
+
+            <!-- Section 4: Taking the Derivative -->
+            <div class="section">
+                <div class="section-number">
+                    <span data-lang="en">SECTION 4</span>
+                    <span data-lang="zh">第四部分</span>
+                </div>
+                <h2 class="section-title">
+                    <span data-lang="en">Finding the Maximum: Derivatives and Slopes</span>
+                    <span data-lang="zh">找到最大值：导数和斜率</span>
+                </h2>
+
+                <div class="section-subtitle">
+                    <span data-lang="en">What is a Derivative? (Intuition First)</span>
+                    <span data-lang="zh">什么是导数？（先要直觉）</span>
+                </div>
+
+                <p data-lang="en">
+                    A <strong>derivative</strong> measures how fast something is changing. Imagine you're driving a car: your position changes with time. The derivative of your position with respect to time is your speed — how much your position changes per unit time.
+                </p>
+                <p data-lang="zh">
+                    <strong>导数</strong>衡量某物变化的速度。想象你在开车：你的位置随时间变化。你的位置关于时间的导数是你的速度——你的位置每单位时间变化多少。
+                </p>
+
+                <p data-lang="en">
+                    For curves, the derivative at a point is the <strong>slope of the line that just touches the curve at that point</strong>. A horizontal line has slope 0. An upward-sloping line has positive slope. Downward-sloping has negative slope.
+                </p>
+                <p data-lang="zh">
+                    对于曲线，在一点处的导数是<strong>恰好在该点接触曲线的直线的斜率</strong>。水平线的斜率为0。上升的线的斜率为正。下降的线的斜率为负。
+                </p>
+
+                <div class="definition-box">
+                    <div class="box-title">
+                        <span data-lang="en">The Key Insight: At the Peak, the Slope is Zero</span>
+                        <span data-lang="zh">关键洞察：在峰值处，斜率为零</span>
+                    </div>
+                    <p data-lang="en">
+                        When you climb a mountain and reach the peak, you're not going uphill anymore and you're not going downhill — you're flat for an instant. That's where the slope = 0. The same is true for the likelihood function: at the maximum (the peak), the derivative equals zero.
+                    </p>
+                    <p data-lang="zh">
+                        当你爬一座山并到达峰顶时，你不再上升，也不下降——你在瞬间是平的。那就是斜率 = 0 的地方。似然函数也是一样的：在最大值（峰值），导数等于零。
+                    </p>
+                </div>
+
+                <p data-lang="en">
+                    So to find where the likelihood is highest, we:
+                </p>
+                <p data-lang="zh">
+                    所以为了找到似然最高的地方，我们：
+                </p>
+                <ol>
+                    <li data-lang="en">Take the derivative of the likelihood function with respect to the parameter.</li>
+                    <li data-lang="en">Set it equal to zero.</li>
+                    <li data-lang="en">Solve for the parameter.</li>
+                    <li data-lang="zh">计算似然函数关于参数的导数。</li>
+                    <li data-lang="zh">将其设置为零。</li>
+                    <li data-lang="zh">求解参数。</li>
+                </ol>
+
+                <div class="section-subtitle">
+                    <span data-lang="en">The Problem with Products: Enter the Log-Likelihood</span>
+                    <span data-lang="zh">乘积的问题：引入对数似然</span>
+                </div>
+
+                <p data-lang="en">
+                    The likelihood is a product of many terms (one for each observation). Taking derivatives of products is messy. But there's a trick: use <strong>logarithms</strong>.
+                </p>
+                <p data-lang="zh">
+                    似然是许多项的乘积（每个观察一项）。对乘积求导很复杂。但有个技巧：使用<strong>对数</strong>。
+                </p>
+
+                <div class="definition-box">
+                    <div class="box-title">
+                        <span data-lang="en">The Log Rule: log(A × B) = log(A) + log(B)</span>
+                        <span data-lang="zh">对数法则：log(A × B) = log(A) + log(B)</span>
+                    </div>
+                    <p data-lang="en">
+                        This is the crucial property of logarithms: they turn multiplication into addition.
+                    </p>
+                    <p data-lang="zh">
+                        这是对数的关键性质：它们将乘法转化为加法。
+                    </p>
+                </div>
+
+                <p data-lang="en">
+                    Define the <strong>log-likelihood</strong> as:
+                </p>
+                <p data-lang="zh">
+                    定义<strong>对数似然</strong>为：
+                </p>
+
+                <div class="math-display">
+                    $$\ell(\theta) = \log L(\theta) = \log(f(x_1|\theta) \cdot f(x_2|\theta) \cdots f(x_n|\theta))$$
+                </div>
+
+                <p data-lang="en">
+                    Using the log rule:
+                </p>
+                <p data-lang="zh">
+                    使用对数法则：
+                </p>
+
+                <div class="math-display">
+                    $$\ell(\theta) = \log f(x_1|\theta) + \log f(x_2|\theta) + \cdots + \log f(x_n|\theta) = \sum_{i=1}^{n} \log f(x_i|\theta)$$
+                </div>
+
+                <p data-lang="en">
+                    Now we have a <strong>sum</strong> instead of a product. Taking derivatives of sums is easy — you differentiate each term and add them up.
+                </p>
+                <p data-lang="zh">
+                    现在我们有一个<strong>和</strong>而不是一个乘积。对和求导很容易——你对每一项求导然后加起来。
+                </p>
+
+                <div class="note-box">
+                    <div class="box-title">
+                        <span data-lang="en">Why Doesn't This Change the Answer?</span>
+                        <span data-lang="zh">为什么这不会改变答案？</span>
+                    </div>
+                    <p data-lang="en">
+                        Because logarithm is a <strong>monotonically increasing function</strong>. If A > B, then log(A) > log(B). So the parameter that maximizes \(L(\theta)\) also maximizes \(\log L(\theta) = \ell(\theta)\). The location of the maximum doesn't change, only the shape of the curve.
+                    </p>
+                    <p data-lang="zh">
+                        因为对数是<strong>单调递增函数</strong>。如果 A > B，那么 log(A) > log(B)。所以使 \(L(\theta)\) 最大化的参数也使 \(\log L(\theta) = \ell(\theta)\) 最大化。最大值的位置不会改变，只是曲线的形状改变了。
+                    </p>
+                </div>
+
+                <div class="section-subtitle">
+                    <span data-lang="en">Example: Coin Flips Revisited</span>
+                    <span data-lang="zh">例子：硬币翻转重新审视</span>
+                </div>
+
+                <p data-lang="en">
+                    We had: \(L(p) \propto p^k (1-p)^{n-k}\)
+                </p>
+                <p data-lang="zh">
+                    我们有：\(L(p) \propto p^k (1-p)^{n-k}\)
+                </p>
+
+                <p data-lang="en">
+                    Take the logarithm:
+                </p>
+                <p data-lang="zh">
+                    取对数：
+                </p>
+
+                <div class="math-display">
+                    $$\ell(p) = k \log p + (n-k) \log(1-p)$$
+                </div>
+
+                <p data-lang="en">
+                    Now differentiate with respect to \(p\):
+                </p>
+                <p data-lang="zh">
+                    现在对 \(p\) 求导：
+                </p>
+
+                <div class="math-display">
+                    $$\frac{d\ell}{dp} = \frac{k}{p} - \frac{n-k}{1-p}$$
+                </div>
+
+                <p data-lang="en">
+                    Set equal to zero:
+                </p>
+                <p data-lang="zh">
+                    设置为零：
+                </p>
+
+                <div class="math-display">
+                    $$\frac{k}{p} = \frac{n-k}{1-p}$$
+                </div>
+
+                <p data-lang="en">
+                    Cross-multiply and solve:
+                </p>
+                <p data-lang="zh">
+                    交叉相乘并求解：
+                </p>
+
+                <div class="math-display">
+                    $$k(1-p) = p(n-k)$$
+                    $$k - kp = np - kp$$
+                    $$k = np$$
+                    $$\hat{p} = \frac{k}{n}$$
+                </div>
+
+                <p data-lang="en">
+                    Beautiful! The MLE for a coin is just the sample proportion of heads — intuitive and simple.
+                </p>
+                <p data-lang="zh">
+                    漂亮！硬币的MLE就是观察到的正面的样本比例——直观且简单。
+                </p>
+            </div>
+
+            <!-- Section 5: Normal Errors & OLS -->
+            <div class="section">
+                <div class="section-number">
+                    <span data-lang="en">SECTION 5</span>
+                    <span data-lang="zh">第五部分</span>
+                </div>
+                <h2 class="section-title">
+                    <span data-lang="en">MLE with Normal Errors = Ordinary Least Squares</span>
+                    <span data-lang="zh">正态误差下的MLE = 普通最小二乘法</span>
+                </h2>
+
+                <p data-lang="en">
+                    Here's a beautiful connection: when your data comes from a linear model with normally distributed errors, the maximum likelihood estimator is exactly the same as OLS (the method you probably learned first).
+                </p>
+                <p data-lang="zh">
+                    这是一个漂亮的连接：当你的数据来自具有正态分布误差的线性模型时，最大似然估计量正好与OLS（你可能首先学到的方法）相同。
+                </p>
+
+                <div class="definition-box">
+                    <div class="box-title">
+                        <span data-lang="en">The Model</span>
+                        <span data-lang="zh">模型</span>
+                    </div>
+                    <p data-lang="en">
+                        You observe \(n\) pairs of data \((x_1, y_1), \ldots, (x_n, y_n)\). You believe:
+                    </p>
+                    <p data-lang="zh">
+                        你观察到 \(n\) 对数据 \((x_1, y_1), \ldots, (x_n, y_n)\)。你相信：
+                    </p>
+                    <div class="math-display">
+                        $$y_i = \beta_0 + \beta_1 x_i + \epsilon_i, \quad \epsilon_i \sim N(0, \sigma^2)$$
+                    </div>
+                    <p data-lang="en">
+                        The error \(\epsilon_i\) is normally distributed with mean 0 and variance \(\sigma^2\).
+                    </p>
+                    <p data-lang="zh">
+                        误差 \(\epsilon_i\) 是均值为0、方差为 \(\sigma^2\) 的正态分布。
+                    </p>
+                </div>
+
+                <p data-lang="en">
+                    The likelihood (ignoring constants) is:
+                </p>
+                <p data-lang="zh">
+                    似然（忽略常数）是：
+                </p>
+
+                <div class="math-display">
+                    $$L(\beta_0, \beta_1, \sigma^2) \propto \exp\left(-\frac{1}{2\sigma^2} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2\right)$$
+                </div>
+
+                <p data-lang="en">
+                    The log-likelihood is:
+                </p>
+                <p data-lang="zh">
+                    对数似然是：
+                </p>
+
+                <div class="math-display">
+                    $$\ell = -\frac{1}{2\sigma^2} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2 + \text{constants}$$
+                </div>
+
+                <p data-lang="en">
+                    To maximize \(\ell\), we need to minimize \(\sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2\), which is the sum of squared residuals — the exact objective of OLS!
+                </p>
+                <p data-lang="zh">
+                    为了最大化 \(\ell\)，我们需要最小化 \(\sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2\)，这是平方残差的和——正好是OLS的目标！
+                </p>
+
+                <div class="key-equation">
+                    <div data-lang="en">
+                        <strong>Key Result:</strong> Under normal errors, the MLE for regression slopes (\(\beta_0, \beta_1\)) is identical to the OLS estimator. This gives us confidence that OLS is doing something sensible from a likelihood perspective.
+                    </div>
+                    <div data-lang="zh">
+                        <strong>关键结果：</strong>在正态误差下，回归斜率（\(\beta_0, \beta_1\)）的MLE与OLS估计量相同。这让我们有信心OLS从似然的角度做的是有意义的。
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Binary Outcomes & Logit -->
+            <div class="section">
+                <div class="section-number">
+                    <span data-lang="en">SECTION 6</span>
+                    <span data-lang="zh">第六部分</span>
+                </div>
+                <h2 class="section-title">
+                    <span data-lang="en">When Data is Yes/No: Logistic Regression</span>
+                    <span data-lang="zh">当数据是是/否时：逻辑回归</span>
+                </h2>
+
+                <p data-lang="en">
+                    Sometimes your outcome is binary: yes/no, 0/1, success/failure. OLS no longer makes sense — it can predict values outside [0, 1]. We need a different model.
+                </p>
+                <p data-lang="zh">
+                    有时你的结果是二元的：是/否、0/1、成功/失败。OLS不再适用——它可以预测[0, 1]之外的值。我们需要一个不同的模型。
+                </p>
+
+                <div class="section-subtitle">
+                    <span data-lang="en">Why Straight Lines Fail</span>
+                    <span data-lang="zh">为什么直线失败</span>
+                </div>
+
+                <p data-lang="en">
+                    Imagine predicting whether someone buys a product based on their income. With a straight line, at very low incomes the prediction might be negative (impossible for a probability!), and at very high incomes it might exceed 1 (also impossible). We need an S-shaped curve that stays between 0 and 1.
+                </p>
+                <p data-lang="zh">
+                    想象根据收入预测某人是否购买产品。用直线，在非常低的收入处预测可能是负数（对于概率是不可能的！），在非常高的收入处可能超过1（也是不可能的）。我们需要一条S形曲线，保持在0和1之间。
+                </p>
+
+                <div class="definition-box">
+                    <div class="box-title">
+                        <span data-lang="en">The Logistic Function (The S-Curve)</span>
+                        <span data-lang="zh">逻辑函数（S形曲线）</span>
+                    </div>
+                    <p data-lang="en">
+                        The logistic function is:
+                    </p>
+                    <p data-lang="zh">
+                        逻辑函数是：
+                    </p>
+                    <div class="math-display">
+                        $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
+                    </div>
+                    <p data-lang="en">
+                        where \(z = \beta_0 + \beta_1 x\) is a linear predictor. Notice:
+                    </p>
+                    <p data-lang="zh">
+                        其中 \(z = \beta_0 + \beta_1 x\) 是线性预测器。注意：
+                    </p>
+                    <ul>
+                        <li data-lang="en">When \(z \to -\infty\), \(\sigma(z) \to 0\)</li>
+                        <li data-lang="en">When \(z = 0\), \(\sigma(z) = 0.5\)</li>
+                        <li data-lang="en">When \(z \to +\infty\), \(\sigma(z) \to 1\)</li>
+                        <li data-lang="zh">当 \(z \to -\infty\) 时，\(\sigma(z) \to 0\)</li>
+                        <li data-lang="zh">当 \(z = 0\) 时，\(\sigma(z) = 0.5\)</li>
+                        <li data-lang="zh">当 \(z \to +\infty\) 时，\(\sigma(z) \to 1\)</li>
+                    </ul>
+                    <p data-lang="en">
+                        Perfect! The output is always between 0 and 1, like a probability.
+                    </p>
+                    <p data-lang="zh">
+                        完美！输出始终在0和1之间，就像一个概率。
+                    </p>
+                </div>
+
+                <p data-lang="en">
+                    We model the probability of success as: \(P(y_i = 1 | x_i) = \sigma(\beta_0 + \beta_1 x_i)\)
+                </p>
+                <p data-lang="zh">
+                    我们将成功的概率建模为：\(P(y_i = 1 | x_i) = \sigma(\beta_0 + \beta_1 x_i)\)
+                </p>
+
+                <div class="section-subtitle">
+                    <span data-lang="en">The Likelihood for Binary Data</span>
+                    <span data-lang="zh">二元数据的似然</span>
+                </div>
+
+                <p data-lang="en">
+                    For each observation, we have either \(y_i = 1\) or \(y_i = 0\). Let \(p_i = \sigma(\beta_0 + \beta_1 x_i)\) be the predicted probability.
+                </p>
+                <p data-lang="zh">
+                    对于每个观察，我们有 \(y_i = 1\) 或 \(y_i = 0\)。设 \(p_i = \sigma(\beta_0 + \beta_1 x_i)\) 为预测概率。
+                </p>
+
+                <p data-lang="en">
+                    The probability of observing \(y_i\) is:
+                </p>
+                <p data-lang="zh">
+                    观察 \(y_i\) 的概率是：
+                </p>
+
+                <div class="math-display">
+                    $$P(y_i | p_i) = p_i^{y_i} (1-p_i)^{1-y_i}$$
+                </div>
+
+                <p data-lang="en">
+                    Notice: if \(y_i = 1\), this becomes \(p_i\). If \(y_i = 0\), this becomes \(1-p_i\). Clever!
+                </p>
+                <p data-lang="zh">
+                    注意：如果 \(y_i = 1\)，这变成 \(p_i\)。如果 \(y_i = 0\)，这变成 \(1-p_i\)。聪明！
+                </p>
+
+                <p data-lang="en">
+                    The likelihood for all observations is:
+                </p>
+                <p data-lang="zh">
+                    所有观察的似然是：
+                </p>
+
+                <div class="math-display">
+                    $$L(\beta_0, \beta_1) = \prod_{i=1}^{n} p_i^{y_i} (1-p_i)^{1-y_i}$$
+                </div>
+
+                <p data-lang="en">
+                    The log-likelihood is:
+                </p>
+                <p data-lang="zh">
+                    对数似然是：
+                </p>
+
+                <div class="math-display">
+                    $$\ell(\beta_0, \beta_1) = \sum_{i=1}^{n} [y_i \log p_i + (1-y_i) \log(1-p_i)]$$
+                </div>
+
+                <div class="note-box">
+                    <div class="box-title">
+                        <span data-lang="en">No Closed-Form Solution</span>
+                        <span data-lang="zh">无闭式解</span>
+                    </div>
+                    <p data-lang="en">
+                        Unlike OLS or the simple coin example, this log-likelihood doesn't have a closed-form solution. We can't solve for \(\beta_0\) and \(\beta_1\) by hand. Instead, we use numerical methods (like Newton-Raphson) to find the maximum iteratively.
+                    </p>
+                    <p data-lang="zh">
+                        与OLS或简单的硬币例子不同，这个对数似然没有闭式解。我们不能手工求解 \(\beta_0\) 和 \(\beta_1\)。相反，我们使用数值方法（如Newton-Raphson）来迭代地找到最大值。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Section 7: Comparing Models -->
+            <div class="section">
+                <div class="section-number">
+                    <span data-lang="en">SECTION 7</span>
+                    <span data-lang="zh">第七部分</span>
+                </div>
+                <h2 class="section-title">
+                    <span data-lang="en">Comparing Models: The Likelihood Ratio Test</span>
+                    <span data-lang="zh">比较模型：似然比测试</span>
+                </h2>
+
+                <p data-lang="en">
+                    Suppose you fit two models to your data. How do you know which is better? One approach: compare their likelihoods.
+                </p>
+                <p data-lang="zh">
+                    假设你为你的数据拟合了两个模型。你如何知道哪一个更好？一种方法：比较它们的似然。
+                </p>
+
+                <div class="definition-box">
+                    <div class="box-title">
+                        <span data-lang="en">Likelihood Ratio Test</span>
+                        <span data-lang="zh">似然比测试</span>
+                    </div>
+                    <p data-lang="en">
+                        Given two models, let \(\ell_1\) and \(\ell_2\) be their log-likelihoods. Define:
+                    </p>
+                    <p data-lang="zh">
+                        给定两个模型，设 \(\ell_1\) 和 \(\ell_2\) 为它们的对数似然。定义：
+                    </p>
+                    <div class="math-display">
+                        $$\text{LR} = 2(\ell_1 - \ell_2)$$
+                    </div>
+                    <p data-lang="en">
+                        (assuming model 1 has more parameters). A larger LR means model 1 fits much better. Under the null hypothesis (models are equally good), LR follows a chi-squared distribution with degrees of freedom = difference in number of parameters.
+                    </p>
+                    <p data-lang="zh">
+                        （假设模型1有更多参数）。更大的LR意味着模型1拟合得更好。在零假设下（模型同样好），LR遵循卡方分布，自由度 = 参数数量的差异。
+                    </p>
+                </div>
+
+                <p data-lang="en">
+                    This gives you a principled way to decide: do the extra parameters in a complex model actually improve the fit, or are you just overfitting?
+                </p>
+                <p data-lang="zh">
+                    这给了你一个有原则的方式来决定：复杂模型中的额外参数是否真的改进了拟合，还是你只是在过度拟合？
+                </p>
+            </div>
+
+            <!-- Section 8: Precision & Standard Errors -->
+            <div class="section">
+                <div class="section-number">
+                    <span data-lang="en">SECTION 8</span>
+                    <span data-lang="zh">第八部分</span>
+                </div>
+                <h2 class="section-title">
+                    <span data-lang="en">Confidence & Precision: Fisher Information</span>
+                    <span data-lang="zh">置信与精度：费舍尔信息</span>
+                </h2>
+
+                <p data-lang="en">
+                    Once you've found the MLE, you want to know: how precise is my estimate? If I collected different data, would I get a very similar estimate, or could it be quite different?
+                </p>
+                <p data-lang="zh">
+                    一旦你找到了MLE，你想知道：我的估计有多精确？如果我收集不同的数据，我会得到一个非常相似的估计，还是可能会有很大不同？
+                </p>
+
+                <div class="section-subtitle">
+                    <span data-lang="en">Intuition: Sharp vs Flat Peaks</span>
+                    <span data-lang="zh">直觉：尖峰 vs 平缓峰</span>
+                </div>
+
+                <p data-lang="en">
+                    Imagine two likelihood curves. One is very peaky — if you're at the true parameter, the likelihood drops sharply as you move away. The other is broad and flat — the likelihood changes slowly. In the peaky case, small changes in data lead to small changes in the MLE (precise estimate). In the flat case, small changes in data lead to big changes in the MLE (imprecise estimate).
+                </p>
+                <p data-lang="zh">
+                    想象两条似然曲线。一条非常尖锐——如果你在真实参数处，当你移动时似然迅速下降。另一条宽而平缓——似然变化缓慢。在尖锐的情况下，数据的小变化导致MLE的小变化（精确估计）。在平缓的情况下，数据的小变化导致MLE的大变化（不精确估计）。
+                </p>
+
+                <div class="definition-box">
+                    <div class="box-title">
+                        <span data-lang="en">Fisher Information: Measuring Curvature</span>
+                        <span data-lang="zh">费舍尔信息：衡量曲率</span>
+                    </div>
+                    <p data-lang="en">
+                        The <strong>Fisher Information</strong> measures how "curvy" the log-likelihood is. High curvature (sharp peak) → high Fisher Information → precise estimates. Low curvature (flat peak) → low Fisher Information → imprecise estimates.
+                    </p>
+                    <p data-lang="zh">
+                        <strong>费舍尔信息</strong>衡量对数似然的"曲率"。高曲率（尖峰）→ 高费舍尔信息 → 精确估计。低曲率（平缓峰）→ 低费舍尔信息 → 不精确估计。
+                    </p>
+                    <p data-lang="en">
+                        For a simple parameter \(\theta\), it's defined as:
+                    </p>
+                    <p data-lang="zh">
+                        对于简单参数 \(\theta\)，定义为：
+                    </p>
+                    <div class="math-display">
+                        $$\mathcal{I}(\theta) = -E\left[\frac{d^2 \ell}{d\theta^2}\right]$$
+                    </div>
+                    <p data-lang="en">
+                        (The negative expected second derivative — a measure of curvature.)
+                    </p>
+                    <p data-lang="zh">
+                        （负期望二阶导数——曲率的度量。）
+                    </p>
+                </div>
+
+                <p data-lang="en">
+                    The asymptotic standard error of the MLE is approximately:
+                </p>
+                <p data-lang="zh">
+                    MLE的渐近标准误差约为：
+                </p>
+
+                <div class="math-display">
+                    $$\text{SE}(\hat{\theta}) \approx \frac{1}{\sqrt{n \cdot \mathcal{I}(\theta)}}$$
+                </div>
+
+                <p data-lang="en">
+                    Higher Fisher Information means smaller standard error (more precision). With more data (\(n\)), the standard error shrinks.
+                </p>
+                <p data-lang="zh">
+                    更高的费舍尔信息意味着更小的标准误差（更高的精度）。数据越多（\(n\)），标准误差就越小。
+                </p>
+
+                <div class="example-box">
+                    <div class="box-title">
+                        <span data-lang="en">Practical Use</span>
+                        <span data-lang="zh">实际使用</span>
+                    </div>
+                    <p data-lang="en">
+                        In logistic regression, software automatically computes the Fisher Information matrix and uses it to calculate standard errors for all coefficients. This lets you construct confidence intervals: \(\hat{\beta} \pm 1.96 \cdot SE(\hat{\beta})\).
+                    </p>
+                    <p data-lang="zh">
+                        在逻辑回归中，软件自动计算费舍尔信息矩阵并使用它来计算所有系数的标准误差。这让你能构建置信区间：\(\hat{\beta} \pm 1.96 \cdot SE(\hat{\beta})\)。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="page-footer">
+                <p data-lang="en">
+                    This guide introduces Maximum Likelihood Estimation from the ground up, with intuition and concrete examples. You've learned what likelihood is, why we maximize it, how to find the maximum using derivatives, and how to interpret the results. These ideas form the foundation of modern statistical inference.
+                </p>
+                <p data-lang="zh">
+                    本指南从零开始介绍最大似然估计，使用直觉和具体例子。你已经学到了什么是似然，我们为什么要最大化它，如何使用导数找到最大值，以及如何解释结果。这些想法构成了现代统计推断的基础。
+                </p>
+
+                <a href="../empirical-modeling.html" class="back-link">
+                    <span data-lang="en">← Back to Empirical Modeling</span>
+                    <span data-lang="zh">← 回到实证建模</span>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langBtns = document.querySelectorAll('.guide-lang-btn');
+        // Exclude buttons from content elements
+        const enElements = document.querySelectorAll('.guide-content [data-lang="en"], .guide-breadcrumb [data-lang="en"], a.guide-back[data-lang="en"], .guide-header [data-lang="en"], .guide-tag [data-lang="en"]');
+        const zhElements = document.querySelectorAll('.guide-content [data-lang="zh"], .guide-breadcrumb [data-lang="zh"], a.guide-back[data-lang="zh"], .guide-header [data-lang="zh"], .guide-tag [data-lang="zh"]');
+        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        setLanguage(savedLang);
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                localStorage.setItem('preferred-lang', lang);
+                setLanguage(lang);
+            });
+        });
+        function setLanguage(lang) {
+            langBtns.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('.guide-lang-btn[data-lang="' + lang + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            if (lang === 'en') {
+                enElements.forEach(el => { el.style.display = ''; });
+                zhElements.forEach(el => { el.style.display = 'none'; });
+                document.body.className = 'en';
+            } else {
+                enElements.forEach(el => { el.style.display = 'none'; });
+                zhElements.forEach(el => { el.style.display = ''; });
+                document.body.className = 'zh';
+            }
+        }
+    });
+    </script>
+
+</body>
+</html>

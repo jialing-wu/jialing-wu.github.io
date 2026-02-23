@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Regression from First Principles | Machine Learning</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Base Styles -->
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Guide Styles -->
+    <link rel="stylesheet" href="guide-style.css">
+
+    <!-- MathJax for Mathematics -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Override: text paragraphs inside math-box should not inherit monospace */
+        .math-box p, .math-box .step-text {
+            font-family: var(--body, "EB Garamond", serif);
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--ink-faded);
+            margin-bottom: 10px;
+        }
+        /* Step label style */
+        .step-label {
+            font-family: var(--sans);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+        /* Divider between steps within a derivation block */
+        .step-block {
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(194,153,61,.2);
+        }
+        .step-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    </style>
+</head>
+
+<body class="zh">
+    <div class="guide-layout">
+        <!-- Topbar -->
+        <div class="guide-topbar">
+            <div class="guide-breadcrumb">
+                <a href="../machine-learning.html" data-lang="en">Machine Learning</a>
+                <a href="../machine-learning.html" data-lang="zh">机器学习</a>
+                <span class="sep">/</span>
+                <span data-lang="en">Linear Regression from First Principles</span>
+                <span data-lang="zh">从第一性原理理解线性回归</span>
+            </div>
+            <div class="guide-lang-toggle">
+                <button class="guide-lang-btn active" data-lang="zh">中文</button>
+                <button class="guide-lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="guide-content-wrapper">
+            <div class="guide-content">
+                <!-- Back link -->
+                <a href="../machine-learning.html#ml-regression" class="guide-back" data-lang="en">← Back to Machine Learning: Regression</a>
+                <a href="../machine-learning.html#ml-regression" class="guide-back" data-lang="zh">← 返回机器学习：回归</a>
+
+                <!-- Page header -->
+                <div class="guide-header">
+                    <div class="guide-tag">
+                        <span data-lang="en">DEEP DIVE · MODULE 1a · REGRESSION</span>
+                        <span data-lang="zh">深入指南 · 模块 1a · 回归</span>
+                    </div>
+                    <h1>
+                        <span data-lang="en">Linear Regression from First Principles</span>
+                        <span data-lang="zh">从第一性原理理解线性回归</span>
+                    </h1>
+                    <p>
+                        <span data-lang="en">Why we minimize squared error, how the Normal Equation falls out of calculus, and when gradient descent is a better choice</span>
+                        <span data-lang="zh">为什么最小化平方误差、法线方程如何从微积分中推导而出、以及何时梯度下降更合适</span>
+                    </p>
+                </div>
+
+                <!-- ========== SECTION 1 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">1. The Problem We Are Solving</span>
+                        <span data-lang="zh">1. 我们要解决的问题</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        You have a dataset of <span class="highlight-key">n observations</span>, each with <span class="highlight-key">k input features</span> and one continuous outcome y. Your goal is to find a <span class="highlight-key">weight vector θ</span> such that the linear combination Xθ predicts y as accurately as possible. This is the estimation problem at the heart of Ordinary Least Squares (OLS).
+                    </p>
+                    <p data-lang="zh">
+                        你有一个包含 <span class="highlight-key">n 个观测</span>的数据集，每个观测有 <span class="highlight-key">k 个输入特征</span>和一个连续结果 y。你的目标是找到一个<span class="highlight-key">权重向量 θ</span>，使线性组合 Xθ 尽可能准确地预测 y。这就是普通最小二乘法（OLS）核心的估计问题。
+                    </p>
+
+                    <p data-lang="en">In matrix notation, our model is:</p>
+                    <p data-lang="zh">用矩阵表示，我们的模型为：</p>
+
+                    <div class="math-box">
+$$\hat{y} = X\theta \quad \text{where } X \in \mathbb{R}^{n \times (k+1)},\ \theta \in \mathbb{R}^{k+1},\ y \in \mathbb{R}^n$$
+                    </div>
+
+                    <p data-lang="en">
+                        The matrix X has n rows (one per observation) and k+1 columns: the first column is all 1s (for the intercept θ₀), and the remaining columns are the feature values. Each row xᵢ is one observation's feature vector; the predicted value for observation i is ŷᵢ = xᵢᵀθ.
+                    </p>
+                    <p data-lang="zh">
+                        矩阵 X 有 n 行（每个观测一行）和 k+1 列：第一列全是 1（用于截距 θ₀），其余列是特征值。每一行 xᵢ 是一个观测的特征向量；观测 i 的预测值为 ŷᵢ = xᵢᵀθ。
+                    </p>
+
+                    <div class="definition-box">
+                        <span data-lang="en"><strong>Concrete example:</strong> Predicting democracy score y from two features — log GDP per capita (x₁) and trade openness (x₂) — for 120 countries. Then n=120, k=2, and each row of X looks like [1, log_GDPᵢ, tradeᵢ]. We seek θ = [θ₀, θ₁, θ₂], where θ₁ is "how much does democracy score change per unit increase in log GDP, holding trade constant?"</span>
+                        <span data-lang="zh"><strong>具体例子：</strong>用两个特征——人均 GDP 的对数（x₁）和贸易开放度（x₂）——预测 120 个国家的民主程度得分 y。则 n=120，k=2，X 的每一行形如 [1, log_GDPᵢ, tradeᵢ]。我们求 θ = [θ₀, θ₁, θ₂]，其中 θ₁ 是"控制贸易开放度后，人均 log GDP 每增加一个单位，民主程度得分变化多少"。</span>
+                    </div>
+                </div>
+
+                <!-- ========== SECTION 2 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">2. Why Squared Error? The Cost Function</span>
+                        <span data-lang="zh">2. 为什么是平方误差？成本函数</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        The prediction error for observation i is the <span class="highlight-key">residual</span> eᵢ = yᵢ − ŷᵢ. We want these residuals to be small. But how do we aggregate them into a single number to minimize?
+                    </p>
+                    <p data-lang="zh">
+                        观测 i 的预测误差是<span class="highlight-key">残差</span> eᵢ = yᵢ − ŷᵢ。我们希望残差很小。但如何将它们汇总成一个数字来最小化？
+                    </p>
+
+                    <table class="guide-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <span data-lang="en">Method</span>
+                                    <span data-lang="zh">方法</span>
+                                </th>
+                                <th>
+                                    <span data-lang="en">Problem</span>
+                                    <span data-lang="zh">问题</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <span data-lang="en">Sum of residuals Σeᵢ</span>
+                                    <span data-lang="zh">残差之和 Σeᵢ</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Positive and negative errors cancel — a model that's +10 off for half the data and −10 off for the other half looks "perfect." Useless.</span>
+                                    <span data-lang="zh">正负误差相消——对一半数据偏高 10、另一半偏低 10 的模型看起来"完美"。毫无意义。</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span data-lang="en">Sum of |eᵢ| (LAD)</span>
+                                    <span data-lang="zh">绝对值之和（LAD）</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Works, but |eᵢ| is not differentiable at zero. Calculus-based optimization becomes messier; no clean closed-form solution.</span>
+                                    <span data-lang="zh">可以用，但 |eᵢ| 在零点不可微。基于微积分的优化更复杂，没有简洁的闭式解。</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span data-lang="en">Sum of eᵢ² (OLS)</span>
+                                    <span data-lang="zh">平方和（OLS）</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en"><strong>Best choice.</strong> Handles sign (squares make everything positive), penalizes large errors heavily (4× error → 16× penalty), smooth everywhere (easy to differentiate). Leads to a clean closed-form solution.</span>
+                                    <span data-lang="zh"><strong>最佳选择。</strong>处理符号（平方使一切为正），对大误差施以重罚（误差 ×4 → 惩罚 ×16），处处光滑（易于求导），并导出简洁的闭式解。</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p data-lang="en">The OLS cost function — the Mean Squared Error — is:</p>
+                    <p data-lang="zh">OLS 成本函数——均方误差——为：</p>
+
+                    <div class="math-box">
+$$J(\theta) = \frac{1}{2n} \|y - X\theta\|^2 = \frac{1}{2n} \sum_{i=1}^{n}(y_i - \hat{y}_i)^2$$
+                    </div>
+
+                    <p data-lang="en">
+                        The factor of ½ is a convenience: it cancels with the 2 that appears when we differentiate. The 1/n averages over observations so the cost doesn't grow automatically with dataset size.
+                    </p>
+                    <p data-lang="zh">
+                        系数 ½ 是为了方便：求导时出现的 2 与之相消，使代数更简洁。1/n 对观测取平均，使成本不随数据集规模自动增大。
+                    </p>
+
+                    <div class="definition-box">
+                        <span data-lang="en"><strong>Probabilistic connection (optional):</strong> If you assume errors eᵢ ~ N(0, σ²), then maximizing the likelihood of observing y given X and θ leads to exactly the same solution as minimizing MSE. OLS = Maximum Likelihood under Gaussian errors — which is why OLS enjoys such favorable statistical properties.</span>
+                        <span data-lang="zh"><strong>概率联系（可选）：</strong>如果假设误差 eᵢ ~ N(0, σ²)，那么在给定 X 和 θ 的条件下最大化观测到 y 的似然，与最小化 MSE 得到完全相同的解。高斯误差假设下 OLS = 最大似然估计——这解释了为什么 OLS 有如此良好的统计性质。</span>
+                    </div>
+                </div>
+
+                <!-- ========== SECTION 3 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">3. Deriving the Normal Equation</span>
+                        <span data-lang="zh">3. 推导法线方程</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        J(θ) is a convex bowl — it has exactly one minimum. To find it, we take the derivative with respect to θ, set it to zero, and solve. Three steps.
+                    </p>
+                    <p data-lang="zh">
+                        J(θ) 是一个凸碗形——它有且仅有一个最小值。为了找到它，我们对 θ 求导，令其为零，然后求解。共三步。
+                    </p>
+
+                    <!-- Step 1 -->
+                    <h3>
+                        <span data-lang="en">Step 1 — Expand the cost function</span>
+                        <span data-lang="zh">步骤 1 — 展开成本函数</span>
+                    </h3>
+
+                    <div class="math-box">
+$$(y - X\theta)^\top(y - X\theta) = y^\top y - 2\theta^\top X^\top y + \theta^\top X^\top X\theta$$
+                    </div>
+
+                    <p data-lang="en">
+                        The two middle terms collapse: y⊤Xθ is a scalar, so it equals its own transpose θ⊤X⊤y. That's why the middle two terms combine into −2θ⊤X⊤y.
+                    </p>
+                    <p data-lang="zh">
+                        中间两项合并：y⊤Xθ 是一个标量，等于其转置 θ⊤X⊤y。因此两项合并为 −2θ⊤X⊤y。
+                    </p>
+
+                    <!-- Step 2 -->
+                    <h3>
+                        <span data-lang="en">Step 2 — Take the gradient with respect to θ</span>
+                        <span data-lang="zh">步骤 2 — 对 θ 求梯度</span>
+                    </h3>
+
+                    <p data-lang="en">
+                        Using two matrix calculus rules: ∂(aᵀθ)/∂θ = a and ∂(θᵀAθ)/∂θ = 2Aθ (for symmetric A):
+                    </p>
+                    <p data-lang="zh">
+                        利用两条矩阵微积分规则：∂(aᵀθ)/∂θ = a 以及 ∂(θᵀAθ)/∂θ = 2Aθ（A 对称时）：
+                    </p>
+
+                    <div class="math-box">
+$$\nabla_\theta J(\theta) = \frac{1}{n}\left(X^\top X\theta - X^\top y\right)$$
+                    </div>
+
+                    <!-- Step 3 -->
+                    <h3>
+                        <span data-lang="en">Step 3 — Set gradient to zero and solve</span>
+                        <span data-lang="zh">步骤 3 — 令梯度为零，求解</span>
+                    </h3>
+
+                    <div class="math-box">
+$$X^\top X\theta = X^\top y \quad \Longrightarrow \quad \boxed{\theta^* = (X^\top X)^{-1} X^\top y}$$
+                    </div>
+
+                    <p data-lang="en">
+                        The system X⊤Xθ = X⊤y is called the <span class="highlight-key">Normal Equations</span> — k+1 linear equations in k+1 unknowns. If X⊤X is invertible (full rank), the unique solution is θ* above — a <span class="highlight-key">closed-form solution</span> requiring no iteration.
+                    </p>
+                    <p data-lang="zh">
+                        方程组 X⊤Xθ = X⊤y 称为<span class="highlight-key">法线方程组</span>——k+1 个方程，k+1 个未知数。如果 X⊤X 可逆（满秩），唯一解即上面的 θ*——这是一个<span class="highlight-key">闭式解</span>，无需任何迭代。
+                    </p>
+                </div>
+
+                <!-- ========== SECTION 4 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">4. Reading the Normal Equation</span>
+                        <span data-lang="zh">4. 解读法线方程</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        The formula θ* = (X⊤X)⁻¹X⊤y looks intimidating. Each part has a clear meaning:
+                    </p>
+                    <p data-lang="zh">
+                        公式 θ* = (X⊤X)⁻¹X⊤y 看起来吓人。其实每一部分都有清晰含义：
+                    </p>
+
+                    <table class="guide-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <span data-lang="en">Component</span>
+                                    <span data-lang="zh">组成部分</span>
+                                </th>
+                                <th>
+                                    <span data-lang="en">What it captures</span>
+                                    <span data-lang="zh">捕捉的信息</span>
+                                </th>
+                                <th>
+                                    <span data-lang="en">In the democracy example</span>
+                                    <span data-lang="zh">在民主程度例子中</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>X⊤y</strong></td>
+                                <td>
+                                    <span data-lang="en">Raw correlation of each feature with the outcome</span>
+                                    <span data-lang="zh">每个特征与结果的原始相关性</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">How much does log GDP alone co-move with democracy score?</span>
+                                    <span data-lang="zh">人均 log GDP 单独与民主程度得分的协变情况</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>X⊤X</strong></td>
+                                <td>
+                                    <span data-lang="en">Feature-feature correlations (which predictors are redundant?)</span>
+                                    <span data-lang="zh">特征间的相关性（哪些预测变量冗余？）</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">How correlated are log GDP and trade openness with each other?</span>
+                                    <span data-lang="zh">人均 log GDP 和贸易开放度之间的相关程度</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>(X⊤X)⁻¹</strong></td>
+                                <td>
+                                    <span data-lang="en">Adjusts for feature redundancy — "disentangles" each predictor's contribution</span>
+                                    <span data-lang="zh">调整特征冗余——"分离"每个预测变量的独立贡献</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">This is how OLS "controls for" other variables</span>
+                                    <span data-lang="zh">这就是 OLS "控制"其他变量的方式</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p data-lang="en">
+                        Combining: (X⊤X)⁻¹X⊤y first measures raw feature-outcome correlations, then adjusts for inter-feature correlations, yielding the coefficient that gives each feature its fair share of predictive credit — holding all other features constant. This is the geometric operation of projecting y onto the column space of X.
+                    </p>
+                    <p data-lang="zh">
+                        综合来看：(X⊤X)⁻¹X⊤y 先衡量特征与结果的原始相关性，再调整特征间的相关性，得到每个特征在控制所有其他特征后应得的预测贡献。这在几何上等价于将 y 投影到 X 的列空间上。
+                    </p>
+                </div>
+
+                <!-- ========== SECTION 5 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">5. When Does the Normal Equation Break Down?</span>
+                        <span data-lang="zh">5. 法线方程何时失效？</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        The Normal Equation requires inverting X⊤X. This fails in two situations:
+                    </p>
+                    <p data-lang="zh">
+                        法线方程需要对 X⊤X 求逆。在两种情况下会失败：
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Singularity: perfect multicollinearity</span>
+                        <span data-lang="zh">奇异性：完全多重共线性</span>
+                    </h3>
+                    <p data-lang="en">
+                        If two features are exact linear combinations of each other (e.g., age and age expressed in months), X⊤X is singular (det = 0) and has no inverse. Fix: drop redundant features, use Ridge regression (adds λI to make it invertible), or use the pseudoinverse (Moore-Penrose).
+                    </p>
+                    <p data-lang="zh">
+                        如果两个特征是彼此的精确线性组合（例如年龄和以月为单位的年龄），X⊤X 是奇异矩阵（行列式 = 0），不可逆。修复：删除冗余特征、使用岭回归（添加 λI 使其可逆）、或使用伪逆（Moore-Penrose）。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Underdetermination: too many features (k ≫ n)</span>
+                        <span data-lang="zh">欠定性：特征过多（k ≫ n）</span>
+                    </h3>
+                    <p data-lang="en">
+                        If you have 50 countries but 200 predictors, X has more columns than rows, and X⊤X cannot be full rank. OLS breaks entirely. Ridge regression adds a penalty that regularizes the solution and makes it feasible.
+                    </p>
+                    <p data-lang="zh">
+                        如果有 50 个国家但 200 个预测变量，X 的列数多于行数，X⊤X 不可能满秩。OLS 完全失效。岭回归添加惩罚项，使解正则化并变为可行。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Computation: large k</span>
+                        <span data-lang="zh">计算性：k 很大</span>
+                    </h3>
+                    <p data-lang="en">
+                        Inverting a (k+1)×(k+1) matrix takes O(k³) time. For k = 10,000 features (e.g., word-count vectors from text data), this is 10¹² operations — prohibitively slow. This is when gradient descent becomes the practical alternative, even for linear regression.
+                    </p>
+                    <p data-lang="zh">
+                        对 (k+1)×(k+1) 矩阵求逆需要 O(k³) 时间。如果 k = 10,000 个特征（例如文本数据的词频向量），这是 10¹² 次运算——慢到无法接受。这时梯度下降成为实用的替代方案，即使对线性回归也是如此。
+                    </p>
+                </div>
+
+                <!-- ========== SECTION 6 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">6. Connection to Gradient Descent</span>
+                        <span data-lang="zh">6. 与梯度下降的联系</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        When the Normal Equation is impractical (large k, nonlinear models), we minimize J(θ) iteratively using gradient descent. Both methods seek the same θ* — they just take different paths to get there.
+                    </p>
+                    <p data-lang="zh">
+                        当法线方程不实用时（k 很大，或非线性模型），我们用梯度下降迭代地最小化 J(θ)。两种方法都寻找相同的 θ* ——只是走了不同的路径。
+                    </p>
+
+                    <p data-lang="en">The gradient descent update rule for linear regression:</p>
+                    <p data-lang="zh">线性回归的梯度下降更新规则：</p>
+
+                    <div class="math-box">
+$$\theta \leftarrow \theta - \alpha \cdot \nabla_\theta J(\theta) = \theta - \frac{\alpha}{n} X^\top(X\theta - y)$$
+                    </div>
+
+                    <p data-lang="en">
+                        Here α is the <span class="highlight-key">learning rate</span> (step size). Each iteration moves θ slightly in the direction that reduces J the most. After enough iterations, θ converges to θ*.
+                    </p>
+                    <p data-lang="zh">
+                        其中 α 是<span class="highlight-key">学习率</span>（步长）。每次迭代将 θ 沿最能减少 J 的方向移动一小步。经过足够多的迭代，θ 收敛到 θ*。
+                    </p>
+
+                    <table class="guide-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <span data-lang="en">Criterion</span>
+                                    <span data-lang="zh">比较维度</span>
+                                </th>
+                                <th>
+                                    <span data-lang="en">Normal Equation</span>
+                                    <span data-lang="zh">法线方程</span>
+                                </th>
+                                <th>
+                                    <span data-lang="en">Gradient Descent</span>
+                                    <span data-lang="zh">梯度下降</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <span data-lang="en">Number of features k</span>
+                                    <span data-lang="zh">特征数 k</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Small (k &lt; ~1,000)</span>
+                                    <span data-lang="zh">小（k &lt; ~1,000）</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Any size (scales to millions)</span>
+                                    <span data-lang="zh">任意大小（可扩展至数百万）</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span data-lang="en">Iterations needed</span>
+                                    <span data-lang="zh">所需迭代次数</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">None — one-shot exact solution</span>
+                                    <span data-lang="zh">无——一步精确解</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Many (must tune α, monitor convergence)</span>
+                                    <span data-lang="zh">多（需调整 α，监控收敛）</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span data-lang="en">Works for neural networks?</span>
+                                    <span data-lang="zh">适用于神经网络？</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">No — requires nonlinear models</span>
+                                    <span data-lang="zh">不——需要非线性模型</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Yes — general-purpose optimizer</span>
+                                    <span data-lang="zh">是——通用优化器</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span data-lang="en">Typical social science use</span>
+                                    <span data-lang="zh">社会科学中的典型用途</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Cross-national datasets, surveys (n up to tens of thousands, k up to hundreds)</span>
+                                    <span data-lang="zh">跨国数据集、调查数据（n 最多数万，k 最多数百）</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Text analysis, large-scale prediction tasks</span>
+                                    <span data-lang="zh">文本分析、大规模预测任务</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ========== SECTION 7 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">7. OLS Assumptions (Gauss-Markov Conditions)</span>
+                        <span data-lang="zh">7. OLS 假设（高斯-马尔可夫条件）</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        OLS is the <span class="highlight-key">Best Linear Unbiased Estimator (BLUE)</span> when these conditions hold. When they don't, you get biased or inefficient estimates.
+                    </p>
+                    <p data-lang="zh">
+                        当这些条件成立时，OLS 是<span class="highlight-key">最佳线性无偏估计量（BLUE）</span>。当它们不成立时，估计量会有偏或低效。
+                    </p>
+
+                    <table class="guide-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <span data-lang="en">Assumption</span>
+                                    <span data-lang="zh">假设</span>
+                                </th>
+                                <th>
+                                    <span data-lang="en">Violation in social science</span>
+                                    <span data-lang="zh">社会科学中常见违背</span>
+                                </th>
+                                <th>
+                                    <span data-lang="en">Fix</span>
+                                    <span data-lang="zh">修复方法</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <span data-lang="en"><strong>Linearity</strong> in θ</span>
+                                    <span data-lang="zh"><strong>线性性</strong>（参数线性）</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">True relationship is exponential or threshold-based</span>
+                                    <span data-lang="zh">真实关系是指数型或阈值型</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Transform features; polynomial regression; nonlinear models</span>
+                                    <span data-lang="zh">特征变换；多项式回归；非线性模型</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span data-lang="en"><strong>No perfect multicollinearity</strong></span>
+                                    <span data-lang="zh"><strong>无完全多重共线性</strong></span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Redundant variables (GDP in both $ and log $)</span>
+                                    <span data-lang="zh">冗余变量（GDP 同时以美元和对数美元形式出现）</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Drop redundant features; Ridge regression</span>
+                                    <span data-lang="zh">删除冗余特征；岭回归</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span data-lang="en"><strong>Exogeneity</strong>: E[ε|X] = 0</span>
+                                    <span data-lang="zh"><strong>外生性</strong>：E[ε|X] = 0</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Omitted variable bias; reverse causality</span>
+                                    <span data-lang="zh">遗漏变量偏差；反向因果</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Instrumental variables; fixed effects; natural experiments</span>
+                                    <span data-lang="zh">工具变量；固定效应；自然实验</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span data-lang="en"><strong>Homoskedasticity</strong>: Var(εᵢ) = σ²</span>
+                                    <span data-lang="zh"><strong>同方差性</strong>：Var(εᵢ) = σ²</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Richer countries have higher variance in outcomes</span>
+                                    <span data-lang="zh">富裕国家结果方差更大</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Robust standard errors (HC3); weighted least squares</span>
+                                    <span data-lang="zh">稳健标准误（HC3）；加权最小二乘法</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span data-lang="en"><strong>No serial correlation</strong>: E[εᵢεⱼ]=0</span>
+                                    <span data-lang="zh"><strong>无序列相关</strong>：E[εᵢεⱼ]=0</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Panel/time-series data: errors correlated across years</span>
+                                    <span data-lang="zh">面板/时间序列数据：误差在年份间相关</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Newey-West standard errors; fixed effects; ARIMA models</span>
+                                    <span data-lang="zh">Newey-West 标准误；固定效应；ARIMA 模型</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ========== SECTION 8 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">8. Key Takeaways</span>
+                        <span data-lang="zh">8. 核心要点</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        Linear regression is far more than "fitting a line." It is a principled estimator grounded in geometry (project y onto X's column space), calculus (set gradient to zero), and probability (MLE under Gaussian errors). The chain of logic:
+                    </p>
+                    <p data-lang="zh">
+                        线性回归远不止"拟合一条直线"。它是一个有原则的估计量，根植于几何（将 y 投影到 X 的列空间）、微积分（令梯度为零）和概率论（高斯误差下的最大似然）。逻辑链如下：
+                    </p>
+
+                    <div class="definition-box">
+                        <span data-lang="en">
+                            Predict y from X → measure "how wrong" with MSE (smooth, penalizes large errors) → set ∇J = 0 → get Normal Equations X⊤Xθ = X⊤y → solve for θ* = (X⊤X)⁻¹X⊤y (exact when X⊤X is invertible) → when not invertible (large k, multicollinearity), regularize with Ridge or use gradient descent instead.
+                        </span>
+                        <span data-lang="zh">
+                            从 X 预测 y → 用 MSE 衡量误差（光滑，对大误差重罚）→ 令 ∇J = 0 → 得到法线方程组 X⊤Xθ = X⊤y → 求解 θ* = (X⊤X)⁻¹X⊤y（X⊤X 可逆时精确）→ 不可逆时（k 很大、多重共线性），用岭回归正则化或改用梯度下降。
+                        </span>
+                    </div>
+                </div>
+
+                <!-- References -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">References</span>
+                        <span data-lang="zh">参考文献</span>
+                    </h2>
+                    <p class="footnote">
+                        Hastie, T., Tibshirani, R., &amp; Friedman, J. (2009). <em>The Elements of Statistical Learning</em> (2nd ed.). Springer. [Ch. 3]<br>
+                        Murphy, K. P. (2022). <em>Probabilistic Machine Learning: An Introduction</em>. MIT Press. [Ch. 11]<br>
+                        Ng, A. (2000). <em>CS229 Lecture Notes: Linear Regression and Gradient Descent</em>. Stanford University.<br>
+                        Greene, W. H. (2018). <em>Econometric Analysis</em> (8th ed.). Pearson. [Ch. 3–4]
+                    </p>
+                </div>
+
+                <!-- Back link at bottom -->
+                <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--parchment); text-align: center;">
+                    <a href="../machine-learning.html#ml-regression" class="guide-back" data-lang="en">← Back to Machine Learning: Regression</a>
+                    <a href="../machine-learning.html#ml-regression" class="guide-back" data-lang="zh">← 返回机器学习：回归</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langBtns = document.querySelectorAll('.guide-lang-btn');
+        const enElements = document.querySelectorAll('[data-lang="en"]');
+        const zhElements = document.querySelectorAll('[data-lang="zh"]');
+        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        setLanguage(savedLang);
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                localStorage.setItem('preferred-lang', lang);
+                setLanguage(lang);
+            });
+        });
+        function setLanguage(lang) {
+            langBtns.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('.guide-lang-btn[data-lang="' + lang + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            enElements.forEach(el => { el.style.display = lang === 'en' ? '' : 'none'; });
+            zhElements.forEach(el => { el.style.display = lang === 'zh' ? '' : 'none'; });
+            document.body.className = lang;
+        }
+    });
+    </script>
+
+</body>
+</html>

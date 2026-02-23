@@ -1,0 +1,16 @@
+# Site settings
+title: Jialing Wu
+url: "https://jialing-wu.github.io"
+baseurl: ""
+
+# Build settings
+markdown: kramdown
+
+# Don't process these folders/files
+exclude:
+  - README.md
+  - .DS_Store
+  - "*.backup"
+  - _for_repo_root
+
+# Keep existing files intact (Jekyll passes through files without front matter)

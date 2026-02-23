@@ -1,0 +1,586 @@
+---
+layout: methods-guide
+title: "Game Theory: Payoff Matrix Explorer"
+title_zh: "博弈论：收益矩阵模拟器"
+parent_title: "Rational Choice Theory"
+parent_title_zh: "理性选择理论"
+parent_url: "reg-rational.html"
+bilingual: true
+mathjax: true
+---
+
+<h2 id="gt-basics">
+  <span data-lang="en">Game Theory Basics</span>
+  <span data-lang="zh">博弈论基础</span>
+</h2>
+
+<p data-lang="en">
+Game theory models strategic interaction between rational agents. A <strong>game</strong> consists of:
+</p>
+
+<p data-lang="zh">
+博弈论研究理性参与者之间的战略互动。一个<strong>博弈</strong>包含以下三个要素：
+</p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Players:</strong> Decision-makers (individuals, firms, nations).</li>
+  <li data-lang="zh"><strong>参与者：</strong>决策者（个人、公司、国家）。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Strategies:</strong> Actions each player can take.</li>
+  <li data-lang="zh"><strong>策略：</strong>每个参与者可以采取的行动。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Payoffs:</strong> Outcomes (utilities, profits, satisfaction) resulting from strategy combinations.</li>
+  <li data-lang="zh"><strong>收益：</strong>由策略组合产生的结果（效用、利润、满意度）。</li>
+</ul>
+
+<p data-lang="en">
+A <strong>normal form game</strong> represents all information in a payoff matrix, where rows are one player's strategies and columns are the other's. Each cell shows payoffs to both players.
+</p>
+
+<p data-lang="zh">
+<strong>标准形式博弈</strong>用一个收益矩阵来表示：行代表一个参与者的策略，列代表另一个参与者的策略。矩阵的每个格子里填的是两个参与者各自的收益。
+</p>
+
+<p data-lang="en">
+<strong>Key concepts:</strong>
+</p>
+
+<p data-lang="zh">
+<strong>关键概念：</strong>
+</p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Dominant strategy:</strong> A strategy that is best for a player regardless of what the opponent does. Not all games have dominant strategies.</li>
+  <li data-lang="zh"><strong>支配策略：</strong>无论对方如何行动，这个策略对你来说都是最好的选择。但并不是所有博弈都有支配策略。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Nash equilibrium:</strong> A strategy pair where no player can improve their payoff by unilaterally deviating. Both players are satisfied—no incentive to change.</li>
+  <li data-lang="zh"><strong>纳什均衡：</strong>一对策略配置，使得每个参与者都无法通过单独改变自己的策略来改善自己的收益。双方都没有动力去改变——这就是均衡。</li>
+</ul>
+
+<p data-lang="en">
+Example: Driving on the left or right side of the road. Once society coordinates on one, neither driver wants to switch (both sides lead to collisions). Multiple equilibria exist; convention selects one.
+</p>
+
+<p data-lang="zh">
+例子：开车时靠左还是靠右。一旦大家都靠左了，没人想改靠右（要不就撞车了）。这个博弈有多个纳什均衡，最后是通过社会惯例选择其中一个。
+</p>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="gt-matrix">
+  <span data-lang="en">Interactive 2×2 Game Builder</span>
+  <span data-lang="zh">交互式 2×2 博弈构建器</span>
+</h2>
+
+<p data-lang="en">
+Build a 2×2 game or load a famous preset. Edit payoff cells and find Nash equilibria.
+</p>
+
+<p data-lang="zh">
+下面你可以构建自己的 2×2 博弈，或者加载一个经典博弈。编辑收益数字，点击按钮找出纳什均衡。
+</p>
+
+<div class="sim-panel" style="background: var(--parchment); padding: 1.5rem; border-radius: 0.5rem; margin: 1.5rem 0;">
+  <div class="ctrl-group" style="margin-bottom: 1rem;">
+    <label class="ctrl-label" style="display: block; margin-bottom: 0.5rem; font-weight: bold;" data-lang="en">Load Preset:</label>
+    <label class="ctrl-label" style="display: block; margin-bottom: 0.5rem; font-weight: bold;" data-lang="zh">选择经典博弈：</label>
+    <select id="preset-select" onchange="loadPreset()" style="padding: 0.5rem; border: 1px solid var(--ink); border-radius: 0.3rem; width: 250px;">
+      <option value="custom" data-en="Custom" data-zh="自定义">Custom</option>
+      <option value="pd" data-en="Prisoner's Dilemma" data-zh="囚徒困境">Prisoner's Dilemma</option>
+      <option value="hd" data-en="Hawk-Dove" data-zh="鹰-鸽">Hawk-Dove</option>
+      <option value="sh" data-en="Stag Hunt" data-zh="猎鹿">Stag Hunt</option>
+      <option value="bs" data-en="Battle of Sexes" data-zh="两性之战">Battle of Sexes</option>
+    </select>
+  </div>
+
+  <div id="game-matrix" style="margin: 1.5rem 0;">
+    <!-- Matrix rendered here -->
+  </div>
+
+  <div style="margin-top: 1rem;">
+    <button class="sim-btn" onclick="findNashEquilibria()" style="background: var(--warm); color: white; padding: 0.7rem 1.5rem; border: none; border-radius: 0.3rem; cursor: pointer; font-weight: bold; margin-right: 0.5rem;">
+      <span data-lang="en">Find Nash Equilibria</span>
+      <span data-lang="zh">寻找纳什均衡</span>
+    </button>
+    <button class="sim-btn" onclick="resetMatrix()" style="background: var(--ink-faded); color: white; padding: 0.7rem 1.5rem; border: none; border-radius: 0.3rem; cursor: pointer; font-weight: bold;">
+      <span data-lang="en">Reset</span>
+      <span data-lang="zh">重置</span>
+    </button>
+  </div>
+
+  <div id="nash-results" style="margin-top: 1.5rem;"></div>
+</div>
+
+<script>
+const presets = {
+  custom: {
+    name: "Custom",
+    strategies: { row: "A", col: "C" },
+    matrix: [
+      [3, 3, 0, 5],
+      [5, 0, 1, 1]
+    ]
+  },
+  pd: {
+    name: "Prisoner's Dilemma",
+    strategies: { row: "Cooperate", col: "Cooperate" },
+    matrix: [
+      [3, 3, 0, 5],
+      [5, 0, 1, 1]
+    ],
+    description: "Two criminals can cooperate (stay silent) or defect (betray). Defection is individually rational but jointly suboptimal. Nash: both defect, earning (1,1) instead of optimal (3,3)."
+  },
+  hd: {
+    name: "Hawk-Dove",
+    strategies: { row: "Hawk", col: "Hawk" },
+    matrix: [
+      [-1, -1, 3, 0],
+      [0, 3, 1, 1]
+    ],
+    description: "Two animals compete for a resource. Hawk: aggressive. Dove: retreat. HH costly (both injured). HD favors hawk. DD peaceful but no reward. Mixed strategy Nash equilibrium."
+  },
+  sh: {
+    name: "Stag Hunt",
+    strategies: { row: "Stag", col: "Stag" },
+    matrix: [
+      [4, 4, 0, 2],
+      [2, 0, 2, 2]
+    ],
+    description: "Hunters can pursue stag (risky, high payoff) or hare (safe, low payoff). If partner hunts stag, you should too. But if uncertain, hare is safer. Two equilibria: (Stag, Stag) is efficient but requires trust."
+  },
+  bs: {
+    name: "Battle of Sexes",
+    strategies: { row: "Opera", col: "Opera" },
+    matrix: [
+      [2, 1, 0, 0],
+      [0, 0, 1, 2]
+    ],
+    description: "Couple wants to spend evening together but prefer different venues: Opera or Boxing. (Opera, Opera) and (Boxing, Boxing) are pure strategy Nash equilibria. Also mixed strategy equilibrium."
+  }
+};
+
+let currentGame = JSON.parse(JSON.stringify(presets.custom));
+
+function loadPreset() {
+  const preset = document.getElementById('preset-select').value;
+  currentGame = JSON.parse(JSON.stringify(presets[preset]));
+  renderMatrix();
+}
+
+function renderMatrix() {
+  let html = '<table style="border-collapse: collapse; margin: 0 auto; width: 100%; max-width: 600px;">';
+
+  // Header
+  html += '<tr><td style="padding: 0.5rem; width: 100px;"></td>';
+  html += `<td style="padding: 0.5rem; text-align: center; font-weight: bold; border: 2px solid var(--ink); background: var(--gold);">Column: ${currentGame.strategies.col}</td>`;
+  html += '<td style="padding: 0.5rem; text-align: center; font-weight: bold; border: 2px solid var(--ink); background: var(--gold);">Column: Other</td></tr>';
+
+  // Rows
+  const strategies = [currentGame.strategies.row, "Other"];
+  for (let i = 0; i < 2; i++) {
+    html += '<tr>';
+    html += `<td style="padding: 0.5rem; font-weight: bold; border: 2px solid var(--ink); background: var(--gold); writing-mode: vertical-rl;">Row: ${strategies[i]}</td>`;
+
+    for (let j = 0; j < 2; j++) {
+      const idx = i * 2 + j;
+      const [rPayoff, cPayoff] = currentGame.matrix[i];
+      const cPayoffCell = j === 0 ? cPayoff : currentGame.matrix[i][j + 1] || 0;
+
+      html += `<td style="padding: 1rem; border: 2px solid var(--ink); background: var(--cream); text-align: center;">
+        <div style="margin-bottom: 0.5rem;">
+          <label style="display: block; font-size: 0.8em; margin-bottom: 0.3rem;">Row payoff:</label>
+          <input type="number" id="payoff-${i}-${j}-r" value="${currentGame.matrix[i][0]}" style="width: 60px; padding: 0.3rem; border: 1px solid var(--ink);" />
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.8em; margin-bottom: 0.3rem;">Col payoff:</label>
+          <input type="number" id="payoff-${i}-${j}-c" value="${currentGame.matrix[i][1]}" style="width: 60px; padding: 0.3rem; border: 1px solid var(--ink);" />
+        </div>
+      </td>`;
+    }
+    html += '</tr>';
+  }
+
+  html += '</table>';
+  document.getElementById('game-matrix').innerHTML = html;
+
+  // Render description if exists
+  if (currentGame.description) {
+    document.getElementById('nash-results').innerHTML = `<p style="font-style: italic; color: var(--ink-faded); margin-top: 1rem;">${currentGame.description}</p>`;
+  }
+}
+
+function findNashEquilibria() {
+  // Read payoffs from input fields
+  const payoffs = [];
+  for (let i = 0; i < 2; i++) {
+    for (let j = 0; j < 2; j++) {
+      const rVal = parseInt(document.getElementById(`payoff-${i}-${j}-r`).value) || 0;
+      const cVal = parseInt(document.getElementById(`payoff-${i}-${j}-c`).value) || 0;
+      payoffs.push([rVal, cVal]);
+    }
+  }
+
+  // Check each cell for Nash equilibrium
+  // Cell (i, j): check if row player can improve by changing row, and column player can improve by changing col
+  const nashCells = [];
+
+  for (let i = 0; i < 2; i++) {
+    for (let j = 0; j < 2; j++) {
+      const idx = i * 2 + j;
+      const [rPayoff, cPayoff] = payoffs[idx];
+
+      // Check row player incentive
+      const otherRowIdx = (1 - i) * 2 + j;
+      const rowImprovement = payoffs[otherRowIdx][0] > rPayoff;
+
+      // Check column player incentive
+      const otherColIdx = i * 2 + (1 - j);
+      const colImprovement = payoffs[otherColIdx][1] > cPayoff;
+
+      if (!rowImprovement && !colImprovement) {
+        nashCells.push({ i, j, rPayoff, cPayoff });
+      }
+    }
+  }
+
+  // Display results
+  let html = '<div class="insight-box" style="background: var(--warm); color: white; padding: 1rem; border-radius: 0.3rem;">';
+  if (nashCells.length > 0) {
+    html += '<p data-lang="en"><strong>Nash Equilibria Found:</strong></p>';
+    html += '<p data-lang="zh"><strong>找到纳什均衡：</strong></p>';
+    nashCells.forEach((cell, idx) => {
+      const cellLabel = `(${["A", "B"][cell.i]}, ${["C", "D"][cell.j]})`;
+      html += `<p style="margin: 0.5rem 0;">Cell ${cellLabel}: Row payoff = ${cell.rPayoff}, Column payoff = ${cell.cPayoff}</p>`;
+    });
+
+    // Check for dominant strategies
+    const dominantRow = checkDominantStrategy('row', payoffs);
+    const dominantCol = checkDominantStrategy('col', payoffs);
+
+    if (dominantRow) {
+      html += `<p data-lang="en">Row player's dominant strategy: <strong>${dominantRow}</strong></p>`;
+      html += `<p data-lang="zh">行参与者的支配策略：<strong>${dominantRow}</strong></p>`;
+    }
+    if (dominantCol) {
+      html += `<p data-lang="en">Column player's dominant strategy: <strong>${dominantCol}</strong></p>`;
+      html += `<p data-lang="zh">列参与者的支配策略：<strong>${dominantCol}</strong></p>`;
+    }
+  } else {
+    html += '<p data-lang="en">No pure strategy Nash equilibrium. A mixed strategy equilibrium may exist.</p>';
+    html += '<p data-lang="zh">没有纯策略纳什均衡。可能存在混合策略均衡。</p>';
+  }
+  html += '</div>';
+
+  document.getElementById('nash-results').innerHTML = html;
+
+  // Highlight Nash cells in matrix
+  nashCells.forEach(cell => {
+    // Re-render matrix with highlights (simplified: just show message for now)
+  });
+}
+
+function checkDominantStrategy(player, payoffs) {
+  if (player === 'row') {
+    const stratA = [payoffs[0][0], payoffs[1][0]];
+    const stratB = [payoffs[2][0], payoffs[3][0]];
+    if (stratA[0] > stratB[0] && stratA[1] > stratB[1]) return "A";
+    if (stratB[0] > stratA[0] && stratB[1] > stratA[1]) return "B";
+  } else {
+    const stratC = [payoffs[0][1], payoffs[2][1]];
+    const stratD = [payoffs[1][1], payoffs[3][1]];
+    if (stratC[0] > stratD[0] && stratC[1] > stratD[1]) return "C";
+    if (stratD[0] > stratC[0] && stratD[1] > stratC[1]) return "D";
+  }
+  return null;
+}
+
+function resetMatrix() {
+  currentGame = JSON.parse(JSON.stringify(presets.custom));
+  document.getElementById('preset-select').value = 'custom';
+  renderMatrix();
+  document.getElementById('nash-results').innerHTML = '';
+}
+
+// Initialize
+renderMatrix();
+</script>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="gt-iterated">
+  <span data-lang="en">Iterated Games and Cooperation</span>
+  <span data-lang="zh">迭代博弈与合作</span>
+</h2>
+
+<p data-lang="en">
+In one-shot games, the prisoner's dilemma yields mutual defection despite mutual cooperation being better. But when games repeat—when players encounter each other multiple times—cooperation becomes rational.
+</p>
+
+<p data-lang="zh">
+在一次性博弈中，囚徒困境产生相互背叛，尽管相互合作更好。但当博弈重复时——当参与者多次相遇时——合作变得理性。
+</p>
+
+<p data-lang="en">
+The <strong>shadow of the future</strong> captures this: if you care about future payoffs, you punish cheaters today (by defecting next round), deterring defection. Cooperation emerges from repeated interaction.
+</p>
+
+<p data-lang="zh">
+<strong>未来的阴影</strong>捕捉了这一点：如果你关心未来的收益，你就会在今天惩罚作弊者（通过下一轮背叛），阻止背叛。合作源于重复互动。
+</p>
+
+<p data-lang="en">
+<strong>Tit-for-Tat (TfT):</strong> A famous strategy in Axelrod's computer tournaments (1980s). Rule: cooperate first; in subsequent rounds, do what opponent did last round.
+</p>
+
+<p data-lang="zh">
+<strong>以牙还牙（TfT）：</strong>Axelrod的计算机竞赛（1980年代）中的著名策略。规则：首先合作；在随后的回合中，做对手上一轮所做的事情。
+</p>
+
+<p data-lang="en">
+Properties:
+</p>
+
+<p data-lang="zh">
+属性：
+</p>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Nice:</strong> Never defects first (cooperative).</li>
+  <li data-lang="zh"><strong>友善：</strong>从不首先背叛（合作）。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Provocable:</strong> Punishes defection immediately.</li>
+  <li data-lang="zh"><strong>易被激怒：</strong>立即惩罚背叛。</li>
+</ul>
+
+<ul style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Forgiving:</strong> Returns to cooperation after one defection.</li>
+  <li data-lang="zh"><strong>宽恕：</strong>一次背叛后恢复合作。</li>
+</ul>
+
+<div class="sim-panel" style="background: var(--parchment); padding: 1.5rem; border-radius: 0.5rem; margin: 1.5rem 0;">
+  <h3 data-lang="en">Tit-for-Tat vs Always Defect (10 Rounds)</h3>
+  <h3 data-lang="zh">以牙还牙 vs 总是背叛（10轮）</h3>
+
+  <table style="width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85em;">
+    <tr style="background: var(--gold);">
+      <th style="padding: 0.5rem; border: 1px solid var(--ink);">Round</th>
+      <th style="padding: 0.5rem; border: 1px solid var(--ink);">TfT</th>
+      <th style="padding: 0.5rem; border: 1px solid var(--ink);">Payoff (TfT)</th>
+      <th style="padding: 0.5rem; border: 1px solid var(--ink);">Defect</th>
+      <th style="padding: 0.5rem; border: 1px solid var(--ink);">Payoff (Defect)</th>
+    </tr>
+    <tr style="background: var(--cream);">
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">1</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">C</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">3</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">D</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">5</td>
+    </tr>
+    <tr style="background: var(--parchment);">
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">2</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">D (punish)</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">1</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">D</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">1</td>
+    </tr>
+    <tr style="background: var(--cream);">
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">3-10</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">D</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">1 each</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">D</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);">1 each</td>
+    </tr>
+    <tr style="background: var(--gold);">
+      <td style="padding: 0.5rem; border: 1px solid var(--ink); font-weight: bold;">Total</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);"></td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink); font-weight: bold;">12</td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink);"></td>
+      <td style="padding: 0.5rem; border: 1px solid var(--ink); font-weight: bold;">14</td>
+    </tr>
+  </table>
+
+  <p data-lang="en">
+  If both players use TfT and cooperate all 10 rounds, total payoffs = 30 each. But when TfT meets Always-Defect, TfT ends at 12 while Always-Defect earns 14. The key: in tournaments with diverse strategies, TfT wins because it cooperates with cooperators and punishes defectors.
+  </p>
+
+  <p data-lang="zh">
+  如果两个参与者都使用TfT并合作所有10轮，总收益 = 各30。但当TfT遇到总是背叛时，TfT结束于12，而总是背叛获得14。关键：在具有不同策略的竞争中，TfT获胜，因为它与合作者合作，惩罚背叛者。
+  </p>
+</div>
+
+<div class="insight-box" style="background: var(--warm); color: white; padding: 1rem; border-radius: 0.3rem; margin-top: 1rem;">
+  <p data-lang="en"><strong>Insight:</strong> Cooperation in repeated games requires: (1) low discount rate (care about future), (2) reasonable probability of future interaction, (3) ability to recognize and punish defectors. Under these conditions, cooperation can emerge endogenously without external enforcement.</p>
+  <p data-lang="zh"><strong>洞察：</strong>重复博弈中的合作需要：(1) 低折扣率（关心未来），(2) 未来互动的合理概率，(3) 识别和惩罚背叛者的能力。在这些条件下，合作可以内生地出现，无需外部执行。</p>
+</div>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="gt-applications">
+  <span data-lang="en">Social Science Applications</span>
+  <span data-lang="zh">社会科学应用</span>
+</h2>
+
+<h3 id="collective-action">
+  <span data-lang="en">Collective Action Problem</span>
+  <span data-lang="zh">集体行动问题</span>
+</h3>
+
+<p data-lang="en">
+Mancur Olson's classic (1965): Why do groups struggle to provide public goods even when collectively beneficial? Because individual incentive is to free-ride: enjoy benefits without paying costs.
+</p>
+
+<p data-lang="zh">
+Mancur Olson的经典著作（1965）：为什么群体即使在集体有益的情况下也难以提供公共物品？因为个人激励是搭便车：享受好处而不付出代价。
+</p>
+
+<p data-lang="en">
+Example: labor union strikes. Strike benefits all workers (higher wages) but costs strikers (lost income). Rational individual: let others strike, I work and keep wages anyway. If everyone reasons this way, strikes fail. Solution: enforceable agreements, repeated interaction, or selective incentives (union fines for scabs).
+</p>
+
+<p data-lang="zh">
+例子：劳工工会罢工。罢工使所有工人受益（工资更高）但给罢工者造成代价（失去收入）。理性个人：让别人罢工，我工作并继续获得工资。如果每个人都这样推理，罢工就会失败。解决方案：可强制执行的协议、重复互动或选择性激励（工会罚款）。
+</p>
+
+<h3 id="arms-races">
+  <span data-lang="en">Arms Races</span>
+  <span data-lang="zh">军备竞赛</span>
+</h3>
+
+<p data-lang="en">
+Cold War superpowers faced a coordination problem: both preferred mutual disarmament but feared being left defenseless. Each feared the other gaining military advantage. Result: arms race escalation despite mutual loss.
+</p>
+
+<p data-lang="zh">
+冷战超级大国面临一个协调问题：双方都偏好相互裁军，但害怕被遗留无防御。每一方都害怕另一方获得军事优势。结果：尽管相互损失，军备竞赛升级。
+</p>
+
+<p data-lang="en">
+Game-theoretic lens: structural analogues to prisoner's dilemma. Solution (in practice): arms control treaties, verification mechanisms, confidence-building measures that establish repeated-game equilibrium.
+</p>
+
+<p data-lang="zh">
+博弈论角度：与囚徒困境的结构类似。解决方案（实践中）：军备控制条约、验证机制、建立重复博弈均衡的信任建立措施。
+</p>
+
+<h3 id="voting">
+  <span data-lang="en">Voting and Strategic Behavior</span>
+  <span data-lang="zh">投票和战略行为</span>
+</h3>
+
+<p data-lang="en">
+Voting is strategic. Example: "vote splitting" in multi-candidate elections. If your preferred candidate is trailing, do you vote sincerely or switch to a viable alternative to block a worse outcome? Sincere voting may allow worst candidate to win (Duverger's Law: two-party system arises from plurality voting).
+</p>
+
+<p data-lang="zh">
+投票是战略性的。例子："多候选人选举中的票票分裂。如果你偏好的候选人落后，你是诚实投票还是切换到可行的替代品来阻止更坏的结果？诚实投票可能导致最坏的候选人当选（Duverger定律：两党制源于多数投票）。
+</p>
+
+<h3 id="public-goods">
+  <span data-lang="en">Public Goods Games in Experiments</span>
+  <span data-lang="zh">实验中的公共物品博弈</span>
+</h3>
+
+<p data-lang="en">
+Laboratory public goods game: each participant receives tokens, decides how much to contribute to a common pool. Pool is multiplied and divided equally. Individually rational strategy: contribute 0 (free-ride). Collectively rational: contribute all (maximize joint payoff).
+</p>
+
+<p data-lang="zh">
+实验室公共物品博弈：每个参与者获得代币，决定向公共池贡献多少。池被乘以并平均分配。个人理性策略：贡献0（搭便车）。集体理性：贡献全部（最大化联合收益）。
+</p>
+
+<p data-lang="en">
+Empirical finding: participants contribute 40-60% of tokens initially, then decline as free-riders become apparent. Adding punishment mechanism (pay to fine others) reverses the trend: contributions rise, free-riders punished.
+</p>
+
+<p data-lang="zh">
+实证发现：参与者最初贡献40-60%的代币，随着搭便车变得明显而下降。添加惩罚机制（支付罚款他人）会扭转趋势：贡献增加，搭便车者受罚。
+</p>
+
+<h3 id="logrolling">
+  <span data-lang="en">Legislative Logrolling</span>
+  <span data-lang="zh">立法权力交易</span>
+</h3>
+
+<p data-lang="en">
+Logrolling: trading votes across issues. A legislator votes for bill A (benefits constituency strongly but legislator indifferent) if another votes for bill B (benefits second legislator's constituency). Analyzed as repeated PD: if you scratch my back, I'll scratch yours.
+</p>
+
+<p data-lang="zh">
+权力交易：跨议题交易投票。立法者投票支持法案A（对选民有很大好处，但立法者无所谓），如果另一个投票支持法案B（使第二个立法者的选民受益）。分析为重复PD：如果你帮我，我就帮你。
+</p>
+
+<p data-lang="en">
+Implication: repeated legislatures with stable membership enable cooperation. High legislative turnover or polarization breaks cooperation, leading to gridlock or zero-sum politics.
+</p>
+
+<p data-lang="zh">
+含义：成员稳定的重复立法机构能够实现合作。高立法人员流动率或两极分化破坏合作，导致僵局或零和政治。
+</p>
+
+<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+
+<h2 id="gt-mixed">
+  <span data-lang="en">Mixed Strategy Nash Equilibrium</span>
+  <span data-lang="zh">混合策略纳什均衡</span>
+</h2>
+
+<p data-lang="en">
+Not all games have pure strategy Nash equilibria. <strong>Matching Pennies</strong> is a classic: two players simultaneously show a coin (Heads or Tails). Player 1 wins if both match; Player 2 wins if they differ.
+</p>
+
+<p data-lang="zh">
+并非所有博弈都有纯策略纳什均衡。<strong>匹配硬币</strong>是一个经典：两个参与者同时展示硬币（正面或反面）。如果两者匹配，参与者1获胜；如果不同，参与者2获胜。
+</p>
+
+<p data-lang="en">
+Any pure strategy is exploitable: if Player 1 always plays Heads, Player 2 always plays Tails and wins every round. Neither pure strategy pair is a Nash equilibrium.
+</p>
+
+<p data-lang="zh">
+任何纯策略都是可利用的：如果参与者1总是玩正面，参与者2总是玩反面并赢得每一轮。没有纯策略对是纳什均衡。
+</p>
+
+<p data-lang="en">
+Solution: <strong>mixed strategy</strong>—each player randomizes. Let p = probability Player 1 plays Heads. For Player 2 to be indifferent (willing to randomize), Player 2 must earn the same payoff from Heads and Tails:
+</p>
+
+<p data-lang="zh">
+解决方案：<strong>混合策略</strong>——每个参与者随机化。设 p = 参与者1玩正面的概率。为了让参与者2无所谓（愿意随机化），参与者2必须从正面和反面获得相同的收益：
+</p>
+
+<div class="math-note">
+E[Heads] = E[Tails]
+<br/>
+p(1) + (1−p)(−1) = p(−1) + (1−p)(1)
+<br/>
+p − (1−p) = −p + (1−p)
+<br/>
+2p − 1 = 1 − 2p
+<br/>
+p = 0.5
+</div>
+
+<p data-lang="en">
+By symmetry, Player 2 also randomizes 50-50. Result: each player plays Heads and Tails with equal probability. Neither can exploit the other; both earn 0 in expectation.
+</p>
+
+<p data-lang="zh">
+由对称性，参与者2也以50-50随机化。结果：每个参与者以相等的概率玩正面和反面。谁都无法利用另一个；两者的期望收益都是0。
+</p>
+
+<p data-lang="en">
+<strong>Key insight:</strong> mixed strategies arise when players want to keep opponents guessing. In sports, soccer penalty takers randomize (kick left/right with near 50-50) to avoid being predictable. Goalies randomize symmetrically. In military strategy, surprise is valuable; hence randomization.
+</p>
+
+<p data-lang="zh">
+<strong>关键洞察：</strong>当参与者想让对手猜测时，混合策略就出现了。在体育运动中，足球点球射手随机化（左/右踢接近50-50）以避免可预测。门将对称地随机化。在军事战略中，惊奇很有价值；因此随机化。
+</p>
+

@@ -1,0 +1,383 @@
+---
+layout: methods-course
+title: "Multilevel Models"
+breadcrumb: "Statistics"
+bilingual: true
+prev:
+  url: reg-robustness.html
+  title: "Evaluating Model Robustness"
+next:
+  url: reg-empirical.html
+  title: "Empirical Modeling"
+---
+
+<style>
+.problem-index{margin:0 0 8px;padding:16px 20px;border:1px solid var(--parchment);border-radius:4px;background:var(--warm)}
+.problem-index-title{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.problem-index a{display:block;font-size:14.5px;line-height:2;color:var(--ink-faded);text-decoration:none;transition:color .2s}
+.problem-index a:hover{color:var(--red)}
+.problem-index a .pi-arrow{font-family:var(--sans);font-size:11px;color:var(--gold);margin-left:6px}
+.paradigm-table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.6}
+.paradigm-table th{background:var(--gold);color:var(--white);padding:10px;text-align:left;font-weight:700}
+.paradigm-table td{border:1px solid var(--parchment);padding:8px 10px}
+.paradigm-table tr:nth-child(even){background:var(--white)}
+.paradigm-table tr:nth-child(odd){background:var(--light)}
+</style>
+
+<!-- HEADER -->
+<div class="method-header">
+  <h1>Multilevel Models</h1>
+  <div class="method-meta">Statistics &middot; Advanced 09</div>
+</div>
+
+<!-- INTRO CARDS -->
+<div class="intro-cards">
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">What Is This?</div>
+    <div class="card-label" data-lang="zh">这一页讲什么？</div>
+    <div data-lang="en"><p>Individual voters nested within constituencies. Students nested within schools. Survey respondents nested within countries. When your data has a hierarchical structure, ignoring it produces wrong standard errors and missed insights. Multilevel models handle nesting correctly.</p></div>
+    <div data-lang="zh"><p>选民嵌套在选区中。学生嵌套在学校中。调查受访者嵌套在国家中。当数据具有层次结构时，忽略它会产生错误的标准误和遗漏的洞见。多层模型能正确处理嵌套。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Prerequisites</div>
+    <div class="card-label" data-lang="zh">前置知识</div>
+    <div data-lang="en"><p>Regression Analysis. MLE & GLM helpful.</p></div>
+    <div data-lang="zh"><p>回归分析。了解 MLE 与 GLM 会有帮助。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Software &amp; Tools</div>
+    <div class="card-label" data-lang="zh">软件工具</div>
+    <div data-lang="en"><p>R (lme4, brms) or Stata (mixed, melogit).</p></div>
+    <div data-lang="zh"><p>R（lme4、brms）或 Stata（mixed、melogit）。</p></div>
+  </div>
+</div>
+
+<!-- PROBLEM INDEX -->
+<div class="problem-index">
+  <div class="problem-index-title" data-lang="en">What problem are you facing?</div>
+  <div class="problem-index-title" data-lang="zh">你遇到了什么问题？</div>
+  <a href="#mm-s1" data-lang="en">My individuals are nested within groups — why does that matter? <span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#mm-s1" data-lang="zh">个体嵌套在群体中——为什么这很重要？<span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#mm-s2" data-lang="en">How do I build a basic multilevel model? <span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#mm-s2" data-lang="zh">怎样建立一个基础多层模型？<span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#mm-s3" data-lang="en">Does the effect of X vary across groups? <span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#mm-s3" data-lang="zh">X 的效果在不同组之间有变化吗？<span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#mm-s4" data-lang="en">How do I handle more complex nested structures? <span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#mm-s4" data-lang="zh">我怎么处理更复杂的嵌套结构？<span class="pi-arrow">&rarr; &sect;4</span></a>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 1 -->
+<div class="section" id="mm-s1">
+  <h2 data-lang="en">Why Nesting Matters: Intraclass Correlation and Clustered Errors</h2>
+  <h2 data-lang="zh">为什么嵌套很重要：组内相关与聚类误差</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You survey 1,000 students, but they're nested in 40 schools. Students in the same school share teachers, facilities, and culture — their outcomes are correlated. OLS standard errors assume independence, so they're too small. Hypothesis tests are too liberal (too many false positives). The degree of clustering is measured by the Intraclass Correlation Coefficient (ICC): how much of total variance is between groups vs. within groups. Ignoring nesting costs you false confidence in results.</p>
+    <p data-lang="zh"><strong>问题：</strong>你调查 1,000 名学生，但他们嵌套在 40 所学校中。同一所学校的学生共享教师、设施和文化——结果相关。OLS 标准误假设独立，所以太小。假设检验太宽松（太多假阳性）。聚类程度由组内相关系数（ICC）测量：总方差中多少是组间对比组内。忽视嵌套会对结果的虚假信心付出代价。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Intraclass Correlation Coefficient (ICC)</h3>
+    <h3 data-lang="zh">组内相关系数（ICC）</h3>
+    <p class="method-desc" data-lang="en">The ICC measures the proportion of total variance attributable to the grouping variable (cluster). ICC = σ²_between / (σ²_between + σ²_within), ranging from 0 (no clustering) to 1 (perfect clustering, all variation is between groups). An ICC = 0.10 means 10% of variance is between groups, 90% within groups. Even small ICCs inflate standard errors meaningfully: standard error inflation ≈ √(1 + (n_cluster - 1) × ICC), where n_cluster is the average cluster size. With ICC = 0.05 and n_cluster = 20, standard errors are √(1 + 19 × 0.05) = √1.95 ≈ 1.4× larger than OLS assumes.</p>
+    <p class="method-desc" data-lang="zh">ICC 测量可归因于分组变量（聚类）的总方差比例。ICC = σ²_between / (σ²_between + σ²_within)，范围从 0（无聚类）到 1（完美聚类，所有变化在组间）。ICC = 0.10 意味着 10% 的方差在组间，90% 在组内。即使小 ICC 也有意义地增加标准误：标准误膨胀 ≈ √(1 + (n_cluster - 1) × ICC)，其中 n_cluster 是平均聚类大小。对 ICC = 0.05 和 n_cluster = 20，标准误是 √(1 + 19 × 0.05) = √1.95 ≈ 1.4 倍比 OLS 假设的更大。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Asking 30 students in one classroom about their teacher is like asking the same student 30 times — you don't have 30 independent opinions, more like 1 opinion repeated. ICC quantifies how "cloned" observations are within groups.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>在一个教室里向 30 名学生询问他们的老师就像询问同一学生 30 次——没有 30 个独立意见，更像 1 个意见重复。ICC 量化观测在组内有多"克隆"。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Calculate ICC for your grouped data. ICC > 0.05 is a common rule of thumb to justify multilevel modeling (others use ICC > 0.01). Calculate design effect (DEFF) = 1 + (n_cluster - 1) × ICC; multiply your standard errors by √DEFF to correct OLS. Better yet: use multilevel models automatically accounting for clustering. Don't ignore clustering just because ICC seems "small" — standard errors still expand meaningfully.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>为分组数据计算 ICC。ICC > 0.05 是证明多层建模的常见经验法则（其他人使用 ICC > 0.01）。计算设计效应（DEFF）= 1 + (n_cluster - 1) × ICC；将标准误乘以 √DEFF 来修正 OLS。更好的是：使用自动考虑聚类的多层模型。别仅因为 ICC 似乎"很小"就忽视聚类——标准误仍然有意义地扩展。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Cross-national survey: 10,000 respondents nested in 50 countries, n_avg = 200 per country. Political attitudes (support for democracy on 0–10 scale). Fit simple model: Democracy ~ Education + Income. OLS standard errors report SEdisplay_B = 0.01 (very precise!). Calculate ICC on residuals: ICC = 0.12 (12% of variance is between countries). Design effect = 1 + (200-1) × 0.12 = 24.88. True standard error ≈ 0.01 × √24.88 ≈ 0.05 (5× larger!). This dramatically widens confidence intervals and may flip statistical significance. Multilevel model automatically corrects.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>跨国调查：10,000 名受访者嵌套在 50 个国家，n_avg = 每个国家 200。政治态度（对民主支持在 0-10 尺度）。拟合模型：Democracy ~ Education + Income。OLS 标准误报告 SE = 0.01（非常精确！）。计算残差的 ICC：ICC = 0.12（12% 的方差在国家间）。设计效应 = 1 + (200-1) × 0.12 = 24.88。真实标准误 ≈ 0.01 × √24.88 ≈ 0.05（5 倍更大！）。这戏剧性地扩大置信区间，可能翻转统计显著性。多层模型自动修正。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">The Design Effect and Clustered Standard Errors</h3>
+    <h3 data-lang="zh">设计效应与聚类标准误</h3>
+    <p class="method-desc" data-lang="en">The design effect (DEFF) quantifies the inflation in variance due to clustering: DEFF = 1 + (n_cluster - 1) × ICC. A DEFF = 2 means standard errors are √2 ≈ 1.41 times larger than simple random sampling would suggest. In the short term, you can correct OLS standard errors post-hoc by multiplying by √DEFF. However, this is a quick fix; better is to use multilevel models, which properly account for clustering in estimation (not just standard errors). Cluster-robust standard errors (available in most software via cluster() option) adjust for clustering while using OLS point estimates.</p>
+    <p class="method-desc" data-lang="zh">设计效应（DEFF）量化聚类导致的方差膨胀：DEFF = 1 + (n_cluster - 1) × ICC。DEFF = 2 意味着标准误比简单随机抽样建议的 √2 ≈ 1.41 倍更大。短期内，可以通过乘以 √DEFF 来事后修正 OLS 标准误。但这是快速修复；更好的是使用多层模型，在估计中正确考虑聚类（而不仅标准误）。聚类-稳健标准误（在大多数软件中通过 cluster() 选项可用）调整聚类，同时使用 OLS 点估计。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> If you survey 100 people but they're actually 10 people each asked 10 times, your effective sample size is closer to 10, not 100. DEFF quantifies this "deflation" of information.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>调查 100 人，但他们实际上是 10 人各被问 10 次，有效样本大小更接近 10，而不是 100。DEFF 量化信息的这种"缩小"。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always cluster standard errors when you have grouped data. Choose your clustering variable carefully — should it be school, teacher, or both? (For panel data, often both unit and time). Use cluster-robust SEs in OLS regressions as a baseline. For more sophisticated inference (random slopes, variance components), use multilevel models. Clustering is not optional when data are clustered — it's required for valid inference.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>当你有分组数据时，始终聚类标准误。仔细选择你的聚类变量——应该是学校、教师，还是两者？（对于面板数据，通常两者都是）。在 OLS 回归中使用聚类-稳健 SE 作为基线。对于更复杂的推论（随机斜率、方差分量），使用多层模型。当数据分组时，聚类不是可选的——它是有效推论的必需。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Study of classroom discipline policies' effect on student behavior, n = 5,000 students in 200 classrooms. Regression: Behavior ~ Strict_Discipline + Controls. OLS SE = 0.05 (t = 3.0, p < 0.01). Cluster-robust SE at classroom level = 0.10 (t = 1.5, p = 0.13, no longer significant!). The discipline effect is real within-classroom, but classroom-level variation inflates variance. Reporting only OLS results would overstate evidence. Clustering corrects this.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>课堂纪律政策对学生行为影响的研究，n = 5,000 名学生在 200 个教室。回归：Behavior ~ Strict_Discipline + Controls。OLS SE = 0.05（t = 3.0，p < 0.01）。在教室级别的聚类-稳健 SE = 0.10（t = 1.5，p = 0.13，不再显著！）。纪律效应在教室内是真实的，但教室级别的变化增加了方差。仅报告 OLS 结果会高估证据。聚类修正这个。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Fixed Effects vs. Random Effects vs. Multilevel: Which Approach?</h3>
+    <h3 data-lang="zh">固定效应对比随机效应对比多层：选哪个方法？</h3>
+    <p class="method-desc" data-lang="en">Beginners often confuse three approaches for handling grouped data. Each makes different assumptions and answers different questions.</p>
+    <p class="method-desc" data-lang="zh">初学者常常混淆处理分组数据的三种方法。每个都有不同的假设和回答不同的问题。</p>
+    <div data-lang="en" style="overflow-x:auto;margin:16px 0;">
+      <table class="paradigm-table">
+        <tr>
+          <th>Approach</th>
+          <th>Key Assumption</th>
+          <th>Removes Time-Invariant Confounders?</th>
+          <th>Estimates Group Effects?</th>
+          <th>Best For</th>
+        </tr>
+        <tr>
+          <td><strong>Fixed Effects (FE)</strong></td>
+          <td>Group effects correlated with predictors (biased if ignored)</td>
+          <td>Yes — controls via group dummies</td>
+          <td>No — dummies absorbed into intercepts</td>
+          <td>Panel data with time-varying outcomes; strong confounding concerns</td>
+        </tr>
+        <tr>
+          <td><strong>Random Effects (RE)</strong></td>
+          <td>Group effects uncorrelated with predictors (exogenous)</td>
+          <td>No — group differences remain in error</td>
+          <td>Yes — estimates variance &amp; correlates with predictors</td>
+          <td>Cross-sectional clustered data; want group-level inference</td>
+        </tr>
+        <tr>
+          <td><strong>Multilevel (MLM)</strong></td>
+          <td>Like RE but explicitly models variance structure</td>
+          <td>No — like RE</td>
+          <td>Yes — with uncertainty quantification</td>
+          <td>Nested data where group heterogeneity is substantive; partial pooling desired</td>
+        </tr>
+      </table>
+    </div>
+    <div data-lang="zh" style="overflow-x:auto;margin:16px 0;">
+      <table class="paradigm-table">
+        <tr>
+          <th>方法</th>
+          <th>关键假设</th>
+          <th>移除时间不变混淆？</th>
+          <th>估计群体效应？</th>
+          <th>最适合</th>
+        </tr>
+        <tr>
+          <td><strong>固定效应 (FE)</strong></td>
+          <td>群体效应与预测变量相关（忽视时有偏差）</td>
+          <td>是——通过群体虚拟变量控制</td>
+          <td>否——虚拟变量吸收到截距中</td>
+          <td>面板数据且有时变结果；强混淆关注</td>
+        </tr>
+        <tr>
+          <td><strong>随机效应 (RE)</strong></td>
+          <td>群体效应与预测变量无关（外生）</td>
+          <td>否——群体差异留在误差中</td>
+          <td>是——估计方差与预测变量相关</td>
+          <td>横截面聚类数据；想要群体级推论</td>
+        </tr>
+        <tr>
+          <td><strong>多层 (MLM)</strong></td>
+          <td>像 RE 但明确建模方差结构</td>
+          <td>否——像 RE</td>
+          <td>是——附加不确定性量化</td>
+          <td>嵌套数据，群体异质性实质重要；偏池化期望</td>
+        </tr>
+      </table>
+    </div>
+    <p class="method-desc" data-lang="en"><strong>Key rule of thumb:</strong> If you have panel data (same units over time) and worry about unobserved heterogeneity correlated with your predictors (e.g., ability affecting both education investment and earnings), use fixed effects. If you have cross-sectional clustered data (students in schools measured once) and want to generalize about schools as a population, use random effects or multilevel. The Hausman test compares FE and RE: reject the null (p &lt; 0.05) favors FE; fail to reject favors RE.</p>
+    <p class="method-desc" data-lang="zh"><strong>关键经验法则：</strong>如果你有面板数据（相同单位随时间）并担心与预测变量相关的未观测异质性（比如影响教育投资和收入的能力），用固定效应。如果你有横截面聚类数据（学生在学校中测量一次）并想推广关于作为人口的学校，用随机效应或多层。Hausman 检验比较 FE 和 RE：拒绝零假设（p &lt; 0.05）偏好 FE；无法拒绝偏好 RE。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">When and How to Use Multilevel Models</h3>
+    <h3 data-lang="zh">何时以及如何使用多层模型</h3>
+    <p class="method-desc" data-lang="en">Multilevel models (also called hierarchical or mixed models) are appropriate when observations are nested and you want to model both within-cluster and between-cluster variation. A null (random intercept) multilevel model is: Y_ij = β_0 + u_j + ε_ij, where u_j is the cluster-level random intercept and ε_ij is the individual-level residual. This partitions variance: Var(Y) = Var(u_j) + Var(ε_ij). Estimate via maximum likelihood (ML) or restricted maximum likelihood (REML). REML is preferred for estimating variance components; ML for likelihood ratio tests of nested models.</p>
+    <p class="method-desc" data-lang="zh">多层模型（也称为分层或混合模型）在观测嵌套且想建模聚类内和聚类间变化时适当。零（随机截距）多层模型是：Y_ij = β_0 + u_j + ε_ij，其中 u_j 是聚类级随机截距，ε_ij 是个体级残差。这分割方差：Var(Y) = Var(u_j) + Var(ε_ij)。通过最大似然（ML）或受限最大似然（REML）估计。REML 偏好于估计方差分量；ML 用于嵌套模型的似然比检验。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> OLS assumes one intercept for everyone. Random intercept multilevel models give each cluster its own intercept, drawn from a distribution. Large clusters with lots of data get intercepts close to their observed mean; small clusters get "shrunk" toward the overall mean (partial pooling).</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>OLS 假设每个人一个截距。随机截距多层模型为每个聚类给其自己的截距，从分布中抽取。有大量数据的大聚类得到接近其观察到平均值的截距；小聚类被"缩小"到整体平均（部分汇总）。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use multilevel models when you have substantial nesting (ICC > 0.05 or clustering design effects > 1.5). Use when interested in both individual and group effects. Use when groups are a large sample (many schools, not just 2–3). Don't use multilevel models if you have only 2 cluster units (not enough to estimate group variance). In that case, use fixed effects (dummies for each cluster) instead.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>有实质性嵌套（ICC > 0.05 或聚类设计效应 > 1.5）时，使用多层模型。关心个体和群体效应时使用。群体是大样本（许多学校，而不仅 2-3 所）时使用。只有 2 个聚类单位（不足以估计群体方差）时，别用多层模型。改用固定效应（每个聚类的虚拟）。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Test scores (outcome) for students (level 1) nested in schools (level 2). Multilevel model: TestScore_ij = β_0 + β_1*SES_ij + u_j + ε_ij. The model estimates: (1) β_0 = grand mean test score, (2) β_1 = effect of SES on scores within schools, (3) Var(u_j) = between-school variance in intercepts (how much do schools differ on average?), (4) Var(ε_ij) = within-school variance. ICC = Var(u_j) / (Var(u_j) + Var(ε_ij)). If ICC = 0.20, then 20% of test score variation is attributable to which school you attend (school effects are substantial). This variance partition is crucial for understanding where variation comes from.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>测试分数（结果）用于学生（级别 1）嵌套在学校（级别 2）。多层模型：TestScore_ij = β_0 + β_1*SES_ij + u_j + ε_ij。模型估计：(1) β_0 = 总体平均分数，(2) β_1 = SES 在学校内的分数效应，(3) Var(u_j) = 学校间截距方差（学校平均差异多少？），(4) Var(ε_ij) = 学校内方差。ICC = Var(u_j) / (Var(u_j) + Var(ε_ij))。如果 ICC = 0.20，则 20% 的分数变化可归因于就读学校（学校效应很大）。这个方差分割对理解变化来自何处至关重要。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 2 -->
+<div class="section" id="mm-s2">
+  <h2 data-lang="en">Random Intercept Models</h2>
+  <h2 data-lang="zh">随机截距模型</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Schools vary in their baseline test scores due to stable characteristics (wealth, local culture, teacher quality). A random intercept model allows each school to have its own intercept, acknowledging these differences. Unlike fixed effects (which discard between-school information), random intercepts use partial pooling: schools with few observations borrow strength from the overall distribution. This is more efficient and allows estimation of group-level effects on predictors.</p>
+    <p data-lang="zh"><strong>问题：</strong>学校由于稳定特征（财富、当地文化、教师质量）在基线测试分数上有所不同。随机截距模型允许每所学校有其自己的截距，承认这些差异。与固定效应（丢弃学校间信息）不同，随机截距使用偏池化：观测很少的学校从整体分布中借入力量。这更有效，并允许对预测器的群体级效应的估计。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Random Intercept Model: Specification and Interpretation</h3>
+    <h3 data-lang="zh">随机截距模型：规范与解释</h3>
+    <p class="method-desc" data-lang="en">Random intercept specification: Y_ij = β_0 + β_1*X_ij + u_j + ε_ij, where u_j ~ N(0, σ²_u) is the school-level random intercept, ε_ij ~ N(0, σ²_ε) is the individual-level residual. Interpretation: β_1 is the within-school effect of X (after accounting for school differences). Each school's actual intercept is β_0 + u_j; schools with positive u_j have higher baseline scores. The random intercepts are exchangeable (treated symmetrically) and drawn from a normal distribution. This implies: (1) school differences are treated as random variation (not fixed), (2) inference is about the population of schools (generalizable beyond the sampled schools), (3) shrinkage: schools with sparse data have intercepts pulled toward β_0.</p>
+    <p class="method-desc" data-lang="zh">随机截距规范：Y_ij = β_0 + β_1*X_ij + u_j + ε_ij，其中 u_j ~ N(0, σ²_u) 是学校级随机截距，ε_ij ~ N(0, σ²_ε) 是个体级残差。解释：β_1 是 X 的学校内效应（考虑学校差异后）。每所学校的实际截距是 β_0 + u_j；正 u_j 的学校有更高的基线分数。随机截距是可交换的（对称处理）并从正态分布中抽取。这暗示：(1) 学校差异被视为随机变化（非固定），(2) 推论是关于学校的人群（可推广到样本外的学校），(3) 缩小：数据稀疏的学校有截距被拉向 β_0。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Estimating baseball batting averages. A player with 5 at-bats who hit 3 times (60% average) shouldn't be estimated purely from those 5 — you'd shrink toward the league average (say 27%). A player with 500 at-bats at 30% is estimated close to observed (strong data, little shrinkage). Random effects do the same: schools with few students shrink toward overall mean; schools with many students are estimated close to observed.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>估计棒球击球率。一个仅有 5 次打击而击中 3 次（60% 平均）的运动员不应仅从这 5 次估计——你会缩小到联盟平均（比如 27%）。一个有 500 次打击、30% 的运动员被估计接近观察到的（强数据，少缩小）。随机效应做同样的事：学生很少的学校缩小到总体平均；学生众多的学校被估计接近观察。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use random intercepts when you have many clusters (≥10, ideally ≥30) with varying sample sizes per cluster. Use when interested in generalizing beyond observed clusters (schools are a sample from a population of schools). Don't use when you have only 2–3 clusters or when clusters are fixed (e.g., specific countries of interest, not a sample of countries). In those cases, use fixed effects instead. Random intercepts assume homogeneity of variance across clusters; use conditional models or robust standard errors if this fails.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>当你有许多聚类（≥10，理想情况下 ≥30）且每个聚类的样本大小变化时，使用随机截距。当有兴趣推广到观察到的聚类之外（学校是来自学校人群的样本）时使用。当你只有 2-3 个聚类或聚类是固定的（例如，特定的关注国家，而不是国家样本）时，不要使用。在这些情况下，改用固定效应。随机截距假设方差在聚类中的齐次；如果这失败，使用条件模型或稳健标准误。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Voter turnout across 50 U.S. states, multiple elections (level 1: voter × election, level 2: state). Random intercept model: Turnout_ij = β_0 + β_1*Closeness_ij + β_2*Education_ij + u_j + ε_ij. β_1 = within-state effect of race closeness on turnout (is the race competitive?). β_2 = within-state effect of education. u_j = state-level intercept: some states have intrinsically higher turnout (VT, MN) vs. lower (TX, OK) due to culture, registration laws, etc. Var(u_j) = between-state variance. If Var(u_j) is large, state context matters a lot. Shrinkage: states with few elections in the data have estimated intercepts pulled toward national average. This borrows strength from other states.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>跨 50 个美国州的选民投票率，多次选举（级别 1：选民 × 选举，级别 2：州）。随机截距模型：Turnout_ij = β_0 + β_1*Closeness_ij + β_2*Education_ij + u_j + ε_ij。β_1 = 竞争亲密对投票率的州内效应（竞争是否激烈？）。β_2 = 教育的州内效应。u_j = 州级截距：由于文化、登记法等，一些州本质上投票率更高（VT、MN）对比更低（TX、OK）。Var(u_j) = 州间方差。如果 Var(u_j) 很大，州背景很重要。缩小：数据中选举很少的州有估计截距被拉向国家平均值。这从其他州借入力量。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Partial Pooling and Shrinkage Estimation</h3>
+    <h3 data-lang="zh">偏池化与缩小估计</h3>
+    <p class="method-desc" data-lang="en">Random effects models use partial pooling: the estimate for cluster j is a weighted average of (1) the cluster j's own data mean and (2) the grand mean across all clusters. Weight is proportional to cluster size and within-cluster variance. If cluster j has many observations and low within-cluster variance, the estimate is close to the observed mean (more weight on data). If cluster j has few observations and high within-cluster variance, the estimate shrinks toward the grand mean (more weight on prior). The shrinkage estimator has lower mean squared error than OLS because it trades a small amount of bias for lower variance.</p>
+    <p class="method-desc" data-lang="zh">随机效应模型使用部分汇总：聚类 j 的估计是 (1) 聚类 j 自己数据平均值和 (2) 所有聚类的总体平均值的加权平均。权重与聚类大小和聚类内方差成正比。聚类 j 有许多观测和低聚类内方差时，估计接近观察到的平均值（对数据的更多权重）。聚类 j 有少量观测和高聚类内方差时，估计缩小到总体平均（对先验更多权重）。缩小估计器比 OLS 有较低的均方误，用少量偏差交换较低的方差。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Estimating a restaurant's quality: if it has 1 review (5 stars), you don't assume it's the best restaurant ever — you shrink toward the average (maybe 3.5 stars). If it has 1,000 reviews (4.8 stars), you trust the observed rating (little shrinkage). Partial pooling is like this, balancing observed data vs. population average.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>估计餐厅质量：1 条评论（5 星），不假设这是有史以来最好的餐厅——缩小到平均（也许 3.5 星）。1,000 条评论（4.8 星），信任观察评分（少缩小）。部分汇总就像这样，平衡观察数据与人群平均。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Partial pooling is advantageous when you have clusters of varying sizes — it provides regularization that avoids overfitting small clusters. Use when inference about specific clusters is secondary to population-level conclusions. Don't use if you need precise estimates of specific clusters (e.g., evaluating specific hospitals); use fixed effects instead. The trade-off: random effects are more efficient (narrower CI) but biased at cluster level; fixed effects are unbiased but less efficient.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>有大小不同的聚类时，部分汇总有利——提供正则化避免过度拟合小聚类。关于特定聚类的推论是次要的对人群级结论时使用。需要特定聚类精确估计时别用（比如评估特定医院）；改用固定效应。权衡：随机效应更有效（较窄 CI）但聚类级有偏；固定效应无偏但效率低。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Estimating crime reduction effect of police in 100 police precincts. Precinct with n = 5 incidents observed reduction: 30%. Grand mean reduction across all precincts: 15%. Random intercept model shrinks the small precinct's estimate from 30% toward the grand mean (maybe 18%), recognizing that high variance with small n makes 30% uncertain. A precinct with n = 500 observed 16% reduction → estimated at ≈16% (less shrinkage, high confidence). This prevents the small precinct from appearing artificially successful due to chance.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>估计 100 个警察辖区的警察犯罪减少效应。n = 5 个事件的辖区观察到减少：30%。所有辖区的总体平均减少：15%。随机截距模型将小辖区估计从 30% 缩小到总体平均（也许 18%），认识到高方差与小 n 使 30% 不确定。n = 500 的辖区观察到 16% 减少 → 估计 ≈16%（少缩小、高信心）。这防止了小辖区由于机会看起来人为成功。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 3 -->
+<div class="section" id="mm-s3">
+  <h2 data-lang="en">Random Slope Models: When Effects Vary</h2>
+  <h2 data-lang="zh">随机斜率模型：效果因组而异</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> The effect of education on earnings may differ across countries (wage returns to education are higher in some places, lower in others). Random intercept models assume the same slope for education in every country — too restrictive. A random slope model allows the effect of education to vary across clusters. This is substantively interesting: testing heterogeneity of causal effects across contexts is a major goal of comparative social science.</p>
+    <p data-lang="zh"><strong>问题：</strong>教育对收入的影响可能在国家间不同（某些地方的教育工资回报更高，其他地方较低）。随机截距模型假设每个国家的教育斜率相同——太限制。随机斜率模型允许教育的效应在聚类中变化。这在实质上很有趣：测试因果效应在情境中的异质性是比较社会科学的主要目标。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Random Slope Specification</h3>
+    <h3 data-lang="zh">随机斜率规范</h3>
+    <p class="method-desc" data-lang="en">Random slope model: Y_ij = β_0 + β_1j*X_ij + u_0j + ε_ij, where β_1j = β_1 + u_1j. The subscript j on β_1 means the slope varies by cluster. u_1j ~ N(0, σ²_u1) is the random slope deviation. Now you have two random effects: u_0j (intercept) and u_1j (slope). These may be correlated: Cov(u_0j, u_1j) can be positive (clusters with high intercepts have steep slopes) or negative (high baseline but small treatment effect, or vice versa). Interpretation: β_1 = average effect of X across clusters. u_1j = deviation for cluster j (is the effect stronger or weaker in cluster j?). Variance of u_1j quantifies heterogeneity: if Var(u_1j) = 0, all slopes are equal (reduces to random intercept). If Var(u_1j) is large, effects differ substantially.</p>
+    <p class="method-desc" data-lang="zh">随机斜率模型：Y_ij = β_0 + β_1j*X_ij + u_0j + ε_ij，其中 β_1j = β_1 + u_1j。β_1 上的下标 j 意味着斜率因聚类变化。u_1j ~ N(0, σ²_u1) 是随机斜率偏差。现在有两个随机效应：u_0j（截距）和 u_1j（斜率）。这些可能相关：Cov(u_0j, u_1j) 可以是正的（高截距的聚类有陡峭斜率）或负的（高基线但小处理效应）。解释：β_1 = 聚类中 X 的平均效应。u_1j = 聚类 j 的偏差（聚类 j 中效应强还是弱？）。u_1j 的方差量化异质性：Var(u_1j) = 0 时，所有斜率相等（减到随机截距）。Var(u_1j) 很大时，效应差异很大。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Random intercept model: all classrooms have different baseline knowledge levels, but learning-from-teaching is the same across classrooms. Random slope model: classrooms also differ in how much students learn from teaching — effective teachers have steep learning gains, ineffective teachers have flat slopes.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>随机截距模型：所有教室有不同的基线知识，但从教学学习在教室中相同。随机斜率模型：教室也在学生从教学学习多少上不同——有效的教师有陡峭的学习收益，无效教师有平缓的斜率。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use random slopes when theory predicts or you observe heterogeneity in effects across clusters. Include random slopes only for variables where heterogeneity is substantively interesting — don't add random slopes for everything (overfitting risk, convergence problems). Random slopes require more clusters and larger sample sizes per cluster; with few clusters (n < 10) or small cluster sizes (n < 10 per cluster), estimates are unreliable. Always report both the average effect (β_1) and its variance (Var(u_1j)). Test whether including random slopes improves fit via likelihood ratio test (LRT).</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>理论预测或在聚类中观察到效应异质性时，使用随机斜率。仅为效应异质性在实质上有趣的变量包括随机斜率——别对所有东西添加（过度拟合风险、收敛问题）。随机斜率需要更多聚类和每个聚类更大的样本大小；聚类很少（n < 10）或聚类大小很小（每个 n < 10），估计不可靠。总报告平均效应（β_1）及其方差（Var(u_1j)）。通过似然比检验（LRT）测试包括随机斜率是否改进拟合。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Effect of unemployment on vote share for incumbent parties across 20 countries, repeated elections. Random intercept model: all countries have different baseline incumbent support, but effect of unemployment is the same. Random slope model allows economic voting to be stronger in some democracies (high transparency, clear accountability) vs. weaker (clientelism, opacity). Result: β_1 = -0.8 (on average, 1% unemployment → 0.8% incumbent loss). Var(u_1j) = 0.36 (substantial heterogeneity). Some countries: β_1j ≈ -1.5 (strong economic voting); others: β_1j ≈ -0.1 (weak, institutional quality matters).</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>失业对现任政党跨 20 个国家投票份额的影响，重复选举。随机截距模型：所有国家有不同的基线现任支持，但失业效应相同。随机斜率模型允许经济投票在某些民主制度中更强（高透明、明确问责）对比较弱（庇护制、不透明）。结果：β_1 = -0.8（平均，失业 1% → 现任损失 0.8%）。Var(u_1j) = 0.36（实质异质性）。某些国家：β_1j ≈ -1.5（强经济投票）；其他：β_1j ≈ -0.1（弱，制度质量重要）。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Correlation Between Random Intercepts and Slopes</h3>
+    <h3 data-lang="zh">随机截距与斜率之间的相关性</h3>
+    <p class="method-desc" data-lang="en">When you include both random intercepts (u_0j) and random slopes (u_1j), they may be correlated. A positive correlation (Cov > 0) means: clusters with high intercepts (baseline advantage) also have steep slopes (large treatment effect). A negative correlation (Cov < 0) means: clusters with high intercepts have shallow slopes (diminishing returns). Example: wealthy countries might have high baseline health outcomes but small returns to education (ceiling effect). Poor countries might have low baseline health but large returns to education (room to improve). Allowing corr(u_0j, u_1j) ≠ 0 is more flexible and often more realistic. Software estimates this correlation automatically.</p>
+    <p class="method-desc" data-lang="zh">当包括随机截距（u_0j）和随机斜率（u_1j）时，它们可能相关。正相关（Cov > 0）意味着：有高截距（基线优势）的聚类也有陡峭斜率（大处理效应）。负相关（Cov < 0）意味着：有高截距的聚类有浅斜率（边际收益递减）。例子：富裕国家可能有高基线健康结果但教育回报少（天花板效应）。贫困国家可能有低基线健康但教育回报大（改进空间）。允许 corr(u_0j, u_1j) ≠ 0 更灵活，通常更现实。软件自动估计这个相关。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Student learning rates might be negatively correlated with baseline knowledge: students starting with little knowledge might learn faster (steep slope), while students with much baseline knowledge learn slowly (shallow slope). Or vice versa for some subjects. The correlation itself is informative about the mechanism.</div>
+    <div class="method-analogy" data-lang="zh">类比：学生学习率可能与基线知识负相关：从很少知识开始的学生可能学得更快（陡峭斜率），有很多基线知识的学生学得慢（浅斜率）。或某些科目的反之。相关性本身对机制很有信息。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> By default, estimate the correlation between random intercepts and slopes — don't force it to zero unless you have a strong reason. Zero correlation is a simplifying assumption that may hide important heterogeneity. If the correlation is negative and large, it indicates a scaling issue (centering the level-1 predictor can help). Report the estimated correlation and its implications. If correlation is positive, interpret: does the mechanism show complementarity? If negative, does it show diminishing returns?</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>默认估计随机截距和斜率之间的相关——除非有强烈理由，别强制为零。零相关是简化假设，可能隐藏重要异质性。相关为负且很大时，表示缩放问题（对中心化级别 1 的预测器可以帮）。报告估计的相关及其含义。相关为正时，解释：机制显示互补吗？为负时，显示边际收益递减吗？</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Effect of social trust on political participation across regions. Random slopes model with correlation. Result: Cov(u_0, u_1) = -0.15 (negative). High-trust regions (positive u_0) have weaker effect of trust on participation (negative u_1) — ceiling effect (already participatory). Low-trust regions (negative u_0) have stronger effect (positive u_1) — trust unlock participation gains where people are currently inactive. This negative correlation makes substantive sense and reveals the mechanism: trust matters more where there's room for improvement.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>社会信任对跨地区政治参与的影响。具有相关的随机斜率模型。结果：Cov(u_0, u_1) = -0.15（负）。高信任地区（正 u_0）对参与的信任效应较弱（负 u_1）——天花板效应（已经参与）。低信任地区（负 u_0）效应更强（正 u_1）——信任解锁目前不活跃的参与收益。这种负相关在实质上合理，揭示机制：信任在有改进空间的地方更重要。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 4 -->
+<div class="section" id="mm-s4">
+  <h2 data-lang="en">Cross-Level Interactions and Three-Level Models</h2>
+  <h2 data-lang="zh">跨层交互与三层模型</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Does democratic quality (level 2: country) moderate the effect of income on political engagement (level 1: individual)? This is a cross-level interaction: a level-2 variable (country characteristic) moderates a level-1 effect (individual income). These interactions are substantively central to comparative politics: "do democracies amplify or attenuate individual-level relationships?" Three-level models nest individuals in organizations in sectors/regions — common in organizational research.</p>
+    <p data-lang="zh"><strong>问题：</strong>民主质量（级别 2：国家）是否缓和收入对政治参与（级别 1：个人）的影响？这是跨层交互：级别 2 变量（国家特征）缓和级别 1 效应（个人收入）。这些交互在比较政治学中在实质上是中心的："民主制度会放大还是衰减个体级关系？"三层模型在部门/地区中嵌套组织中的个人——组织研究中很常见。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Cross-Level Interactions: Moderating Effects of Group Characteristics</h3>
+    <h3 data-lang="zh">跨层交互：群体特征的缓和效应</h3>
+    <p class="method-desc" data-lang="en">Cross-level interaction model: Y_ij = β_0 + β_1*X_ij + β_2*Z_j + β_3*(X_ij × Z_j) + u_0j + ε_ij, where X is level-1 (individual), Z is level-2 (group/context), and X × Z is their product. β_3 is the cross-level interaction: does the effect of X depend on Z? If β_3 > 0, higher Z amplifies the effect of X. If β_3 < 0, higher Z attenuates. Interpretation requires care: is X_ij centered? Centering at the cluster mean (group-mean centering) vs. grand mean affects interpretation. Grand-mean centering: β_1 = average effect of X within groups; β_3 = how group-level Z modifies this within-group effect. Group-mean centering: β_1 = effect for clusters where Z = 0; different interpretation.</p>
+    <p class="method-desc" data-lang="zh">跨层交互模型：Y_ij = β_0 + β_1*X_ij + β_2*Z_j + β_3*(X_ij × Z_j) + u_0j + ε_ij，其中 X 是级别 1（个人），Z 是级别 2（群体/背景），X × Z 是乘积。β_3 是跨层交互：X 的效应是否取决于 Z？β_3 > 0，更高的 Z 放大 X 的效应。β_3 < 0，更高的 Z 衰减。解释需小心：X_ij 是否居中？在聚类均值（群体均值居中）对比总体均值的居中影响解释。总体均值居中：β_1 = 群体内 X 的平均效应；β_3 = 群体级 Z 如何修改这个群体内效应。群体均值居中：β_1 = Z = 0 的聚类的效应；不同解释。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> The effectiveness of studying (X) may depend on school quality (Z). In a good school, studying helps a lot. In a poor school, studying helps less (ceiling/floor effects, peer effects). Cross-level interaction quantifies: "how much does school quality change the return to studying?"</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>学习的有效性（X）可能取决于学校质量（Z）。好学校，学习很有帮助。差学校，学习帮助较少（天花板/地板效应、同伴效应）。跨层交互量化："学校质量改变学习回报多少？"</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Include cross-level interactions when theory predicts context-dependency of individual-level effects. Always center predictors; use grand-mean centering for interpretation simplicity unless group-mean centering is theoretically motivated. Report both the main effect (β_1) and interaction (β_3), plus predicted values at different levels of Z to show the mechanism. Test interaction significance via LRT. Multiple cross-level interactions can be included but increase model complexity — be selective.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>理论预测个体级效应的背景依赖时，包括跨层交互。总中心化预测器；除非群体均值居中在理论上有动机，否则用总体均值居中简化解释。报告主效应（β_1）和交互（β_3），加上在 Z 的不同水平的预测值显示机制。通过 LRT 测试交互显著性。可以包括多个跨层交互但增加模型复杂性——要有选择。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Effect of unemployment (X, level 1: individual) on turnout (Y) moderated by electoral competitiveness (Z, level 2: district). Model: Turnout_ij = β_0 + β_1*Unemployment_ij + β_2*Competitiveness_j + β_3*(Unemployment_ij × Competitiveness_j) + u_0j + ε_ij. Grand-mean centered. β_1 = -0.08 (unemployed individuals 8 pp less likely to vote, on average). β_3 = +0.04 (cross-level interaction): in competitive districts, unemployment's negative effect is smaller (partially offset). Interpretation: politics activates voters in close races, buffering against economic disaffection.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>失业（X，级别 1：个人）对投票率（Y）的影响由选举竞争性（Z，级别 2：地区）缓和。模型：Turnout_ij = β_0 + β_1*Unemployment_ij + β_2*Competitiveness_j + β_3*(Unemployment_ij × Competitiveness_j) + u_0j + ε_ij。总体均值居中。β_1 = -0.08（失业个人投票可能性低 8 pp，平均）。β_3 = +0.04（跨层交互）：竞争激烈的地区，失业的负效应更小（部分抵消）。解释：政治激活接近竞争的投票者，缓冲对经济不满的影响。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Three-Level Models</h3>
+    <h3 data-lang="zh">三层模型</h3>
+    <p class="method-desc" data-lang="en">A three-level model nests level 1 (individuals) in level 2 (groups) in level 3 (higher-order clusters). Example: students (L1) in classrooms (L2) in schools (L3). Model: Y_ijk = β_0 + β_1*X_ijk + u_0jk + u_0k + ε_ijk, where u_0jk is classroom-level variation and u_0k is school-level variation. Interpretation: total variance = Var(u_0k) + Var(u_0jk) + Var(ε_ijk). You can compute ICC at each level: ICC_2 = Var(u_0jk) / total, ICC_3 = Var(u_0k) / total. This decomposes where variation comes from — is it mostly between students (low ICCs), between classrooms, or between schools? Cross-level interactions can occur at multiple levels (school-level variable moderating classroom-level effect, etc.).</p>
+    <p class="method-desc" data-lang="zh">三层模型在级别 3（更高阶聚类）中嵌套级别 2（群体）中的级别 1（个人）。例子：学生（L1）在教室（L2）在学校（L3）。模型：Y_ijk = β_0 + β_1*X_ijk + u_0jk + u_0k + ε_ijk，其中 u_0jk 是教室级变化，u_0k 是学校级变化。解释：总方差 = Var(u_0k) + Var(u_0jk) + Var(ε_ijk)。可以在每个级别计算 ICC：ICC_2 = Var(u_0jk) / total，ICC_3 = Var(u_0k) / total。这分解变化来自哪里——主要在学生间（低 ICC）、教室间还是学校间？跨层交互可以在多个级别发生（学校级变量缓和教室级效应）。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> You're measuring reading ability. Some variation is due to individual differences (some kids are better readers). Some is due to classroom teaching (good teachers raise all students). Some is due to school resources (well-funded schools have better teachers). Three-level models partition this variance.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>你在测量阅读能力。一些变化是由于个体差异（有些孩子更好的读者）。一些是由于课堂教学（好老师提升所有学生）。一些是由于学校资源（资金充足的学校有更好的教师）。三层模型分割这个方差。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use three-level models when you have genuine nesting at three levels with sufficient sample sizes at each (≥10 clusters at level 2 per level 3 cluster, ≥10 level 3 clusters). Each additional level demands more data. With few clusters at a level, estimates are unreliable. You can generalize to four or more levels (students in schools in districts in states), but interpretation becomes complex. Start simple (L1 + L2) and add levels only if data warrant and research questions require it.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>在三个级别有真正嵌套且每个级别有充分样本大小时使用（每个级别 3 聚类 ≥10 个级别 2 聚类，≥10 个级别 3 聚类）。每增加一个级别需要更多数据。聚类在一个级别很少时，估计不可靠。可以推广到四个或更多级别（州中地区中学校中的学生），但解释变得复杂。从简单开始（L1 + L2），仅在数据保证且研究问题需要时添加。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Employees (L1) in departments (L2) in organizations (L3). Outcome: job satisfaction. Does departmental culture (L2) and organizational policy (L3) matter? Model: Satisfaction_ijk = β_0 + β_1*Tenure_ijk + u_0jk + u_0k + ε_ijk. Variance decomposition: 5% between organizations, 10% between departments within organizations, 85% between individuals. This shows: individual characteristics dominate; department culture is secondary but meaningful; organization policy is tertiary. If you only modeled L1 + L2, ignoring L3 organizational variation, you'd inflate department-level effects.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>组织（L3）中部门（L2）中的员工（L1）。结果：工作满意度。部门文化（L2）和组织政策（L3）重要吗？模型：Satisfaction_ijk = β_0 + β_1*Tenure_ijk + u_0jk + u_0k + ε_ijk。方差分解：组织间 5%，组织内部门间 10%，个人间 85%。这表明：个体特征占主导；部门文化次要但有意义；组织政策第三位。只建模 L1 + L2，忽视 L3 组织变化，会增加部门级效应。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Growth Curve Models (Longitudinal Multilevel)</h3>
+    <h3 data-lang="zh">增长曲线模型（纵向多层）</h3>
+    <p class="method-desc" data-lang="en">A growth curve model combines multilevel structure (L1: time, L2: individuals) to estimate trajectories. Model: Y_ti = β_0i + β_1i*Time_t + ε_ti, where β_0i and β_1i vary by individual i. The intercept β_0i is initial level; slope β_1i is rate of change. Both can have random effects: β_0i = β_0 + u_0i, β_1i = β_1 + u_1i. This allows individuals to have different baseline levels (u_0i) and different growth rates (u_1i). Add level-2 predictors to model heterogeneity: faster growth for individuals with characteristic X? Slower for those with Y? Growth curves naturally handle unbalanced designs (different follow-up times for different individuals), missing data (MCAR assumed), and are powerful for longitudinal analysis.</p>
+    <p class="method-desc" data-lang="zh">增长曲线模型结合多层结构（L1：时间，L2：个人）来估计轨迹。模型：Y_ti = β_0i + β_1i*Time_t + ε_ti，其中 β_0i 和 β_1i 因个人 i 变化。截距 β_0i 是初始水平；斜率 β_1i 是变化率。两者可以有随机效应：β_0i = β_0 + u_0i，β_1i = β_1 + u_1i。这允许个人有不同的基线水平和不同的增长率。添加级别 2 预测器建模异质性：具有特征 X 的个人增长更快？具有 Y 的增长更慢？增长曲线自然处理不平衡设计（不同个人的不同跟踪时间）、缺失数据（假设 MCAR）且对纵向分析很强大。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Tracking student achievement over years (time nested in student). Some students start high and plateau. Others start low and climb steeply. Growth curve models estimate each student's trajectory and test whether predictors like socioeconomic status predict initial achievement, growth rate, or both.</div>
+    <div class="method-analogy" data-lang="zh">类比：追踪学生成就数年（嵌套在学生中的时间）。一些学生开始高并达到平稳。其他开始低并陡峭上升。增长曲线模型估计每个学生的轨迹并测试诸如社会经济地位之类的预测因素是否预测初始成就、增长率或两者。</div>
+    <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use growth curve models for longitudinal data with repeated measures on individuals. Specify time as a continuous variable (age, years since intervention) for trajectory modeling. Add time-based interactions (does treatment effect grow over time?). Growth curve models are robust to attrition (missing later timepoints) if missingness is random. Test whether simpler trajectories (linear) fit or whether quadratic/polynomial terms are needed. This is a powerful framework for intervention evaluation and developmental trajectories.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>具有个体重复测量的纵向数据用增长曲线模型。指定时间为连续变量（年龄、自干预以来年份）用于轨迹建模。添加基于时间的交互（处理效应是否随时间增长？）。缺失是随机时，增长曲线模型对流失（缺失较晚时间点）很稳健。测试较简单轨迹（线性）拟合或需要二次/多项式项。这是干预评估和发展轨迹的强大框架。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Voter polarization index tracked annually for 10,000 voters (L1: years, L2: voters). Model: Polarization_ti = β_0i + β_1i*Year_t + ε_ti. Some voters polarize (positive slope, increasing partisan distance), others depolarize or stay stable. Random effects: u_0i (initial polarization level), u_1i (rate of polarization). Question: do voters exposed to political education (X_i) have slower polarization growth? Model: β_1i = β_1 + γ*Education_i + u_1i. Result: education slows polarization growth by 0.05 points/year. This trajectory analysis reveals how interventions affect change, not just levels.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>每年为 10,000 名选民追踪的选民两极分化指数（L1：年份，L2：选民）。模型：Polarization_ti = β_0i + β_1i*Year_t + ε_ti。一些选民两极分化（正斜率，增加党派距离），其他去极化或保持稳定。随机效应：u_0i（初始两极分化水平），u_1i（两极分化率）。问题：暴露于政治教育（X_i）的选民是否有较慢的两极分化增长？模型：β_1i = β_1 + γ*Education_i + u_1i。结果：教育将两极分化增长减少 0.05 点/年。轨迹分析揭示干预如何影响变化，不仅是水平。</div>
+  </div>
+</div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Cross-Classified and More Complex Nesting Structures</h3>
+    <h3 data-lang="zh">交叉分类与更复杂的嵌套结构</h3>
+    <p class="method-desc" data-lang="en">So far, we've assumed a simple hierarchy: individuals in groups. But sometimes nesting is more complex. Two structures deserve mention: <strong>cross-classified:</strong> individuals belong to multiple clusters simultaneously (not nested within one). Example: a student attends a school (cluster A) and lives in a neighborhood (cluster B). The student's outcome depends on both, and neither is nested in the other. <strong>Three-level models:</strong> three levels of nesting. Example: students (L1) in schools (L2) in districts (L3). This is common in organizational and educational research.</p>
+    <p class="method-desc" data-lang="zh">到目前为止，我们假设简单层次：个人在群体中。但有时嵌套更复杂。两个结构值得提及：<strong>交叉分类：</strong>个人同时属于多个聚类（不嵌套在一个中）。例：学生上某所学校（聚类 A）并住在社区（聚类 B）。学生的结果取决于两者，都不嵌套在另一个。<strong>三层模型：</strong>三个嵌套级别。例：学生（L1）在学校（L2）在教区（L3）。这在组织和教育研究中很常见。</p>
+    <p class="method-desc" data-lang="en"><strong>Cross-classified models:</strong> Specification: Y_ij,j' = β_0 + X_ij,j' + u_j + u_j' + ε_ij,j', where u_j and u_j' are random effects for the two non-nested clusters. For example, a student i in school j and neighborhood j' has an outcome depending on both school variation (u_j) and neighborhood variation (u_j'). Estimation is more complex — not all software handles this easily. R's lme4 can fit cross-classified models with syntax like: <code>lmer(outcome ~ predictors + (1|school) + (1|neighborhood))</code>. The key: both school and neighborhood effects appear as independent random intercepts.</p>
+    <p class="method-desc" data-lang="zh"><strong>交叉分类模型：</strong>规范：Y_ij,j' = β_0 + X_ij,j' + u_j + u_j' + ε_ij,j'，其中 u_j 和 u_j' 是两个非嵌套聚类的随机效应。例如，学校 j 和社区 j' 中的学生 i 有取决于学校变化（u_j）和社区变化（u_j'）的结果。估计更复杂——不是所有软件都能轻易处理。R 的 lme4 可以拟合交叉分类模型，句法如：<code>lmer(outcome ~ predictors + (1|school) + (1|neighborhood))</code>。关键：学校和社区效应都作为独立的随机截距出现。</p>
+    <p class="method-desc" data-lang="en"><strong>Three-level models:</strong> Common in education research. Y_ijk = β_0 + β_1*X_ijk + u_0jk + u_0k + ε_ijk, where i = student, j = classroom, k = school. The model estimates variance at each level: between students (within-classroom variation), between classrooms (within-school variation), and between schools. The ICC can be computed for each level. lme4 syntax: <code>lmer(y ~ x + (1|school/classroom))</code> or equivalently <code>lmer(y ~ x + (1|school) + (1|classroom:school))</code>. The first version is more intuitive (classrooms nested in schools). The second is more explicit about what clustering is where.</p>
+    <p class="method-desc" data-lang="zh"><strong>三层模型：</strong>教育研究中常见。Y_ijk = β_0 + β_1*X_ijk + u_0jk + u_0k + ε_ijk，其中 i = 学生，j = 教室，k = 学校。模型在每个级别估计方差：学生间（教室内变化）、教室间（学校内变化）、学校间。ICC 可以在每个级别计算。lme4 句法：<code>lmer(y ~ x + (1|school/classroom))</code> 或等价 <code>lmer(y ~ x + (1|school) + (1|classroom:school))</code>。第一个更直观（教室嵌套在学校）。第二个更明确地说明聚类在哪。</p>
+    <p class="method-desc" data-lang="en"><strong>When to use:</strong> Use cross-classified when units genuinely belong to multiple non-nested clusters. Use three-level models when data have genuine hierarchical structure at three levels. With each added level, estimation becomes more demanding. As a rule: if you have fewer than 10 clusters at a given level, random effects estimates at that level are unstable. Stick to two-level models unless your data clearly warrant three levels and you have sufficient cluster sizes.</p>
+    <p class="method-desc" data-lang="zh"><strong>何时使用：</strong>当单位确实属于多个非嵌套聚类时使用交叉分类。当数据在三个级别有真实层次结构时使用三层模型。每增加一个级别，估计变得更复杂。作为规则：如果某个级别的聚类少于 10 个，该级别的随机效应估计不稳定。除非数据清楚地证明三层级别且聚类大小足够，否则坚持两层模型。</p>
+  </div>
+
+<hr class="section-divider">
+<!-- GUIDES -->
+<div class="section" id="mm-guides">
+  <h2 data-lang="en">Guides</h2>
+  <h2 data-lang="zh">配套指南</h2>
+  <div class="m-list">
+    <a class="m-card" href="/methods/guides/reg-mlm-icc.html">
+      <div class="m-num">▶</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Multilevel Modeling with lme4</div>
+        <div class="m-title" data-lang="zh">多层模型 lme4 实战</div>
+        <div class="m-desc" data-lang="en">Step-by-step lme4 workflow: ICC, random intercepts, random slopes, and model comparison.</div>
+        <div class="m-desc" data-lang="zh">逐步 lme4 工作流：ICC、随机截距、随机斜率与模型比较。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<hr class="section-divider">
+<!-- RESOURCES -->
+<div class="section" id="mm-resources">
+  <h2 data-lang="en">Resources</h2>
+  <h2 data-lang="zh">资源</h2>
+  <div class="method-section">
+    <p class="method-desc" data-lang="en"><strong>Foundational Texts:</strong> Raudenbush &amp; Bryk (2002) <em>Hierarchical Linear Models</em> — the classic reference. Hox et al. (2018) <em>Multilevel Analysis</em> (3rd ed.) — accessible and modern. Gelman &amp; Hill (2007) <em>Data Analysis Using Regression and Multilevel Models</em> — bridges Bayesian and frequentist approaches. Finch, Bolin &amp; Kelley (2019) <em>Multilevel Modeling Using R</em> — hands-on R code throughout, covers lme4 and nlme in detail. Snijders &amp; Bosker (2012) <em>Multilevel Analysis</em> (2nd ed.) — excellent on statistical power and design considerations for multilevel studies.</p>
+    <p class="method-desc" data-lang="zh"><strong>基础文献：</strong>Raudenbush &amp; Bryk (2002)《分层线性模型》——经典参考。Hox 等 (2018)《多层分析》第三版——易懂且现代。Gelman &amp; Hill (2007)《使用回归与多层模型的数据分析》——桥接贝叶斯与频率方法。Finch、Bolin &amp; Kelley (2019)《用 R 做多层建模》——全书 R 代码实操，详细覆盖 lme4 和 nlme。Snijders &amp; Bosker (2012)《多层分析》第二版——多层研究的统计功效和设计考量很出色。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Software:</strong> R packages: <code>lme4</code> for frequentist mixed models (lmer, glmer). <code>nlme</code> as alternative with similar functionality. <code>brms</code> for Bayesian multilevel models (powerful for priors, uncertainty quantification). Stata: <code>melogit</code>, <code>mixed</code>, <code>mepoisson</code> for multilevel mixed models. SPSS: mixed models menu (limited but accessible).</p>
+    <p class="method-desc" data-lang="zh"><strong>软件：</strong>R 包：<code>lme4</code> 频率混合模型（lmer、glmer）。<code>nlme</code> 作为相似功能的替代。<code>brms</code> 贝叶斯多层模型（先验和不确定性量化很强大）。Stata：<code>melogit</code>、<code>mixed</code>、<code>mepoisson</code> 多层混合模型。SPSS：混合模型菜单（有限但易获取）。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Key Papers:</strong> Rao & Molina (2015) on variance decomposition and ICC. Singer & Willett (2003) on growth curve models in detail. Preacher, Zyphur & Zhang (2010) on calculating and reporting multilevel indirect effects. Snijders & Bosker (1999) on statistical power in multilevel designs.</p>
+    <p class="method-desc" data-lang="zh"><strong>关键论文：</strong>Rao & Molina (2015) 关于方差分解和 ICC。Singer & Willett (2003) 详细关于增长曲线模型。Preacher、Zyphur & Zhang (2010) 关于计算和报告多层间接效应。Snijders & Bosker (1999) 关于多层设计中的统计功效。</p>
+  </div>
+</div>
+
+<!-- PAGE NAV -->
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/reg-robustness.html">
+    <span class="pn-arrow">&larr;</span>
+    <span><span class="pn-title">Evaluating Model Robustness</span></span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/reg-empirical.html">
+    <span><span class="pn-title">Empirical Modeling</span></span>
+    <span class="pn-arrow">&rarr;</span>
+  </a>
+</div>

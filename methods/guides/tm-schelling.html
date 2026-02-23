@@ -1,0 +1,353 @@
+---
+layout: methods-guide
+title: "Schelling Segregation Model"
+title_zh: "Schelling 隔离模型"
+parent_title: "Theoretical Modeling"
+parent_title_zh: "理论建模"
+parent_url: "theoretical-modeling.html"
+bilingual: true
+---
+
+<style>
+  .sim-panel{background:var(--paper);border:1px solid var(--parchment);border-radius:4px;padding:28px 32px;margin:24px 0;}
+  .sim-canvas-wrap{display:flex;justify-content:center;margin:16px 0;}
+  canvas#grid{border:1px solid var(--parchment);display:block;cursor:crosshair;}
+  .sim-controls{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;}
+  .ctrl-group{display:flex;flex-direction:column;gap:6px;}
+  .ctrl-label{font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-ghost);display:flex;justify-content:space-between;}
+  .ctrl-val{font-family:var(--mono);color:var(--red);font-weight:500;}
+  input[type=range]{width:100%;accent-color:var(--red);}
+  .sim-btns{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+  .sim-btn{font-family:var(--sans);font-size:12px;font-weight:600;padding:7px 18px;border:none;border-radius:3px;cursor:pointer;letter-spacing:.03em;transition:background .2s;}
+  .sim-btn.run{background:var(--red);color:var(--paper);}
+  .sim-btn.run:hover{background:var(--leather);}
+  .sim-btn.step{background:var(--parchment);color:var(--ink);}
+  .sim-btn.step:hover{background:var(--sand);}
+  .sim-btn.pause{background:var(--gold);color:var(--paper);}
+  .sim-btn.reset{background:transparent;border:1px solid var(--parchment);color:var(--ink-ghost);}
+  .sim-btn:disabled{opacity:.4;cursor:not-allowed;}
+  .sim-stats{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap;}
+  .stat-chip{flex:1;min-width:120px;background:var(--cream);border:1px solid var(--parchment);border-radius:3px;padding:10px 14px;text-align:center;}
+  .stat-chip .slabel{font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-ghost);display:block;margin-bottom:4px;}
+  .stat-chip .sval{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--ink);}
+  .legend{display:flex;gap:16px;justify-content:center;margin-top:12px;}
+  .leg-item{display:flex;align-items:center;gap:6px;font-family:var(--sans);font-size:11px;color:var(--ink-ghost);}
+  .leg-dot{width:14px;height:14px;border-radius:2px;flex-shrink:0;}
+  .insight-box{background:var(--cream);border-left:3px solid var(--gold);padding:14px 18px;margin-top:20px;font-family:var(--serif);font-size:14px;line-height:1.6;color:var(--ink);}
+  .math-note{font-family:var(--mono);font-size:12px;background:var(--parchment);padding:10px 14px;border-radius:3px;margin:10px 0;color:var(--ink);}
+</style>
+
+<!-- Header -->
+<div class="method-header">
+  <div class="method-meta">
+    <span data-lang="en">INTERACTIVE SIMULATION · MODULE 3</span>
+    <span data-lang="zh">互动模拟 · 模块三</span>
+  </div>
+  <h1>
+    <span data-lang="en">Schelling Segregation Model</span>
+    <span data-lang="zh">Schelling 隔离模型</span>
+  </h1>
+  <p>
+    <span data-lang="en">Why do cities segregate even when no one prefers segregation? Thomas Schelling's 1971 model shows how mild individual preferences cascade into dramatic collective outcomes—a foundational result in complexity science.</span>
+    <span data-lang="zh">为何城市在无人明确希望隔离的情况下，仍会产生种族或群体的居住隔离？Schelling 1971 年的模型揭示了温和的个体偏好如何级联成戏剧性的集体结果——这是复杂性科学的奠基性发现之一。</span>
+  </p>
+</div>
+
+<hr class="section-divider">
+
+<!-- Theory section -->
+<section>
+  <h2>
+    <span data-lang="en">The Mechanism, Step by Step</span>
+    <span data-lang="zh">机制详解</span>
+  </h2>
+  <p>
+    <span data-lang="en"><strong>The setting.</strong> Picture a checkerboard-style grid — like a city viewed from above. Each cell is either occupied by a Red agent, a Blue agent, or is empty. These could represent households, racial groups, political camps, or any two groups who live in proximity. A few cells are always left empty so that unhappy agents have somewhere to move.</span>
+    <span data-lang="zh"><strong>场景设定。</strong>想象一个棋盘式网格——就像从上空俯瞰一座城市。每个格子要么由红色主体占据，要么由蓝色主体占据，要么是空格。这些主体可以代表家庭、种族群体、政治阵营，或任何两个相邻居住的群体。一部分格子始终保持空置，以便不满意的主体有地方可以搬去。</span>
+  </p>
+  <p>
+    <span data-lang="en"><strong>Who counts as a neighbor?</strong> In the standard Schelling model, each agent has up to 8 neighbors — the cell directly above, below, left, right, and the four diagonals. This is called the Moore neighborhood. An agent on the edge has fewer neighbors (5 or 3). Only <em>occupied</em> neighbors count — empty cells are ignored.</span>
+    <span data-lang="zh"><strong>谁算邻居？</strong>在标准 Schelling 模型中，每个主体最多有 8 个邻居——正上方、正下方、左、右和四个对角方向的格子。这称为 Moore 邻域。处于边缘的主体邻居更少（5 个或 3 个）。只有<em>有人居住</em>的格子才算邻居——空格不计入。</span>
+  </p>
+  <p>
+    <span data-lang="en"><strong>The tolerance threshold τ.</strong> Each agent has a number τ (pronounced "tau") between 0 and 1 — their personal tolerance threshold. An agent is "satisfied" if the fraction of its occupied neighbors who share its own color is at least τ. If not satisfied, it is "unhappy" and will try to move.</span>
+    <span data-lang="zh"><strong>容忍阈值 τ。</strong>每个主体有一个介于 0 和 1 之间的数 τ（读作"tau"）——个人容忍阈值。如果一个主体的有人居住邻居中，与自己同色的比例不低于 τ，则该主体"满意"。否则为"不满意"，会尝试搬走。</span>
+  </p>
+  <div class="math-note">
+    <span data-lang="en">Agent satisfied when:  (# same-color occupied neighbors) / (# all occupied neighbors) ≥ τ</span>
+    <span data-lang="zh">主体满意的条件：（同色有人居住邻居数）/（全部有人居住邻居数）≥ τ</span>
+  </div>
+  <p>
+    <span data-lang="en"><strong>Example.</strong> Set τ = 0.40. An agent has 6 occupied neighbors: 2 same-color, 4 different-color. Fraction same = 2/6 ≈ 0.33, which is below τ = 0.40. This agent is unhappy and will move to a random empty cell. Nothing "racist" is happening — the agent just prefers not to be an extreme minority in its immediate neighborhood.</span>
+    <span data-lang="zh"><strong>示例。</strong>设 τ = 0.40。一个主体有 6 个有人居住的邻居：2 个同色，4 个不同色。同色比例 = 2/6 ≈ 0.33，低于 τ = 0.40。该主体不满意，会移动到随机空格。这里没有任何"种族主义"——主体只是不希望在直接邻域中成为极少数。</span>
+  </p>
+  <h3>
+    <span data-lang="en">Why Does Mild Preference Create Total Segregation?</span>
+    <span data-lang="zh">为什么温和偏好会产生完全隔离？</span>
+  </h3>
+  <p>
+    <span data-lang="en">This is the shocking result. At τ = 0.30, each agent is perfectly happy living with 70% "different" neighbors — an overwhelmingly open-minded preference. Yet the simulation reliably reaches a segregation index of 0.7–0.9 (vs. ~0.5 for a random mix). Here's why:</span>
+    <span data-lang="zh">这是令人震惊的结果。在 τ = 0.30 时，每个主体完全可以接受 70% 的"异色"邻居——这是极为开放的偏好。然而，模拟可靠地达到 0.7–0.9 的隔离指数（随机混合约为 0.5）。原因如下：</span>
+  </p>
+  <p>
+    <span data-lang="en">Suppose a Red agent moves into a Blue-majority area, making the few Red neighbors there less isolated. That previously-borderline Red neighbor is now satisfied; it stays put. But this movement slightly increases the fraction of Reds in that area, which may push a nearby Blue agent below its threshold — causing it to move. When it moves, it changes the neighborhood composition of both where it left and where it arrived, potentially triggering more moves. Each move has ripple effects. This is the cascade: small local adjustments propagate through the grid, accumulating into large-scale spatial sorting.</span>
+    <span data-lang="zh">假设一个红色主体搬进蓝色多数区域，使那里原本孤立的红色邻居不那么孤立。那个之前勉强满意的红色邻居现在满意了，留了下来。但这次搬迁微微提高了该区域红色比例，可能将附近某个蓝色主体推到阈值以下——导致其搬走。搬走后，它改变了离开处和到达处的邻域构成，可能触发更多搬移。每次搬移都有涟漪效应。这就是级联：小的局部调整在网格中传播，积累成大规模的空间分类。</span>
+  </p>
+  <div class="insight-box">
+    <strong data-lang="en">Schelling's insight: </strong><strong data-lang="zh">Schelling 的核心洞见：</strong>
+    <span data-lang="en">The final state (near-total segregation) is <em>nobody's goal</em> — most agents would actually prefer to live in a somewhat integrated neighborhood. But the system has no mechanism to coordinate on a globally desirable outcome. Each agent optimizing locally produces a collectively undesired global pattern. This is the fundamental insight: <strong>individual intentions ≠ aggregate outcomes</strong>. Sociology cannot be reduced to psychology.</span>
+    <span data-lang="zh">最终状态（近乎完全隔离）<em>不是任何人的目标</em>——大多数主体实际上更希望住在适度融合的邻域。但系统没有机制来协调达到全局理想结果。每个主体的局部最优化产生了集体不愿见到的全局格局。这是根本性洞见：<strong>个人意图 ≠ 集体结果</strong>。社会学不能化约为心理学。</span>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- Simulation panel -->
+<section>
+  <h2>
+    <span data-lang="en">Interactive Demo</span>
+    <span data-lang="zh">互动演示</span>
+  </h2>
+  <p>
+    <span data-lang="en">Try starting with a low threshold (≤30%) and running the simulation. Then try 50% or higher. Notice the segregation index rising rapidly even for mild preferences.</span>
+    <span data-lang="zh">尝试从低阈值（≤30%）开始运行模拟，然后再尝试 50% 或更高。注意即使是温和的偏好，隔离指数也会迅速上升。</span>
+  </p>
+
+  <div class="sim-panel">
+    <!-- Legend -->
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:#B5372A;"></div><span data-lang="en">Type A</span><span data-lang="zh">A 类</span></div>
+      <div class="leg-item"><div class="leg-dot" style="background:#C2993D;"></div><span data-lang="en">Type B</span><span data-lang="zh">B 类</span></div>
+      <div class="leg-item"><div class="leg-dot" style="background:#EDE7D9;border:1px solid #D4CCC4;"></div><span data-lang="en">Empty</span><span data-lang="zh">空格</span></div>
+    </div>
+
+    <!-- Canvas -->
+    <div class="sim-canvas-wrap">
+      <canvas id="grid" width="480" height="480"></canvas>
+    </div>
+
+    <!-- Stats -->
+    <div class="sim-stats">
+      <div class="stat-chip">
+        <span class="slabel" data-lang="en">Step</span><span class="slabel" data-lang="zh">步数</span>
+        <span class="sval" id="sStep">0</span>
+      </div>
+      <div class="stat-chip">
+        <span class="slabel" data-lang="en">Unhappy</span><span class="slabel" data-lang="zh">不满意</span>
+        <span class="sval" id="sUnhappy">—</span>
+      </div>
+      <div class="stat-chip">
+        <span class="slabel" data-lang="en">Segregation Index</span><span class="slabel" data-lang="zh">隔离指数</span>
+        <span class="sval" id="sSegIdx">—</span>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="sim-btns">
+      <button class="sim-btn run" id="btnRun"><span data-lang="en">▶ Run</span><span data-lang="zh">▶ 运行</span></button>
+      <button class="sim-btn pause" id="btnPause" disabled><span data-lang="en">⏸ Pause</span><span data-lang="zh">⏸ 暂停</span></button>
+      <button class="sim-btn step" id="btnStep"><span data-lang="en">Step</span><span data-lang="zh">单步</span></button>
+      <button class="sim-btn reset" id="btnReset"><span data-lang="en">↺ Reset</span><span data-lang="zh">↺ 重置</span></button>
+    </div>
+
+    <!-- Controls -->
+    <div class="sim-controls">
+      <div class="ctrl-group">
+        <div class="ctrl-label"><span data-lang="en">Tolerance τ</span><span data-lang="zh">容忍阈值 τ</span><span class="ctrl-val"><span id="vTol">30</span>%</span></div>
+        <input type="range" id="sTol" min="0" max="100" value="30" step="5">
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label"><span data-lang="en">Density</span><span data-lang="zh">密度</span><span class="ctrl-val"><span id="vDen">75</span>%</span></div>
+        <input type="range" id="sDen" min="40" max="95" value="75" step="5">
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label"><span data-lang="en">Type A ratio</span><span data-lang="zh">A 类比例</span><span class="ctrl-val"><span id="vRat">50</span>%</span></div>
+        <input type="range" id="sRat" min="20" max="80" value="50" step="5">
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label"><span data-lang="en">Speed</span><span data-lang="zh">速度</span><span class="ctrl-val"><span id="vSpd">5</span></span></div>
+        <input type="range" id="sSpd" min="1" max="10" value="5" step="1">
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- Interpretation -->
+<section>
+  <h2>
+    <span data-lang="en">What to Look For</span>
+    <span data-lang="zh">观察要点</span>
+  </h2>
+  <p>
+    <span data-lang="en"><strong>Threshold effect:</strong> Below ~25%, agents rarely move and mixing is stable. Above 30%, small clusters form and snowball. At 50%+, the grid quickly collapses into a checkerboard of large monochrome patches.</span>
+    <span data-lang="zh"><strong>阈值效应：</strong>阈值低于约 25% 时，主体很少移动，混合状态稳定。超过 30% 时，小集群开始形成并滚雪球式扩大。达到 50% 以上时，网格迅速崩溃为由大片单色区域拼成的棋盘格。</span>
+  </p>
+  <p>
+    <span data-lang="en"><strong>Segregation Index:</strong> This measures the average fraction of same-type neighbors across all agents. A random mix yields ~0.5; perfect segregation approaches 1.0. Watch how quickly it climbs even at τ = 0.30.</span>
+    <span data-lang="zh"><strong>隔离指数：</strong>衡量所有主体中同类邻居的平均比例。随机混合约为 0.5；完全隔离接近 1.0。观察即使在 τ = 0.30 时指数上升的速度。</span>
+  </p>
+  <p>
+    <span data-lang="en"><strong>Path dependence:</strong> Reset several times with the same parameters. Each run produces a different spatial pattern, but the segregation index converges to a similar level. The outcome is robust but the structure is contingent.</span>
+    <span data-lang="zh"><strong>路径依赖：</strong>用相同参数多次重置运行。每次运行产生不同的空间格局，但隔离指数收敛到相似水平。结果是稳健的，但具体结构是偶然的。</span>
+  </p>
+</section>
+
+<!-- Page nav -->
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/theoretical-modeling.html">
+    <span class="pn-arrow">←</span>
+    <span>
+      <span class="pn-dir" data-lang="en">Back</span><span class="pn-dir" data-lang="zh">返回</span>
+      <span class="pn-title" data-lang="en">Theoretical Modeling</span><span class="pn-title" data-lang="zh">理论建模</span>
+    </span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/guides/tm-ca.html">
+    <span>
+      <span class="pn-dir" data-lang="en">Next</span><span class="pn-dir" data-lang="zh">下一篇</span>
+      <span class="pn-title" data-lang="en">Cellular Automata</span><span class="pn-title" data-lang="zh">元胞自动机</span>
+    </span>
+    <span class="pn-arrow">→</span>
+  </a>
+</div>
+
+<script>
+// ── Simulation ───────────────────────────────────────────────────
+const GRID = 40;
+const canvas = document.getElementById('grid');
+const ctx = canvas.getContext('2d');
+const CELL = canvas.width / GRID;
+
+let grid = [], running = false, step = 0, rafId = null, lastT = 0;
+
+const sTol = document.getElementById('sTol');
+const sDen = document.getElementById('sDen');
+const sRat = document.getElementById('sRat');
+const sSpd = document.getElementById('sSpd');
+
+function sliderBind(slider, display) {
+  slider.addEventListener('input', () => { document.getElementById(display).textContent = slider.value; });
+}
+sliderBind(sTol, 'vTol'); sliderBind(sDen, 'vDen'); sliderBind(sRat, 'vRat'); sliderBind(sSpd, 'vSpd');
+
+function init() {
+  step = 0; running = false;
+  const density = +sDen.value / 100;
+  const aRatio  = +sRat.value  / 100;
+  grid = Array.from({length: GRID}, () =>
+    Array.from({length: GRID}, () => {
+      if (Math.random() > density) return 0;
+      return Math.random() < aRatio ? 1 : 2;
+    })
+  );
+  updateStats(); draw();
+}
+
+function neighbors(r, c) {
+  const ns = [];
+  for (let dr = -1; dr <= 1; dr++)
+    for (let dc = -1; dc <= 1; dc++) {
+      if (!dr && !dc) continue;
+      const rr = r+dr, cc = c+dc;
+      if (rr>=0 && rr<GRID && cc>=0 && cc<GRID && grid[rr][cc]) ns.push(grid[rr][cc]);
+    }
+  return ns;
+}
+
+function happy(r, c) {
+  const a = grid[r][c]; if (!a) return true;
+  const ns = neighbors(r, c); if (!ns.length) return true;
+  return ns.filter(n => n===a).length / ns.length >= +sTol.value/100;
+}
+
+function doStep() {
+  const unhappy = [];
+  const empty = [];
+  for (let r=0;r<GRID;r++) for (let c=0;c<GRID;c++) {
+    if (!grid[r][c]) empty.push([r,c]);
+    else if (!happy(r,c)) unhappy.push([r,c]);
+  }
+  // shuffle unhappy
+  for (let i=unhappy.length-1;i>0;i--) {
+    const j=Math.floor(Math.random()*(i+1));
+    [unhappy[i],unhappy[j]]=[unhappy[j],unhappy[i]];
+  }
+  unhappy.forEach(([r,c]) => {
+    if (!empty.length) return;
+    const idx = Math.floor(Math.random()*empty.length);
+    const [er,ec] = empty[idx];
+    grid[er][ec] = grid[r][c]; grid[r][c] = 0;
+    empty.splice(idx,1); empty.push([r,c]);
+  });
+  step++;
+  updateStats(); draw();
+}
+
+function segIndex() {
+  let same=0,total=0;
+  for (let r=0;r<GRID;r++) for (let c=0;c<GRID;c++) {
+    if (!grid[r][c]) continue;
+    const ns=neighbors(r,c);
+    if (!ns.length) continue;
+    same += ns.filter(n=>n===grid[r][c]).length;
+    total += ns.length;
+  }
+  return total ? (same/total).toFixed(3) : '—';
+}
+
+function unhappyCount() {
+  let n=0;
+  for (let r=0;r<GRID;r++) for (let c=0;c<GRID;c++)
+    if (grid[r][c] && !happy(r,c)) n++;
+  return n;
+}
+
+function updateStats() {
+  document.getElementById('sStep').textContent = step;
+  document.getElementById('sUnhappy').textContent = unhappyCount();
+  document.getElementById('sSegIdx').textContent = segIndex();
+}
+
+function draw() {
+  const colors = ['#EDE7D9','#B5372A','#C2993D'];
+  for (let r=0;r<GRID;r++) for (let c=0;c<GRID;c++) {
+    ctx.fillStyle = colors[grid[r][c]||0];
+    ctx.fillRect(c*CELL, r*CELL, CELL, CELL);
+  }
+  // grid lines
+  ctx.strokeStyle = 'rgba(212,204,196,0.4)'; ctx.lineWidth = 0.3;
+  for (let i=0;i<=GRID;i++) {
+    ctx.beginPath(); ctx.moveTo(i*CELL,0); ctx.lineTo(i*CELL,canvas.height); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,i*CELL); ctx.lineTo(canvas.width,i*CELL); ctx.stroke();
+  }
+}
+
+function loop(t) {
+  rafId = requestAnimationFrame(loop);
+  if (!running) return;
+  const delay = 550 - +sSpd.value * 50;
+  if (t - lastT > delay) { doStep(); lastT = t; }
+}
+
+document.getElementById('btnRun').addEventListener('click', () => {
+  running = true;
+  document.getElementById('btnRun').disabled = true;
+  document.getElementById('btnPause').disabled = false;
+});
+document.getElementById('btnPause').addEventListener('click', () => {
+  running = false;
+  document.getElementById('btnRun').disabled = false;
+  document.getElementById('btnPause').disabled = true;
+});
+document.getElementById('btnStep').addEventListener('click', () => { if (!running) doStep(); });
+document.getElementById('btnReset').addEventListener('click', () => {
+  running = false;
+  document.getElementById('btnRun').disabled = false;
+  document.getElementById('btnPause').disabled = true;
+  init();
+});
+
+init();
+requestAnimationFrame(loop);
+</script>

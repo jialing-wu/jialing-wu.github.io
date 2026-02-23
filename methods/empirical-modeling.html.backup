@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empirical Modeling of Social Science Theory — Research Methods Notebook</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* Collapsible math sections */
+details.math-box { margin: 10px 0; border: 1px solid var(--parchment); border-radius: 4px; background: var(--warm); }
+details.math-box summary { font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--gold); padding: 10px 14px; cursor: pointer; user-select: none; }
+details.math-box summary:hover { color: var(--red); }
+details.math-box .math-content { padding: 12px 14px; border-top: 1px solid var(--parchment); }
+details.math-box .math-content p { font-size: 14.5px; line-height: 1.7; color: var(--ink-faded); margin-bottom: 8px; }
+details.math-box .formula { font-family: var(--mono); font-size: 12.5px; color: var(--ink-soft); background: rgba(30,24,15,.04); padding: 8px 12px; border-radius: 3px; margin: 6px 0; overflow-x: auto; white-space: nowrap; }
+
+/* Clean overview table */
+.mode-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14.5px; }
+.mode-table th { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); padding: 10px 12px; border-bottom: 2px solid var(--parchment); text-align: left; }
+.mode-table td { padding: 12px; border-bottom: 1px solid rgba(222,212,192,.4); color: var(--ink-faded); line-height: 1.6; vertical-align: top; }
+.mode-table tr:last-child td { border-bottom: none; }
+.mode-table .mode-num { font-family: var(--sans); font-size: 11px; font-weight: 600; color: var(--red); white-space: nowrap; }
+.mode-table tr.highlight td { background: rgba(194,153,61,.06); }
+
+/* Intro cards */
+.intro-card { border: 1px solid var(--parchment); border-radius: 4px; padding: 18px 20px; margin: 12px 0; background: var(--paper); }
+.intro-card .card-label { font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--red); margin-bottom: 8px; }
+.intro-card p { font-size: 14.5px; line-height: 1.75; color: var(--ink-faded); margin-bottom: 6px; }
+.intro-card p:last-child { margin-bottom: 0; }
+
+/* Method blocks */
+.method-section { margin: 24px 0; }
+.method-section h3 { font-family: var(--sans); font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 12px; margin-top: 16px; }
+.method-desc { font-size: 14.5px; line-height: 1.75; color: var(--ink-faded); margin-bottom: 12px; }
+.method-desc strong { color: var(--leather); }
+.method-example { margin: 12px 0; padding: 10px 14px; border-radius: 4px; background: rgba(181,55,42,.04); border: 1px solid rgba(181,55,42,.1); font-size: 14.5px; line-height: 1.65; color: var(--ink-faded); }
+.method-example::before { content: ''; display: inline-block; width: 6px; height: 6px; background: var(--red); border-radius: 50%; margin-right: 8px; vertical-align: middle; }
+.method-analogy { margin: 12px 0; padding: 10px 14px; border-radius: 4px; background: rgba(194,153,61,.06); border: 1px solid rgba(194,153,61,.15); font-size: 14.5px; line-height: 1.65; color: var(--ink-faded); font-style: italic; }
+
+/* Challenge overview */
+.challenge-overview { margin: 16px 0; padding: 12px 14px; border-left: 3px solid var(--gold); background: rgba(194,153,61,.04); }
+.challenge-overview p { font-size: 14.5px; line-height: 1.65; color: var(--ink-faded); margin-bottom: 0; }
+.challenge-overview strong { color: var(--leather); }
+
+/* Divider */
+.card-divider { margin: 2px 0; padding: 0; border: none; background: none; height: 1px; background: linear-gradient(to right, transparent, rgba(222,212,192,.3), transparent); }
+
+/* Typography consistency */
+h2 { font-size: 20px; font-weight: 600; margin-top: 28px; margin-bottom: 16px; }
+p { font-size: 14.5px; line-height: 1.75; }
+
+/* Module grid */
+.modules-overview { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media(max-width: 860px) {
+  .modules-overview { grid-template-columns: 1fr; }
+}
+.module-card { border: 1px solid var(--parchment); border-radius: 4px; padding: 16px; background: var(--paper); }
+.module-card h4 { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--red); margin-bottom: 6px; }
+.module-card p { font-size: 14.5px; line-height: 1.65; color: var(--ink-faded); margin-bottom: 0; }
+
+/* Links */
+a.learn-more { color: var(--red); text-decoration: none; font-family: var(--sans); font-size: 13px; font-weight: 500; }
+a.learn-more:hover { border-bottom: 1px solid var(--red); }
+
+/* Resources */
+.resources-section { margin-top: 32px; padding-top: 20px; border-top: 2px solid var(--parchment); }
+.resource-list { list-style: none; padding: 0; margin: 12px 0; }
+.resource-list li { margin: 8px 0; font-size: 14.5px; color: var(--ink-faded); }
+.resource-list a { color: var(--red); text-decoration: none; }
+.resource-list a:hover { border-bottom: 1px solid var(--red); }
+
+/* Navigation */
+.page-nav { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--parchment); font-size: 14px; }
+.page-nav a { color: var(--red); text-decoration: none; }
+.page-nav a:hover { text-decoration: underline; }
+
+@media(max-width: 860px) {
+  h2 { font-size: 18px; }
+  p, .method-desc, .method-example, .method-analogy, .challenge-overview { font-size: 14.5px; }
+}
+</style>
+</head>
+<body class="zh">
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="sb-brand" href="index.html"><h2>Methods <span>Notebook</span></h2><div class="sb-sub">Jialing Wu</div></a>
+    <div class="sb-cat">Person-Centered Quantitative Methods</div>
+    <a class="sb-link" href="lpa.html"><span class="sb-num">01</span> Latent Profile Analysis</a>
+    <div class="sb-cat">Computational Social Science</div>
+    <div class="sb-subcat">Foundations</div>
+    <a class="sb-link" href="machine-learning.html"><span class="sb-num">01</span> Machine Learning</a>
+    <a class="sb-link" href="llm.html"><span class="sb-num">02</span> LLM &amp; NLP</a>
+    <a class="sb-link" href="text-analysis.html"><span class="sb-num">03</span> Text as Data</a>
+    <a class="sb-link" href="theoretical-modeling.html"><span class="sb-num">04</span> Theoretical Modeling</a>
+    <div class="sb-cat">Statistics</div>
+    <div class="sb-subcat">Foundations</div>
+    <a class="sb-link active" href="empirical-modeling.html"><span class="sb-num">01</span> Empirical Modeling</a>
+    <div class="sb-footer"><a href="https://jialing-wu.github.io">&larr; My Website</a></div>
+  </aside>
+  <div class="sidebar-overlay" id="overlay" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"></div>
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"><span></span></button>
+      <div class="breadcrumb">Statistics<span class="sep">/</span> Foundations<span class="sep">/</span> Empirical Modeling</div>
+      <div class="topbar-lang">
+        <button class="lang-btn" id="btn-zh" onclick="setLang('zh')">中文</button>
+        <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- HEADER -->
+      <div class="method-header">
+        <h1>Empirical Modeling of Social Science Theory</h1>
+        <div class="method-meta">Statistics &middot; Foundations 01</div>
+        <div data-lang="en"><p class="subtitle">Notes from ICPSR 2024 "Empirical Modeling of (Positive Social-Science) Theory", University of Michigan &middot; <a href="https://lsa.umich.edu/polisci/people/faculty/franzese.html" target="_blank" style="color:var(--red);border-bottom:1px solid var(--red)">Prof. Robert Franzese</a></p></div>
+        <div data-lang="zh"><p class="subtitle">笔记整理自 ICPSR 2024「Empirical Modeling of (Positive Social-Science) Theory」, University of Michigan &middot; <a href="https://lsa.umich.edu/polisci/people/faculty/franzese.html" target="_blank" style="color:var(--red);border-bottom:1px solid var(--red)">Prof. Robert Franzese</a></p></div>
+      </div>
+
+      <!-- INTRODUCTION: THREE SEPARATE CARDS -->
+      <div class="section">
+        <div class="intro-card">
+          <div class="card-label" data-lang="en">What Is This Course?</div>
+          <div class="card-label" data-lang="zh">这门课讲什么？</div>
+          <div data-lang="en">
+            <p>This course bridges theory and data. We learn to build empirical models guided by theory, answering not just "does X affect Y?" but "how does Y respond when X changes, given everything else?" We focus on Mode IV: understanding causal responses in full systems, not just isolated treatment effects.</p>
+          </div>
+          <div data-lang="zh">
+            <p>这门课是理论与数据之间的桥梁。我们学习构建由理论指导的经验模型，回答不仅是"X 影响 Y 吗？"而是"当 X 变化时，在给定其他所有因素的情况下，Y 如何回应？"我们聚焦于模式四：理解完整系统中的因果反应，而不仅仅是隔离的处理效应。</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin:1px 0;padding:0;border:none;background:none;height:1px;background:linear-gradient(to right, transparent, rgba(222,212,192,.3), transparent)"></div>
+
+      <div class="section">
+        <div class="intro-card">
+          <div class="card-label" data-lang="en">Prerequisites</div>
+          <div class="card-label" data-lang="zh">前置知识</div>
+          <div data-lang="en">
+            <p>Basic regression familiarity is helpful but we review everything from scratch. You should be comfortable reading equations and thinking about why models matter. Most importantly: curiosity about how social systems work.</p>
+          </div>
+          <div data-lang="zh">
+            <p>基础回归的了解很有帮助，但我们会从头复习一切。你应该能够舒适地阅读方程式并思考模型为什么重要。最重要的是：对社会系统如何运作的好奇心。</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin:1px 0;padding:0;border:none;background:none;height:1px;background:linear-gradient(to right, transparent, rgba(222,212,192,.3), transparent)"></div>
+
+      <div class="section">
+        <div class="intro-card">
+          <div class="card-label" data-lang="en">Software</div>
+          <div class="card-label" data-lang="zh">软件工具</div>
+          <div data-lang="en">
+            <p>Stata dominates applied social science research; R is free and increasingly flexible; Python is growing for machine learning integration. Code examples for all three are provided. See the <a class="learn-more" href="guides/em-commands.html">Stata/R Command Reference</a> for syntax and implementation details.</p>
+          </div>
+          <div data-lang="zh">
+            <p>Stata 在应用社会科学研究中占主导地位；R 免费且越来越灵活；Python 在机器学习集成方面增长。提供了所有三种的代码示例。有关语法和实现细节，请参阅<a class="learn-more" href="guides/em-commands.html">Stata/R 命令参考</a>。</p>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- FOUR MODES TABLE -->
+      <div class="section">
+        <h2 data-lang="en">Four Modes of Empirical Analysis</h2>
+        <h2 data-lang="zh">经验分析的四种模式</h2>
+
+        <div data-lang="en">
+          <p>Not all empirical questions are the same. Each mode has different goals, methods, and standards for success. Understanding which mode you're answering is crucial.</p>
+        </div>
+        <div data-lang="zh">
+          <p>不是所有经验问题都相同。每种模式有不同的目标、方法和成功标准。理解你正在回答哪种模式至关重要。</p>
+        </div>
+
+        <div data-lang="en">
+          <table class="mode-table">
+            <thead><tr><th>Mode</th><th>Question</th><th>Example</th><th>Gold Standard</th></tr></thead>
+            <tbody>
+              <tr><td class="mode-num">I</td><td>What is X? How often does Y occur?</td><td>Building a corruption index</td><td>Usefulness</td></tr>
+              <tr><td class="mode-num">II</td><td>What happens next?</td><td>Predicting election outcomes</td><td>Out-of-sample accuracy</td></tr>
+              <tr><td class="mode-num">III</td><td>Does X cause Y?</td><td>Does class size hurt grades?</td><td>RCT</td></tr>
+              <tr class="highlight"><td class="mode-num">IV</td><td><strong>How does Y respond to X in the full system?</strong></td><td>How do wages adjust when unemployment changes?</td><td>Response accuracy</td></tr>
+            </tbody>
+          </table>
+          <p><strong>This course focuses on Mode IV:</strong> estimating how variables respond to each other in real systems where everything causes everything else. Unlike RCTs that isolate a single treatment effect, Mode IV asks: given all the mutual influences and feedback loops in the system, what is the trajectory of adjustment?</p>
+        </div>
+        <div data-lang="zh">
+          <table class="mode-table">
+            <thead><tr><th>模式</th><th>问题</th><th>例子</th><th>黄金标准</th></tr></thead>
+            <tbody>
+              <tr><td class="mode-num">I</td><td>X 是什么？Y 发生多频繁？</td><td>从多个指标构建腐败指数</td><td>有用性</td></tr>
+              <tr><td class="mode-num">II</td><td>接下来会怎样？</td><td>预测选举结果或股票走势</td><td>样本外准确性</td></tr>
+              <tr><td class="mode-num">III</td><td>X 是否导致 Y？</td><td>增加班级规模是否伤害成绩？</td><td>RCT</td></tr>
+              <tr class="highlight"><td class="mode-num">IV</td><td><strong>在完整系统中 Y 如何对 X 作出反应？</strong></td><td>失业改变时工资如何调整？</td><td>反应准确性</td></tr>
+            </tbody>
+          </table>
+          <p><strong>本课程聚焦于模式四：</strong>估计在变量相互影响的真实系统中，变量如何相互作出反应。不像 RCT 隔离单个处理效应，模式四问：给定系统中所有相互影响和反馈循环，调整的轨迹是什么？</p>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- COURSE OVERVIEW -->
+      <div class="section">
+        <h2 data-lang="en">How This Course Is Organized</h2>
+        <h2 data-lang="zh">课程如何组织</h2>
+
+        <div data-lang="en">
+          <p>Social systems are complex. Building models that honestly capture this complexity—without overfitting or oversimplifying—requires tackling five fundamental challenges. We address these through four core modules:</p>
+        </div>
+        <div data-lang="zh">
+          <p>社会系统很复杂。构建能真实捕捉这种复杂性的模型——不过度拟合或过度简化——需要应对五大根本挑战。我们通过四个核心模块来解决这些问题：</p>
+        </div>
+
+        <div class="modules-overview">
+          <div class="module-card">
+            <h4 data-lang="en">Module 1: Core Methods Review</h4>
+            <h4 data-lang="zh">模块 1：核心方法复习</h4>
+            <p data-lang="en">Challenges 1 &amp; 5: Multicausality + Micronumerosity. Foundation: OLS, GLS, MLE. When can we trust our estimates? How do classical assumptions hold or fail?</p>
+            <p data-lang="zh">挑战 1 &amp; 5：多因性 + 微观观测数。基础：OLS、GLS、MLE。我们何时能信任估计？古典假设如何成立或失败？</p>
+          </div>
+          <div class="module-card">
+            <h4 data-lang="en">Module 2: Context Conditionality</h4>
+            <h4 data-lang="zh">模块 2：情境条件性</h4>
+            <p data-lang="en">Challenge 2: Effects are not universal—they depend on context. Interactions, nonlinear models, multilevel structures. How do we estimate conditional effects?</p>
+            <p data-lang="zh">挑战 2：效应不是普遍的——取决于情境。交互、非线性模型、多层结构。我们如何估计条件效应？</p>
+          </div>
+          <div class="module-card">
+            <h4 data-lang="en">Module 3: Dynamics &amp; Space</h4>
+            <h4 data-lang="zh">模块 3：动态与空间</h4>
+            <p data-lang="en">Challenge 3: Nothing is static. Lagged dependent variables, unit roots, stationarity, cointegration. How do we model temporal and spatial dependence?</p>
+            <p data-lang="zh">挑战 3：没有什么是静止的。滞后因变量、单位根、平稳性、协整。我们如何模型化时间和空间依赖？</p>
+          </div>
+          <div class="module-card">
+            <h4 data-lang="en">Module 4: Endogeneity &amp; Systems</h4>
+            <h4 data-lang="zh">模块 4：内生性与系统</h4>
+            <p data-lang="en">Challenge 4: Everything causes everything else. IV/2SLS, VAR, impulse responses, multipliers. How do we break simultaneity and estimate causal responses?</p>
+            <p data-lang="zh">挑战 4：什么都相互影响。IV/2SLS、VAR、脉冲反应、乘数。我们如何打破同时性并估计因果反应？</p>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- MODULE 1: CORE METHODS -->
+      <div class="section">
+        <h2 data-lang="en">Module 1: Core Methods Review</h2>
+        <h2 data-lang="zh">模块 1：核心方法复习</h2>
+
+        <div class="challenge-overview">
+          <p data-lang="en"><strong>Challenges 1 &amp; 5:</strong> In social science, almost everything matters (multicausality). Yet we always have limited data relative to the number of potential causes (micronumerosity). How do we choose which variables to include? How do we estimate reliably when classical assumptions fail?</p>
+          <p data-lang="zh"><strong>挑战 1 &amp; 5：</strong>在社会科学中，几乎什么都重要（多因性）。但相对于潜在原因数，我们的数据总是有限的（微观观测数）。我们如何选择包括哪些变量？当古典假设失败时，我们如何可靠地估计？</p>
+        </div>
+
+        <!-- OLS -->
+        <div class="method-section">
+          <h3 data-lang="en">Ordinary Least Squares (OLS)</h3>
+          <h3 data-lang="zh">普通最小二乘法 (OLS)</h3>
+          <div class="method-desc" data-lang="en">OLS finds the line (or plane) that minimizes the sum of squared prediction errors. It's your first tool for estimating linear relationships. When you assume errors are independent, normally distributed, and uncorrelated with your predictors, OLS gives you unbiased estimates. The key insight: OLS works because it balances fitting the data with being stable across different samples.</div>
+          <div class="method-desc" data-lang="zh">OLS 找到使预测误差平方和最小的线（或平面）。它是估计线性关系的第一个工具。当你假设误差独立、正态分布且与预测变量无关时，OLS 给你无偏估计。关键见解：OLS 之所以有效，是因为它平衡了拟合数据和在不同样本中的稳定性。</div>
+          <div class="method-analogy" data-lang="en">Think of OLS as fitting a rope to a scatter of points. You pull the rope tight so it's as close as possible to all points, but you don't force it through them. The rope finds the middle path.</div>
+          <div class="method-analogy" data-lang="zh">将 OLS 想象为将绳子拟合到散点。你拉紧绳子，使其尽可能靠近所有点，但不强制穿过它们。绳子找到中间路径。</div>
+          <div class="method-example" data-lang="en">Estimating the wage penalty for unemployment spells. OLS regresses log wages on months unemployed, controlling for education and experience.</div>
+          <div class="method-example" data-lang="zh">估计失业期的工资惩罚。OLS 将对数工资回归到失业月数，控制教育和经验。</div>
+
+          <details class="math-box">
+            <summary data-lang="en">Show the math</summary>
+            <summary data-lang="zh" style="display:none">显示数学</summary>
+            <div class="math-content">
+              <p data-lang="en">OLS minimizes the sum of squared residuals:</p>
+              <p data-lang="zh" style="display:none">OLS 最小化残差平方和：</p>
+              <div class="formula">min Σ(yᵢ - (β₀ + β₁x₁ᵢ + ... + βₖxₖᵢ))²</div>
+              <p data-lang="en">The solution (when X'X is invertible):</p>
+              <p data-lang="zh" style="display:none">解决方案（当 X'X 可逆时）：</p>
+              <div class="formula">β̂ = (X'X)⁻¹X'y</div>
+              <p data-lang="en">This is the best linear unbiased estimator (BLUE) under the Gauss-Markov assumptions.</p>
+              <p data-lang="zh" style="display:none">在高斯-马尔可夫假设下，这是最佳线性无偏估计量 (BLUE)。</p>
+            </div>
+          </details>
+        </div>
+
+        <!-- Gauss-Markov Assumptions -->
+        <div class="method-section">
+          <h3 data-lang="en">The Gauss-Markov Assumptions</h3>
+          <h3 data-lang="zh">高斯-马尔可夫假设</h3>
+          <div class="method-desc" data-lang="en">For OLS to give you unbiased and efficient estimates, five assumptions must hold. They rarely do perfectly in real data. Understanding when they fail—and what bias that creates—is essential for honest social science.</div>
+          <div class="method-desc" data-lang="zh">为了让 OLS 给你无偏和有效的估计，五个假设必须成立。它们在真实数据中很少完美。理解它们何时失败——以及这会造成什么偏差——对诚实的社会科学至关重要。</div>
+
+          <details class="math-box">
+            <summary data-lang="en">Show the assumptions</summary>
+            <summary data-lang="zh" style="display:none">显示假设</summary>
+            <div class="math-content">
+              <p data-lang="en"><strong>1. Linearity:</strong> The true relationship is E[y|X] = Xβ. If reality is nonlinear, your coefficient absorbs nonlinearity bias.</p>
+              <p data-lang="zh" style="display:none"><strong>1. 线性性：</strong>真实关系是 E[y|X] = Xβ。如果现实是非线性的，你的系数吸收非线性偏差。</p>
+              <p data-lang="en"><strong>2. No omitted variables:</strong> All relevant variables are included. If X₂ is omitted, your β̂₁ will include X₂'s effect: β̂₁ ≈ β₁ + β₂Corr(X₁,X₂).</p>
+              <p data-lang="zh" style="display:none"><strong>2. 无遗漏变量：</strong>包括所有相关变量。如果 X₂ 遗漏，你的 β̂₁ 将包括 X₂ 的效应：β̂₁ ≈ β₁ + β₂Corr(X₁,X₂)。</p>
+              <p data-lang="en"><strong>3. Exogeneity:</strong> E[u|X] = 0. Your errors are uncorrelated with predictors. Violating this (simultaneous causation, measurement error, selection bias) creates bias.</p>
+              <p data-lang="zh" style="display:none"><strong>3. 外生性：</strong>E[u|X] = 0。你的误差与预测变量无关。违反这一点（同时因果、测量误差、选择偏差）会造成偏差。</p>
+              <p data-lang="en"><strong>4. Homoscedasticity:</strong> Var(u|X) = σ². Errors have constant variance. If variance changes with X (heteroscedasticity), your standard errors are wrong.</p>
+              <p data-lang="zh" style="display:none"><strong>4. 同方差性：</strong>Var(u|X) = σ²。误差具有恒定方差。如果方差随 X 变化（异方差），你的标准误是错误的。</p>
+              <p data-lang="en"><strong>5. No autocorrelation:</strong> Cov(uᵢ, uⱼ) = 0 for i ≠ j. Errors are independent. Time series data almost always violates this.</p>
+              <p data-lang="zh" style="display:none"><strong>5. 无自相关：</strong>Cov(uᵢ, uⱼ) = 0，i ≠ j。误差独立。时间序列数据几乎总是违反这一点。</p>
+            </div>
+          </details>
+        </div>
+
+        <!-- Three Important Biases -->
+        <div class="method-section">
+          <h3 data-lang="en">Three Important Biases</h3>
+          <h3 data-lang="zh">三种重要偏差</h3>
+          <div class="method-desc" data-lang="en">When Gauss-Markov assumptions fail, three biases are common and pernicious. Understanding them helps you diagnose problems and choose methods to fix them.</div>
+          <div class="method-desc" data-lang="zh">当高斯-马尔可夫假设失败时，三种偏差很常见且有害。理解它们帮助你诊断问题并选择方法来修复。</div>
+
+          <!-- OVB -->
+          <div style="margin-top:16px">
+            <h4 data-lang="en">Omitted Variable Bias (OVB)</h4>
+            <h4 data-lang="zh">遗漏变量偏差 (OVB)</h4>
+            <div class="method-desc" data-lang="en">When you omit a variable that affects Y and correlates with X, your coefficient on X absorbs that variable's effect. The bias depends on two things: how strong the omitted variable's effect is, and how correlated it is with X.</div>
+            <div class="method-desc" data-lang="zh">当你遗漏一个影响 Y 且与 X 相关的变量时，你的 X 系数吸收该变量的效应。偏差取决于两件事：遗漏变量效应的强度，以及它与 X 的相关程度。</div>
+            <div class="method-analogy" data-lang="en">Suppose you study education's effect on wages, but omit ability. Smart people both get educated and earn more. So your education coefficient picks up some of ability's effect—you overestimate education's true causal power.</div>
+            <div class="method-analogy" data-lang="zh">假设你研究教育对工资的影响，但遗漏了能力。聪明人既受教育又赚钱更多。所以你的教育系数吸收了能力效应的一部分——你高估了教育的真实因果力量。</div>
+            <details class="math-box">
+              <summary data-lang="en">Show the formula</summary>
+              <summary data-lang="zh" style="display:none">显示公式</summary>
+              <div class="math-content">
+                <p data-lang="en">If the true model is: Y = β₁X₁ + β₂X₂ + u</p>
+                <p data-lang="zh" style="display:none">如果真实模型是：Y = β₁X₁ + β₂X₂ + u</p>
+                <p data-lang="en">But you estimate: Y = β̂₁X₁ + ũ (omitting X₂), then:</p>
+                <p data-lang="zh" style="display:none">但你估计：Y = β̂₁X₁ + ũ（遗漏 X₂），则：</p>
+                <div class="formula">E[β̂₁] = β₁ + β₂·Corr(X₁,X₂)·(SD(X₂)/SD(X₁))</div>
+                <p data-lang="en">Learn more: <a class="learn-more" href="guides/em-ovb-proof.html">Full OVB decomposition proof</a></p>
+                <p data-lang="zh" style="display:none">了解更多：<a class="learn-more" href="guides/em-ovb-proof.html">完整 OVB 分解证明</a></p>
+              </div>
+            </details>
+          </div>
+
+          <!-- Measurement Error -->
+          <div style="margin-top:16px">
+            <h4 data-lang="en">Measurement Error</h4>
+            <h4 data-lang="zh">测量误差</h4>
+            <div class="method-desc" data-lang="en">If your X variable is measured with error, you underestimate its true effect. The more measurement error, the more your coefficient shrinks toward zero ("attenuation bias"). If your Y is measured with error, it just adds noise—no bias, but less precision.</div>
+            <div class="method-desc" data-lang="zh">如果你的 X 变量有测量误差，你会低估其真实效应。测量误差越多，你的系数向零收缩越多（"衰减偏差"）。如果你的 Y 有测量误差，它只是增加噪声——无偏差，但精度降低。</div>
+            <div class="method-analogy" data-lang="en">Imagine measuring income poorly (many people misreport). If you regress health on this noisy income measure, you'll underestimate income's protective effect.</div>
+            <div class="method-analogy" data-lang="zh">想象收入测量不佳（许多人误报）。如果你将健康回归到这个嘈杂的收入测量，你会低估收入的保护效应。</div>
+          </div>
+
+          <!-- Simultaneity / Endogeneity -->
+          <div style="margin-top:16px">
+            <h4 data-lang="en">Simultaneity &amp; Reverse Causality</h4>
+            <h4 data-lang="zh">同时性与反向因果</h4>
+            <div class="method-desc" data-lang="en">When X and Y cause each other, you have a simultaneity problem. Your OLS coefficient estimates neither causal direction clearly. The direction and magnitude of bias depends on the strength of reverse causality. This is perhaps the most serious threat to causal inference in observational data.</div>
+            <div class="method-desc" data-lang="zh">当 X 和 Y 相互影响时，你有同时性问题。你的 OLS 系数不能清楚地估计任何因果方向。偏差的方向和幅度取决于反向因果的强度。这可能是观测数据中最严重的因果推断威胁。</div>
+            <div class="method-analogy" data-lang="en">Does democracy cause prosperity, or prosperity cause democracy? Both are true. Regressing development on democracy with OLS will give you a muddy estimate of neither.</div>
+            <div class="method-analogy" data-lang="zh">民主导致繁荣，还是繁荣导致民主？两者都是真的。用 OLS 将发展回归到民主将给你两者都不清楚的浑浊估计。</div>
+          </div>
+        </div>
+
+        <!-- GLS -->
+        <div class="method-section">
+          <h3 data-lang="en">Generalized Least Squares (GLS)</h3>
+          <h3 data-lang="zh">广义最小二乘法 (GLS)</h3>
+          <div class="method-desc" data-lang="en">When errors are not homoscedastic or are autocorrelated, OLS is still unbiased but inefficient—you're not using all the information in your data. GLS down-weights observations with high error variance and handles autocorrelation. It's OLS for the "real" world where errors misbehave.</div>
+          <div class="method-desc" data-lang="zh">当误差不是同方差或有自相关时，OLS 仍然无偏但无效率——你没有使用数据中的所有信息。GLS 降低权重具有高误差方差的观测值并处理自相关。它是"真实"世界中错误行为的 OLS。</div>
+          <div class="method-analogy" data-lang="en">If you're estimating from survey data where some respondents are more reliable than others, GLS lets you trust the reliable ones more.</div>
+          <div class="method-analogy" data-lang="zh">如果你从调查数据估计，其中一些受访者比其他人更可靠，GLS 让你更信任可靠的。</div>
+          <details class="math-box">
+            <summary data-lang="en">Show the formula</summary>
+            <summary data-lang="zh" style="display:none">显示公式</summary>
+            <div class="math-content">
+              <p data-lang="en">When Var(u) = Σ (a variance-covariance matrix that's not diagonal or not σ²I), GLS transforms the problem:</p>
+              <p data-lang="zh" style="display:none">当 Var(u) = Σ（不是对角的或不是 σ²I 的方差-协方差矩阵），GLS 转换问题：</p>
+              <div class="formula">β̂_GLS = (X'Σ⁻¹X)⁻¹X'Σ⁻¹y</div>
+              <p data-lang="en">The key: Σ⁻¹ gives higher weight to observations with smaller error variance.</p>
+              <p data-lang="zh" style="display:none">关键：Σ⁻¹ 对具有较小误差方差的观测值给予更高权重。</p>
+            </div>
+          </details>
+        </div>
+
+        <!-- MLE -->
+        <div class="method-section">
+          <h3 data-lang="en">Maximum Likelihood Estimation (MLE) for Nonlinear Models</h3>
+          <h3 data-lang="zh">非线性模型的最大似然估计 (MLE)</h3>
+          <div class="method-desc" data-lang="en">When your outcome is not continuous (binary: yes/no, counts: 0, 1, 2..., or duration until an event), OLS is inappropriate. MLE finds the parameters that make your observed data most likely. For binary outcomes, this means logit or probit. For counts, Poisson. MLE is flexible and handles the nonlinearity directly.</div>
+          <div class="method-desc" data-lang="zh">当你的结果不是连续的（二元：是/否、计数：0、1、2...或直到事件的持续时间），OLS 不适合。MLE 找到使观察数据最可能的参数。对于二元结果，这意味着 logit 或 probit。对于计数，泊松。MLE 灵活且直接处理非线性。</p>
+          <div class="method-example" data-lang="en">Predicting whether a bill passes (binary outcome). Logit: the probability a bill passes is a nonlinear S-curve function of its sponsor's power and bipartisan support.</div>
+          <div class="method-example" data-lang="zh">预测法案是否通过（二元结果）。Logit：法案通过的概率是其赞助人权力和两党支持的非线性 S 曲线函数。</div>
+
+          <details class="math-box">
+            <summary data-lang="en">Show the intuition</summary>
+            <summary data-lang="zh" style="display:none">显示直观</summary>
+            <div class="math-content">
+              <p data-lang="en"><strong>Logit:</strong> P(Y=1) = 1 / (1 + exp(-(β₀ + β₁X₁ + ... + βₖXₖ)))</p>
+              <p data-lang="zh" style="display:none"><strong>Logit：</strong>P(Y=1) = 1 / (1 + exp(-(β₀ + β₁X₁ + ... + βₖXₖ)))</p>
+              <p data-lang="en"><strong>Probit:</strong> P(Y=1) = Φ(β₀ + β₁X₁ + ... + βₖXₖ), where Φ is the normal CDF</p>
+              <p data-lang="zh" style="display:none"><strong>Probit：</strong>P(Y=1) = Φ(β₀ + β₁X₁ + ... + βₖXₖ)，其中 Φ 是正态 CDF</p>
+              <p data-lang="en"><strong>Poisson:</strong> E[Y|X] = exp(β₀ + β₁X₁ + ... + βₖXₖ) for count data</p>
+              <p data-lang="zh" style="display:none"><strong>泊松：</strong>E[Y|X] = exp(β₀ + β₁X₁ + ... + βₖXₖ) 对于计数数据</p>
+              <p data-lang="en">MLE maximizes the likelihood function: choose β to make P(data | β) as large as possible.</p>
+              <p data-lang="zh" style="display:none">MLE 最大化似然函数：选择 β 使 P(数据 | β) 尽可能大。</p>
+              <p data-lang="en">Learn more: <a class="learn-more" href="guides/em-mle-derivation.html">MLE derivation and likelihood ratio tests</a></p>
+              <p data-lang="zh" style="display:none">了解更多：<a class="learn-more" href="guides/em-mle-derivation.html">MLE 推导和似然比检验</a></p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- MODULE 2: INTERACTIONS & MULTILEVEL -->
+      <div class="section">
+        <h2 data-lang="en">Module 2: Context Conditionality</h2>
+        <h2 data-lang="zh">模块 2：情境条件性</h2>
+
+        <div class="challenge-overview">
+          <p data-lang="en"><strong>Challenge 2:</strong> Effects are not universal. Education's return differs by gender. Democracy's stability depends on development level. When you pool across contexts, you hide this heterogeneity. The solution: estimate separate effects by context, or use interactions to model effect modification.</p>
+          <p data-lang="zh"><strong>挑战 2：</strong>效应不是普遍的。教育回报因性别而异。民主的稳定性取决于发展水平。当你在各种情境中汇总，你隐藏了这种异质性。解决方案：为每个情境估计单独效应，或使用交互来模型化效应修饰。</p>
+        </div>
+
+        <!-- Linear Interactions -->
+        <div class="method-section">
+          <h3 data-lang="en">Linear Interactions</h3>
+          <h3 data-lang="zh">线性交互</h3>
+          <div class="method-desc" data-lang="en">An interaction term lets the effect of one variable depend on another. Instead of a single coefficient for X₁, you get different effects depending on the value of X₂. This captures context-dependence directly in your regression equation.</div>
+          <div class="method-desc" data-lang="zh">交互项让一个变量的效应取决于另一个。不是 X₁ 的单一系数，你得到取决于 X₂ 值的不同效应。这直接在回归方程中捕捉情境依赖。</div>
+          <div class="method-analogy" data-lang="en">Think of a medication's effectiveness: the dose-response relationship is different depending on whether you've eaten. Dose × Eaten is an interaction—the effect of dose depends on eating status.</div>
+          <div class="method-analogy" data-lang="zh">想想药物的有效性：剂量反应关系取决于你是否进食。剂量 × 进食是交互——剂量的效应取决于进食状态。</div>
+          <div class="method-example" data-lang="en">Gender &times; Education: the wage return to education is higher for men than women. Y = β₁Ed + β₂Male + β₃(Ed × Male) + u. The effect of education is β₁ for women, β₁ + β₃ for men.</div>
+          <div class="method-example" data-lang="zh">性别 &times; 教育：男性教育的工资回报高于女性。Y = β₁Ed + β₂Male + β₃(Ed × Male) + u。教育的效应对女性是 β₁，对男性是 β₁ + β₃。</div>
+
+          <details class="math-box">
+            <summary data-lang="en">Show the formula</summary>
+            <summary data-lang="zh" style="display:none">显示公式</summary>
+            <div class="math-content">
+              <div class="formula">Y = β₀ + β₁X₁ + β₂X₂ + β₃(X₁ × X₂) + u</div>
+              <p data-lang="en">The partial effect of X₁ on Y is: ∂Y/∂X₁ = β₁ + β₃X₂</p>
+              <p data-lang="zh" style="display:none">X₁ 对 Y 的偏效应是：∂Y/∂X₁ = β₁ + β₃X₂</p>
+              <p data-lang="en">Now the effect of X₁ <em>depends on X₂</em>. Higher X₂ means either stronger or weaker X₁ effect depending on the sign of β₃.</p>
+              <p data-lang="zh" style="display:none">现在 X₁ 的效应<em>取决于 X₂</em>。更高的 X₂ 意味着更强或更弱的 X₁ 效应，取决于 β₃ 的符号。</p>
+            </div>
+          </details>
+        </div>
+
+        <!-- Nonlinear Interactions -->
+        <div class="method-section">
+          <h3 data-lang="en">Nonlinear Interactions</h3>
+          <h3 data-lang="zh">非线性交互</h3>
+          <div class="method-desc" data-lang="en">When your outcome is binary, count, or duration, interactions become more complex. The effect of X₁ on the probability (or count, or hazard) of Y depends on X₂ in a nonlinear way. You must be careful interpreting: the coefficient on X₁ alone does not tell you the marginal effect.</div>
+          <div class="method-desc" data-lang="zh">当你的结果是二元、计数或持续时间时，交互变得更复杂。X₁ 对 Y 的概率（或计数或风险）的影响以非线性方式取决于 X₂。解释时必须谨慎：单独 X₁ 的系数不告诉你边际效应。</div>
+          <div class="method-example" data-lang="en">Logit model: The effect of campaign spending on the probability a candidate wins depends on party. In a safe district, money has little effect; in competitive ones, it's large.</div>
+          <div class="method-example" data-lang="zh">Logit 模型：竞选支出对候选人获胜概率的影响取决于党派。在安全选区，钱的影响很小；在竞争选区，影响很大。</div>
+        </div>
+
+        <!-- Multilevel Models -->
+        <div class="method-section">
+          <h3 data-lang="en">Multilevel &amp; Random-Coefficient Models</h3>
+          <h3 data-lang="zh">多层和随机系数模型</h3>
+          <div class="method-desc" data-lang="en">When observations cluster (students within schools, individuals within countries), you have nested data. Multilevel models let you estimate effects separately at each level. Students might have intercepts that vary by school, and slopes (effects) that vary too. This captures context-dependence in a structured way.</div>
+          <div class="method-desc" data-lang="zh">当观测值聚集（学校内的学生、国家内的个人）时，你有嵌套数据。多层模型让你在每个层级分别估计效应。学生可能有按学校变化的截距和也变化的斜率（效应）。这以结构化方式捕捉情境依赖。</div>
+          <div class="method-analogy" data-lang="en">Students learn differently across schools. A multilevel model says: each school has its own "base learning rate" (intercept), and the effect of teacher quality might differ by school too (slope).</div>
+          <div class="method-analogy" data-lang="zh">学生在不同学校学习方式不同。多层模型说：每所学校都有自己的"基础学习率"（截距），教师质量的效应可能也因学校而异（斜率）。</div>
+
+          <details class="math-box">
+            <summary data-lang="en">Show the structure</summary>
+            <summary data-lang="zh" style="display:none">显示结构</summary>
+            <div class="math-content">
+              <p data-lang="en"><strong>Level 1 (within-school):</strong> Scoreᵢⱼ = β₀ⱼ + β₁ⱼ(SESᵢⱼ) + rᵢⱼ</p>
+              <p data-lang="zh" style="display:none"><strong>第 1 级（学校内）：</strong>Scoreᵢⱼ = β₀ⱼ + β₁ⱼ(SESᵢⱼ) + rᵢⱼ</p>
+              <p data-lang="en"><strong>Level 2 (between-school):</strong> β₀ⱼ = γ₀₀ + γ₀₁(SchoolFundingⱼ) + u₀ⱼ</p>
+              <p data-lang="zh" style="display:none"><strong>第 2 级（学校间）：</strong>β₀ⱼ = γ₀₀ + γ₀₁(SchoolFundingⱼ) + u₀ⱼ</p>
+              <p data-lang="en">And: β₁ⱼ = γ₁₀ + u₁ⱼ (SES effect varies randomly by school)</p>
+              <p data-lang="zh" style="display:none">且：β₁ⱼ = γ₁₀ + u₁ⱼ（SES 效应按学校随机变化）</p>
+              <p data-lang="en"><strong>Rule of thumb:</strong> If intraclass correlation (ICC) > 0.05, you have meaningful clustering and should use multilevel models.</p>
+              <p data-lang="zh" style="display:none"><strong>经验法则：</strong>如果类内相关 (ICC) > 0.05，你有有意义的聚集，应该使用多层模型。</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- MODULE 3: DYNAMICS & SPACE -->
+      <div class="section">
+        <h2 data-lang="en">Module 3: Dynamics &amp; Space</h2>
+        <h2 data-lang="zh">模块 3：动态与空间</h2>
+
+        <div class="challenge-overview">
+          <p data-lang="en"><strong>Challenge 3:</strong> Nothing is static. Yesterday's inflation affects today's rates. Last year's investment shapes this year's output. Observations are not independent. Ignoring this dependence leads to spurious regression and wrong inference. You must account for dynamics: past values matter.</p>
+          <p data-lang="zh"><strong>挑战 3：</strong>没有什么是静止的。昨天的通胀影响今天的利率。去年的投资塑造今年的产出。观测值不独立。忽视这种依赖导致伪回归和错误推论。你必须考虑动态：过去值很重要。</p>
+        </div>
+
+        <!-- LDV, ADL, ECM -->
+        <div class="method-section">
+          <h3 data-lang="en">Lagged Dependent Variable &amp; Autoregressive Distributed Lag Models</h3>
+          <h3 data-lang="zh">滞后因变量与自回归分布滞后模型</h3>
+          <div class="method-desc" data-lang="en">The simplest way to model dynamics: include the lagged dependent variable (Y_{t-1}) as a predictor. This captures persistence—outcomes today depend on yesterday's outcomes. An ADL model includes lags of both Y and X, allowing effects to propagate over multiple periods.</div>
+          <div class="method-desc" data-lang="zh">模型化动态的最简单方法：将滞后因变量 (Y_{t-1}) 作为预测变量包括。这捕捉持久性——今天的结果取决于昨天的结果。ADL 模型包括 Y 和 X 的滞后，允许效应在多个期间传播。</div>
+          <div class="method-example" data-lang="en">GDP growth today depends partly on last quarter's growth (momentum), plus shocks to investment spending. An ADL captures this: Growth_t = β₁Growth_{t-1} + β₂Investment_t + β₃Investment_{t-1}.</div>
+          <div class="method-example" data-lang="zh">今天的 GDP 增长部分取决于上一季度的增长（动力），加上投资支出的冲击。ADL 捕捉这一点：Growth_t = β₁Growth_{t-1} + β₂Investment_t + β₃Investment_{t-1}。</div>
+
+          <details class="math-box">
+            <summary data-lang="en">Show the structure</summary>
+            <summary data-lang="zh" style="display:none">显示结构</summary>
+            <div class="math-content">
+              <p data-lang="en"><strong>ADL(1,1):</strong> Yₜ = α + β₁Y_{t-1} + γ₀Xₜ + γ₁X_{t-1} + uₜ</p>
+              <p data-lang="zh" style="display:none"><strong>ADL(1,1)：</strong>Yₜ = α + β₁Y_{t-1} + γ₀Xₜ + γ₁X_{t-1} + uₜ</p>
+              <p data-lang="en">If |β₁| < 1, the process is stable. The long-run effect of X on Y is: (γ₀ + γ₁)/(1 - β₁). Short-run (immediate) effect: γ₀.</p>
+              <p data-lang="zh" style="display:none">如果 |β₁| < 1，过程稳定。X 对 Y 的长期效应是：(γ₀ + γ₁)/(1 - β₁)。短期（立即）效应：γ₀。</p>
+            </div>
+          </details>
+        </div>
+
+        <!-- Unit Roots & Stationarity -->
+        <div class="method-section">
+          <h3 data-lang="en">Unit Roots &amp; Stationarity</h3>
+          <h3 data-lang="zh">单位根与平稳性</h3>
+          <div class="method-desc" data-lang="en">A time series is stationary if its mean and variance are constant over time. Many economic variables are non-stationary: stock prices, aggregate output, inflation. If you regress one non-stationary variable on another unrelated non-stationary variable, you'll find a "significant" relationship that's pure nonsense (spurious regression). Test for unit roots (Augmented Dickey-Fuller) before running regressions on time series.</div>
+          <div class="method-desc" data-lang="zh">时间序列是平稳的，如果其均值和方差随时间恒定。许多经济变量是非平稳的：股票价格、总产出、通胀。如果你将一个非平稳变量回归到另一个无关的非平稳变量，你会找到一个"显著"的关系，这是纯粹的胡说八道（伪回归）。在对时间序列运行回归之前，测试单位根（增强 Dickey-Fuller）。</div>
+          <div class="method-analogy" data-lang="en">A random walk (like a drunken person taking random steps) has no fixed mean—it drifts. Two independent random walks will sometimes "track together" purely by chance, giving you spurious correlation.</div>
+          <div class="method-analogy" data-lang="zh">随机游走（像醉汉随机踏步）没有固定均值——它漂移。两个独立的随机游走有时会"一起跟踪"，纯粹是偶然，给你伪相关。</div>
+        </div>
+
+        <!-- Spatial Models -->
+        <div class="method-section">
+          <h3 data-lang="en">Spatial &amp; Spatiotemporal Models</h3>
+          <h3 data-lang="zh">空间与时空模型</h3>
+          <div class="method-desc" data-lang="en">When observations are geographic units (regions, cities), they cluster spatially: nearby units are more similar. Ignoring this spatial dependence violates classical assumptions. Spatial models (spatial lag, spatial error) explicitly model this correlation. This is less common in social science but growing, especially for policy evaluation across regions.</div>
+          <div class="method-desc" data-lang="zh">当观测值是地理单位（区域、城市）时，它们在空间聚集：附近的单位更相似。忽视这种空间依赖违反了经典假设。空间模型（空间滞后、空间误差）明确模型化这种相关性。这在社会科学中不太常见，但在增长，特别是对地区政策评估。</div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- MODULE 4: ENDOGENEITY & SYSTEMS -->
+      <div class="section">
+        <h2 data-lang="en">Module 4: Endogeneity &amp; Causal Estimation</h2>
+        <h2 data-lang="zh">模块 4：内生性与因果估计</h2>
+
+        <div class="challenge-overview">
+          <p data-lang="en"><strong>Challenge 4:</strong> Everything causes everything else. Democracy and development feed each other. Crime and policing are simultaneous. When X and Y cause each other, OLS gives you a biased mess. Instrumental variables (IVs) break the simultaneity: find an external lever that affects only one side, and use it to extract the true causal effect.</p>
+          <p data-lang="zh"><strong>挑战 4：</strong>什么都相互影响。民主和发展相互反馈。犯罪和警务是同时的。当 X 和 Y 相互影响时，OLS 给你一个有偏的混乱。工具变量 (IV) 打破同时性：找到一个只影响一方的外部杠杆，并使用它提取真实因果效应。</p>
+        </div>
+
+        <!-- IV / 2SLS -->
+        <div class="method-section">
+          <h3 data-lang="en">Instrumental Variables &amp; Two-Stage Least Squares</h3>
+          <h3 data-lang="zh">工具变量与两阶段最小二乘法</h3>
+          <div class="method-desc" data-lang="en">An instrumental variable (IV) is a variable that affects X but does not directly affect Y (except through X). Using the IV, you can estimate how X truly affects Y, even if X and Y are endogenous. The two-stage procedure: first, predict X using the IV; second, regress Y on the predicted X. This "purifies" X of its reverse-causality correlation with Y.</div>
+          <div class="method-desc" data-lang="zh">工具变量 (IV) 是影响 X 但不直接影响 Y（除非通过 X）的变量。使用 IV，你可以估计 X 真正如何影响 Y，即使 X 和 Y 是内生的。两阶段程序：首先，使用 IV 预测 X；其次，将 Y 回归到预测的 X 上。这"净化"了 X 与 Y 的反向因果相关性。</div>
+          <div class="method-analogy" data-lang="en">Imagine you want to estimate whether being more educated makes people earn more, but education and earnings both depend on ability. You find an IV: a change in compulsory schooling laws (which affects education but not ability directly). Using this law change, you can isolate education's true effect on earnings.</div>
+          <div class="method-analogy" data-lang="zh">想象你想估计受教育程度更高是否让人赚钱更多，但教育和收入都取决于能力。你找到一个 IV：强制教育法律的变化（影响教育但不直接影响能力）。使用这个法律变化，你可以隔离教育对收入的真实效应。</div>
+          <div class="method-example" data-lang="en">Acemoglu, Johnson &amp; Robinson (2001): Does institutional quality cause development? Use IV: geographic variables (latitude, disease environment) that affect institutions but not development directly.</div>
+          <div class="method-example" data-lang="zh">Acemoglu、Johnson &amp; Robinson (2001)：制度质量是否导致发展？使用 IV：地理变量（纬度、疾病环境）影响制度但不直接影响发展。</div>
+
+          <details class="math-box">
+            <summary data-lang="en">Show the 2SLS procedure</summary>
+            <summary data-lang="zh" style="display:none">显示 2SLS 程序</summary>
+            <div class="math-content">
+              <p data-lang="en"><strong>Stage 1:</strong> Xₜ = π₀ + π₁Zₜ + νₜ, where Z is the IV</p>
+              <p data-lang="zh" style="display:none"><strong>阶段 1：</strong>Xₜ = π₀ + π₁Zₜ + νₜ，其中 Z 是 IV</p>
+              <p data-lang="en"><strong>Stage 2:</strong> Yₜ = β₀ + β₁X̂ₜ + uₜ, where X̂ is predicted from Stage 1</p>
+              <p data-lang="zh" style="display:none"><strong>阶段 2：</strong>Yₜ = β₀ + β₁X̂ₜ + uₜ，其中 X̂ 从阶段 1 预测</p>
+              <p data-lang="en">For this to work, two conditions must hold: (1) Relevance: Z must correlate strongly with X (test with F-stat > 10); (2) Exogeneity: Z must not directly affect Y.</p>
+              <p data-lang="zh" style="display:none">为了使其有效，两个条件必须成立：(1) 相关性：Z 必须与 X 强烈相关（用 F 统计量 > 10 测试）；(2) 外生性：Z 不得直接影响 Y。</p>
+              <p data-lang="en">Learn more: <a class="learn-more" href="guides/em-iv-mechanics.html">IV mechanics, weak instruments, and overidentification</a></p>
+              <p data-lang="zh" style="display:none">了解更多：<a class="learn-more" href="guides/em-iv-mechanics.html">IV 机制、弱工具和过度识别</a></p>
+            </div>
+          </details>
+        </div>
+
+        <!-- VAR & Impulse Response -->
+        <div class="method-section">
+          <h3 data-lang="en">VAR &amp; Impulse Response Functions</h3>
+          <h3 data-lang="zh">VAR 与脉冲反应函数</h3>
+          <div class="method-desc" data-lang="en">When you have multiple endogenous variables that all cause each other (a full system), you can't isolate one IV for each causal link. Instead, use a Vector Autoregression (VAR): every variable is regressed on its own lags and the lags of all other variables. Then use an impulse response function to trace how the system responds when you "shock" one variable. This captures the propagation of effects through the full system.</div>
+          <div class="method-desc" data-lang="zh">当你有多个相互影响的内生变量（一个完整系统）时，你不能为每个因果链隔离一个 IV。相反，使用向量自回归 (VAR)：每个变量对其自身滞后和所有其他变量的滞后进行回归。然后使用脉冲反应函数来追踪当你"冲击"一个变量时系统如何反应。这捕捉效应通过完整系统的传播。</div>
+          <div class="method-example" data-lang="en">Monetary policy VAR: How do interest rates, inflation, output, and unemployment respond over time when the central bank raises rates? A shock to rates propagates through the economy with lags.</div>
+          <div class="method-example" data-lang="zh">货币政策 VAR：当中央银行加息时，利率、通胀、产出和失业如何随时间响应？对利率的冲击通过经济传播，有滞后。</div>
+        </div>
+
+        <!-- Systems Multiplier -->
+        <div class="method-section">
+          <h3 data-lang="en">Systems Multipliers: Why Coefficients ≠ Causal Responses</h3>
+          <h3 data-lang="zh">系统乘数：为什么系数 ≠ 因果反应</h3>
+          <div class="method-desc" data-lang="en">This is the crucial insight of Mode IV. In a simultaneous system where Y = f(X) and X = g(Y), a one-unit increase in X doesn't lead to a one-unit increase in Y at the coefficient β₁. Instead, the system adjusts: X increases, which increases Y, which feeds back and changes X again, and so on until equilibrium. The total effect (multiplier) is larger or smaller than the direct coefficient depending on feedback strength.</div>
+          <div class="method-desc" data-lang="zh">这是模式四的关键见解。在同时系统中，Y = f(X) 和 X = g(Y)，X 增加一个单位不会导致 Y 在系数 β₁ 处增加一个单位。相反，系统调整：X 增加，这增加 Y，这反馈并再次改变 X，以此类推，直到均衡。总效应（乘数）取决于反馈强度，比直接系数更大或更小。</div>
+          <div class="method-analogy" data-lang="en">Think of fiscal stimulus: government spending increases, which increases income, which increases consumption (part of income), which increases income again, etc. The total effect on GDP is the multiplier, which is larger than the initial government spending because of this feedback.</div>
+          <div class="method-analogy" data-lang="zh">想想财政刺激：政府支出增加，这增加收入，这增加消费（部分收入），这再次增加收入，等等。对 GDP 的总效应是乘数，大于初始政府支出，因为这个反馈。</div>
+
+          <details class="math-box">
+            <summary data-lang="en">Show the multiplier logic</summary>
+            <summary data-lang="zh" style="display:none">显示乘数逻辑</summary>
+            <div class="math-content">
+              <p data-lang="en">Simple system: Y = a·X + u₁ and X = b·Y + u₂</p>
+              <p data-lang="zh" style="display:none">简单系统：Y = a·X + u₁ 和 X = b·Y + u₂</p>
+              <p data-lang="en">Solving: Y = a·(b·Y + u₂) + u₁, so Y = a·u₂/(1 - ab) + u₁/(1 - ab)</p>
+              <p data-lang="zh" style="display:none">求解：Y = a·(b·Y + u₂) + u₁，所以 Y = a·u₂/(1 - ab) + u₁/(1 - ab)</p>
+              <p data-lang="en">The multiplier on u₂ (which affects X) is a/(1 - ab), NOT just a. If ab > 0 (same-sign feedback), the multiplier amplifies a.</p>
+              <p data-lang="zh" style="display:none">u₂ 的乘数（影响 X）是 a/(1 - ab)，不仅仅是 a。如果 ab > 0（同号反馈），乘数放大 a。</p>
+              <p data-lang="en">Learn more: <a class="learn-more" href="guides/em-dynamic-multiplier.html">Dynamic multipliers and long-run equilibrium</a></p>
+              <p data-lang="zh" style="display:none">了解更多：<a class="learn-more" href="guides/em-dynamic-multiplier.html">动态乘数和长期均衡</a></p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- RESOURCES -->
+      <div class="section resources-section">
+        <h2 data-lang="en">Resources</h2>
+        <h2 data-lang="zh">资源</h2>
+
+        <h3 data-lang="en">Key References</h3>
+        <h3 data-lang="zh">关键参考</h3>
+        <ul class="resource-list">
+          <li>Angrist, J. D., & Pischke, J. S. (2008). <em>Mostly Harmless Econometrics: An Empiricist's Companion</em>. Princeton University Press.</li>
+          <li>Wooldridge, J. M. (2019). <em>Introductory Econometrics: A Modern Approach</em> (7th ed.). Cengage Learning.</li>
+          <li>Greene, W. H. (2018). <em>Econometric Analysis</em> (8th ed.). Pearson.</li>
+          <li>Hamilton, J. D. (1994). <em>Time Series Analysis</em>. Princeton University Press.</li>
+          <li>Franzese Jr., R. J., & Kam, C. D. (2009). <em>Modeling and Interpreting Interactive Hypotheses in Regression Analysis</em>. University of Michigan Press.</li>
+        </ul>
+
+        <h3 data-lang="en">Learn More</h3>
+        <h3 data-lang="zh">了解更多</h3>
+        <ul class="resource-list">
+          <li><a href="guides/em-commands.html">Stata/R Command Reference</a> — Syntax and implementation examples</li>
+          <li><a href="guides/em-ovb-proof.html">Omitted Variable Bias: The Full Decomposition</a> — Rigorous proof of the OVB formula</li>
+          <li><a href="guides/em-iv-mechanics.html">IV Mechanics: Relevance, Exogeneity, and Overidentification</a> — When and why IVs work (and fail)</li>
+          <li><a href="guides/em-mle-derivation.html">MLE Derivation &amp; Likelihood Ratio Tests</a> — From first principles to hypothesis testing</li>
+          <li><a href="guides/em-dynamic-multiplier.html">Dynamic Multipliers &amp; Long-Run Equilibrium</a> — How shocks propagate in systems</li>
+          <li><a href="theoretical-modeling.html">← Theoretical Modeling</a> — How to build models from theory</li>
+        </ul>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- PAGE NAVIGATION -->
+      <div class="page-nav">
+        <span><a href="theoretical-modeling.html">← Theoretical Modeling</a></span>
+        <span><a href="index.html">Methods Notebook Home →</a></span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function setLang(lang) {
+  document.body.className = lang;
+  document.getElementById('btn-en').style.fontWeight = (lang === 'en') ? '600' : '400';
+  document.getElementById('btn-zh').style.fontWeight = (lang === 'zh') ? '600' : '400';
+  document.getElementById('btn-en').style.color = (lang === 'en') ? 'var(--red)' : 'var(--ink-faded)';
+  document.getElementById('btn-zh').style.color = (lang === 'zh') ? 'var(--red)' : 'var(--ink-faded)';
+}
+
+// Initialize language buttons on load
+window.addEventListener('load', function() {
+  setLang(document.body.className);
+});
+</script>
+
+</body>
+</html>

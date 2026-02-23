@@ -1,0 +1,522 @@
+---
+layout: methods-guide
+title: "Opinion Dynamics"
+title_zh: "观点动态"
+parent_title: "Theoretical Modeling"
+parent_title_zh: "理论建模"
+parent_url: "theoretical-modeling.html"
+bilingual: true
+---
+
+<style>
+  .tab-bar{display:flex;gap:0;border-bottom:2px solid var(--parchment);margin-bottom:20px;}
+  .tab-btn{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.04em;padding:9px 20px;border:none;background:none;cursor:pointer;color:var(--ink-ghost);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;}
+  .tab-btn.active{color:var(--red);border-bottom-color:var(--red);}
+  .tab-pane{display:none;} .tab-pane.active{display:block;}
+  .sim-panel{background:var(--paper);border:1px solid var(--parchment);border-radius:4px;padding:24px 28px;margin:16px 0;}
+  canvas{display:block;border:1px solid var(--parchment);border-radius:3px;}
+  .two-col{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;}
+  .ctrl-group{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+  .ctrl-label{font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-ghost);display:flex;justify-content:space-between;}
+  .ctrl-val{font-family:var(--mono);color:var(--red);font-weight:500;}
+  input[type=range]{width:100%;accent-color:var(--red);}
+  .sim-btns{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap;}
+  .sim-btn{font-family:var(--sans);font-size:12px;font-weight:600;padding:7px 18px;border:none;border-radius:3px;cursor:pointer;letter-spacing:.03em;transition:background .2s;}
+  .sim-btn.run{background:var(--red);color:var(--paper);}
+  .sim-btn.run:hover{background:var(--leather);}
+  .sim-btn.pause{background:var(--gold);color:var(--paper);}
+  .sim-btn.reset{background:transparent;border:1px solid var(--parchment);color:var(--ink-ghost);}
+  .sim-btn:disabled{opacity:.4;cursor:not-allowed;}
+  .math-note{font-family:var(--mono);font-size:12px;background:var(--parchment);padding:12px 16px;border-radius:3px;margin:10px 0;color:var(--ink);line-height:1.8;}
+  .insight-box{background:var(--cream);border-left:3px solid var(--gold);padding:14px 18px;margin:14px 0;font-family:var(--serif);font-size:14px;line-height:1.6;color:var(--ink);}
+  .stat-row{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap;}
+  .stat-chip{flex:1;min-width:100px;background:var(--cream);border:1px solid var(--parchment);border-radius:3px;padding:8px 12px;text-align:center;}
+  .stat-chip .slabel{font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-ghost);display:block;margin-bottom:3px;}
+  .stat-chip .sval{font-family:var(--mono);font-size:16px;color:var(--ink);}
+  .opinion-bar{height:18px;border-radius:3px;margin:6px 0;position:relative;overflow:hidden;border:1px solid var(--parchment);}
+  .bar-label{font-family:var(--sans);font-size:10px;color:var(--ink-ghost);text-transform:uppercase;letter-spacing:.04em;}
+</style>
+
+<div class="method-header">
+  <div class="method-meta">
+    <span data-lang="en">INTERACTIVE SIMULATION · MODULE 3</span>
+    <span data-lang="zh">互动模拟 · 模块三</span>
+  </div>
+  <h1>
+    <span data-lang="en">Opinion Dynamics & Echo Chambers</span>
+    <span data-lang="zh">观点动态与回音室</span>
+  </h1>
+  <p>
+    <span data-lang="en">How do opinions evolve in social networks? Two landmark models — DeGroot's consensus averaging and Deffuant's bounded confidence — produce radically different outcomes: convergence vs. polarization.</span>
+    <span data-lang="zh">社会网络中的观点如何演化？两个里程碑式模型——DeGroot 的共识平均模型和 Deffuant 的有界置信模型——产生截然不同的结果：收敛与极化。</span>
+  </p>
+</div>
+
+<section>
+  <h2><span data-lang="en">The Core Question</span><span data-lang="zh">核心问题</span></h2>
+  <p>
+    <span data-lang="en">People talk, read, and argue. Through this interaction, their views shift — sometimes toward consensus, sometimes toward sharp division. Opinion dynamics models try to formalize this: under what conditions does a society converge to shared beliefs, and under what conditions does it fragment into polarized camps that talk past each other?</span>
+    <span data-lang="zh">人们交流、阅读、争论。通过这种互动，观点发生转变——有时走向共识，有时走向尖锐分裂。观点动态模型试图将此形式化：在什么条件下社会趋于共识，在什么条件下社会分裂为相互对立的极化阵营？</span>
+  </p>
+  <p>
+    <span data-lang="en">We model each agent as holding a continuous opinion on [0, 1]. Think of it as their position on a policy issue (e.g., 0 = strongly against immigration, 1 = strongly in favor), their confidence in a scientific consensus, or their willingness to comply with a social norm. The models ask: how does this distribution evolve over time?</span>
+    <span data-lang="zh">我们将每个主体建模为持有 [0, 1] 区间内的连续观点。可以将其理解为他们在某一政策问题上的立场（如 0 = 强烈反对移民，1 = 强烈支持），对科学共识的信心，或遵守社会规范的意愿。模型的问题是：这种分布如何随时间演化？</span>
+  </p>
+  <p>
+    <span data-lang="en">The two models here make <strong>one crucial difference</strong> in their assumptions: <em>Does it matter how far apart two agents' opinions are before they'll influence each other?</em> DeGroot says no — all neighbors always count. Deffuant says yes — agents only update from others who are already close enough. This single difference produces completely different long-run outcomes.</span>
+    <span data-lang="zh">这两个模型在假设上有<strong>一个关键差异</strong>：<em>两个主体在相互影响之前，观点差距的大小是否重要？</em>DeGroot 说不重要——所有邻居始终计入。Deffuant 说重要——主体只会更新那些观点已经足够接近的人的影响。这唯一的差异产生了截然不同的长期结果。</span>
+  </p>
+  <p>
+    <span data-lang="en">Opinion is visualized as a color spectrum — blue (0.0) → gray (0.5) → red (1.0). Watch the history canvas on the right: each column is one time step, each dot is one agent's opinion. When everyone converges, you'll see a single horizontal band of one color. When polarization sets in, you'll see distinct horizontal stripes separate out and persist.</span>
+    <span data-lang="zh">观点以颜色谱可视化——蓝色（0.0）→ 灰色（0.5）→ 红色（1.0）。观察右侧的历史画布：每列是一个时间步，每个点是一个主体的观点。当所有人收敛时，你会看到单一颜色的水平色带。当极化形成时，你会看到不同颜色的水平条纹分离出来并持续存在。</span>
+  </p>
+</section>
+
+<hr class="section-divider">
+
+<section>
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="degroot">
+      <span data-lang="en">DeGroot Model</span><span data-lang="zh">DeGroot 模型</span>
+    </button>
+    <button class="tab-btn" data-tab="deffuant">
+      <span data-lang="en">Deffuant Bounded Confidence</span><span data-lang="zh">Deffuant 有界置信</span>
+    </button>
+  </div>
+
+  <!-- DeGroot tab -->
+  <div class="tab-pane active" id="tab-degroot">
+    <h3><span data-lang="en">The Model, Step by Step</span><span data-lang="zh">模型逐步解析</span></h3>
+    <p>
+      <span data-lang="en">In DeGroot (1974), at each time step every agent updates their opinion to the <em>weighted average</em> of their own opinion and their neighbors' opinions. There is no threshold — all neighbors count, no matter how different their views are.</span>
+      <span data-lang="zh">在 DeGroot（1974）模型中，每个时间步，每个主体将观点更新为自己的观点和邻居观点的<em>加权平均值</em>。没有阈值——所有邻居都计入，无论他们的观点差异多大。</span>
+    </p>
+    <p>
+      <span data-lang="en"><strong>A concrete example:</strong> Say agent <em>i</em> has opinion 0.8 (strongly right-leaning). Their three neighbors hold opinions 0.4, 0.5, and 0.7. If self-weight = 0.50, then: new opinion = 0.5 × 0.8 + 0.5 × (0.4+0.5+0.7)/3 = 0.5 × 0.8 + 0.5 × 0.533 = 0.667. The agent moved toward the network average.</span>
+      <span data-lang="zh"><strong>一个具体例子：</strong>设主体 <em>i</em> 的观点为 0.8（强烈右倾）。其三个邻居的观点分别为 0.4、0.5 和 0.7。若自我权重 = 0.50，则：新观点 = 0.5 × 0.8 + 0.5 × (0.4+0.5+0.7)/3 = 0.5 × 0.8 + 0.5 × 0.533 = 0.667。该主体向网络平均值靠近了。</span>
+    </p>
+    <div class="math-note">x_i(t+1) = w · x_i(t) + (1−w) · &nbsp; (1/|N_i|) Σ_{j∈N_i} x_j(t)
+<br>
+<span style="color:var(--ink-ghost)">w = self-weight (stubbornness) &nbsp;|&nbsp; N_i = neighbors of i</span></div>
+    <p>
+      <span data-lang="en">The self-weight parameter (labeled "stubbornness" in the slider) controls how much agents anchor to their prior belief. w=0 means total conformism — agents ignore their own opinion completely and adopt the neighbor average each step. w=0.9 means a very stubborn agent who barely moves. In the simulation, higher stubbornness slows convergence but doesn't prevent it (as long as the network is strongly connected).</span>
+      <span data-lang="zh">自我权重参数（滑块中标注为"固执度"）控制主体对先前观点的锚定程度。w=0 意味着完全顺从——主体完全忽视自己的观点，每步采用邻居均值。w=0.9 意味着非常固执的主体，几乎不移动。在模拟中，更高的固执度会减慢收敛速度，但不会阻止收敛（只要网络是强连通的）。</span>
+    </p>
+    <p>
+      <span data-lang="en"><strong>Who determines the final consensus?</strong> Not a democratic average of initial opinions — rather, it depends on network centrality. Agents with more connections (higher degree) pull consensus toward themselves more strongly. An agent connected to everyone has outsized influence; a peripheral agent barely matters. This is why media reach and network hubs are important: in a DeGroot world, whoever reaches the most people shapes collective belief.</span>
+      <span data-lang="zh"><strong>谁决定最终共识？</strong>不是初始观点的民主平均——而是取决于网络中心性。连接更多的主体（更高度数）会更强烈地将共识拉向自身。与所有人相连的主体具有超强影响力；边缘主体几乎无足轻重。这就是为什么媒体覆盖率和网络枢纽如此重要：在 DeGroot 的世界中，触达最多人的人塑造了集体信念。</span>
+    </p>
+
+    <div class="sim-panel">
+      <div class="two-col">
+        <div style="flex:1;min-width:260px;">
+          <canvas id="dgCanvas" width="320" height="320"></canvas>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <canvas id="dgHistory" width="280" height="220" style="border:1px solid var(--parchment);border-radius:3px;display:block;width:100%;"></canvas>
+          <div class="stat-row">
+            <div class="stat-chip">
+              <span class="slabel" data-lang="en">Step</span><span class="slabel" data-lang="zh">步数</span>
+              <span class="sval" id="dgStep">0</span>
+            </div>
+            <div class="stat-chip">
+              <span class="slabel" data-lang="en">Std Dev</span><span class="slabel" data-lang="zh">标准差</span>
+              <span class="sval" id="dgStd">—</span>
+            </div>
+            <div class="stat-chip">
+              <span class="slabel" data-lang="en">Converged?</span><span class="slabel" data-lang="zh">已收敛？</span>
+              <span class="sval" id="dgConv">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sim-btns">
+        <button class="sim-btn run" id="dgRun"><span data-lang="en">▶ Run</span><span data-lang="zh">▶ 运行</span></button>
+        <button class="sim-btn pause" id="dgPause" disabled><span data-lang="en">⏸ Pause</span><span data-lang="zh">⏸ 暂停</span></button>
+        <button class="sim-btn reset" id="dgReset"><span data-lang="en">↺ Reset</span><span data-lang="zh">↺ 重置</span></button>
+      </div>
+
+      <div class="ctrl-group">
+        <div class="ctrl-label"><span data-lang="en">Agents</span><span data-lang="zh">主体数</span><span class="ctrl-val" id="dgNVal">30</span></div>
+        <input type="range" id="dgN" min="10" max="60" value="30" step="5">
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label"><span data-lang="en">Network density (avg edges/node)</span><span data-lang="zh">网络密度（平均连接数）</span><span class="ctrl-val" id="dgKVal">4</span></div>
+        <input type="range" id="dgK" min="2" max="10" value="4" step="1">
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label"><span data-lang="en">Self-weight (stubbornness)</span><span data-lang="zh">自我权重（固执度）</span><span class="ctrl-val" id="dgWVal">0.50</span></div>
+        <input type="range" id="dgW" min="0" max="0.9" value="0.5" step="0.05">
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <strong data-lang="en">DeGroot's theorem: </strong><strong data-lang="zh">DeGroot 定理：</strong>
+      <span data-lang="en">If the influence network is strongly connected and aperiodic, the process always converges to a consensus — a single opinion equal to a weighted average of initial opinions. The final opinion reflects network centrality: high-degree, influential nodes pull consensus toward themselves. The converged opinion is determined by the network's stationary distribution.</span>
+      <span data-lang="zh">若影响力网络强连通且非周期，过程必然收敛到共识——即初始观点的加权平均值。最终观点反映网络中心性：高度数、影响力强的节点将共识拉向自身。收敛观点由网络的平稳分布决定。</span>
+    </div>
+  </div>
+
+  <!-- Deffuant tab -->
+  <div class="tab-pane" id="tab-deffuant">
+    <h3><span data-lang="en">The Model, Step by Step</span><span data-lang="zh">模型逐步解析</span></h3>
+    <p>
+      <span data-lang="en">Deffuant et al. (2000) add one crucial assumption to the opinion dynamics picture: agents <em>only update from people whose opinions are already close to theirs</em>. The distance threshold ε ("epsilon") is called the <strong>confidence bound</strong> — it captures the idea that people with very different views don't really "hear" each other, or simply refuse to update from those they see as too extreme.</span>
+      <span data-lang="zh">Deffuant 等人（2000）在观点动态图景中加入了一个关键假设：主体<em>只会更新观点与自己已经相近的人的影响</em>。距离阈值 ε（"epsilon"）称为<strong>置信边界</strong>——它捕捉了这样一种想法：观点差异非常大的人不会真正"听到"对方，或者干脆拒绝向那些被自己视为极端的人更新。</span>
+    </p>
+    <p>
+      <span data-lang="en"><strong>A concrete example:</strong> ε = 0.25. Agent <em>i</em> holds opinion 0.3 (center-left) and agent <em>j</em> holds 0.8 (center-right). Difference = |0.8 − 0.3| = 0.5 > ε, so <em>no interaction</em>. But if agent <em>k</em> holds 0.45, then |0.45 − 0.3| = 0.15 < ε — they interact, and both move toward each other by factor μ. This interaction is strictly bilateral: no one else is affected.</span>
+      <span data-lang="zh"><strong>一个具体例子：</strong>ε = 0.25。主体 <em>i</em> 持有观点 0.3（中左），主体 <em>j</em> 持有观点 0.8（中右）。差值 = |0.8 − 0.3| = 0.5 > ε，因此<em>不发生交互</em>。但如果主体 <em>k</em> 持有 0.45，则 |0.45 − 0.3| = 0.15 < ε——他们发生交互，双方都以系数 μ 相互靠近。这种交互严格是双边的：不影响其他人。</span>
+    </p>
+    <div class="math-note">Select random pair (i, j):<br>
+If |x_i − x_j| < ε:  &nbsp; ← only then do they interact<br>
+&nbsp;&nbsp;x_i ← x_i + μ(x_j − x_i)  &nbsp;← i moves toward j<br>
+&nbsp;&nbsp;x_j ← x_j + μ(x_i − x_j)  &nbsp;← j moves toward i<br>
+<br>
+<span style="color:var(--ink-ghost)">ε: confidence bound (how open-minded?) &nbsp;|&nbsp; μ: step size (how fast they converge, 0–0.5)</span></div>
+    <p>
+      <span data-lang="en"><strong>Why does small ε create polarization?</strong> Here's the mechanism: when ε is small, only people who already agree interact. After many rounds, nearby agents cluster together into a tight group. Once two clusters are more than ε apart, they can <em>never</em> interact again — they're permanently isolated. The result is persistent multi-cluster polarization, even though <em>no one is being malicious</em> and <em>every interaction was a genuine attempt to find common ground</em>.</span>
+      <span data-lang="zh"><strong>为什么小 ε 会产生极化？</strong>机制如下：当 ε 较小时，只有已经同意的人才会互动。经过多轮之后，相邻主体聚集成一个紧密的群体。一旦两个集群相距超过 ε，它们就<em>永远无法</em>再次互动——被永久隔离。结果是持续的多集群极化，尽管<em>没有人居心不良</em>，<em>每次互动都是寻找共同点的真诚尝试</em>。</span>
+    </p>
+    <p>
+      <span data-lang="en">The key threshold: when ε > 0.5, even the two extreme agents (0 and 1) can interact, and a single consensus always forms. When ε < 0.5, the opinion space fractures. The predicted number of final clusters is approximately <strong>1/(2ε)</strong>. Try ε = 0.1 (≈5 clusters), ε = 0.25 (≈2), ε = 0.6 (1 consensus). This is the model's central result, and it has become a canonical theoretical explanation for why echo chambers form even in the absence of any algorithm or partisan media.</span>
+      <span data-lang="zh">关键阈值：当 ε > 0.5 时，即使两个极端主体（0 和 1）也可以互动，必然形成单一共识。当 ε < 0.5 时，观点空间碎裂。最终集群数量的预测约为 <strong>1/(2ε)</strong>。试试 ε = 0.1（约 5 个集群）、ε = 0.25（约 2 个）、ε = 0.6（1 个共识）。这是该模型的核心结论，已成为回音室在没有任何算法或党派媒体的情况下形成的经典理论解释。</span>
+    </p>
+
+    <div class="sim-panel">
+      <div class="two-col">
+        <div style="flex:1;min-width:260px;">
+          <canvas id="dfCanvas" width="320" height="320"></canvas>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <canvas id="dfHistory" width="280" height="220" style="border:1px solid var(--parchment);border-radius:3px;display:block;width:100%;"></canvas>
+          <div class="stat-row">
+            <div class="stat-chip">
+              <span class="slabel" data-lang="en">Interactions</span><span class="slabel" data-lang="zh">互动次数</span>
+              <span class="sval" id="dfStep">0</span>
+            </div>
+            <div class="stat-chip">
+              <span class="slabel" data-lang="en">Clusters</span><span class="slabel" data-lang="zh">集群数</span>
+              <span class="sval" id="dfClusters">—</span>
+            </div>
+            <div class="stat-chip">
+              <span class="slabel" data-lang="en">Std Dev</span><span class="slabel" data-lang="zh">标准差</span>
+              <span class="sval" id="dfStd">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sim-btns">
+        <button class="sim-btn run" id="dfRun"><span data-lang="en">▶ Run</span><span data-lang="zh">▶ 运行</span></button>
+        <button class="sim-btn pause" id="dfPause" disabled><span data-lang="en">⏸ Pause</span><span data-lang="zh">⏸ 暂停</span></button>
+        <button class="sim-btn reset" id="dfReset"><span data-lang="en">↺ Reset</span><span data-lang="zh">↺ 重置</span></button>
+      </div>
+
+      <div class="ctrl-group">
+        <div class="ctrl-label"><span data-lang="en">Agents</span><span data-lang="zh">主体数</span><span class="ctrl-val" id="dfNVal">80</span></div>
+        <input type="range" id="dfN" min="20" max="150" value="80" step="10">
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label"><span data-lang="en">ε — Confidence bound</span><span data-lang="zh">ε — 置信边界</span><span class="ctrl-val" id="dfEpsVal">0.25</span></div>
+        <input type="range" id="dfEps" min="0.05" max="0.6" value="0.25" step="0.01">
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label"><span data-lang="en">μ — Convergence speed</span><span data-lang="zh">μ — 收敛速度</span><span class="ctrl-val" id="dfMuVal">0.20</span></div>
+        <input type="range" id="dfMu" min="0.05" max="0.5" value="0.2" step="0.05">
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <strong data-lang="en">The ε transition: </strong><strong data-lang="zh">ε 相变：</strong>
+      <span data-lang="en">When ε > 0.5, one consensus cluster forms. When ε is small (0.1–0.2), many small clusters form — polarization. The number of final clusters ≈ 1/(2ε). This is the central result: a small confidence horizon produces persistent disagreement — an echo chamber — even in the absence of any malicious agent or algorithm.</span>
+      <span data-lang="zh">当 ε > 0.5 时，形成一个共识集群。当 ε 较小（0.1–0.2）时，形成许多小集群——极化。最终集群数 ≈ 1/(2ε)。这是核心结论：即使没有任何恶意主体或算法，较小的置信边界也会产生持久分歧——即回音室。</span>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/guides/tm-sir.html">
+    <span class="pn-arrow">←</span>
+    <span>
+      <span class="pn-dir" data-lang="en">Previous</span><span class="pn-dir" data-lang="zh">上一篇</span>
+      <span class="pn-title" data-lang="en">SIR Epidemic Model</span><span class="pn-title" data-lang="zh">SIR 流行病模型</span>
+    </span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/guides/tm-evogame.html">
+    <span>
+      <span class="pn-dir" data-lang="en">Next</span><span class="pn-dir" data-lang="zh">下一篇</span>
+      <span class="pn-title" data-lang="en">Evolutionary Game Theory</span><span class="pn-title" data-lang="zh">演化博弈论</span>
+    </span>
+    <span class="pn-arrow">→</span>
+  </a>
+</div>
+
+<script>
+// ── Tab switching ────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── Color helpers ────────────────────────────────────────────────
+function opinionColor(v) {
+  // 0 = blue, 0.5 = gray, 1 = red
+  const r = v < 0.5 ? Math.round(v*2*100+80) : Math.round(80+(v-.5)*2*100);
+  const g = v < 0.5 ? Math.round(v*2*80+80) : Math.round(160-(v-.5)*2*100);
+  const b = v < 0.5 ? Math.round(180-(v*2*100)) : Math.round(80-(v-.5)*2*60);
+  return `rgb(${r},${g},${b})`;
+}
+
+// ── Layout helpers ───────────────────────────────────────────────
+function circleLayout(n, cx, cy, r) {
+  return Array.from({length:n}, (_,i)=>{
+    const θ = 2*Math.PI*i/n - Math.PI/2;
+    return {x:cx+r*Math.cos(θ), y:cy+r*Math.sin(θ)};
+  });
+}
+
+// ═══════════════════════════════════════════
+// DEGROOT MODEL
+// ═══════════════════════════════════════════
+const DGC = document.getElementById('dgCanvas');
+const dgctx = DGC.getContext('2d');
+const DGH = document.getElementById('dgHistory');
+const dhctx = DGH.getContext('2d');
+
+let dgAgents=[], dgEdges=[], dgRunning=false, dgStep=0, dgRaf=null, dgHist=[];
+
+function dgInit() {
+  dgRunning=false; dgStep=0; dgHist=[];
+  document.getElementById('dgRun').disabled=false;
+  document.getElementById('dgPause').disabled=true;
+  const n=+document.getElementById('dgN').value;
+  const k=+document.getElementById('dgK').value;
+  const pos=circleLayout(n, DGC.width/2, DGC.height/2, DGC.width/2-30);
+  dgAgents = pos.map((p,i)=>({...p, opinion:Math.random()}));
+  // random edges
+  dgEdges=[];
+  for(let i=0;i<n;i++) {
+    for(let j=i+1;j<n;j++) {
+      if(Math.random() < k/(n-1)) dgEdges.push([i,j]);
+    }
+  }
+  dgDraw(); dgDrawHist();
+  document.getElementById('dgStep').textContent=0;
+  document.getElementById('dgStd').textContent='—';
+  document.getElementById('dgConv').textContent='—';
+}
+
+function dgDoStep() {
+  const w=+document.getElementById('dgW').value;
+  const n=dgAgents.length;
+  const adj=Array.from({length:n},()=>[]);
+  dgEdges.forEach(([i,j])=>{adj[i].push(j);adj[j].push(i);});
+  const next=dgAgents.map((a,i)=>{
+    const nbrs=adj[i];
+    if(!nbrs.length) return a.opinion;
+    const nbrAvg=nbrs.reduce((s,j)=>s+dgAgents[j].opinion,0)/nbrs.length;
+    return w*a.opinion + (1-w)*nbrAvg;
+  });
+  dgAgents.forEach((a,i)=>a.opinion=next[i]);
+  dgStep++;
+  dgHist.push(dgAgents.map(a=>a.opinion));
+  if(dgHist.length>150) dgHist.shift();
+  const std=dgStd();
+  document.getElementById('dgStep').textContent=dgStep;
+  document.getElementById('dgStd').textContent=std.toFixed(4);
+  document.getElementById('dgConv').textContent=std<0.005?'✓':'…';
+  dgDraw(); dgDrawHist();
+}
+
+function dgStd() {
+  const ops=dgAgents.map(a=>a.opinion);
+  const mean=ops.reduce((a,b)=>a+b,0)/ops.length;
+  return Math.sqrt(ops.reduce((s,x)=>s+(x-mean)**2,0)/ops.length);
+}
+
+function dgDraw() {
+  dgctx.fillStyle='#F9F7F3'; dgctx.fillRect(0,0,DGC.width,DGC.height);
+  dgEdges.forEach(([i,j])=>{
+    dgctx.strokeStyle='rgba(180,170,160,0.3)'; dgctx.lineWidth=1;
+    dgctx.beginPath(); dgctx.moveTo(dgAgents[i].x,dgAgents[i].y);
+    dgctx.lineTo(dgAgents[j].x,dgAgents[j].y); dgctx.stroke();
+  });
+  dgAgents.forEach(a=>{
+    dgctx.beginPath(); dgctx.arc(a.x,a.y,7,0,Math.PI*2);
+    dgctx.fillStyle=opinionColor(a.opinion); dgctx.fill();
+    dgctx.strokeStyle='rgba(80,80,80,0.15)'; dgctx.lineWidth=1; dgctx.stroke();
+  });
+}
+
+function dgDrawHist() {
+  dhctx.fillStyle='#F9F7F3'; dhctx.fillRect(0,0,DGH.width,DGH.height);
+  if(!dgHist.length) return;
+  const n=dgAgents.length;
+  dgHist.forEach((snapshot,t)=>{
+    const x=t/dgHist.length*DGH.width;
+    snapshot.forEach(op=>{
+      const y=(1-op)*DGH.height;
+      dhctx.fillStyle=opinionColor(op);
+      dhctx.fillRect(x,y,DGH.width/dgHist.length+1,2);
+    });
+  });
+}
+
+let dgLast=0;
+function dgLoop(t) {
+  dgRaf=requestAnimationFrame(dgLoop);
+  if(!dgRunning) return;
+  if(t-dgLast>120) { dgDoStep(); dgLast=t; }
+}
+
+document.getElementById('dgRun').addEventListener('click',()=>{
+  dgRunning=true; document.getElementById('dgRun').disabled=true; document.getElementById('dgPause').disabled=false;
+});
+document.getElementById('dgPause').addEventListener('click',()=>{
+  dgRunning=false; document.getElementById('dgRun').disabled=false; document.getElementById('dgPause').disabled=true;
+});
+document.getElementById('dgReset').addEventListener('click', dgInit);
+['dgN','dgK','dgW'].forEach(id=>{
+  const map={dgN:'dgNVal',dgK:'dgKVal',dgW:'dgWVal'};
+  document.getElementById(id).addEventListener('input',e=>{
+    document.getElementById(map[id]).textContent=e.target.value;
+  });
+});
+
+dgInit();
+requestAnimationFrame(dgLoop);
+
+// ═══════════════════════════════════════════
+// DEFFUANT MODEL
+// ═══════════════════════════════════════════
+const DFC = document.getElementById('dfCanvas');
+const dfctx = DFC.getContext('2d');
+const DFH = document.getElementById('dfHistory');
+const dfhctx = DFH.getContext('2d');
+
+let dfAgents=[], dfRunning=false, dfInter=0, dfRaf=null, dfHist=[];
+
+function dfInit() {
+  dfRunning=false; dfInter=0; dfHist=[];
+  document.getElementById('dfRun').disabled=false;
+  document.getElementById('dfPause').disabled=true;
+  const n=+document.getElementById('dfN').value;
+  // layout in rows
+  const cols=Math.ceil(Math.sqrt(n*1.5));
+  const rows=Math.ceil(n/cols);
+  const padX=20, padY=20;
+  dfAgents = Array.from({length:n},(_,i)=>({
+    x: padX+(i%cols)/(cols-1||1)*(DFC.width-2*padX),
+    y: padY+(Math.floor(i/cols))/(rows-1||1)*(DFC.height-2*padY),
+    opinion:Math.random()
+  }));
+  dfDraw(); dfDrawHist();
+  document.getElementById('dfStep').textContent=0;
+  document.getElementById('dfClusters').textContent='—';
+  document.getElementById('dfStd').textContent='—';
+}
+
+function dfDoSteps(k=20) {
+  const eps=+document.getElementById('dfEps').value;
+  const mu=+document.getElementById('dfMu').value;
+  const n=dfAgents.length;
+  for(let s=0;s<k;s++) {
+    const i=Math.floor(Math.random()*n);
+    const j=Math.floor(Math.random()*n);
+    if(i===j) continue;
+    const diff=Math.abs(dfAgents[i].opinion-dfAgents[j].opinion);
+    if(diff<eps) {
+      const d=dfAgents[j].opinion-dfAgents[i].opinion;
+      dfAgents[i].opinion+=mu*d;
+      dfAgents[j].opinion-=mu*d;
+    }
+    dfInter++;
+  }
+  dfHist.push(dfAgents.map(a=>a.opinion));
+  if(dfHist.length>150) dfHist.shift();
+  const clusters=dfCountClusters();
+  const std=dfStd();
+  document.getElementById('dfStep').textContent=dfInter;
+  document.getElementById('dfClusters').textContent=clusters;
+  document.getElementById('dfStd').textContent=std.toFixed(4);
+  dfDraw(); dfDrawHist();
+}
+
+function dfCountClusters() {
+  const eps=+document.getElementById('dfEps').value;
+  const sorted=[...dfAgents].sort((a,b)=>a.opinion-b.opinion);
+  let c=1;
+  for(let i=1;i<sorted.length;i++) if(sorted[i].opinion-sorted[i-1].opinion>eps) c++;
+  return c;
+}
+
+function dfStd() {
+  const ops=dfAgents.map(a=>a.opinion);
+  const mean=ops.reduce((a,b)=>a+b,0)/ops.length;
+  return Math.sqrt(ops.reduce((s,x)=>s+(x-mean)**2,0)/ops.length);
+}
+
+function dfDraw() {
+  dfctx.fillStyle='#F9F7F3'; dfctx.fillRect(0,0,DFC.width,DFC.height);
+  dfAgents.forEach(a=>{
+    dfctx.beginPath(); dfctx.arc(a.x,a.y,5,0,Math.PI*2);
+    dfctx.fillStyle=opinionColor(a.opinion); dfctx.fill();
+    dfctx.strokeStyle='rgba(80,80,80,0.1)'; dfctx.lineWidth=1; dfctx.stroke();
+  });
+  // distribution bar at bottom
+  const bH=14, bY=DFC.height-bH-4;
+  const bW=DFC.width-20;
+  const bX=10;
+  dfctx.fillStyle='#EDE7D9'; dfctx.fillRect(bX,bY,bW,bH);
+  dfAgents.forEach(a=>{
+    const px=bX+a.opinion*bW;
+    dfctx.fillStyle=opinionColor(a.opinion);
+    dfctx.fillRect(px-1.5,bY,3,bH);
+  });
+}
+
+function dfDrawHist() {
+  dfhctx.fillStyle='#F9F7F3'; dfhctx.fillRect(0,0,DFH.width,DFH.height);
+  if(!dfHist.length) return;
+  dfHist.forEach((snapshot,t)=>{
+    const x=t/dfHist.length*DFH.width;
+    snapshot.forEach(op=>{
+      const y=(1-op)*DFH.height;
+      dfhctx.fillStyle=opinionColor(op);
+      dfhctx.fillRect(x,y,DFH.width/dfHist.length+1,2);
+    });
+  });
+}
+
+let dfLast=0;
+function dfLoop(t) {
+  dfRaf=requestAnimationFrame(dfLoop);
+  if(!dfRunning) return;
+  if(t-dfLast>80) { dfDoSteps(30); dfLast=t; }
+}
+
+document.getElementById('dfRun').addEventListener('click',()=>{
+  dfRunning=true; document.getElementById('dfRun').disabled=true; document.getElementById('dfPause').disabled=false;
+});
+document.getElementById('dfPause').addEventListener('click',()=>{
+  dfRunning=false; document.getElementById('dfRun').disabled=false; document.getElementById('dfPause').disabled=true;
+});
+document.getElementById('dfReset').addEventListener('click', dfInit);
+['dfN','dfEps','dfMu'].forEach(id=>{
+  const map={dfN:'dfNVal',dfEps:'dfEpsVal',dfMu:'dfMuVal'};
+  document.getElementById(id).addEventListener('input',e=>{
+    document.getElementById(map[id]).textContent=e.target.value;
+  });
+});
+
+dfInit();
+requestAnimationFrame(dfLoop);
+</script>

@@ -1,0 +1,566 @@
+---
+layout: methods-guide
+title: "Factor Analysis in R: EFA and CFA Step-by-Step"
+title_zh: "R 语言因子分析：EFA 与 CFA 全流程"
+parent_title: "Measurement & Scaling"
+parent_title_zh: "测量与量表"
+parent_url: "reg-measurement.html"
+bilingual: true
+---
+
+<style>
+  .method-header {
+    background: linear-gradient(135deg, var(--cream) 0%, var(--parchment) 100%);
+    border-left: 4px solid var(--gold);
+    padding: 24px;
+    margin-bottom: 28px;
+    border-radius: 3px;
+  }
+  
+  .method-meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faded);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 12px;
+  }
+  
+  .method-header h1 {
+    font-family: var(--serif);
+    font-size: 32px;
+    color: var(--ink);
+    margin: 8px 0 12px 0;
+    font-weight: normal;
+  }
+  
+  .method-header p {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--ink-faded);
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  .insight-box {
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-family: var(--serif);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  
+  .math-note {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--parchment);
+    padding: 12px 16px;
+    border-radius: 3px;
+    margin: 10px 0;
+    color: var(--ink);
+    overflow-x: auto;
+  }
+  
+  .section-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--ink);
+    margin: 28px 0 14px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gold);
+  }
+  
+  .theory-text {
+    font-family: var(--serif);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 12px 0;
+  }
+  
+  .step-box {
+    background: var(--parchment);
+    padding: 18px;
+    border-radius: 3px;
+    margin: 16px 0;
+    border-left: 4px solid var(--warm);
+  }
+  
+  .step-title {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--warm);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+  }
+  
+  .code-block {
+    background: var(--paper);
+    padding: 16px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 13px;
+    overflow-x: auto;
+    line-height: 1.7;
+    margin: 12px 0;
+    color: var(--ink);
+    border: 1px solid var(--ink-ghost);
+  }
+  
+  .code-label {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ink-faded);
+    margin-top: 14px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 16px 0;
+    border: 1px solid var(--ink-ghost);
+    border-radius: 3px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--serif);
+    font-size: 13px;
+  }
+  
+  table th {
+    background: var(--cream);
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 2px solid var(--gold);
+    color: var(--ink);
+    font-weight: 600;
+  }
+  
+  table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--ink-ghost);
+    color: var(--ink);
+  }
+  
+  table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .warning-box {
+    background: rgba(204, 0, 0, 0.05);
+    border-left: 3px solid var(--red);
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-family: var(--serif);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  
+  [data-lang="zh"] {
+    display: none;
+  }
+  
+  body.lang-zh [data-lang="en"] {
+    display: none;
+  }
+  
+  body.lang-zh [data-lang="zh"] {
+    display: inline;
+  }
+</style>
+
+<div class="method-header">
+  <div class="method-meta" data-lang="en">CODE WALKTHROUGH · GUIDE 2</div>
+  <div class="method-meta" data-lang="zh">代码演示 · 指南 2</div>
+  <h1 data-lang="en">Factor Analysis in R: EFA and CFA Step-by-Step</h1>
+  <h1 data-lang="zh">R 语言因子分析：EFA 与 CFA 全流程</h1>
+  <p data-lang="en">Complete walkthrough: exploratory factor analysis (EFA) to confirm factor structure with CFA using a political trust scale.</p>
+  <p data-lang="zh">完整演示：从探索性因子分析 (EFA) 到用 CFA 确认因子结构，使用政治信任量表。</p>
+</div>
+
+<div class="section-title" data-lang="en">The Dataset</div>
+<div class="section-title" data-lang="zh">数据集</div>
+
+<div class="theory-text" data-lang="en">
+  We analyze a political trust scale with 8 items, each rated 1-5:
+</div>
+<div class="theory-text" data-lang="zh">
+  我们分析一个包含 8 个项目的政治信任量表，每个项目评分 1-5：
+</div>
+
+<div class="table-wrapper">
+  <table>
+    <tr>
+      <th data-lang="en">Item</th>
+      <th data-lang="zh">项目</th>
+      <th data-lang="en">Description</th>
+      <th data-lang="zh">描述</th>
+    </tr>
+    <tr>
+      <td>parliament</td>
+      <td></td>
+      <td data-lang="en">Trust in parliament</td>
+      <td data-lang="zh">对议会的信任</td>
+    </tr>
+    <tr>
+      <td>courts</td>
+      <td></td>
+      <td data-lang="en">Trust in courts</td>
+      <td data-lang="zh">对法院的信任</td>
+    </tr>
+    <tr>
+      <td>elections</td>
+      <td></td>
+      <td data-lang="en">Trust in election system</td>
+      <td data-lang="zh">对选举制度的信任</td>
+    </tr>
+    <tr>
+      <td>media</td>
+      <td></td>
+      <td data-lang="en">Trust in media</td>
+      <td data-lang="zh">对媒体的信任</td>
+    </tr>
+    <tr>
+      <td>police</td>
+      <td></td>
+      <td data-lang="en">Trust in police</td>
+      <td data-lang="zh">对警察的信任</td>
+    </tr>
+    <tr>
+      <td>president</td>
+      <td></td>
+      <td data-lang="en">Trust in president</td>
+      <td data-lang="zh">对总统的信任</td>
+    </tr>
+    <tr>
+      <td>local_gov</td>
+      <td></td>
+      <td data-lang="en">Trust in local government</td>
+      <td data-lang="zh">对地方政府的信任</td>
+    </tr>
+    <tr>
+      <td>ngos</td>
+      <td></td>
+      <td data-lang="en">Trust in NGOs</td>
+      <td data-lang="zh">对非政府组织的信任</td>
+    </tr>
+  </table>
+</div>
+
+<div class="insight-box" data-lang="en">
+  <strong>Expected structure:</strong> We hypothesize two latent factors: (1) Institutional trust (parliament, courts, elections, media), and (2) Executive trust (police, president, local government, NGOs).
+</div>
+<div class="insight-box" data-lang="zh">
+  <strong>预期结构：</strong>我们假设两个潜在因子：(1) 制度信任（议会、法院、选举、媒体），(2) 行政信任（警察、总统、地方政府、非政府组织）。
+</div>
+
+<div class="section-title" data-lang="en">Step 1: Data Preparation & Correlation Matrix</div>
+<div class="section-title" data-lang="zh">步骤 1：数据准备和相关矩阵</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">Load libraries and check data quality</div>
+  <div class="step-title" data-lang="zh">加载库并检查数据质量</div>
+  
+  <div class="code-block"><code>library(psych)
+library(lavaan)
+library(tidyverse)
+
+# Load your data
+# items_df: rows = respondents, columns = 8 trust items
+data(trust_data)  # or: trust_data <- read.csv("trust.csv")
+
+# Descriptive statistics
+describe(trust_data)
+# Check means, SDs, skewness—items should vary meaningfully</code></pre>
+</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">Compute correlation matrix and factorability tests</div>
+  <div class="step-title" data-lang="zh">计算相关矩阵和可因子分解性检验</div>
+  
+  <div class="code-block"><code># Correlation matrix
+cor_matrix <- cor(trust_data, use = "pairwise.complete.obs")
+round(cor_matrix, 2)
+
+# KMO (Kaiser–Meyer–Olkin) test
+KMO(cor_matrix)
+# KMO > 0.7: acceptable
+# KMO > 0.8: meritorious
+# KMO > 0.9: marvelous
+# If KMO < 0.5: factor analysis inappropriate
+
+# Bartlett's test: are correlations significantly different from 0?
+cortest.bartlett(cor_matrix, n = nrow(trust_data))
+# p < 0.05: factor analysis is appropriate</code></pre>
+</div>
+
+  <div class="insight-box" data-lang="en">
+    <strong>Interpretation:</strong> KMO and Bartlett's test answer: "Is factor analysis suitable for this data?" A high KMO (>0.7) and significant Bartlett's test (p < 0.05) are good signs. If KMO < 0.5, your items may not cluster into factors.
+  </div>
+  <div class="insight-box" data-lang="zh">
+    <strong>解释：</strong>KMO 和 Bartlett 检验回答："因子分析是否适合这些数据？" 高 KMO (>0.7) 和显著的 Bartlett 检验 (p < 0.05) 是好信号。如果 KMO < 0.5，您的项目可能不聚类成因子。
+  </div>
+</div>
+
+<div class="section-title" data-lang="en">Step 2: Determine Number of Factors</div>
+<div class="section-title" data-lang="zh">步骤 2：确定因子数量</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">Scree plot and parallel analysis</div>
+  <div class="step-title" data-lang="zh">碎石图和平行分析</div>
+  
+  <div class="code-block"><code># Scree plot: plot eigenvalues
+scree(cor_matrix, factors = TRUE, pc = FALSE)
+# Look for the "elbow"—where eigenvalues flatten out
+# Classic rule: Kaiser criterion (eigenvalue > 1)
+
+# Parallel analysis (more rigorous)
+fa.parallel(trust_data, fa = "fa", n.iter = 100)
+# Compare actual eigenvalues to random eigenvalues
+# Retain factors where actual > random line
+# This usually suggests fewer factors than Kaiser rule</code></pre>
+</div>
+
+  <div class="code-block"><code># Manual eigenvalues
+eigen(cor_matrix)$values
+# Cumulative variance explained:
+cumsum(eigen(cor_matrix)$values) / sum(eigen(cor_matrix)$values)</code></pre>
+</div>
+
+  <div class="insight-box" data-lang="en">
+    <strong>Why parallel analysis?</strong> The Kaiser criterion (eigenvalue > 1) often overestimates the number of factors, especially with many items. Parallel analysis compares your data to random correlations—a more conservative approach.
+  </div>
+  <div class="insight-box" data-lang="zh">
+    <strong>为什么是平行分析？</strong>Kaiser 准则（特征值 > 1）经常高估因子数量，特别是在有很多项目时。平行分析将您的数据与随机相关进行比较——一个更保守的方法。
+  </div>
+</div>
+
+<div class="section-title" data-lang="en">Step 3: Run Exploratory Factor Analysis (EFA)</div>
+<div class="section-title" data-lang="zh">步骤 3：运行探索性因子分析 (EFA)</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">1-factor solution (baseline)</div>
+  <div class="step-title" data-lang="zh">1 因子解（基准）</div>
+  
+  <div class="code-block"><code>efa_1f <- fa(trust_data, nfactors = 1, rotate = "none", fm = "ml")
+print(efa_1f)</code></pre>
+</div>
+</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">2-factor solution with oblique rotation</div>
+  <div class="step-title" data-lang="zh">2 因子解与倾斜旋转</div>
+  
+  <div class="code-block"><code># Oblique rotation (promax): allows factors to correlate
+# Use this when you expect factors to be related
+efa_2f <- fa(trust_data, nfactors = 2, rotate = "promax", fm = "ml")
+print(efa_2f)
+
+# Factor loadings
+print(efa_2f$loadings, cutoff = 0.3)
+# Loadings > 0.4: meaningful
+# Loadings > 0.6: strong
+# Look for simple structure: each item loads high on one factor, low on others
+
+# Model fit indices
+efa_2f$RMSEA   # Root mean square error of approximation (< 0.06: good)
+efa_2f$TLI     # Tucker–Lewis index (> 0.95: good)
+efa_2f$BIC     # Bayesian information criterion (lower: better)</code></pre>
+</div>
+
+  <div class="insight-box" data-lang="en">
+    <strong>Orthogonal vs. Oblique rotation:</strong> Orthogonal (varimax) forces factors to be uncorrelated. Oblique (promax, direct oblimin) allows correlation. In social science, factors usually correlate—use oblique rotation unless theory says otherwise.
+  </div>
+  <div class="insight-box" data-lang="zh">
+    <strong>正交 vs. 斜交旋转：</strong>正交（varimax）强制因子不相关。斜交（promax、direct oblimin）允许相关。在社会科学中，因子通常相关——除非理论另有说明，否则使用斜交旋转。
+  </div>
+</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">Interpretation: Factor Loadings Table</div>
+  <div class="step-title" data-lang="zh">解释：因子负荷表</div>
+  
+  <div class="theory-text" data-lang="en">
+    Extract and display factor loadings:
+  </div>
+  <div class="theory-text" data-lang="zh">
+    提取并显示因子负荷：
+  </div>
+  
+  <div class="code-block"><code>loadings_df <- as.data.frame(unclass(efa_2f$loadings))
+colnames(loadings_df) <- c("Factor 1", "Factor 2")
+rownames(loadings_df) <- c("Parliament", "Courts", "Elections", "Media", 
+                           "Police", "President", "Local Gov", "NGOs")
+loadings_df$Communality <- rowSums(loadings_df^2)
+print(round(loadings_df, 3))</code></pre>
+</div>
+
+  <div class="theory-text" data-lang="en">
+    <strong>Communality:</strong> h² = sum of squared loadings for an item. It's the variance explained by the factors. Items with low communality (< 0.3) may need to be removed.
+  </div>
+  <div class="theory-text" data-lang="zh">
+    <strong>共同度：</strong>h² = 某项的平方负荷和。它是因子解释的方差。共同度低的项目（< 0.3）可能需要删除。
+  </div>
+</div>
+
+<div class="section-title" data-lang="en">Step 4: Reliability (Cronbach's Alpha)</div>
+<div class="section-title" data-lang="zh">步骤 4：信度（Cronbach α）</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">Calculate internal consistency for each factor</div>
+  <div class="step-title" data-lang="zh">为每个因子计算内部一致性</div>
+  
+  <div class="code-block"><code># Split items by which factor they load on
+institutional <- trust_data[, c("parliament", "courts", "elections", "media")]
+executive <- trust_data[, c("police", "president", "local_gov", "ngos")]
+
+# Cronbach's alpha (0.7–0.9: acceptable; > 0.9: potentially redundant)
+alpha(institutional)
+alpha(executive)
+# Output includes: raw_alpha, std.alpha, item-total correlations
+
+# McDonald's omega (better than alpha—assumes congeneric items)
+omega(institutional)
+omega(executive)
+# Often higher than alpha; more robust</code></pre>
+</div>
+
+  <div class="insight-box" data-lang="en">
+    <strong>Why omega > alpha?</strong> Cronbach's alpha assumes all items have equal loadings (tau-equivalent). Omega accounts for unequal loadings (congeneric). Omega is more accurate for real data.
+  </div>
+  <div class="insight-box" data-lang="zh">
+    <strong>为什么 ω > α？</strong>Cronbach α 假设所有项目负荷相等（Tau 等价）。Omega 考虑不等负荷（congeneric）。对于实际数据，Omega 更准确。
+  </div>
+</div>
+
+<div class="section-title" data-lang="en">Step 5: Confirmatory Factor Analysis (CFA)</div>
+<div class="section-title" data-lang="zh">步骤 5：验证性因子分析 (CFA)</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">Specify CFA model based on EFA structure</div>
+  <div class="step-title" data-lang="zh">根据 EFA 结构指定 CFA 模型</div>
+  
+  <div class="code-block"><code># CFA model specification (lavaan syntax)
+model_cfa <- '
+  # Institutional trust factor
+  institutional =~ parliament + courts + elections + media
+  
+  # Executive trust factor
+  executive =~ police + president + local_gov + ngos
+'
+
+# Fit CFA on same data (later: use separate validation sample)
+cfa_fit <- cfa(model_cfa, data = trust_data, estimator = "ML")
+
+# Print results
+summary(cfa_fit, fit.measures = TRUE, standardized = TRUE)</code></pre>
+</div>
+
+  <div class="warning-box" data-lang="en">
+    <strong>Important:</strong> Ideally, use a separate dataset for CFA (split-sample). Running EFA and CFA on the same data is circular—you're confirming patterns you explored. The separate sample avoids this capitalization on chance.
+  </div>
+  <div class="warning-box" data-lang="zh">
+    <strong>重要：</strong>理想情况下，对 CFA 使用单独的数据集（分样本）。在同一数据上运行 EFA 和 CFA 是循环的——您确认的是您探索的模式。单独的样本避免了这种对机会的利用。
+  </div>
+</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">Evaluate model fit</div>
+  <div class="step-title" data-lang="zh">评估模型拟合</div>
+  
+  <div class="code-block"><code># Extract key fit indices
+fitMeasures(cfa_fit, c("cfi", "rmsea", "srmr", "tli", "aic", "bic"))
+
+# Interpretation:
+# CFI (Comparative Fit Index): > 0.95 (good), > 0.90 (acceptable)
+# RMSEA: < 0.06 (good), < 0.08 (acceptable)
+# SRMR (Standardized RMR): < 0.08 (good)
+# TLI: > 0.95 (good), > 0.90 (acceptable)</code></pre>
+</div>
+
+  <div class="code-block"><code># Factor loadings and significance
+standardizedSolution(cfa_fit)
+# All loadings should be > 0.4 and statistically significant (p < 0.05)</code></pre>
+</div>
+
+  <div class="code-block"><code># Model modification indices: where fit could improve
+modindices(cfa_fit, sort. = TRUE, maximum.number = 10)
+# Large MI values suggest covariances (e.g., error correlations)
+# Caution: only add modifications if theoretically justified</code></pre>
+</div>
+</div>
+
+<div class="section-title" data-lang="en">Step 6: Measurement Invariance</div>
+<div class="section-title" data-lang="zh">步骤 6：测量不变性</div>
+
+<div class="step-box">
+  <div class="step-title" data-lang="en">Test if scale works identically across groups (e.g., gender)</div>
+  <div class="step-title" data-lang="zh">测试量表是否在各组（例如性别）中的工作方式相同</div>
+  
+  <div class="code-block"><code># Configural invariance: same factor structure across groups
+fit_config <- cfa(model_cfa, data = trust_data, group = "gender")
+
+# Metric invariance: equal factor loadings
+fit_metric <- cfa(model_cfa, data = trust_data, group = "gender",
+                  group.equal = "loadings")
+
+# Scalar invariance: equal intercepts
+fit_scalar <- cfa(model_cfa, data = trust_data, group = "gender",
+                  group.equal = c("loadings", "intercepts"))
+
+# Compare models
+lavTestScore(fit_metric)
+compareFit(fit_config, fit_metric, fit_scalar)
+
+# Rule of thumb: if CFI change < 0.01, constraint is acceptable
+# Your scale measures the same construct across groups</code></pre>
+</div>
+
+  <div class="insight-box" data-lang="en">
+    <strong>Measurement invariance levels:</strong> Configural (structure), Metric (loadings), Scalar (intercepts), Strict (residual variances). Each level is more restrictive. Scalar invariance is typically sufficient for comparing means across groups.
+  </div>
+  <div class="insight-box" data-lang="zh">
+    <strong>测量不变性水平：</strong>构型（结构）、度量（负荷）、标量（截距）、严格（残差方差）。每个水平更严格。标量不变性通常足以比较各组的平均值。
+  </div>
+</div>
+
+<div class="section-title" data-lang="en">Common Errors to Avoid</div>
+<div class="section-title" data-lang="zh">要避免的常见错误</div>
+
+<div class="warning-box" data-lang="en">
+  <strong>1. Double-loading items:</strong> If an item loads > 0.4 on multiple factors, it's ambiguous. Consider removing it or revising the theory.
+</div>
+<div class="warning-box" data-lang="zh">
+  <strong>1. 双重负荷项目：</strong>如果一个项目在多个因子上的负荷 > 0.4，则存在歧义。考虑删除它或修改理论。
+</div>
+
+<div class="warning-box" data-lang="en">
+  <strong>2. Heywood cases:</strong> If communality > 1 or variance < 0, the model is misspecified. Try: fewer factors, remove problematic items, or use a different estimator.
+</div>
+<div class="warning-box" data-lang="zh">
+  <strong>2. Heywood 情况：</strong>如果共同度 > 1 或方差 < 0，模型指定错误。尝试：减少因子、删除有问题的项目或使用不同的估计方法。
+</div>
+
+<div class="warning-box" data-lang="en">
+  <strong>3. Low KMO or Bartlett p > 0.05:</strong> Your items don't cluster—factor analysis may not work. Reconsider if you have the right items or the right theory.
+</div>
+<div class="warning-box" data-lang="zh">
+  <strong>3. KMO 低或 Bartlett p > 0.05：</strong>您的项目不聚类——因子分析可能不起作用。重新考虑您是否有正确的项目或理论。
+</div>
+
+<div class="warning-box" data-lang="en">
+  <strong>4. Overfitting:</strong> EFA + CFA on same data inflates fit. Use split-sample or cross-validation.
+</div>
+<div class="warning-box" data-lang="zh">
+  <strong>4. 过度拟合：</strong>在同一数据上进行 EFA + CFA 会夸大拟合。使用分样本或交叉验证。
+</div>
+

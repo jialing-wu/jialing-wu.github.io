@@ -1,0 +1,515 @@
+---
+layout: methods-guide
+title: "Interactive Path Diagram Builder"
+title_zh: "交互式路径图构建器"
+parent_title: "Structural Equation Modeling"
+parent_title_zh: "结构方程模型"
+parent_url: "reg-sem.html"
+bilingual: true
+mathjax: true
+---
+
+<div class="guide-content">
+
+  <!-- ===== SECTION 1: What is a Path Diagram? ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">1. What is a Path Diagram?</h2>
+    <h2 data-lang="zh">1. 什么是路径图？</h2>
+
+    <p data-lang="en">
+      A path diagram is the visual language of SEM. It's like a circuit diagram for social relationships,
+      showing which variables influence which others and how they're connected.
+    </p>
+    <p data-lang="zh">
+      路径图是SEM的视觉语言。它就像社会关系的电路图，显示哪些变量影响哪些其他变量以及它们如何连接。
+    </p>
+
+    <h3 data-lang="en">Key Symbols</h3>
+    <h3 data-lang="zh">关键符号</h3>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0;">
+      <div style="padding: 1rem; background: var(--parchment); border-radius: 0.5rem;">
+        <h4 data-lang="en">Rectangles = Observed Variables</h4>
+        <h4 data-lang="zh">矩形 = 观测变量</h4>
+        <p data-lang="en">Variables directly measured in your data (survey items, test scores, income).</p>
+        <p data-lang="zh">在数据中直接测量的变量（调查项目、考试成绩、收入）。</p>
+      </div>
+
+      <div style="padding: 1rem; background: var(--cream); border-radius: 0.5rem;">
+        <h4 data-lang="en">Ovals = Latent Variables</h4>
+        <h4 data-lang="zh">椭圆 = 潜在变量</h4>
+        <p data-lang="en">Unobserved constructs (intelligence, trust, life satisfaction) measured by observed variables.</p>
+        <p data-lang="zh">未观测的结构（智力、信任、生活满意度）由观测变量测量。</p>
+      </div>
+
+      <div style="padding: 1rem; background: var(--parchment); border-radius: 0.5rem;">
+        <h4 data-lang="en">Single Arrow = Directional Path</h4>
+        <h4 data-lang="zh">单箭头 = 方向路径</h4>
+        <p data-lang="en">X causes Y. The arrow points from cause to effect. Includes a coefficient (path strength).</p>
+        <p data-lang="zh">X 导致 Y。箭头从原因指向结果。包括系数（路径强度）。</p>
+      </div>
+
+      <div style="padding: 1rem; background: var(--cream); border-radius: 0.5rem;">
+        <h4 data-lang="en">Double Arrow = Covariance/Correlation</h4>
+        <h4 data-lang="zh">双箭头 = 协方差/相关</h4>
+        <p data-lang="en">X and Y are related but no causal direction claimed. Includes a covariance or correlation coefficient.</p>
+        <p data-lang="zh">X 和 Y 相关但没有声称因果方向。包括协方差或相关系数。</p>
+      </div>
+    </div>
+
+    <p data-lang="en">
+      <strong>Analogy:</strong> Think of a path diagram like an electrical circuit. Rectangles are light bulbs
+      (observed), ovals are batteries (latent power), single arrows are wires carrying current (causal paths),
+      and double arrows show two connected terminals (correlations).
+    </p>
+    <p data-lang="zh">
+      <strong>类比：</strong>将路径图想象成电路。矩形是灯泡（观测），椭圆是电池（潜在力量），
+      单箭头是传导电流的电线（因果路径），双箭头显示两个连接的端子（相关）。
+    </p>
+  </section>
+
+  <!-- ===== SECTION 2: Interactive Path Explorer ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">2. Interactive Path Diagram Explorer</h2>
+    <h2 data-lang="zh">2. 交互式路径图浏览器</h2>
+
+    <p data-lang="en">
+      Below is a simple SEM model: Trust (latent) → Participation (latent) → Civic Outcomes (latent).
+      Each latent variable is measured by 3 observed indicators. Click on paths to see coefficients.
+    </p>
+    <p data-lang="zh">
+      下面是一个简单的SEM模型：信任（潜在）→ 参与（潜在）→ 公民成果（潜在）。
+      每个潜在变量由3个观测指标测量。点击路径以查看系数。
+    </p>
+
+    <div style="margin: 2rem 0; padding: 1rem; background: var(--parchment); border-radius: 0.5rem;">
+      <label>
+        <input type="checkbox" id="show-unstd" checked>
+        <span data-lang="en">Show Unstandardized Coefficients</span>
+        <span data-lang="zh">显示未标准化系数</span>
+      </label>
+      <span style="margin-left: 2rem;">|</span>
+      <label style="margin-left: 2rem;">
+        <input type="checkbox" id="show-std">
+        <span data-lang="en">Show Standardized (β)</span>
+        <span data-lang="zh">显示标准化 (β)</span>
+      </label>
+    </div>
+
+    <!-- Simple SVG Path Diagram -->
+    <svg id="sem-diagram" width="100%" height="500" style="border: 1px solid #ddd; margin: 2rem 0; background: white;">
+      <!-- Latent variable circles -->
+      <circle cx="80" cy="250" r="40" fill="none" stroke="#1976d2" stroke-width="2"/>
+      <text x="80" y="260" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">Trust</text>
+
+      <circle cx="280" cy="250" r="40" fill="none" stroke="#2e7d32" stroke-width="2"/>
+      <text x="280" y="260" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">Participation</text>
+
+      <circle cx="480" cy="250" r="40" fill="none" stroke="#f57c00" stroke-width="2"/>
+      <text x="480" y="260" text-anchor="middle" font-size="12" fill="#f57c00" font-weight="bold">Outcomes</text>
+
+      <!-- Observed variables (rectangles) -->
+      <!-- Trust indicators -->
+      <rect x="30" y="80" width="50" height="35" fill="none" stroke="#1976d2" stroke-width="1.5"/>
+      <text x="55" y="103" text-anchor="middle" font-size="10">t1</text>
+
+      <rect x="30" y="130" width="50" height="35" fill="none" stroke="#1976d2" stroke-width="1.5"/>
+      <text x="55" y="153" text-anchor="middle" font-size="10">t2</text>
+
+      <rect x="30" y="180" width="50" height="35" fill="none" stroke="#1976d2" stroke-width="1.5"/>
+      <text x="55" y="203" text-anchor="middle" font-size="10">t3</text>
+
+      <!-- Participation indicators -->
+      <rect x="250" y="80" width="50" height="35" fill="none" stroke="#2e7d32" stroke-width="1.5"/>
+      <text x="275" y="103" text-anchor="middle" font-size="10">p1</text>
+
+      <rect x="250" y="130" width="50" height="35" fill="none" stroke="#2e7d32" stroke-width="1.5"/>
+      <text x="275" y="153" text-anchor="middle" font-size="10">p2</text>
+
+      <rect x="250" y="180" width="50" height="35" fill="none" stroke="#2e7d32" stroke-width="1.5"/>
+      <text x="275" y="203" text-anchor="middle" font-size="10">p3</text>
+
+      <!-- Outcomes indicators -->
+      <rect x="450" y="80" width="50" height="35" fill="none" stroke="#f57c00" stroke-width="1.5"/>
+      <text x="475" y="103" text-anchor="middle" font-size="10">o1</text>
+
+      <rect x="450" y="130" width="50" height="35" fill="none" stroke="#f57c00" stroke-width="1.5"/>
+      <text x="475" y="153" text-anchor="middle" font-size="10">o2</text>
+
+      <rect x="450" y="180" width="50" height="35" fill="none" stroke="#f57c00" stroke-width="1.5"/>
+      <text x="475" y="203" text-anchor="middle" font-size="10">o3</text>
+
+      <!-- Measurement model paths (latent to observed) -->
+      <line x1="70" y1="220" x2="55" y2="115" stroke="#1976d2" stroke-width="1.5" marker-end="url(#arrowblue)"/>
+      <line x1="75" y1="217" x2="55" y2="165" stroke="#1976d2" stroke-width="1.5" marker-end="url(#arrowblue)"/>
+      <line x1="70" y1="220" x2="55" y2="215" stroke="#1976d2" stroke-width="1.5" marker-end="url(#arrowblue)"/>
+
+      <line x1="270" y1="220" x2="275" y2="115" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrowgreen)"/>
+      <line x1="280" y1="217" x2="275" y2="165" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrowgreen)"/>
+      <line x1="270" y1="220" x2="275" y2="215" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrowgreen)"/>
+
+      <line x1="470" y1="220" x2="475" y2="115" stroke="#f57c00" stroke-width="1.5" marker-end="url(#arroworange)"/>
+      <line x1="480" y1="217" x2="475" y2="165" stroke="#f57c00" stroke-width="1.5" marker-end="url(#arroworange)"/>
+      <line x1="470" y1="220" x2="475" y2="215" stroke="#f57c00" stroke-width="1.5" marker-end="url(#arroworange)"/>
+
+      <!-- Structural paths (latent to latent) -->
+      <line x1="120" y1="250" x2="240" y2="250" stroke="#d32f2f" stroke-width="2.5" marker-end="url(#arrowred)"/>
+      <text x="180" y="240" text-anchor="middle" font-size="11" fill="#d32f2f" font-weight="bold" class="path-coef">β = 0.65</text>
+
+      <line x1="320" y1="250" x2="440" y2="250" stroke="#d32f2f" stroke-width="2.5" marker-end="url(#arrowred)"/>
+      <text x="380" y="240" text-anchor="middle" font-size="11" fill="#d32f2f" font-weight="bold" class="path-coef">β = 0.58</text>
+
+      <!-- Arrow markers -->
+      <defs>
+        <marker id="arrowblue" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10" fill="#1976d2"/>
+        </marker>
+        <marker id="arrowgreen" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10" fill="#2e7d32"/>
+        </marker>
+        <marker id="arroworange" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10" fill="#f57c00"/>
+        </marker>
+        <marker id="arrowred" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10" fill="#d32f2f"/>
+        </marker>
+      </defs>
+    </svg>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 2rem 0;">
+      <div class="stat-chip">
+        <span class="slabel" data-lang="en">CFI:</span>
+        <span class="sval">0.987</span>
+      </div>
+      <div class="stat-chip">
+        <span class="slabel" data-lang="en">RMSEA:</span>
+        <span class="sval">0.034</span>
+      </div>
+      <div class="stat-chip">
+        <span class="slabel" data-lang="en">SRMR:</span>
+        <span class="sval">0.028</span>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <h4 data-lang="en">Fit Statistics Explained</h4>
+      <h4 data-lang="zh">拟合统计量解释</h4>
+
+      <ul>
+        <li data-lang="en">
+          <strong>CFI (Comparative Fit Index):</strong> How much better is your model than baseline?
+          Target: CFI > 0.95
+        </li>
+        <li data-lang="zh">
+          <strong>CFI（比较拟合指数）：</strong>您的模型比基线好多少？目标：CFI > 0.95
+        </li>
+        <li data-lang="en">
+          <strong>RMSEA (Root Mean Square Error of Approximation):</strong> Average discrepancy between
+          observed and model-implied covariances. Target: RMSEA < 0.06
+        </li>
+        <li data-lang="zh">
+          <strong>RMSEA（近似均方根误差）：</strong>观测和模型暗示的协方差之间的平均差异。
+          目标：RMSEA < 0.06
+        </li>
+        <li data-lang="en">
+          <strong>SRMR (Standardized Root Mean Square Residual):</strong> Average standardized residual.
+          Target: SRMR < 0.08
+        </li>
+        <li data-lang="zh">
+          <strong>SRMR（标准化均方根残差）：</strong>平均标准化残差。目标：SRMR < 0.08
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 3: lavaan Syntax Decoder ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">3. lavaan Syntax Decoder</h2>
+    <h2 data-lang="zh">3. lavaan 语法解码器</h2>
+
+    <p data-lang="en">
+      lavaan (LAtent VAriable ANalysis) is R's most popular SEM package.
+      The syntax maps directly to the path diagram.
+    </p>
+    <p data-lang="zh">
+      lavaan（潜在变量分析）是R中最受欢迎的SEM包。语法直接映射到路径图。
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
+      <div style="padding: 1rem; background: var(--parchment); border-radius: 0.5rem;">
+        <h4 data-lang="en">Measurement Model (=~)</h4>
+        <h4 data-lang="zh">测量模型 (=~)</h4>
+        <p data-lang="en">
+          Defines how latent variables are measured. The latent variable is on the left,
+          observed indicators on the right.
+        </p>
+        <p data-lang="zh">
+          定义潜在变量如何测量。潜在变量在左边，观测指标在右边。
+        </p>
+        <pre><code>trust =~ t1 + t2 + t3
+# Trust is measured by t1, t2, t3</code></pre>
+      </div>
+
+      <div style="padding: 1rem; background: var(--cream); border-radius: 0.5rem;">
+        <h4 data-lang="en">Regression (~)</h4>
+        <h4 data-lang="zh">回归 (~)</h4>
+        <p data-lang="en">
+          Directional causal path. DV on left, IVs on right.
+          Can use observed or latent variables.
+        </p>
+        <p data-lang="zh">
+          方向因果路径。因变量在左边，自变量在右边。
+          可以使用观测或潜在变量。
+        </p>
+        <pre><code>participation ~ trust
+outcomes ~ participation + trust</code></pre>
+      </div>
+
+      <div style="padding: 1rem; background: var(--parchment); border-radius: 0.5rem;">
+        <h4 data-lang="en">Covariance (~~)</h4>
+        <h4 data-lang="zh">协方差 (~~)</h4>
+        <p data-lang="en">
+          Allows two variables to be correlated without claiming direction.
+          Useful for exogenous variables or error covariances.
+        </p>
+        <p data-lang="zh">
+          允许两个变量相关而不声称方向。对外生变量或误差协方差有用。
+        </p>
+        <pre><code>x1 ~~ x2
+# x1 and x2 are allowed to covary</code></pre>
+      </div>
+
+      <div style="padding: 1rem; background: var(--cream); border-radius: 0.5rem;">
+        <h4 data-lang="en">Intercept (~1)</h4>
+        <h4 data-lang="zh">截距 (~1)</h4>
+        <p data-lang="en">
+          Estimates the mean or intercept of a variable.
+          Useful for multiple-group analysis.
+        </p>
+        <p data-lang="zh">
+          估计变量的均值或截距。对多组分析有用。
+        </p>
+        <pre><code>y ~ 1
+# Estimate the mean of y</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 4: Complete lavaan Example ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">4. Complete lavaan Example</h2>
+    <h2 data-lang="zh">4. 完整的 lavaan 示例</h2>
+
+    <pre><code class="language-r">
+library(lavaan)
+
+# Define the model
+model <- '
+  # Measurement model (latent variables defined by observed indicators)
+  trust =~ t1 + t2 + t3
+  participation =~ p1 + p2 + p3
+  outcomes =~ o1 + o2 + o3
+
+  # Structural model (relationships between latent variables)
+  participation ~ trust
+  outcomes ~ participation + trust
+'
+
+# Fit the model
+fit <- sem(model, data = mydata)
+
+# Summary with standardized coefficients
+summary(fit, standardized = TRUE, fit.measures = TRUE)
+
+# Extract fit measures
+fitMeasures(fit, c("cfi", "rmsea", "srmr", "chisq", "df", "pvalue"))
+
+# Look at modification indices (suggestions for improving model)
+modindices(fit, sort = TRUE) |> head(10)
+# Large modification indices suggest freeing parameters would improve fit
+
+# If you want to modify the model (e.g., correlate errors):
+model2 <- '
+  trust =~ t1 + t2 + t3
+  participation =~ p1 + p2 + p3
+  outcomes =~ o1 + o2 + o3
+
+  participation ~ trust
+  outcomes ~ participation + trust
+
+  # Allow error correlations
+  t1 ~~ t2
+  p1 ~~ p2
+'
+
+fit2 <- sem(model2, data = mydata)
+anova(fit, fit2)  # Likelihood ratio test: is model2 significantly better?
+
+# Extract parameter estimates for reporting
+pars <- parameterEstimates(fit, standardized = TRUE)
+pars |> filter(op == "~")  # Only show regression paths
+
+# Visualize the model path diagram
+semPlot::semPaths(fit, "std", edge.label.cex = 0.9)
+    </code></pre>
+
+    <h3 data-lang="en">Interpreting Output</h3>
+    <h3 data-lang="zh">解释输出</h3>
+
+    <ul>
+      <li data-lang="en">
+        <strong>Estimate:</strong> Unstandardized coefficient (raw units).
+      </li>
+      <li data-lang="zh">
+        <strong>Estimate：</strong>未标准化系数（原始单位）。
+      </li>
+      <li data-lang="en">
+        <strong>Std.all:</strong> Standardized coefficient (β, in SD units). Use this for comparing effect sizes.
+      </li>
+      <li data-lang="zh">
+        <strong>Std.all：</strong>标准化系数（β，以标准差单位）。用此比较效应大小。
+      </li>
+      <li data-lang="en">
+        <strong>Z-value & p-value:</strong> Statistical significance. Z > 1.96 ≈ p < 0.05.
+      </li>
+      <li data-lang="zh">
+        <strong>Z 值和 p 值：</strong>统计显著性。Z > 1.96 ≈ p < 0.05。
+      </li>
+      <li data-lang="en">
+        <strong>CI.lower & CI.upper:</strong> 95% confidence interval for the coefficient.
+      </li>
+      <li data-lang="zh">
+        <strong>CI.lower 和 CI.upper：</strong>系数的 95% 置信区间。
+      </li>
+    </ul>
+  </section>
+
+  <!-- ===== SECTION 5: Common SEM Pitfalls ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">5. Common SEM Pitfalls</h2>
+    <h2 data-lang="zh">5. 常见的 SEM 陷阱</h2>
+
+    <h3 data-lang="en">Specification Search (P-Hacking)</h3>
+    <h3 data-lang="zh">规范搜索（P-值挖掘）</h3>
+
+    <p data-lang="en">
+      <strong>Problem:</strong> You fit a model, look at modification indices, add paths, fit again,
+      and repeat until everything fits well. This is exploratory and data-driven — you're fitting
+      the noise, not the true model.
+    </p>
+    <p data-lang="zh">
+      <strong>问题：</strong>您拟合一个模型，查看修改指数，添加路径，重新拟合，并重复直到一切都拟合良好。
+      这是探索性和数据驱动的——您拟合的是噪声，而不是真实模型。
+    </p>
+
+    <p data-lang="en">
+      <strong>Solution:</strong> Pre-register your model (specify it before seeing the data or fit indices).
+      If you do exploratory SEM, report it as exploratory and plan a replication.
+    </p>
+    <p data-lang="zh">
+      <strong>解决方案：</strong>预注册你的模型（在看到数据或拟合指数之前指定）。
+      如果进行探索性SEM，将其报告为探索性的并计划复制。
+    </p>
+
+    <h3 data-lang="en">Heywood Cases (Negative Variances)</h3>
+    <h3 data-lang="zh">Heywood 情况（负方差）</h3>
+
+    <p data-lang="en">
+      <strong>Problem:</strong> The estimated variance of a latent variable or error term is negative.
+      Variances can't be negative! This is a sign of model misspecification.
+    </p>
+    <p data-lang="zh">
+      <strong>问题：</strong>潜在变量或误差项的估计方差是负数。方差不能为负！这表示模型规范错误。
+    </p>
+
+    <p data-lang="en">
+      <strong>Cause:</strong> Model doesn't fit the data, measurement model is weak, or you have outliers.
+    </p>
+    <p data-lang="zh">
+      <strong>原因：</strong>模型不符合数据，测量模型薄弱，或存在异常值。
+    </p>
+
+    <p data-lang="en">
+      <strong>Solution:</strong> Check data quality, simplify the model, remove problematic indicators,
+      or constrain the variance to be positive.
+    </p>
+    <p data-lang="zh">
+      <strong>解决方案：</strong>检查数据质量，简化模型，移除有问题的指标，或将方差约束为正数。
+    </p>
+
+    <h3 data-lang="en">Sample Size Too Small</h3>
+    <h3 data-lang="zh">样本量太小</h3>
+
+    <p data-lang="en">
+      <strong>Rule of Thumb:</strong>
+    </p>
+    <p data-lang="zh">
+      <strong>经验法则：</strong>
+    </p>
+
+    <ul>
+      <li data-lang="en">Simple models (3–5 latent variables): N > 200</li>
+      <li data-lang="zh">简单模型（3-5 个潜在变量）：N > 200</li>
+      <li data-lang="en">Moderate complexity: N > 400</li>
+      <li data-lang="zh">中等复杂度：N > 400</li>
+      <li data-lang="en">Complex models (10+ latent variables): N > 1000</li>
+      <li data-lang="zh">复杂模型（10+ 潜在变量）：N > 1000</li>
+    </ul>
+
+    <p data-lang="en">
+      Small samples lead to high standard errors, unstable estimates, and inflated Type I error rates.
+    </p>
+    <p data-lang="zh">
+      小样本导致高标准误差、不稳定的估计和夸大的I类错误率。
+    </p>
+
+    <h3 data-lang="en">"SEM Cannot Prove Causation"</h3>
+    <h3 data-lang="zh">"SEM 无法证明因果关系"</h3>
+
+    <p data-lang="en">
+      <strong>Key Point:</strong> SEM tests consistency with a causal theory, but so does any regression.
+      The causal interpretation comes from theory and research design, not the statistics.
+    </p>
+    <p data-lang="zh">
+      <strong>关键点：</strong>SEM 测试与因果理论的一致性，但任何回归也是如此。因果解释来自理论和研究设计，而不是统计。
+    </p>
+
+    <p data-lang="en">
+      To strengthen causal claims:
+    </p>
+    <p data-lang="zh">
+      为了加强因果主张：
+    </p>
+
+    <ul>
+      <li data-lang="en">Use longitudinal data (X measured before Y)</li>
+      <li data-lang="zh">使用纵向数据（X 在 Y 之前测量）</li>
+      <li data-lang="en">Random assignment of treatment</li>
+      <li data-lang="zh">随机分配治疗</li>
+      <li data-lang="en">Instrumental variables or natural experiments</li>
+      <li data-lang="zh">工具变量或自然实验</li>
+      <li data-lang="en">Control for confounders</li>
+      <li data-lang="zh">控制混杂因素</li>
+      <li data-lang="en">Domain expertise supporting the causal direction</li>
+      <li data-lang="zh">支持因果方向的领域专业知识</li>
+    </ul>
+  </section>
+
+</div>
+
+<style>
+  #sem-diagram {
+    background: white;
+    border-radius: 0.5rem;
+  }
+
+  .path-coef {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .path-coef:hover {
+    font-size: 13px;
+    font-weight: bold;
+  }
+</style>

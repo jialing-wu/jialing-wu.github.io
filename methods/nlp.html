@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NLP — Research Methods Notebook</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a class="sb-brand" href="index.html"><h2>Methods <span>Notebook</span></h2><div class="sb-sub">Jialing Wu</div></a>
+    <div class="sb-cat">Person-Centered Quantitative Methods</div>
+    <a class="sb-link" href="lpa.html"><span class="sb-num">01</span> Latent Profile Analysis</a>
+    <div class="sb-cat">Computational Social Science</div>
+    <div class="sb-subcat">Foundations</div>
+    <a class="sb-link" href="machine-learning.html" style="display:none"><span class="sb-num">01</span> Machine Learning</a>
+    <a class="sb-link" href="llm.html" style="display:none"><span class="sb-num">02</span> LLM &amp; NLP</a>
+    <a class="sb-link" href="text-analysis.html"><span class="sb-num">03</span> Text as Data</a>
+    <a class="sb-link" href="theoretical-modeling.html"><span class="sb-num">04</span> Theoretical Modeling</a>
+    <div class="sb-cat">Statistics</div>
+    <div class="sb-subcat">Foundations</div>
+    <a class="sb-link" href="empirical-modeling.html"><span class="sb-num">01</span> Empirical Modeling</a>
+    <div class="sb-footer"><a href="https://jialing-wu.github.io">&larr; My Website</a></div>
+  </aside>
+  <div class="sidebar-overlay" id="overlay" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"></div>
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"><span></span></button>
+      <div class="breadcrumb"><a href="index.html">Methods</a><span class="sep">/</span> Natural Language Processing</div>
+    </div>
+    <div class="content">
+      <div class="method-header">
+        <h1>Natural Language Processing (NLP)</h1>
+        <div class="method-meta">Computational Methods · 01</div>
+      </div>
+
+      <div class="section">
+        <h2>Overview</h2>
+        <p>Natural Language Processing is a branch of computational linguistics that enables machines to understand, interpret, and generate human language. In education research, NLP is particularly useful for analyzing large volumes of text data — open-ended survey responses, social media posts, policy documents, and academic literature.</p>
+        <p>Common NLP tasks in education research include topic modeling (discovering latent themes), sentiment analysis (measuring emotional tone), text classification, and named entity recognition.</p>
+      </div>
+
+      <div class="section">
+        <h2>Key Techniques</h2>
+
+        <h3>1. Text Preprocessing</h3>
+        <p>Before any analysis, raw text must be cleaned and standardized. This typically includes tokenization, lowercasing, removing stopwords, stemming or lemmatization, and handling special characters.</p>
+        <pre><code><span class="keyword">import</span> nltk
+<span class="keyword">from</span> nltk.corpus <span class="keyword">import</span> stopwords
+<span class="keyword">from</span> nltk.stem <span class="keyword">import</span> WordNetLemmatizer
+
+<span class="comment"># Basic preprocessing pipeline</span>
+<span class="keyword">def</span> <span class="func">preprocess</span>(text):
+    tokens = nltk.<span class="func">word_tokenize</span>(text.lower())
+    stop = <span class="func">set</span>(stopwords.<span class="func">words</span>(<span class="string">'english'</span>))
+    lemmatizer = <span class="func">WordNetLemmatizer</span>()
+    <span class="keyword">return</span> [lemmatizer.<span class="func">lemmatize</span>(t)
+            <span class="keyword">for</span> t <span class="keyword">in</span> tokens
+            <span class="keyword">if</span> t.isalpha() <span class="keyword">and</span> t <span class="keyword">not in</span> stop]</code></pre>
+
+        <h3>2. Topic Modeling (LDA)</h3>
+        <p>Latent Dirichlet Allocation discovers hidden topics in a corpus. Each document is represented as a mixture of topics, and each topic is a distribution over words.</p>
+        <pre><code><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> LatentDirichletAllocation
+<span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> CountVectorizer
+
+<span class="comment"># Fit LDA with 5 topics</span>
+vectorizer = <span class="func">CountVectorizer</span>(max_features=<span class="string">5000</span>)
+X = vectorizer.<span class="func">fit_transform</span>(documents)
+
+lda = <span class="func">LatentDirichletAllocation</span>(
+    n_components=<span class="string">5</span>,
+    random_state=<span class="string">42</span>
+)
+lda.<span class="func">fit</span>(X)
+
+<span class="comment"># Display top words per topic</span>
+feature_names = vectorizer.<span class="func">get_feature_names_out</span>()
+<span class="keyword">for</span> i, topic <span class="keyword">in</span> <span class="func">enumerate</span>(lda.components_):
+    top = [feature_names[j] <span class="keyword">for</span> j <span class="keyword">in</span> topic.<span class="func">argsort</span>()[-10:]]
+    <span class="func">print</span>(<span class="string">f"Topic {i}: {', '.join(top)}"</span>)</code></pre>
+
+        <div class="info-box">
+          <div class="label">Tip</div>
+          <p>Use coherence scores (e.g., <code>c_v</code>) to determine the optimal number of topics. The <code>gensim</code> library provides built-in coherence evaluation.</p>
+        </div>
+
+        <h3>3. Sentiment Analysis</h3>
+        <p>Sentiment analysis classifies text into positive, negative, or neutral categories. For education research, this can reveal student attitudes, public discourse on policies, or emotional tone in social media discussions.</p>
+        <pre><code><span class="keyword">from</span> transformers <span class="keyword">import</span> pipeline
+
+<span class="comment"># Using a pre-trained sentiment model</span>
+classifier = <span class="func">pipeline</span>(<span class="string">"sentiment-analysis"</span>)
+
+texts = [
+    <span class="string">"I love how this course integrates hands-on projects"</span>,
+    <span class="string">"The workload is overwhelming and unfair"</span>,
+    <span class="string">"The lecture was okay, nothing special"</span>
+]
+
+<span class="keyword">for</span> t <span class="keyword">in</span> texts:
+    result = <span class="func">classifier</span>(t)[0]
+    <span class="func">print</span>(<span class="string">f"{result['label']}: {result['score']:.3f} — {t}"</span>)</code></pre>
+      </div>
+
+      <div class="section">
+        <h2>When to Use</h2>
+        <ul>
+          <li>Analyzing open-ended survey responses at scale</li>
+          <li>Mining social media data for public opinion on education policy</li>
+          <li>Conducting systematic literature reviews with automated screening</li>
+          <li>Identifying themes in interview transcripts as a complement to manual coding</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>Limitations</h2>
+        <ul>
+          <li>Pre-trained models may not capture domain-specific language well</li>
+          <li>Topic models require careful tuning and interpretation</li>
+          <li>Sentiment analysis struggles with sarcasm, irony, and academic language</li>
+          <li>Results should be validated against manual qualitative coding</li>
+        </ul>
+      </div>
+
+      <div class="materials">
+        <h3>Materials & References</h3>
+        <div class="mat-item">
+          <span class="mat-icon">📄</span>
+          <a class="mat-link" href="https://doi.org/10.1007/s10648-023-09828-z" target="_blank">Pimentel et al. (2023) — NLP in Education: A Review</a>
+          <span class="mat-note">Journal</span>
+        </div>
+        <div class="mat-item">
+          <span class="mat-icon">📓</span>
+          <a class="mat-link" href="https://www.nltk.org/book/" target="_blank">NLTK Book — Natural Language Processing with Python</a>
+          <span class="mat-note">Textbook</span>
+        </div>
+        <div class="mat-item">
+          <span class="mat-icon">💻</span>
+          <a class="mat-link" href="https://huggingface.co/docs/transformers/" target="_blank">Hugging Face Transformers Documentation</a>
+          <span class="mat-note">Tool</span>
+        </div>
+        <div class="mat-item">
+          <span class="mat-icon">📊</span>
+          <a class="mat-link" href="https://radimrehurek.com/gensim/" target="_blank">Gensim — Topic Modeling Library</a>
+          <span class="mat-note">Tool</span>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <a class="next" href="network-analysis.html"><div class="nav-label">Next →</div><div class="nav-title">Network Analysis</div></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

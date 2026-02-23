@@ -1,0 +1,582 @@
+---
+layout: methods-guide
+title: "GLM Link Function Selector"
+title_zh: "广义线性模型链接函数选择器"
+parent_title: "Maximum Likelihood & GLM"
+parent_title_zh: "最大似然法与广义线性模型"
+parent_url: "reg-mle.html"
+bilingual: true
+mathjax: true
+---
+
+<div class="guide-content">
+
+  <!-- ===== SECTION 1: What's Your DV? ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">1. What's Your Dependent Variable?</h2>
+    <h2 data-lang="zh">1. 您的因变量是什么？</h2>
+
+    <p data-lang="en">
+      Click on your dependent variable type below. Each choice recommends the right GLM family,
+      link function, and shows you an example R call.
+    </p>
+    <p data-lang="zh">
+      点击下方您的因变量类型。每个选择都会推荐正确的GLM家族、链接函数，并展示R代码示例。
+    </p>
+
+    <div class="dv-selector">
+      <button class="dv-card" data-dv="binary">
+        <div class="dv-icon">0/1</div>
+        <div class="dv-label" data-lang="en">Binary</div>
+        <div class="dv-label" data-lang="zh">二分</div>
+        <div class="dv-example" data-lang="en">Yes/No, Accept/Reject</div>
+        <div class="dv-example" data-lang="zh">是/否、接受/拒绝</div>
+      </button>
+
+      <button class="dv-card" data-dv="count">
+        <div class="dv-icon">0,1,2,...</div>
+        <div class="dv-label" data-lang="en">Count</div>
+        <div class="dv-label" data-lang="zh">计数</div>
+        <div class="dv-example" data-lang="en">Events, Arrests, Visits</div>
+        <div class="dv-example" data-lang="zh">事件数、逮捕次数、访问次数</div>
+      </button>
+
+      <button class="dv-card" data-dv="ordinal">
+        <div class="dv-icon">1,2,3</div>
+        <div class="dv-label" data-lang="en">Ordinal</div>
+        <div class="dv-label" data-lang="zh">有序分类</div>
+        <div class="dv-example" data-lang="en">Low/Med/High, Likert</div>
+        <div class="dv-example" data-lang="zh">低/中/高、李克特量表</div>
+      </button>
+
+      <button class="dv-card" data-dv="proportion">
+        <div class="dv-icon">0 to 1</div>
+        <div class="dv-label" data-lang="en">Proportion</div>
+        <div class="dv-label" data-lang="zh">比例</div>
+        <div class="dv-example" data-lang="en">Percent, Rate, Share</div>
+        <div class="dv-example" data-lang="zh">百分比、比率、份额</div>
+      </button>
+
+      <button class="dv-card" data-dv="survival">
+        <div class="dv-icon">T → Event</div>
+        <div class="dv-label" data-lang="en">Duration/Survival</div>
+        <div class="dv-label" data-lang="zh">时长/生存</div>
+        <div class="dv-example" data-lang="en">Time to event, Censoring</div>
+        <div class="dv-example" data-lang="zh">事件发生时间、截断</div>
+      </button>
+    </div>
+
+    <!-- Recommendation Panel -->
+    <div id="recommendation-panel" class="sim-panel" style="display: none; margin-top: 2rem;">
+      <h3 data-lang="en">Recommended Model</h3>
+      <h3 data-lang="zh">推荐模型</h3>
+
+      <div class="stat-chip">
+        <span class="slabel" data-lang="en">Family:</span>
+        <span class="sval" id="rec-family">—</span>
+      </div>
+
+      <div class="stat-chip">
+        <span class="slabel" data-lang="en">Link Function:</span>
+        <span class="sval" id="rec-link">—</span>
+      </div>
+
+      <div class="stat-chip">
+        <span class="slabel" data-lang="en">Example:</span>
+        <span class="sval" id="rec-example">—</span>
+      </div>
+
+      <div style="margin-top: 1rem; padding: 1rem; background: var(--parchment); border-left: 4px solid var(--leather);">
+        <h4 data-lang="en">R Code</h4>
+        <h4 data-lang="zh">R 代码</h4>
+        <pre><code id="rec-code"></code></pre>
+      </div>
+
+      <div style="margin-top: 1rem; padding: 1rem; background: var(--cream); border-radius: 0.5rem;">
+        <h4 data-lang="en">Key Assumptions</h4>
+        <h4 data-lang="zh">关键假设</h4>
+        <ul id="rec-assumptions"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 2: Why Not OLS? ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">2. Why Not Just Use OLS?</h2>
+    <h2 data-lang="zh">2. 为什么不直接用普通最小二乘法？</h2>
+
+    <p data-lang="en">
+      OLS assumes a linear model with normally distributed errors. For binary, count, and other
+      non-continuous outcomes, OLS breaks down in predictable ways:
+    </p>
+    <p data-lang="zh">
+      OLS假设线性模型且误差正态分布。对于二分、计数和其他非连续结果，OLS会以可预测的方式失败：
+    </p>
+
+    <canvas id="ols-failure-chart" style="max-width: 100%; margin: 2rem 0;"></canvas>
+
+    <p data-lang="en">
+      <strong>For Binary (0/1):</strong> OLS predictions can exceed 1 or fall below 0, which is nonsensical
+      for probabilities. Binary GLM (logistic regression) constrains predictions to [0, 1].
+    </p>
+    <p data-lang="zh">
+      <strong>二分情况：</strong> OLS预测可能超过1或低于0，这对概率无意义。二分GLM（逻辑回归）将预测约束在[0, 1]。
+    </p>
+
+    <p data-lang="en">
+      <strong>For Counts:</strong> OLS can predict negative counts (absurd!). Poisson GLM ensures
+      predictions are always ≥ 0.
+    </p>
+    <p data-lang="zh">
+      <strong>计数情况：</strong> OLS可能预测负数计数（荒谬！）。泊松GLM确保预测总是≥ 0。
+    </p>
+
+    <p data-lang="en">
+      <strong>Variance changes:</strong> OLS assumes constant variance. But binary data has higher variance
+      when p is near 0.5, and Poisson variance equals the mean. GLM handles heteroskedasticity correctly.
+    </p>
+    <p data-lang="zh">
+      <strong>方差变化：</strong> OLS假设方差恒定。但二分数据在p接近0.5时方差更高，泊松方差等于均值。GLM正确处理异方差性。
+    </p>
+  </section>
+
+  <!-- ===== SECTION 3: Logit vs Probit ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">3. Logit vs Probit: A Visual Comparison</h2>
+    <h2 data-lang="zh">3. 逻辑回归与质序回归：视觉对比</h2>
+
+    <p data-lang="en">
+      Both logit (logistic) and probit (normal CDF) link functions map the linear predictor to [0, 1].
+      Adjust the coefficient below to see how predicted probabilities change:
+    </p>
+    <p data-lang="zh">
+      逻辑回归和质序回归（正态累积分布函数）链接函数都将线性预测器映射到[0, 1]。调整下方系数查看预测概率的变化：
+    </p>
+
+    <div style="margin: 2rem 0; padding: 1rem; background: var(--parchment); border-radius: 0.5rem;">
+      <label>
+        <span data-lang="en">Coefficient (β):</span>
+        <span data-lang="zh">系数（β）：</span>
+        <input type="range" id="logit-probit-slider" min="0.1" max="3" step="0.1" value="1.5"
+               style="width: 200px; margin: 0 1rem;">
+        <span id="logit-probit-value">1.5</span>
+      </label>
+    </div>
+
+    <canvas id="logit-probit-chart" style="max-width: 100%; margin: 2rem 0;"></canvas>
+
+    <div class="insight-box">
+      <h4 data-lang="en">Key Insight</h4>
+      <h4 data-lang="zh">关键洞察</h4>
+      <p data-lang="en">
+        Logit and probit almost always produce nearly identical predicted probabilities
+        (typically differ by &lt; 0.01). For practical purposes, they're interchangeable.
+        Choose logit for interpretability (odds ratios) or probit if you have theoretical
+        reasons to prefer the normal distribution.
+      </p>
+      <p data-lang="zh">
+        逻辑回归和质序回归几乎总是产生几乎相同的预测概率（通常相差&lt; 0.01）。在实际目的上，它们是可互换的。
+        为了可解释性（比值比）选择逻辑回归，或如果你有理论理由更喜欢正态分布则选择质序回归。
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 4: Interpreting GLM Output ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">4. Interpreting GLM Output</h2>
+    <h2 data-lang="zh">4. 解释 GLM 输出</h2>
+
+    <h3 data-lang="en">4a. Odds Ratios (Logistic Regression)</h3>
+    <h3 data-lang="zh">4a. 比值比（逻辑回归）</h3>
+
+    <p data-lang="en">
+      When you exponentiate a coefficient from logistic regression, you get the odds ratio.
+      An odds ratio of 1.5 means that a one-unit increase in the predictor multiplies the odds
+      by 1.5 (a 50% increase in odds).
+    </p>
+    <p data-lang="zh">
+      当您对逻辑回归的系数取指数时，您得到比值比。比值比1.5意味着预测变量增加一个单位会将几率乘以1.5（几率增加50%）。
+    </p>
+
+    <div class="math-note">
+      <p>$$\text{Odds Ratio} = e^{\beta}$$</p>
+      <p data-lang="en">If β = 0.405, then OR = e^0.405 ≈ 1.5</p>
+      <p data-lang="zh">如果β = 0.405，则 OR = e^0.405 ≈ 1.5</p>
+    </div>
+
+    <h3 data-lang="en">4b. Incidence Rate Ratios (Poisson Regression)</h3>
+    <h3 data-lang="zh">4b. 发病率比（泊松回归）</h3>
+
+    <p data-lang="en">
+      For Poisson (count) models, exponentiate to get the incidence rate ratio (IRR).
+      An IRR of 1.2 means a one-unit increase in the predictor multiplies the expected count by 1.2.
+    </p>
+    <p data-lang="zh">
+      对于泊松（计数）模型，取指数得到发病率比（IRR）。IRR为1.2意味着预测变量增加一个单位会将预期计数乘以1.2。
+    </p>
+
+    <h3 data-lang="en">4c. Marginal Effects</h3>
+    <h3 data-lang="zh">4c. 边际效应</h3>
+
+    <p data-lang="en">
+      For binary outcomes, the marginal effect (ME) is often more interpretable than odds ratios.
+      It tells you: "One-unit increase in X increases probability of Y by X percentage points."
+    </p>
+    <p data-lang="zh">
+      对于二分结果，边际效应（ME）通常比比值比更具可解释性。它告诉您："X增加一个单位会增加Y的概率X个百分点。"
+    </p>
+
+    <pre><code class="language-r">
+library(margins)
+
+# Logistic regression
+glm_binary <- glm(outcome ~ x1 + x2, family = binomial(link = "logit"), data = mydata)
+
+# Get marginal effects
+mfx <- margins(glm_binary)
+summary(mfx)
+
+# For Poisson
+glm_poisson <- glm(count ~ x1 + x2, family = poisson(link = "log"), data = mydata)
+mfx_poisson <- margins(glm_poisson)
+summary(mfx_poisson)
+    </code></pre>
+  </section>
+
+  <!-- ===== SECTION 5: Model Diagnostics ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">5. Model Diagnostics & Fit</h2>
+    <h2 data-lang="zh">5. 模型诊断与拟合</h2>
+
+    <h3 data-lang="en">Deviance Residuals</h3>
+    <h3 data-lang="zh">偏差残差</h3>
+
+    <p data-lang="en">
+      Unlike OLS residuals (observed − fitted), GLM residuals are more complex.
+      Deviance residuals should be approximately normal and centered at 0. Large deviance residuals
+      indicate poorly fit observations.
+    </p>
+    <p data-lang="zh">
+      与OLS残差（观测值 − 拟合值）不同，GLM残差更复杂。偏差残差应大约正态分布且以0为中心。
+      大的偏差残差表示拟合不良的观测。
+    </p>
+
+    <h3 data-lang="en">AIC & BIC for Model Comparison</h3>
+    <h3 data-lang="zh">AIC 与 BIC 用于模型比较</h3>
+
+    <p data-lang="en">
+      AIC (Akaike) and BIC (Bayesian) penalize model complexity. Lower is better.
+      Use them to compare nested or non-nested models.
+    </p>
+    <p data-lang="zh">
+      AIC（赤池）和BIC（贝叶斯）惩罚模型复杂性。越低越好。用它们比较嵌套或非嵌套模型。
+    </p>
+
+    <pre><code class="language-r">
+# Model comparison
+model1 <- glm(outcome ~ x1 + x2, family = binomial, data = mydata)
+model2 <- glm(outcome ~ x1 + x2 + x3, family = binomial, data = mydata)
+
+AIC(model1, model2)
+BIC(model1, model2)
+
+# Likelihood ratio test (for nested models)
+anova(model1, model2, test = "Chisq")
+    </code></pre>
+
+    <h3 data-lang="en">Overdispersion (Poisson)</h3>
+    <h3 data-lang="zh">过度离散（泊松）</h3>
+
+    <p data-lang="en">
+      Poisson assumes variance = mean. If actual variance &gt; mean, you have overdispersion.
+      Fix it with quasi-Poisson or negative binomial.
+    </p>
+    <p data-lang="zh">
+      泊松假设方差 = 均值。如果实际方差 > 均值，则存在过度离散。用准泊松或负二项式修复。
+    </p>
+
+    <pre><code class="language-r">
+# Test for overdispersion
+library(AER)
+dispersiontest(glm_poisson)
+
+# If overdispersed, use quasi-Poisson
+model_quasipoisson <- glm(count ~ x1 + x2, family = quasipoisson, data = mydata)
+
+# Or negative binomial
+library(MASS)
+model_negbin <- glm.nb(count ~ x1 + x2, data = mydata)
+    </code></pre>
+  </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  // Data structure for DV recommendations
+  const dvRecommendations = {
+    binary: {
+      family: "Binomial",
+      link: "Logit (or Probit)",
+      example: "Voter turnout (vote / not vote)",
+      code: `fit <- glm(outcome ~ x1 + x2,
+                  family = binomial(link = "logit"),
+                  data = mydata)
+summary(fit)`,
+      assumptions: [
+        "Outcomes are 0/1 (or TRUE/FALSE)",
+        "Independence of observations",
+        "No perfect separation (all 1s or 0s at some X)",
+        "Linear in the logit: logit(p) = β₀ + β₁X"
+      ]
+    },
+    count: {
+      family: "Poisson",
+      link: "Log",
+      example: "Number of arrests, clinic visits, complaints filed",
+      code: `fit <- glm(count ~ x1 + x2,
+                  family = poisson(link = "log"),
+                  data = mydata)
+summary(fit)`,
+      assumptions: [
+        "Outcomes are non-negative integers (0, 1, 2, ...)",
+        "Variance ≈ Mean (if violated, use quasi-Poisson or negbin)",
+        "Independence of observations",
+        "Linear in the log: log(λ) = β₀ + β₁X"
+      ]
+    },
+    ordinal: {
+      family: "Ordinal (Proportional Odds)",
+      link: "Logit",
+      example: "Satisfaction (Low, Medium, High), Likert scales",
+      code: `library(ordinal)
+fit <- clm(response ~ x1 + x2, data = mydata)
+summary(fit)`,
+      assumptions: [
+        "Outcomes have natural ordering",
+        "Proportional odds: effect of X same across all thresholds",
+        "No skipping categories (e.g., rare outcomes)",
+        "Independence of observations"
+      ]
+    },
+    proportion: {
+      family: "Beta-Binomial or Quasibinomial",
+      link: "Logit",
+      example: "Graduation rate by school, crime rate, market share",
+      code: `fit <- glm(prop ~ x1 + x2,
+                  family = quasibinomial(link = "logit"),
+                  data = mydata)
+summary(fit)`,
+      assumptions: [
+        "Outcomes in range [0, 1]",
+        "Often aggregated from binary data",
+        "Use quasibinomial if overdispersed",
+        "Beta distribution if extreme clustering near 0/1"
+      ]
+    },
+    survival: {
+      family: "Exponential, Weibull, or Cox PH",
+      link: "Log (accelerated) or none (Cox)",
+      example: "Time to recidivism, time to promotion, time on welfare",
+      code: `library(survival)
+fit <- coxph(Surv(time, event) ~ x1 + x2, data = mydata)
+summary(fit)`,
+      assumptions: [
+        "Time to event (with censoring allowed)",
+        "Cox PH assumes proportional hazards",
+        "Accelerated life models assume log-linear",
+        "Independence of observations"
+      ]
+    }
+  };
+
+  // Handle DV card clicks
+  document.querySelectorAll('.dv-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const dv = this.getAttribute('data-dv');
+      const rec = dvRecommendations[dv];
+
+      document.getElementById('rec-family').textContent = rec.family;
+      document.getElementById('rec-link').textContent = rec.link;
+      document.getElementById('rec-example').textContent = rec.example;
+      document.getElementById('rec-code').textContent = rec.code;
+
+      const assumptionsList = document.getElementById('rec-assumptions');
+      assumptionsList.innerHTML = '';
+      rec.assumptions.forEach(assumption => {
+        const li = document.createElement('li');
+        li.textContent = assumption;
+        assumptionsList.appendChild(li);
+      });
+
+      document.getElementById('recommendation-panel').style.display = 'block';
+    });
+  });
+
+  // OLS Failure Chart
+  const olsCtx = document.getElementById('ols-failure-chart');
+  if (olsCtx) {
+    const x = Array.from({length: 21}, (_, i) => (i - 10) / 2);
+    const olsLine = x.map(xi => xi); // y = x
+    const logisticLine = x.map(xi => 1 / (1 + Math.exp(-2 * xi))); // logistic
+
+    new Chart(olsCtx, {
+      type: 'scatter',
+      data: {
+        datasets: [
+          {
+            label: 'OLS (problematic)',
+            data: x.map((xi, i) => ({x: xi, y: olsLine[i]})),
+            borderColor: '#d32f2f',
+            backgroundColor: '#d32f2f',
+            showLine: true,
+            borderDash: [5, 5],
+            tension: 0,
+            fill: false
+          },
+          {
+            label: 'Logistic (correct)',
+            data: x.map((xi, i) => ({x: xi, y: logisticLine[i]})),
+            borderColor: '#2e7d32',
+            backgroundColor: '#2e7d32',
+            showLine: true,
+            tension: 0.3,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {position: 'top'},
+          title: {display: true, text: 'Binary Outcome: Why OLS Fails'}
+        },
+        scales: {
+          x: {title: {display: true, text: 'Predictor (X)'}},
+          y: {min: -1, max: 2, title: {display: true, text: 'Probability (should be 0–1)'}}
+        }
+      }
+    });
+  }
+
+  // Logit vs Probit Chart
+  const slider = document.getElementById('logit-probit-slider');
+  const valueDisplay = document.getElementById('logit-probit-value');
+  const lpCtx = document.getElementById('logit-probit-chart');
+
+  function updateLogitProbitChart() {
+    const beta = parseFloat(slider.value);
+    valueDisplay.textContent = beta.toFixed(2);
+
+    const x = Array.from({length: 101}, (_, i) => (i - 50) / 10);
+    const logitProbs = x.map(xi => 1 / (1 + Math.exp(-beta * xi)));
+    const probitProbs = x.map(xi => {
+      // Approximate normal CDF
+      const z = beta * xi;
+      return 0.5 * (1 + Math.tanh(Math.sqrt(Math.PI / 8) * z));
+    });
+
+    const dataset = lpCtx.chart;
+    if (dataset) {
+      dataset.data.datasets[0].data = x.map((xi, i) => ({x: xi, y: logitProbs[i]}));
+      dataset.data.datasets[1].data = x.map((xi, i) => ({x: xi, y: probitProbs[i]}));
+      dataset.update();
+    }
+  }
+
+  if (lpCtx) {
+    const beta = parseFloat(slider.value);
+    const x = Array.from({length: 101}, (_, i) => (i - 50) / 10);
+    const logitProbs = x.map(xi => 1 / (1 + Math.exp(-beta * xi)));
+    const probitProbs = x.map(xi => {
+      const z = beta * xi;
+      return 0.5 * (1 + Math.tanh(Math.sqrt(Math.PI / 8) * z));
+    });
+
+    lpCtx.chart = new Chart(lpCtx, {
+      type: 'scatter',
+      data: {
+        datasets: [
+          {
+            label: 'Logit (Logistic)',
+            data: x.map((xi, i) => ({x: xi, y: logitProbs[i]})),
+            borderColor: '#1976d2',
+            backgroundColor: '#1976d2',
+            showLine: true,
+            tension: 0.3,
+            fill: false
+          },
+          {
+            label: 'Probit (Normal CDF)',
+            data: x.map((xi, i) => ({x: xi, y: probitProbs[i]})),
+            borderColor: '#f57c00',
+            backgroundColor: '#f57c00',
+            showLine: true,
+            borderDash: [3, 3],
+            tension: 0.3,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {position: 'top'},
+          title: {display: true, text: 'Logit vs Probit: Nearly Identical Predictions'}
+        },
+        scales: {
+          x: {title: {display: true, text: 'Linear Predictor (Xβ)'}},
+          y: {min: 0, max: 1, title: {display: true, text: 'Predicted Probability'}}
+        }
+      }
+    });
+
+    slider.addEventListener('input', updateLogitProbitChart);
+  }
+</script>
+
+<style>
+  .dv-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .dv-card {
+    padding: 1.5rem;
+    background: var(--parchment);
+    border: 2px solid var(--ink-ghost);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    font-family: var(--sans);
+  }
+
+  .dv-card:hover {
+    border-color: var(--leather);
+    background: var(--cream);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .dv-icon {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--leather);
+    margin-bottom: 0.5rem;
+  }
+
+  .dv-label {
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 1rem;
+  }
+
+  .dv-example {
+    font-size: 0.85rem;
+    color: var(--ink-faded);
+    margin-top: 0.5rem;
+  }
+</style>

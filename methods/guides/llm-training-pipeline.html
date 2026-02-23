@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>From Pre-training to Alignment: Mathematical Pipeline</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+            --bg-main: #fafaf8;
+            --bg-card: #fff;
+            --border: #e8e8e6;
+            --accent: #8b7355;
+            --accent-light: #d4c5b9;
+            --code-bg: #f5f5f3;
+            --zh-accent: #c41d34;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'EB Garamond', serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        body.zh {
+            font-family: 'Noto Serif SC', 'EB Garamond', serif;
+        }
+
+        .container {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        header {
+            margin-bottom: 50px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 30px;
+            position: relative;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--accent);
+        }
+
+        .lang-toggle {
+            font-family: 'IBM Plex Sans', sans-serif;
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+        }
+
+        .lang-btn {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            cursor: pointer;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        body.zh .lang-btn.active {
+            background-color: var(--zh-accent);
+            border-color: var(--zh-accent);
+        }
+
+        .header-tag {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        body.zh .header-tag {
+            color: var(--zh-accent);
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 42px;
+            font-weight: 300;
+            line-height: 1.2;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 14px;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+
+        .toc {
+            background-color: var(--code-bg);
+            padding: 20px 25px;
+            border-radius: 4px;
+            margin: 40px 0;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 14px;
+        }
+
+        .toc-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 12px;
+        }
+
+        .toc ol {
+            margin-left: 20px;
+        }
+
+        .toc li {
+            margin-bottom: 8px;
+        }
+
+        .toc a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        body.zh .toc a {
+            color: var(--zh-accent);
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        section {
+            margin-bottom: 60px;
+        }
+
+        h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 400;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent);
+            padding-left: 20px;
+        }
+
+        body.zh h2 {
+            border-left-color: var(--zh-accent);
+        }
+
+        h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-weight: 400;
+            margin-top: 35px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 18px;
+            text-align: justify;
+        }
+
+        .equation-block {
+            background-color: var(--code-bg);
+            padding: 25px;
+            border-radius: 4px;
+            margin: 25px 0;
+            border-left: 3px solid var(--accent);
+            overflow-x: auto;
+        }
+
+        body.zh .equation-block {
+            border-left-color: var(--zh-accent);
+        }
+
+        .equation-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 12px;
+            text-align: right;
+        }
+
+        .math-explanation {
+            background-color: #f9f9f7;
+            padding: 18px 22px;
+            border-radius: 4px;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .math-explanation strong {
+            color: var(--accent);
+        }
+
+        body.zh .math-explanation strong {
+            color: var(--zh-accent);
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 18px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .note {
+            background-color: #fef8f3;
+            border-left: 4px solid var(--accent-light);
+            padding: 18px 22px;
+            margin: 25px 0;
+            border-radius: 2px;
+        }
+
+        body.zh .note {
+            background-color: #fef3f3;
+            border-left-color: var(--zh-accent);
+        }
+
+        .note strong {
+            color: var(--accent);
+        }
+
+        body.zh .note strong {
+            color: var(--zh-accent);
+        }
+
+        code {
+            font-family: 'IBM Plex Mono', monospace;
+            background-color: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 14px;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 20px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .derivation-step {
+            counter-increment: step-counter;
+            margin-left: 25px;
+            margin-bottom: 20px;
+            padding-left: 20px;
+            border-left: 2px solid var(--border);
+            position: relative;
+        }
+
+        .derivation-step::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: -15px;
+            top: 0;
+            background-color: var(--accent);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        body.zh .derivation-step::before {
+            background-color: var(--zh-accent);
+        }
+
+        .counter-section {
+            counter-reset: step-counter;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 14px;
+        }
+
+        .comparison-table thead {
+            background-color: var(--code-bg);
+        }
+
+        .comparison-table th, .comparison-table td {
+            border: 1px solid var(--border);
+            padding: 15px;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        body.zh .comparison-table th {
+            color: var(--zh-accent);
+        }
+
+        .comparison-table tbody tr:nth-child(odd) {
+            background-color: #fafaf8;
+        }
+
+        .math-concept {
+            background-color: #f0f5ff;
+            border-left: 4px solid #4a90e2;
+            padding: 18px 22px;
+            margin: 25px 0;
+            border-radius: 2px;
+        }
+
+        body.zh .math-concept {
+            background-color: #fff0f0;
+            border-left-color: var(--zh-accent);
+        }
+
+        footer {
+            margin-top: 80px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px 20px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            h2 {
+                font-size: 26px;
+            }
+
+            .equation-block {
+                padding: 18px;
+                font-size: 14px;
+            }
+        }
+
+        /* MathJax adjustments */
+        .MathJax {
+            font-size: 1.1em !important;
+        }
+
+        /* Data lang attribute styling */
+        [data-lang-en] {
+            display: block;
+        }
+
+        [data-lang-zh] {
+            display: none;
+        }
+
+        body.zh [data-lang-en] {
+            display: none;
+        }
+
+        body.zh [data-lang-zh] {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="header-top">
+            <a href="../llm.html" class="back-link" data-lang-en>← Back to LLM Methods</a>
+            <a href="../llm.html" class="back-link" data-lang-zh hidden>← 返回 LLM 方法</a>
+            <div class="lang-toggle">
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="zh">ZH</button>
+            </div>
+        </div>
+
+        <div class="header-tag">
+            <span data-lang-en>ADVANCED · PROOF & DERIVATION</span>
+            <span data-lang-zh hidden>进阶 · 证明与推导</span>
+        </div>
+
+        <h1 data-lang-en>From Pre-training to Alignment: Mathematical Pipeline</h1>
+        <h1 data-lang-zh hidden>从预训练到对齐：数学管道</h1>
+
+        <p class="subtitle" data-lang-en>Complete mathematical framework for language model training, from fundamental loss functions to advanced alignment techniques</p>
+        <p class="subtitle" data-lang-zh hidden>语言模型训练的完整数学框架，从基础损失函数到高级对齐技术</p>
+    </header>
+
+    <!-- Table of Contents -->
+    <div class="toc">
+        <div class="toc-title" data-lang-en>Contents</div>
+        <div class="toc-title" data-lang-zh hidden>目录</div>
+        <ol>
+            <li><a href="#sec-cross-entropy" data-lang-en>Cross-Entropy Loss & Language Modeling</a>
+                <a href="#sec-cross-entropy" data-lang-zh hidden>交叉熵损失与语言建模</a></li>
+            <li><a href="#sec-perplexity" data-lang-en>Perplexity: Interpretation and Metrics</a>
+                <a href="#sec-perplexity" data-lang-zh hidden>困惑度：解释与指标</a></li>
+            <li><a href="#sec-sft" data-lang-en>Supervised Fine-Tuning (SFT)</a>
+                <a href="#sec-sft" data-lang-zh hidden>监督微调 (SFT)</a></li>
+            <li><a href="#sec-rlhf" data-lang-en>RLHF Pipeline: Complete Analysis</a>
+                <a href="#sec-rlhf" data-lang-zh hidden>RLHF 管道：完整分析</a></li>
+            <li><a href="#sec-dpo" data-lang-en>Direct Preference Optimization (DPO)</a>
+                <a href="#sec-dpo" data-lang-zh hidden>直接偏好优化 (DPO)</a></li>
+            <li><a href="#sec-sampling" data-lang-en>Advanced Sampling Methods</a>
+                <a href="#sec-sampling" data-lang-zh hidden>高级采样方法</a></li>
+        </ol>
+    </div>
+
+    <!-- Section 1: Cross-Entropy Loss -->
+    <section id="sec-cross-entropy">
+        <h2 data-lang-en>Cross-Entropy Loss & Language Modeling</h2>
+        <h2 data-lang-zh hidden>交叉熵损失与语言建模</h2>
+
+        <p data-lang-en>
+            The foundation of all language model training is the cross-entropy loss function. Given a sequence of tokens
+            <span class="math">w₁, w₂, ..., wₙ</span>, the model learns to predict the next token at each position.
+        </p>
+        <p data-lang-zh hidden>
+            所有语言模型训练的基础是交叉熵损失函数。给定一个标记序列 <span class="math">w₁, w₂, ..., wₙ</span>，模型学习在每个位置预测下一个标记。
+        </p>
+
+        <h3 data-lang-en>Fundamental Definition</h3>
+        <h3 data-lang-zh hidden>基本定义</h3>
+
+        <div class="equation-block">
+            $$L = -\sum_{t=1}^{n} \log P(w_t | w_1, w_2, \ldots, w_{t-1})$$
+            <div class="equation-label">Equation 1.1: Causal Language Modeling Loss</div>
+        </div>
+
+        <p data-lang-en>
+            Where <strong>P(wₜ | w₁...wₜ₋₁)</strong> is the probability assigned by the model to the correct token at position <em>t</em>,
+            conditioned on all previous tokens. The negative log-likelihood is summed over all positions in the sequence.
+        </p>
+        <p data-lang-zh hidden>
+            其中 <strong>P(wₜ | w₁...wₜ₋₁)</strong> 是模型对位置 <em>t</em> 处正确标记的概率，以所有先前的标记为条件。负对数似然被求和到序列中的所有位置。
+        </p>
+
+        <div class="math-explanation">
+            <strong data-lang-en>Intuition:</strong>
+            <strong data-lang-zh hidden>直觉：</strong>
+            <span data-lang-en>
+                The model outputs a probability distribution over the vocabulary at each position.
+                We want to maximize P(wₜ | context), which is equivalent to minimizing -log P(wₜ | context).
+                Taking the log converts multiplication into addition (useful for computing over sequences).
+                The model "learns" by adjusting weights to increase log-probabilities of correct tokens.
+            </span>
+            <span data-lang-zh hidden>
+                模型在每个位置输出词汇表上的概率分布。我们想要最大化 P(wₜ | context)，这相当于最小化 -log P(wₜ | context)。
+                对数将乘法转换为加法（对序列计算很有用）。
+                模型通过调整权重来增加正确标记的对数概率而"学习"。
+            </span>
+        </div>
+
+        <h3 data-lang-en>Implementation Details</h3>
+        <h3 data-lang-zh hidden>实现细节</h3>
+
+        <p data-lang-en>
+            In practice, the model outputs logits <strong>zᵢ</strong> from the final layer (one per vocabulary item).
+            These are converted to probabilities via softmax:
+        </p>
+        <p data-lang-zh hidden>
+            在实践中，模型从最后一层输出 logits <strong>zᵢ</strong>（每个词汇项一个）。
+            这些通过 softmax 转换为概率：
+        </p>
+
+        <div class="equation-block">
+            $$P(w_t | \text{context}) = \frac{e^{z_{\text{correct}}}}{\sum_{j=1}^{V} e^{z_j}}$$
+            <div class="equation-label">Equation 1.2: Softmax Probability</div>
+        </div>
+
+        <p data-lang-en">where <em>V</em> is vocabulary size.</p>
+        <p data-lang-zh hidden>其中 <em>V</em> 是词汇大小。</p>
+
+        <div class="math-concept">
+            <strong data-lang-en>Numerical Stability:</strong>
+            <strong data-lang-zh hidden>数值稳定性：</strong>
+            <span data-lang-en>
+                Direct computation of softmax can cause numerical overflow. In practice, use the log-sum-exp trick:
+                compute softmax in a numerically stable way by subtracting the maximum logit before exponentiation.
+            </span>
+            <span data-lang-zh hidden>
+                直接计算softmax可能导致数值溢出。在实践中，使用 log-sum-exp 技巧：
+                通过在指数化前减去最大logit来以数值稳定的方式计算softmax。
+            </span>
+        </div>
+
+        <div class="counter-section">
+            <h3 data-lang-en>Gradient-Based Learning</h3>
+            <h3 data-lang-zh hidden>基于梯度的学习</h3>
+
+            <p data-lang-en>
+                The loss is minimized using stochastic gradient descent and backpropagation.
+                The gradient with respect to the logit of the correct token is:
+            </p>
+            <p data-lang-zh hidden>
+                使用随机梯度下降和反向传播来最小化损失。
+                关于正确标记的logit的梯度是：
+            </p>
+
+            <div class="equation-block">
+                $$\frac{\partial L}{\partial z_{\text{correct}}} = P(w_t | \text{context}) - 1$$
+                <div class="equation-label">Equation 1.3: Cross-Entropy Gradient</div>
+            </div>
+
+            <div class="derivation-step">
+                <strong data-lang-en>Why this form?</strong>
+                <strong data-lang-zh hidden>为什么是这种形式？</strong>
+                <span data-lang-en>
+                    The gradient is simply the predicted probability minus the true label (which is 1 for the correct token).
+                    If P = 0.9 (high confidence in correct token), gradient is small.
+                    If P = 0.1 (low confidence), gradient is large and pushes the logit higher.
+                </span>
+                <span data-lang-zh hidden>
+                    梯度只是预测的概率减去真实标签（正确标记为1）。
+                    如果 P = 0.9（对正确标记的高置信度），梯度很小。
+                    如果 P = 0.1（低置信度），梯度很大并将logit推高。
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Perplexity -->
+    <section id="sec-perplexity">
+        <h2 data-lang-en>Perplexity: Interpretation and Metrics</h2>
+        <h2 data-lang-zh hidden>困惑度：解释与指标</h2>
+
+        <p data-lang-en>
+            While loss is the training objective, <strong>perplexity</strong> is often used to evaluate language models
+            because it's more interpretable and language-independent.
+        </p>
+        <p data-lang-zh hidden>
+            虽然损失是训练目标，但 <strong>困惑度</strong> 经常用于评估语言模型，因为它更具可解释性且与语言无关。
+        </p>
+
+        <h3 data-lang-en>Definition</h3>
+        <h3 data-lang-zh hidden>定义</h3>
+
+        <div class="equation-block">
+            $$\text{Perplexity} = e^{L/N} = \exp\left(\frac{1}{N}\sum_{t=1}^{N} \log P(w_t | w_1, \ldots, w_{t-1})\right)$$
+            <div class="equation-label">Equation 2.1: Perplexity Formula</div>
+        </div>
+
+        <p data-lang-en">where <em>N</em> is the number of tokens in the evaluation set.</p>
+        <p data-lang-zh hidden>其中 <em>N</em> 是评估集中的标记数。</p>
+
+        <div class="math-explanation">
+            <strong data-lang-en>Interpretation:</strong>
+            <strong data-lang-zh hidden>解释：</strong>
+            <span data-lang-en>
+                Perplexity is the average branching factor of the model. A perplexity of 100 means the model
+                is as confused as if it were choosing uniformly among 100 equally likely tokens.
+                <strong>Lower perplexity = better model.</strong> A perfect model predicting with probability 1 would have perplexity = 1.
+            </span>
+            <span data-lang-zh hidden>
+                困惑度是模型的平均分支因子。困惑度为 100 意味着模型的困惑程度相当于在 100 个等可能的标记中均匀选择。
+                <strong>困惑度越低 = 模型越好。</strong>以概率 1 完美预测的模型的困惑度 = 1。
+            </span>
+        </div>
+
+        <h3 data-lang-en>Relationship to Loss</h3>
+        <h3 data-lang-zh hidden>与损失的关系</h3>
+
+        <div class="equation-block">
+            $$L_{\text{avg}} = \frac{L}{N} = \log(\text{Perplexity})$$
+            <div class="equation-label">Equation 2.2: Loss-Perplexity Equivalence</div>
+        </div>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th data-lang-en>Metric</th>
+                    <th data-lang-zh hidden>指标</th>
+                    <th data-lang-en>Range</th>
+                    <th data-lang-zh hidden>范围</th>
+                    <th data-lang-en>Interpretation</th>
+                    <th data-lang-zh hidden>解释</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td data-lang-en>Loss (L)</td>
+                    <td data-lang-zh hidden>损失 (L)</td>
+                    <td>[0, ∞)</td>
+                    <td>[0, ∞)</td>
+                    <td data-lang-en>Sum of negative log probs; harder to interpret directly</td>
+                    <td data-lang-zh hidden>负对数概率的总和；难以直接解释</td>
+                </tr>
+                <tr>
+                    <td data-lang-en>Avg Loss (L/N)</td>
+                    <td data-lang-zh hidden>平均损失 (L/N)</td>
+                    <td>[0, ∞)</td>
+                    <td>[0, ∞)</td>
+                    <td data-lang-en>Normalized by sequence length; more stable</td>
+                    <td data-lang-zh hidden>按序列长度归一化；更稳定</td>
+                </tr>
+                <tr>
+                    <td data-lang-en>Perplexity</td>
+                    <td data-lang-zh hidden>困惑度</td>
+                    <td>[1, ∞)</td>
+                    <td>[1, ∞)</td>
+                    <td data-lang-en>Exponential of avg loss; intuitive branching factor</td>
+                    <td data-lang-zh hidden>平均损失的指数；直观的分支因子</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="note">
+            <strong data-lang-en>Note:</strong>
+            <strong data-lang-zh hidden>注意：</strong>
+            <span data-lang-en>
+                Perplexity is particularly useful for comparing models of different architectures
+                or trained on different data distributions. Always compute on the same held-out test set for fair comparison.
+            </span>
+            <span data-lang-zh hidden>
+                困惑度对于比较不同架构或在不同数据分布上训练的模型特别有用。
+                始终在相同的留出测试集上计算以进行公平比较。
+            </span>
+        </div>
+    </section>
+
+    <!-- Section 3: Supervised Fine-Tuning -->
+    <section id="sec-sft">
+        <h2 data-lang-en>Supervised Fine-Tuning (SFT)</h2>
+        <h2 data-lang-zh hidden>监督微调 (SFT)</h2>
+
+        <p data-lang-en>
+            Supervised Fine-Tuning is the first alignment step. After pre-training on general internet data,
+            the model is fine-tuned on high-quality demonstrations of desired behavior.
+        </p>
+        <p data-lang-zh hidden>
+            监督微调是第一个对齐步骤。在通用互联网数据上预训练后，
+            模型在所需行为的高质量演示上进行微调。
+        </p>
+
+        <h3 data-lang-en>Objective Function</h3>
+        <h3 data-lang-zh hidden>目标函数</h3>
+
+        <p data-lang-en>
+            The loss function is <strong>identical to pre-training</strong>, but the data distribution changes:
+        </p>
+        <p data-lang-zh hidden>
+            损失函数与预训练<strong>完全相同</strong>，但数据分布发生变化：
+        </p>
+
+        <div class="equation-block">
+            $$L_{\text{SFT}} = -\sum_{t=1}^{n} \log P_\theta(w_t | w_1, \ldots, w_{t-1}; x)$$
+            <div class="equation-label">Equation 3.1: SFT Loss (Same as Pre-training)</div>
+        </div>
+
+        <p data-lang-en">where <strong>x</strong> is the instruction/prompt and <strong>w</strong> is the desired response.</p>
+        <p data-lang-zh hidden>其中 <strong>x</strong> 是指令/提示，<strong>w</strong> 是所需的响应。</p>
+
+        <h3 data-lang-en>Key Differences from Pre-training</h3>
+        <h3 data-lang-zh hidden>与预训练的关键区别</h3>
+
+        <ul>
+            <li data-lang-en><strong>Data Quality:</strong> SFT uses curated, high-quality demonstrations (typically 10K-100K examples) instead of raw internet text</li>
+            <li data-lang-zh hidden><strong>数据质量：</strong> SFT 使用精心策划的高质量演示（通常 10K-100K 个例子），而不是原始互联网文本</li>
+
+            <li data-lang-en><strong>Data Distribution:</strong> Skewed toward the desired task/style, not representative of the whole internet</li>
+            <li data-lang-zh hidden><strong>数据分布：</strong>向所需任务/风格倾斜，不代表整个互联网</li>
+
+            <li data-lang-en><strong>Learning Rate:</strong> Typically much smaller than pre-training (1e-5 to 1e-4) to preserve pre-trained knowledge</li>
+            <li data-lang-zh hidden><strong>学习率：</strong>通常比预训练小得多（1e-5 到 1e-4）以保留预训练知识</li>
+
+            <li data-lang-en><strong>Training Steps:</strong> Usually only 1-10 epochs through the data (vs. multiple passes in pre-training)</li>
+            <li data-lang-zh hidden><strong>训练步骤：</strong>通常只是通过数据的 1-10 个 epoch（相比预训练的多个 pass）</li>
+        </ul>
+
+        <div class="math-concept">
+            <strong data-lang-en>Why Not Just Use Cross-Entropy?</strong>
+            <strong data-lang-zh hidden>为什么不直接使用交叉熵？</strong>
+            <span data-lang-en>
+                Cross-entropy loss optimizes for <em>likelihood</em> of demonstrations, but doesn't directly optimize for
+                <em>alignment</em> (matching human preferences). This is why more sophisticated methods like RLHF and DPO
+                were developed—they directly optimize for preference satisfaction.
+            </span>
+            <span data-lang-zh hidden>
+                交叉熵损失优化演示的<em>似然性</em>，但不直接优化<em>对齐</em>（与人类偏好匹配）。
+                这就是为什么开发了更复杂的方法如 RLHF 和 DPO——它们直接优化偏好满意度。
+            </span>
+        </div>
+    </section>
+
+    <!-- Section 4: RLHF -->
+    <section id="sec-rlhf">
+        <h2 data-lang-en>RLHF Pipeline: Complete Analysis</h2>
+        <h2 data-lang-zh hidden>RLHF 管道：完整分析</h2>
+
+        <p data-lang-en>
+            Reinforcement Learning from Human Feedback (RLHF) extends SFT by explicitly optimizing for human preferences.
+            The pipeline has three main stages:
+        </p>
+        <p data-lang-zh hidden>
+            从人类反馈进行强化学习 (RLHF) 通过明确优化人类偏好来扩展 SFT。
+            该管道有三个主要阶段：
+        </p>
+
+        <ol>
+            <li data-lang-en>Collect preferences: Humans compare pairs of model outputs</li>
+            <li data-lang-zh hidden>收集偏好：人工比较模型输出的配对</li>
+
+            <li data-lang-en>Train reward model: Learn a function that predicts human preferences</li>
+            <li data-lang-zh hidden>训练奖励模型：学习预测人类偏好的函数</li>
+
+            <li data-lang-en>Use RL to optimize policy against reward model</li>
+            <li data-lang-zh hidden>使用 RL 根据奖励模型优化策略</li>
+        </ol>
+
+        <h3 data-lang-en>Stage 1: Reward Model Training</h3>
+        <h3 data-lang-zh hidden>阶段 1：奖励模型训练</h3>
+
+        <p data-lang-en>
+            Given pairs of responses (A, B) to the same prompt, humans label which is preferred.
+            The reward model learns to predict these preferences using the Bradley-Terry model:
+        </p>
+        <p data-lang-zh hidden>
+            给定同一提示的响应对 (A, B)，人工标记哪个更优选。
+            奖励模型学习使用 Bradley-Terry 模型预测这些偏好：
+        </p>
+
+        <div class="equation-block">
+            $$P(A \succ B) = \sigma(r(A) - r(B)) = \frac{1}{1 + e^{-(r(A) - r(B))}}$$
+            <div class="equation-label">Equation 4.1: Bradley-Terry Model</div>
+        </div>
+
+        <p data-lang-en">
+            where <strong>r(·)</strong> is the scalar reward output of the model, and <strong>σ</strong> is the sigmoid function.
+        </p>
+        <p data-lang-zh hidden>
+            其中 <strong>r(·)</strong> 是模型的标量奖励输出，<strong>σ</strong> 是 sigmoid 函数。
+        </p>
+
+        <h3 data-lang-en>Reward Model Loss</h3>
+        <h3 data-lang-zh hidden>奖励模型损失</h3>
+
+        <div class="equation-block">
+            $$L_{\text{reward}} = -\sum_{(A,B)} [y_{AB} \log(\sigma(r(A) - r(B))) + (1-y_{AB}) \log(1 - \sigma(r(A) - r(B)))]$$
+            <div class="equation-label">Equation 4.2: Reward Model Binary Cross-Entropy</div>
+        </div>
+
+        <p data-lang-en">where yₐᵦ = 1 if A is preferred, 0 if B is preferred.</p>
+        <p data-lang-zh hidden>其中当 A 更优选时 yₐᵦ = 1，当 B 更优选时为 0。</p>
+
+        <div class="math-explanation">
+            <strong data-lang-en>Why Bradley-Terry?</strong>
+            <strong data-lang-zh hidden>为什么是 Bradley-Terry？</strong>
+            <span data-lang-en">
+                The Bradley-Terry model is the standard choice because it has nice properties:
+                (1) It's a probabilistic model that naturally extends to more than 2 options,
+                (2) The loss is convex in the reward difference,
+                (3) It respects transitivity: if A ≻ B and B ≻ C, then A ≻ C.
+            </span>
+            <span data-lang-zh hidden>
+                Bradley-Terry 模型是标准选择，因为它有很好的性质：
+                (1) 这是一个概率模型，自然扩展到 2 个以上的选项，
+                (2) 损失在奖励差异中是凸的，
+                (3) 它尊重传递性：如果 A ≻ B 和 B ≻ C，则 A ≻ C。
+            </span>
+        </div>
+
+        <h3 data-lang-en">Stage 2: Policy Optimization with PPO</h3>
+        <h3 data-lang-zh hidden>阶段 2：使用 PPO 的策略优化</h3>
+
+        <p data-lang-en>
+            Once the reward model is trained, we optimize the language model (policy) to maximize rewards
+            while staying close to the original SFT model. We use Proximal Policy Optimization (PPO).
+        </p>
+        <p data-lang-zh hidden>
+            一旦奖励模型被训练，我们优化语言模型（策略）以最大化奖励，
+            同时保持接近原始 SFT 模型。我们使用近端策略优化 (PPO)。
+        </p>
+
+        <h3 data-lang-en>PPO Clipped Objective</h3>
+        <h3 data-lang-zh hidden>PPO 裁剪目标</h3>
+
+        <div class="equation-block">
+            $$L^{\text{CLIP}}(\theta) = \min\left(r_t(\theta) \hat{A}_t, \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) \hat{A}_t\right)$$
+            <div class="equation-label">Equation 4.3: PPO Clipped Objective</div>
+        </div>
+
+        <p data-lang-en">where:</p>
+        <p data-lang-zh hidden>其中：</p>
+
+        <ul>
+            <li data-lang-en"><strong>rₜ(θ)</strong> = probability ratio: P_θ(aₜ|sₜ) / P_{θ_old}(aₜ|sₜ)</li>
+            <li data-lang-zh hidden><strong>rₜ(θ)</strong> = 概率比：P_θ(aₜ|sₜ) / P_{θ_old}(aₜ|sₜ)</li>
+
+            <li data-lang-en"><strong>Âₜ</strong> = advantage estimate (returns - baseline value estimate)</li>
+            <li data-lang-zh hidden><strong>Âₜ</strong> = 优势估计（返回 - 基线价值估计）</li>
+
+            <li data-lang-en"><strong>ε</strong> = clipping parameter (typically 0.2)</li>
+            <li data-lang-zh hidden><strong>ε</strong> = 裁剪参数（通常 0.2）</li>
+        </ul>
+
+        <h3 data-lang-en">Full RLHF Objective</h3>
+        <h3 data-lang-zh hidden>完整 RLHF 目标</h3>
+
+        <p data-lang-en">The full objective combines the clipped loss with a KL penalty to the reference model:</p>
+        <p data-lang-zh hidden>完整目标将裁剪损失与对参考模型的 KL 惩罚相结合：</p>
+
+        <div class="equation-block">
+            $$L(\theta) = \mathbb{E}_{s \sim \mathcal{D}} \left[ L^{\text{CLIP}}(\theta) - \beta \cdot \text{KL}(\pi_\theta(\cdot|s) \| \pi_{\text{ref}}(\cdot|s)) \right]$$
+            <div class="equation-label">Equation 4.4: RLHF with KL Regularization</div>
+        </div>
+
+        <div class="counter-section">
+            <h3 data-lang-en>The KL Penalty: Why is it Necessary?</h3>
+            <h3 data-lang-zh hidden>KL 惩罚：为什么必要？</h3>
+
+            <div class="derivation-step">
+                <strong data-lang-en>Problem:</strong>
+                <strong data-lang-zh hidden>问题：</strong>
+                <span data-lang-en">
+                    Without constraints, the model will exploit the reward model's weaknesses.
+                    This is called <em>reward hacking</em> — finding shortcuts to high reward without genuine improvement.
+                </span>
+                <span data-lang-zh hidden>
+                    没有约束，模型将利用奖励模型的弱点。
+                    这被称为<em>奖励黑客</em>——找到获得高奖励的捷径而不是真正的改进。
+                </span>
+            </div>
+
+            <div class="derivation-step">
+                <strong data-lang-en>Solution:</strong>
+                <strong data-lang-zh hidden>解决方案：</strong>
+                <span data-lang-en">
+                    Add KL divergence penalty: KL(π_θ || π_ref) ≥ 0, with equality only when π_θ = π_ref.
+                    This forces the optimized policy to stay close to the reference (SFT) model.
+                </span>
+                <span data-lang-zh hidden>
+                    添加 KL 散度惩罚：KL(π_θ || π_ref) ≥ 0，仅当 π_θ = π_ref 时等号成立。
+                    这强制优化的策略保持接近参考（SFT）模型。
+                </span>
+            </div>
+
+            <div class="derivation-step">
+                <strong data-lang-en>Tuning β:</strong>
+                <strong data-lang-zh hidden>调整 β：</strong>
+                <span data-lang-en">
+                    Larger β = stronger constraint to reference model (more conservative).
+                    Smaller β = more aggressive policy update (more reward-seeking).
+                    Typical values: β ∈ [0.01, 0.1].
+                </span>
+                <span data-lang-zh hidden>
+                    较大的 β = 对参考模型的更强约束（更保守）。
+                    较小的 β = 更激进的策略更新（更多奖励寻求）。
+                    典型值：β ∈ [0.01, 0.1]。
+                </span>
+            </div>
+        </div>
+
+        <h3 data-lang-en>KL Divergence Definition</h3>
+        <h3 data-lang-zh hidden>KL 散度定义</h3>
+
+        <div class="equation-block">
+            $$\text{KL}(\pi_\theta || \pi_{\text{ref}}) = \sum_{a} \pi_\theta(a|s) \left[ \log \pi_\theta(a|s) - \log \pi_{\text{ref}}(a|s) \right]$$
+            <div class="equation-label">Equation 4.5: KL Divergence</div>
+        </div>
+
+        <p data-lang-en">
+            In practice, this is computed approximately using sampled tokens from the prompt:
+        </p>
+        <p data-lang-zh hidden>
+            在实践中，这是使用来自提示的采样标记近似计算的：
+        </p>
+
+        <div class="equation-block">
+            $$\text{KL}_{\text{approx}} = \frac{1}{N} \sum_{t=1}^{N} [\log \pi_\theta(w_t) - \log \pi_{\text{ref}}(w_t)]$$
+            <div class="equation-label">Equation 4.6: Approximated KL for Language Models</div>
+        </div>
+    </section>
+
+    <!-- Section 5: DPO -->
+    <section id="sec-dpo">
+        <h2 data-lang-en>Direct Preference Optimization (DPO)</h2>
+        <h2 data-lang-zh hidden>直接偏好优化 (DPO)</h2>
+
+        <p data-lang-en>
+            DPO is a recent method that simplifies RLHF by directly optimizing the language model on preferences
+            without training a separate reward model. It derives from the Bradley-Terry model.
+        </p>
+        <p data-lang-zh hidden>
+            DPO 是一种最近的方法，通过直接在偏好上优化语言模型来简化 RLHF，
+            而无需训练单独的奖励模型。它源自 Bradley-Terry 模型。
+        </p>
+
+        <h3 data-lang-en>Theoretical Foundation</h3>
+        <h3 data-lang-zh hidden>理论基础</h3>
+
+        <h3 data-lang-en>Step 1: Bradley-Terry Preference Model</h3>
+        <h3 data-lang-zh hidden>步骤 1：Bradley-Terry 偏好模型</h3>
+
+        <p data-lang-en">
+            Start with the Bradley-Terry model for preferences (same as in RLHF reward modeling):
+        </p>
+        <p data-lang-zh hidden>
+            从偏好的 Bradley-Terry 模型开始（与 RLHF 奖励建模相同）：
+        </p>
+
+        <div class="equation-block">
+            $$P(y_w \succ y_l | x) = \sigma(r(x, y_w) - r(x, y_l))$$
+            <div class="equation-label">Equation 5.1: Bradley-Terry Preference Model</div>
+        </div>
+
+        <p data-lang-en">where y_w is the winning response and y_l is the losing response.</p>
+        <p data-lang-zh hidden>其中 y_w 是获胜响应，y_l 是失败响应。</p>
+
+        <h3 data-lang-en">Step 2: RLHF Connection</h3>
+        <h3 data-lang-zh hidden>步骤 2：RLHF 连接</h3>
+
+        <p data-lang-en">
+            In RLHF, the reward model is trained to maximize:
+        </p>
+        <p data-lang-zh hidden>
+            在 RLHF 中，奖励模型被训练以最大化：
+        </p>
+
+        <div class="equation-block">
+            $$L_{\text{reward}} = -\mathbb{E}_{(x,y_w,y_l)} \left[ \log \sigma(r(x,y_w) - r(x,y_l)) \right]$$
+            <div class="equation-label">Equation 5.2: Reward Model Objective</div>
+        </div>
+
+        <p data-lang-en">
+            The optimal reward function satisfying Bradley-Terry can be shown to take the form:
+        </p>
+        <p data-lang-zh hidden>
+            可以证明，满足 Bradley-Terry 的最优奖励函数采用以下形式：
+        </p>
+
+        <div class="equation-block">
+            $$r^*(x,y) = \beta \log \frac{\pi^*(y|x)}{\pi_{\text{ref}}(y|x)}$$
+            <div class="equation-label">Equation 5.3: Optimal Reward Function</div>
+        </div>
+
+        <p data-lang-en">where π* is the optimal policy and β is the inverse temperature.</p>
+        <p data-lang-zh hidden>其中 π* 是最优策略，β 是反温度。</p>
+
+        <h3 data-lang-en">Step 3: DPO Derivation</h3>
+        <h3 data-lang-zh hidden>步骤 3：DPO 推导</h3>
+
+        <p data-lang-en">
+            Here's the key insight: <strong>we can directly express preferences in terms of policy probabilities</strong>
+            without explicitly training a reward model.
+        </p>
+        <p data-lang-zh hidden>
+            关键的洞察是：<strong>我们可以直接用策略概率表达偏好</strong>
+            而不需要显式训练奖励模型。
+        </p>
+
+        <div class="counter-section">
+            <div class="derivation-step">
+                <strong data-lang-en">Start with Bradley-Terry:</strong>
+                <strong data-lang-zh hidden>从 Bradley-Terry 开始：</strong>
+                $$P(y_w \succ y_l | x) = \sigma(r(x, y_w) - r(x, y_l))$$
+            </div>
+
+            <div class="derivation-step">
+                <strong data-lang-en>Substitute the optimal reward:</strong>
+                <strong data-lang-zh hidden>代入最优奖励：</strong>
+                $$P(y_w \succ y_l | x) = \sigma\left(\beta \log \frac{\pi^*(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta \log \frac{\pi^*(y_l|x)}{\pi_{\text{ref}}(y_l|x)}\right)$$
+            </div>
+
+            <div class="derivation-step">
+                <strong data-lang-en>Simplify using log properties:</strong>
+                <strong data-lang-zh hidden>使用对数属性简化：</strong>
+                $$P(y_w \succ y_l | x) = \sigma\left(\beta \log \frac{\pi^*(y_w|x) \pi_{\text{ref}}(y_l|x)}{\pi^*(y_l|x) \pi_{\text{ref}}(y_w|x)}\right)$$
+            </div>
+
+            <div class="derivation-step">
+                <strong data-lang-en">This is the DPO equivalence:</strong>
+                <strong data-lang-zh hidden>这就是 DPO 等价性：</strong>
+                <span data-lang-en">The optimal policy π* that satisfies human preferences (via Bradley-Terry) is directly linked to policy probabilities.</span>
+                <span data-lang-zh hidden>满足人类偏好（通过 Bradley-Terry）的最优策略 π* 与策略概率直接相关。</span>
+            </div>
+        </div>
+
+        <h3 data-lang-en">DPO Loss Function</h3>
+        <h3 data-lang-zh hidden>DPO 损失函数</h3>
+
+        <p data-lang-en">
+            Directly optimizing for preferences (without training a reward model) gives us the DPO loss:
+        </p>
+        <p data-lang-zh hidden>
+            直接优化偏好（不训练奖励模型）给我们 DPO 损失：
+        </p>
+
+        <div class="equation-block">
+            $$L_{\text{DPO}}(\pi_\theta; \pi_{\text{ref}}) = -\mathbb{E}_{(x,y_w,y_l) \sim \mathcal{D}} \left[ \log \sigma\left( \beta \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)} \right) \right]$$
+            <div class="equation-label">Equation 5.4: DPO Loss Function</div>
+        </div>
+
+        <h3 data-lang-en">DPO vs. RLHF Comparison</h3>
+        <h3 data-lang-zh hidden>DPO 与 RLHF 比较</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th data-lang-en>Aspect</th>
+                    <th data-lang-zh hidden>方面</th>
+                    <th>RLHF</th>
+                    <th>DPO</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td data-lang-en>Reward Model</td>
+                    <td data-lang-zh hidden>奖励模型</td>
+                    <td data-lang-en>Trained separately</td>
+                    <td data-lang-en>Implicit in loss</td>
+                </tr>
+                <tr>
+                    <td data-lang-en">Training Stages</td>
+                    <td data-lang-zh hidden>训练阶段</td>
+                    <td data-lang-en>3: SFT, Reward, PPO</td>
+                    <td data-lang-en>2: SFT, DPO</td>
+                </tr>
+                <tr>
+                    <td data-lang-en>Computational Cost</td>
+                    <td data-lang-zh hidden>计算成本</td>
+                    <td data-lang-en>Higher (needs RL)</td>
+                    <td data-lang-en">Lower (supervised)</td>
+                </tr>
+                <tr>
+                    <td data-lang-en">Reward Hacking Risk</td>
+                    <td data-lang-zh hidden>奖励黑客风险</td>
+                    <td data-lang-en>Higher (reward model can be gamed)</td>
+                    <td data-lang-en">Lower (directly on preferences)</td>
+                </tr>
+                <tr>
+                    <td data-lang-en>Stability</td>
+                    <td data-lang-zh hidden>稳定性</td>
+                    <td data-lang-en>Requires tuning (β, ε, etc.)</td>
+                    <td data-lang-en">More stable (supervised learning)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="note">
+            <strong data-lang-en>Why Direct Preferences?</strong>
+            <strong data-lang-zh hidden>为什么直接偏好？</strong>
+            <span data-lang-en">
+                DPO elegantly sidesteps the need for a separate reward model by working directly with preference comparisons.
+                Since the optimal reward is derived from the Bradley-Terry model (which itself comes from preference comparisons),
+                we can "collapse" the two stages into one: directly optimize the policy on the preference data.
+            </span>
+            <span data-lang-zh hidden>
+                DPO 通过直接使用偏好比较优雅地避免了单独奖励模型的需要。
+                由于最优奖励源自 Bradley-Terry 模型（其本身来自偏好比较），
+                我们可以将两个阶段"折叠"为一个：直接在偏好数据上优化策略。
+            </span>
+        </div>
+    </section>
+
+    <!-- Section 6: Advanced Sampling -->
+    <section id="sec-sampling">
+        <h2 data-lang-en>Advanced Sampling Methods</h2>
+        <h2 data-lang-zh hidden>高级采样方法</h2>
+
+        <p data-lang-en>
+            During inference, we don't always use greedy decoding (argmax). Instead, we sample from the model's
+            probability distribution using various techniques to balance quality and diversity.
+        </p>
+        <p data-lang-zh hidden>
+            在推理过程中，我们并不总是使用贪心解码 (argmax)。相反，我们使用各种技术从模型的
+            概率分布中采样，以平衡质量和多样性。
+        </p>
+
+        <h3 data-lang-en">Temperature Sampling</h3>
+        <h3 data-lang-zh hidden>温度采样</h3>
+
+        <p data-lang-en">
+            Temperature controls the "sharpness" of the probability distribution:
+        </p>
+        <p data-lang-zh hidden>
+            温度控制概率分布的"尖锐性"：
+        </p>
+
+        <div class="equation-block">
+            $$P_\tau(w) = \frac{e^{z_w / \tau}}{\sum_{v} e^{z_v / \tau}}$$
+            <div class="equation-label">Equation 6.1: Temperature-Scaled Softmax</div>
+        </div>
+
+        <p data-lang-en">where z are logits and τ is temperature (τ ≥ 0).</p>
+        <p data-lang-zh hidden>其中 z 是 logits，τ 是温度（τ ≥ 0）。</p>
+
+        <ul>
+            <li data-lang-en"><strong>τ → 0:</strong> Distribution becomes sharper (concentrates on highest-probability token)</li>
+            <li data-lang-zh hidden><strong>τ → 0：</strong>分布变得更尖锐（集中在最高概率标记上）</li>
+
+            <li data-lang-en"><strong>τ = 1:</strong> Original distribution (no scaling)</li>
+            <li data-lang-zh hidden><strong>τ = 1：</strong>原始分布（无缩放）</li>
+
+            <li data-lang-en"><strong>τ → ∞:</strong> Distribution becomes uniform (all tokens equally likely)</li>
+            <li data-lang-zh hidden><strong>τ → ∞：</strong>分布变得均匀（所有标记等可能）</li>
+        </ul>
+
+        <div class="math-explanation">
+            <strong data-lang-en">Intuition:</strong>
+            <strong data-lang-zh hidden>直觉：</strong>
+            <span data-lang-en">
+                Think of temperature as adjusting the model's confidence level. Low τ = model is confident, picks high-probability tokens.
+                High τ = model is uncertain, considers lower-probability options. Useful for increasing diversity in outputs.
+            </span>
+            <span data-lang-zh hidden>
+                将温度视为调整模型的置信度水平。低 τ = 模型有信心，选择高概率标记。
+                高 τ = 模型不确定，考虑低概率选项。用于增加输出的多样性。
+            </span>
+        </div>
+
+        <h3 data-lang-en">Top-k Sampling</h3>
+        <h3 data-lang-zh hidden>Top-k 采样</h3>
+
+        <p data-lang-en">
+            Sample only from the k most probable tokens, setting others to zero probability:
+        </p>
+        <p data-lang-zh hidden>
+            仅从 k 个最概率的标记中采样，将其他标记的概率设置为零：
+        </p>
+
+        <div class="equation-block">
+            $$P_{\text{top-k}}(w) = \begin{cases}
+            \frac{P(w)}{\sum_{v \in \text{top-k}} P(v)} & \text{if } w \in \text{top-k} \\
+            0 & \text{otherwise}
+            \end{cases}$$
+            <div class="equation-label">Equation 6.2: Top-k Sampling</div>
+        </div>
+
+        <p data-lang-en">
+            This prevents sampling from the "tail" of the distribution where low-probability tokens can cause nonsensical outputs.
+        </p>
+        <p data-lang-zh hidden>
+            这防止从分布的"尾部"采样，其中低概率标记可能导致无意义的输出。
+        </p>
+
+        <h3 data-lang-en">Nucleus (Top-p) Sampling</h3>
+        <h3 data-lang-zh hidden>核心 (Top-p) 采样</h3>
+
+        <p data-lang-en">
+            Sample from the smallest set of tokens whose cumulative probability exceeds p:
+        </p>
+        <p data-lang-zh hidden>
+            从累积概率超过 p 的最小标记集中采样：
+        </p>
+
+        <div class="equation-block">
+            $$S_p = \arg\min_S \left( \sum_{w \in S} P(w) > p \right)$$
+            <div class="equation-label">Equation 6.3: Nucleus Selection</div>
+        </div>
+
+        <p data-lang-en">
+            Then normalize and sample:
+        </p>
+        <p data-lang-zh hidden>
+            然后归一化并采样：
+        </p>
+
+        <div class="equation-block">
+            $$P_{\text{nucleus}}(w) = \begin{cases}
+            \frac{P(w)}{\sum_{v \in S_p} P(v)} & \text{if } w \in S_p \\
+            0 & \text{otherwise}
+            \end{cases}$$
+            <div class="equation-label">Equation 6.4: Nucleus Sampling Distribution</div>
+        </div>
+
+        <div class="math-explanation">
+            <strong data-lang-en">Example:</strong>
+            <strong data-lang-zh hidden>示例：</strong>
+            <span data-lang-en">
+                If probabilities are [0.5, 0.3, 0.1, 0.05, 0.05] for tokens [A, B, C, D, E]:
+                With p = 0.9, we include A (0.5), B (0.3), C (0.1) = 0.9 cumulative probability.
+                We exclude D and E and renormalize the distribution over {A, B, C}.
+            </span>
+            <span data-lang-zh hidden>
+                如果标记 [A, B, C, D, E] 的概率为 [0.5, 0.3, 0.1, 0.05, 0.05]：
+                使用 p = 0.9，我们包括 A (0.5)、B (0.3)、C (0.1) = 0.9 累积概率。
+                我们排除 D 和 E，并在 {A, B, C} 上重新归一化分布。
+            </span>
+        </div>
+
+        <h3 data-lang-en">Comparison of Sampling Methods</h3>
+        <h3 data-lang-zh hidden>采样方法比较</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th data-lang-en>Method</th>
+                    <th data-lang-zh hidden>方法</th>
+                    <th data-lang-en>Parameter</th>
+                    <th data-lang-zh hidden>参数</th>
+                    <th data-lang-en>Pros</th>
+                    <th data-lang-zh hidden>优点</th>
+                    <th data-lang-en>Cons</th>
+                    <th data-lang-zh hidden>缺点</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td data-lang-en>Greedy</td>
+                    <td data-lang-zh hidden>贪心</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td data-lang-en">Deterministic, fast</td>
+                    <td data-lang-zh hidden>确定性，快速</td>
+                    <td data-lang-en">Repetitive, boring</td>
+                    <td data-lang-zh hidden>重复，无聊</td>
+                </tr>
+                <tr>
+                    <td data-lang-en>Temperature</td>
+                    <td data-lang-zh hidden>温度</td>
+                    <td>τ ∈ [0, ∞)</td>
+                    <td>τ ∈ [0, ∞)</td>
+                    <td data-lang-en">Simple, controls diversity globally</td>
+                    <td data-lang-zh hidden>简单，全局控制多样性</td>
+                    <td data-lang-en">Can be chaotic at high τ</td>
+                    <td data-lang-zh hidden>在高τ时可能混乱</td>
+                </tr>
+                <tr>
+                    <td data-lang-en">Top-k</td>
+                    <td data-lang-zh hidden>Top-k</td>
+                    <td>k ∈ [1, V]</td>
+                    <td>k ∈ [1, V]</td>
+                    <td data-lang-en>Prevents low-prob tail</td>
+                    <td data-lang-zh hidden>防止低概率尾部</td>
+                    <td data-lang-en">Fixed cutoff, ignores distribution shape</td>
+                    <td data-lang-zh hidden>固定截断，忽略分布形状</td>
+                </tr>
+                <tr>
+                    <td data-lang-en">Nucleus</td>
+                    <td data-lang-zh hidden>核心</td>
+                    <td>p ∈ (0, 1]</td>
+                    <td>p ∈ (0, 1]</td>
+                    <td data-lang-en">Adaptive, respects distribution shape</td>
+                    <td data-lang-zh hidden>自适应，尊重分布形状</td>
+                    <td data-lang-en">Slightly more compute to find S_p</td>
+                    <td data-lang-zh hidden>计算稍多以找到 S_p</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="note">
+            <strong data-lang-en>Best Practices:</strong>
+            <strong data-lang-zh hidden>最佳实践：</strong>
+            <ul>
+                <li data-lang-en">For creative tasks: use nucleus sampling with p ≈ 0.9, τ ≈ 0.7-0.8</li>
+                <li data-lang-zh hidden>对于创意任务：使用 p ≈ 0.9、τ ≈ 0.7-0.8 的核心采样</li>
+
+                <li data-lang-en">For factual tasks: use greedy (τ → 0) or very low temperature (τ ≈ 0.1)</li>
+                <li data-lang-zh hidden>对于事实性任务：使用贪心 (τ → 0) 或非常低的温度 (τ ≈ 0.1)</li>
+
+                <li data-lang-en">Avoid very high temperatures: typically cap at τ ≤ 2.0 to avoid nonsense</li>
+                <li data-lang-zh hidden>避免非常高的温度：通常限制在 τ ≤ 2.0 以避免无意义的内容</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p data-lang-en>
+            This guide presents the mathematical foundations of modern LLM training pipelines.
+            For implementation details, refer to papers by Schulman et al. (PPO), Ouyang et al. (InstructGPT),
+            and Rafailov et al. (DPO).
+        </p>
+        <p data-lang-zh hidden>
+            本指南介绍了现代 LLM 训练管道的数学基础。
+            有关实现细节，请参考 Schulman 等人 (PPO)、Ouyang 等人 (InstructGPT)
+            和 Rafailov 等人 (DPO) 的论文。
+        </p>
+        <p style="margin-top: 20px; font-size: 12px; color: var(--text-secondary);">
+            Last updated: February 2025 | <span data-lang-en">Bilingual Edition</span><span data-lang-zh hidden>双语版本</span>
+        </p>
+    </footer>
+</div>
+
+<script>
+    // Language toggle functionality
+    const langButtons = document.querySelectorAll('.lang-btn');
+    const body = document.body;
+
+    // Set initial language from localStorage or default to English
+    const savedLang = localStorage.getItem('preferred-lang') || 'en';
+    if (savedLang === 'zh') {
+        body.classList.add('zh');
+        langButtons[1].classList.add('active');
+        langButtons[0].classList.remove('active');
+    }
+
+    langButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang');
+
+            if (lang === 'zh') {
+                body.classList.add('zh');
+                langButtons[1].classList.add('active');
+                langButtons[0].classList.remove('active');
+                localStorage.setItem('preferred-lang', 'zh');
+            } else {
+                body.classList.remove('zh');
+                langButtons[0].classList.add('active');
+                langButtons[1].classList.remove('active');
+                localStorage.setItem('preferred-lang', 'en');
+            }
+
+            // Trigger MathJax rerender
+            if (window.MathJax) {
+                MathJax.typesetPromise().catch(err => console.log(err));
+            }
+        });
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href !== '#') {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
