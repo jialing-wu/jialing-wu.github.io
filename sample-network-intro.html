@@ -485,14 +485,49 @@ body.presenting .pres-progress{
     </div>
   </div>
 
-  <p class="method-desc" data-lang="en"><em>Intuition:</em> find groups where members are more connected to each other than to outsiders — like identifying lunch tables in a high school cafeteria. <em>Theory:</em> the most common approach maximizes <strong>modularity</strong> Q = (1/2m) Σ [A<sub>ij</sub> − k<sub>i</sub>k<sub>j</sub>/2m] δ(c<sub>i</sub>, c<sub>j</sub>), which compares actual within-group edges to what you'd expect under a random null model. The Louvain algorithm solves this efficiently even for million-node networks.</p>
-  <p class="method-desc" data-lang="zh"><em>直觉：</em>找到成员之间联系比对外联系更紧密的群体——就像识别高中食堂里的午餐桌。<em>理论：</em>最常用的方法最大化<strong>模块性</strong> Q = (1/2m) Σ [A<sub>ij</sub> − k<sub>i</sub>k<sub>j</sub>/2m] δ(c<sub>i</sub>, c<sub>j</sub>)，比较实际组内边与随机零模型的预期。Louvain 算法即使面对百万节点网络也能高效求解。</p>
+  <p class="method-desc" data-lang="en"><em>Intuition:</em> find groups where members are more connected to each other than to outsiders — like identifying lunch tables in a high school cafeteria. The algorithm doesn't need labels; it discovers structure purely from the pattern of connections. This is powerful because the groups it finds often reveal real social divisions that surveys miss.</p>
+  <p class="method-desc" data-lang="zh"><em>直觉：</em>找到成员之间联系比对外联系更紧密的群体——就像识别高中食堂里的午餐桌。算法不需要标签，纯粹从连接模式中发现结构。这很有用，因为它找到的群体常常揭示问卷遗漏的真实社会划分。</p>
+</div>
+
+<!-- SLIDE: Network Methods Overview -->
+<div class="slide" id="slide-methods-overview">
+  <div class="slide-num" data-lang="en">Part 1 · Slide 5</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 5 页</div>
+  <h2 data-lang="en">Common Network Methods at a Glance</h2>
+  <h2 data-lang="zh">常用网络方法一览</h2>
+
+  <p class="method-desc" data-lang="en">Once you have network data, several methods are available. Each answers a different question:</p>
+  <p class="method-desc" data-lang="zh">有了网络数据后，有多种方法可用，每种回答不同的问题：</p>
+
+  <div class="check-grid">
+    <div class="check-card">
+      <div class="check-title" data-lang="en">QAP Regression</div>
+      <div class="check-title" data-lang="zh">QAP 回归</div>
+      <div class="check-desc" data-lang="en"><em>Question:</em> Do two networks correlate? E.g. do friendship ties predict advice ties? <em>How:</em> permutation-based test that handles non-independence. Think of shuffling one network many times and checking if the real correlation is unusually strong.</div>
+      <div class="check-desc" data-lang="zh"><em>问题：</em>两个网络是否相关？如友谊关系能预测建议关系吗？<em>方法：</em>基于置换的检验，处理非独立性。想象把一个网络洗牌很多次，看真实相关是否异常强。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-title" data-lang="en">SAOM / Siena</div>
+      <div class="check-title" data-lang="zh">SAOM / Siena</div>
+      <div class="check-desc" data-lang="en"><em>Question:</em> Does the network shape behavior, or does behavior shape the network? <em>How:</em> longitudinal model that separates <em>selection</em> (who befriends whom) from <em>influence</em> (do friends become similar). Requires panel data (≥2 time points).</div>
+      <div class="check-desc" data-lang="zh"><em>问题：</em>是网络塑造行为，还是行为塑造网络？<em>方法：</em>纵向模型，区分<em>选择</em>（谁和谁交友）与<em>影响</em>（朋友是否变得相似）。需要面板数据（≥2 个时间点）。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-title" data-lang="en">ERGM</div>
+      <div class="check-title" data-lang="zh">ERGM</div>
+      <div class="check-desc" data-lang="en"><em>Question:</em> What local tendencies (reciprocity, homophily, popularity) make the observed network more likely than random? <em>How:</em> like logistic regression, but for networks — models the probability of the whole network as a function of structural patterns. <strong>Today's focus.</strong></div>
+      <div class="check-desc" data-lang="zh"><em>问题：</em>什么局部倾向（互惠、同质性、人气）使观测网络比随机网络更可能出现？<em>方法：</em>相当于网络的逻辑回归——将整个网络的概率建模为结构模式的函数。<strong>今天的重点。</strong></div>
+    </div>
+  </div>
+
+  <div class="method-when" data-lang="en"><strong>Today we focus on ERGM</strong> — because our paper (Köhler et al. 2024) uses it to answer: what drives advice-seeking ties in an organization? Part 2 walks through this paper step by step.</div>
+  <div class="method-when" data-lang="zh"><strong>今天我们聚焦 ERGM</strong>——因为我们要拆解的论文（Köhler et al. 2024）用它来回答：什么驱动了组织中的求助关系？第二部分将逐步拆解这篇论文。</div>
 </div>
 
 <!-- SLIDE: When to Use -->
 <div class="slide" id="slide-when">
-  <div class="slide-num" data-lang="en">Part 1 · Slide 5</div>
-  <div class="slide-num" data-lang="zh">第一部分 · 第 5 页</div>
+  <div class="slide-num" data-lang="en">Part 1 · Slide 6</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 6 页</div>
   <h2 data-lang="en">Should You Use Network Analysis?</h2>
   <h2 data-lang="zh">你应该用网络分析吗？</h2>
 
@@ -527,8 +562,8 @@ body.presenting .pres-progress{
 
 <!-- SLIDE: Steps to a Network Analysis Paper -->
 <div class="slide" id="slide-steps">
-  <div class="slide-num" data-lang="en">Part 1 · Slide 6</div>
-  <div class="slide-num" data-lang="zh">第一部分 · 第 6 页</div>
+  <div class="slide-num" data-lang="en">Part 1 · Slide 7</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 7 页</div>
   <h2 data-lang="en">From Idea to Paper: A Network Analysis Workflow</h2>
   <h2 data-lang="zh">从想法到论文：网络分析的工作流程</h2>
 
@@ -772,38 +807,6 @@ body.presenting .pres-progress{
 
   <p class="method-desc" data-lang="en"><strong>Extensions to consider:</strong> Use a <em>Temporal ERGM (TERGM)</em> to track network evolution over time. Add objective performance data instead of self-assessed skills. Use <em>SAOM (Stochastic Actor-Oriented Models)</em> to disentangle selection from influence. Expand to multiple organizations for comparison.</p>
   <p class="method-desc" data-lang="zh"><strong>可以考虑的延伸：</strong>使用<em>时序 ERGM (TERGM)</em> 追踪网络随时间的演变。用客观绩效数据替代自评技能。使用<em>SAOM（随机行动者导向模型）</em>区分选择效应和影响效应。扩展到多个组织进行比较。</p>
-</div>
-
-<!-- SLIDE: Other Methods -->
-<div class="slide" id="slide-other-methods">
-  <div class="slide-num" data-lang="en">Part 2 · Slide 8</div>
-  <div class="slide-num" data-lang="zh">第二部分 · 第 8 页</div>
-  <h2 data-lang="en">Beyond ERGM: Other Network Methods</h2>
-  <h2 data-lang="zh">ERGM 之外：其他网络方法</h2>
-
-  <div class="check-grid">
-    <div class="check-card">
-      <div class="check-title" data-lang="en">QAP Regression</div>
-      <div class="check-title" data-lang="zh">QAP 回归</div>
-      <div class="check-desc" data-lang="en">Tests if two networks correlate (e.g., do friendship ties predict advice ties?). Uses permutation to handle non-independence. See: Krackhardt (1988).</div>
-      <div class="check-desc" data-lang="zh">检验两个网络是否相关（如友谊关系预测建议关系？）。用置换处理非独立性。参见：Krackhardt (1988)。</div>
-    </div>
-    <div class="check-card">
-      <div class="check-title" data-lang="en">SAOM / Siena</div>
-      <div class="check-title" data-lang="zh">SAOM / Siena</div>
-      <div class="check-desc" data-lang="en">Longitudinal models that separate network <em>selection</em> (who befriends whom) from <em>influence</em> (do friends become similar). See: Snijders et al. (2010).</div>
-      <div class="check-desc" data-lang="zh">纵向模型，区分网络<em>选择</em>（谁和谁交友）与<em>影响</em>（朋友是否变得相似）。参见：Snijders et al. (2010)。</div>
-    </div>
-    <div class="check-card">
-      <div class="check-title" data-lang="en">Latent Space Models</div>
-      <div class="check-title" data-lang="zh">潜在空间模型</div>
-      <div class="check-desc" data-lang="en">Embeds nodes in a latent geometric space; closer nodes are more likely to connect. Good for visualization and clustering. See: Hoff et al. (2002).</div>
-      <div class="check-desc" data-lang="zh">将节点嵌入潜在几何空间；距离近的节点更可能连接。适合可视化和聚类。参见：Hoff et al. (2002)。</div>
-    </div>
-  </div>
-
-  <div class="method-when" data-lang="en"><strong>How to choose?</strong> Cross-sectional + tie formation → ERGM. Longitudinal + co-evolution → SAOM. Network correlation → QAP. Visualization + clustering → Latent space. All can be implemented in R (statnet, RSiena, latentnet).</div>
-  <div class="method-when" data-lang="zh"><strong>如何选择？</strong>横截面 + 关系形成 → ERGM。纵向 + 共同演化 → SAOM。网络相关 → QAP。可视化 + 聚类 → 潜在空间。全部可在 R 中实现（statnet, RSiena, latentnet）。</div>
 </div>
 
 <!-- SLIDE: Takeaway -->
