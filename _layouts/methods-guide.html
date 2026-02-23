@@ -63,5 +63,26 @@
     </div>
   </div>
 </div>
+<script>
+/* Scroll reveal — fade-in cards and sections as they enter viewport */
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        e.target.style.transitionDelay = '0s';
+      }
+    });
+  },{threshold:0.08});
+  var els = document.querySelectorAll('.reveal,.intro-card,.card,.module-card,.feature-block,.method-section,.profile-card,.sw-pill');
+  var delay = 0;
+  els.forEach(function(el){
+    el.style.transitionDelay = (delay * 0.06) + 's';
+    obs.observe(el);
+    delay++;
+    if(delay > 12) delay = 0;
+  });
+})();
+</script>
 </body>
 </html>
