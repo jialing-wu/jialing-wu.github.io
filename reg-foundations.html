@@ -17,6 +17,11 @@ next:
 .problem-index a{display:block;font-size:14.5px;line-height:2;color:var(--ink-faded);text-decoration:none;transition:color .2s}
 .problem-index a:hover{color:var(--red)}
 .problem-index a .pi-arrow{font-family:var(--sans);font-size:11px;color:var(--gold);margin-left:6px}
+.paradigm-table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.6}
+.paradigm-table th{background:var(--gold);color:var(--white);padding:10px;text-align:left;font-weight:700}
+.paradigm-table td{border:1px solid var(--parchment);padding:8px 10px}
+.paradigm-table tr:nth-child(even){background:var(--white)}
+.paradigm-table tr:nth-child(odd){background:var(--light)}
 </style>
 
 <!-- HEADER -->
@@ -106,6 +111,88 @@ next:
     <h3 data-lang="zh">分布形态：对称性与偏度</h3>
     <p class="method-desc" data-lang="en">A symmetric distribution has values balanced around the center. Mean and median are close. Skewness measures asymmetry. Right-skewed (positively skewed) distributions have a tail on the right: some very high values pull the mean above the median. Left-skewed distributions have a tail on the left, pulling the mean below the median.</p>
     <p class="method-desc" data-lang="zh">对称分布的值围绕中心平衡。平均数和中位数接近。偏度衡量不对称性。右偏（正偏）分布右边有尾：一些很高的值将平均数拉到中位数上方。左偏分布左边有尾，把平均数拉到中位数下方。</p>
+    <p class="method-desc" data-lang="en">Common distributions in social science and their real-world examples:</p>
+    <p class="method-desc" data-lang="zh">社会科学中的常见分布及其真实例子：</p>
+    <div data-lang="en" style="overflow-x:auto;margin:16px 0;">
+      <table class="paradigm-table">
+        <tr>
+          <th>Distribution Shape</th>
+          <th>Characteristics</th>
+          <th>Common Social Science Examples</th>
+          <th>What It Looks Like</th>
+        </tr>
+        <tr>
+          <td><strong>Normal (Bell-Shaped)</strong></td>
+          <td>Symmetric; mean = median; symmetric tails</td>
+          <td>Test scores, IQ, height, measurement error</td>
+          <td>Classic bell curve; peaks in middle</td>
+        </tr>
+        <tr>
+          <td><strong>Right-Skewed (Positive)</strong></td>
+          <td>Long tail on right; mean > median</td>
+          <td>Income, wealth, house prices, page views, crime rates by neighborhood</td>
+          <td>Hump on left, long tail extending right</td>
+        </tr>
+        <tr>
+          <td><strong>Left-Skewed (Negative)</strong></td>
+          <td>Long tail on left; mean < median</td>
+          <td>Test scores in easy exams, age at retirement, education in developed countries, grades</td>
+          <td>Hump on right, long tail extending left</td>
+        </tr>
+        <tr>
+          <td><strong>Bimodal (Two Peaks)</strong></td>
+          <td>Two distinct clusters; two modes</td>
+          <td>Partisan ideology (polarization), height split by gender, voting patterns in divided societies</td>
+          <td>Two separate humps; deep valley between</td>
+        </tr>
+        <tr>
+          <td><strong>Uniform</strong></td>
+          <td>Flat; equal density across range</td>
+          <td>Rare in nature; maybe survey responses split evenly between alternatives</td>
+          <td>Flat line across range</td>
+        </tr>
+      </table>
+    </div>
+    <div data-lang="zh" style="overflow-x:auto;margin:16px 0;">
+      <table class="paradigm-table">
+        <tr>
+          <th>分布形态</th>
+          <th>特征</th>
+          <th>常见社会科学例子</th>
+          <th>看起来像什么</th>
+        </tr>
+        <tr>
+          <td><strong>正态（钟形）</strong></td>
+          <td>对称；平均数 = 中位数；对称尾</td>
+          <td>测试分数、IQ、身高、测量误差</td>
+          <td>经典钟形曲线；峰值在中间</td>
+        </tr>
+        <tr>
+          <td><strong>右偏（正偏）</strong></td>
+          <td>右边长尾；平均数 > 中位数</td>
+          <td>收入、财富、房价、页面浏览、社区犯罪率</td>
+          <td>左边隆起，右边长尾延伸</td>
+        </tr>
+        <tr>
+          <td><strong>左偏（负偏）</strong></td>
+          <td>左边长尾；平均数 < 中位数</td>
+          <td>简单考试分数、退休年龄、发达国家教育、成绩</td>
+          <td>右边隆起，左边长尾延伸</td>
+        </tr>
+        <tr>
+          <td><strong>双峰（两个峰）</strong></td>
+          <td>两个不同聚类；两个众数</td>
+          <td>党派意识形态（两极分化）、按性别分的身高、分裂社会投票模式</td>
+          <td>两个独立隆起；深谷在中间</td>
+        </tr>
+        <tr>
+          <td><strong>均匀</strong></td>
+          <td>平坦；整个范围密度相等</td>
+          <td>自然中很少；也许调查回答在选项间均匀分裂</td>
+          <td>整个范围的平坦线</td>
+        </tr>
+      </table>
+    </div>
     <p class="method-desc" data-lang="en">Why does this matter? Many statistical tests assume the data are roughly normal (symmetric and bell-shaped). If your data are heavily skewed, those tests may not work well. Income is always right-skewed: most people earn moderate amounts, a few earn huge amounts, nobody earns negative income. Education, when measured as years, is often left-skewed in developed countries: most people finish high school or college, but few don't finish elementary school.</p>
     <p class="method-desc" data-lang="zh">为什么这重要？许多统计检验假设数据大致正态（对称、钟形）。如果数据严重偏斜，这些检验可能不起作用。收入总是右偏：大多数人赚取中等收入，少数赚取巨额，没人赚负收入。教育，按年数计，在发达国家通常左偏：大多数人完成高中或大学，但几乎没人没完成小学。</p>
     <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always visualize your data's shape (histogram or density plot). If it's heavily skewed, consider transformations (log, square root) or using median-based tests. Kurtosis (how heavy the tails are) also matters for some tests, though it's less critical than skewness. Report skewness as a number if it's relevant to your conclusions, but don't obsess over small departures from normality.</div>
@@ -172,41 +259,41 @@ next:
     <h3 data-lang="en">The Null Hypothesis and P-Values</h3>
     <h3 data-lang="zh">零假设与P值</h3>
     <p class="method-desc" data-lang="en">The null hypothesis (H₀) is the assumption that there is no effect, no difference, no relationship. The alternative hypothesis (H₁) says there is an effect. You calculate a test statistic (like a t-statistic or chi-square) that measures how far your observed data deviate from what H₀ predicts. The p-value is the probability of observing data as extreme as (or more extreme than) what you actually saw, assuming H₀ is true.</p>
-    <p class="method-desc" data-lang="zh">零假设（H₀）是没有效应、没有差异、没有关系的假设。备择假设（H₁）说有效应。你计算一个检验统计量（如t统计或卡方），衡量观察数据与H₀预测的偏离程度。P值是假设H₀为真时，观察到与实际看到的一样极端（或更极端）的数据的概率。</p>
+    <p class="method-desc" data-lang="zh">零假设（H₀）是说没有效应、没有差异、没有关系。备择假设（H₁）则说存在某种效应。你计算一个检验统计量（比如t统计或卡方），用来衡量你观察到的数据与零假设预测的有多大差异。P值是指在零假设为真的前提下，看到与你实际观察到的数据一样极端（或更极端）的数据的概率。</p>
     <p class="method-desc" data-lang="en">A p-value of 0.03 does not mean: "There is a 3% chance the null hypothesis is true" or "There is a 97% chance my hypothesis is correct." Those statements are false. The correct meaning is: "If the null hypothesis were true, there would be only a 3% chance of seeing data this extreme due to random sampling alone." Small p-values (p &lt; 0.05) suggest the null is unlikely, but they say nothing about the size or practical importance of an effect.</p>
-    <p class="method-desc" data-lang="zh">P值0.03不表示："零假设为真的概率是3%"或"我的假设正确的概率是97%"。这些说法是错的。正确含义是："如果零假设为真，仅由随机抽样看到这样极端数据的概率只有3%。"小P值（p &lt; 0.05）暗示零假设不可能，但它们对效应的大小或实际重要性什么都没说。</p>
+    <p class="method-desc" data-lang="zh">P值0.03不是说："零假设为真的概率是3%"或者"我的假设正确的概率是97%"。这些都是错误的理解。正确的含义是："如果零假设为真，仅仅由于随机抽样就看到这样极端数据的概率只有3%。"小的P值（p &lt; 0.05）表明零假设不太可能成立，但它们对效应的大小或实际意义一无所知。</p>
     <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A court trial tests H₀ = "defendant is innocent" versus H₁ = "defendant is guilty." Evidence that is inconsistent with innocence (p &lt; 0.05) leads to conviction. But statistical p &lt; 0.05 is not "beyond a reasonable doubt" in the legal sense. In fact, p &lt; 0.05 in social science often means "unlikely if nothing is happening," but it doesn't mean the effect is large, repeatable, or socially significant. The analogy breaks down because courts care about effect size and social impact; statistics alone do not.</div>
-    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>法庭审判检验H₀ ="被告无罪"对H₁="被告有罪"。与无罪不一致的证据（p &lt; 0.05）导致定罪。但统计p &lt; 0.05不是法律意义的"毫无合理怀疑"。实际上，社会科学中的p &lt; 0.05常常意思是"如果什么都没发生不太可能"，但这不意味着效应很大、可重复或社会上显著。类比在这里断裂，因为法庭关心效应大小和社会影响；统计学本身则不。</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>法庭审判检验H₀="被告无罪"对比H₁="被告有罪"。与无罪相悖的证据（p &lt; 0.05）会导致定罪。但统计意义上的p &lt; 0.05不等于法律意义上的"毫无合理怀疑"。实际上，社会科学中的p &lt; 0.05只是说"如果什么都没发生的话，看到这样的数据不太可能"，但这并不意味着效应很大、可以重复或在社会上有显著影响。类比在此处破裂了，因为法庭关心的是效应的大小和社会影响；而统计学本身则不关心。</div>
     <p class="method-desc" data-lang="en">There are two ways to be wrong: Type I error (false positive: rejecting H₀ when it is actually true) and Type II error (false negative: failing to reject H₀ when it is false). The p-value controls Type I error at the rate you choose (usually 5%). But it does not control Type II error, which depends on sample size and effect size.</p>
-    <p class="method-desc" data-lang="zh">有两种出错方式：第一类错误（假正：当H₀实际为真时拒绝它）和第二类错误（假负：当H₀为假时不拒绝它）。P值以你选择的速率（通常5%）控制第一类错误。但它不控制第二类错误，这取决于样本大小和效应大小。</p>
+    <p class="method-desc" data-lang="zh">犯错误有两种方式：第一类错误（假正，即当零假设实际为真时却拒绝了它）和第二类错误（假负，即当零假设为假时却没有拒绝它）。P值通过你选定的速率（通常是5%）来控制第一类错误。但它不能控制第二类错误，第二类错误的大小取决于样本大小和效应大小。</p>
     <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use p-values when you genuinely have a null hypothesis to test (e.g., "Does this intervention have any effect?"). Avoid using p &lt; 0.05 as the gold standard for truth. A p-value of 0.051 is not meaningfully different from 0.049. Social science is drowning in p-value worship: researchers hunt for p &lt; 0.05 through multiple testing, data dredging, and questionable practices, leading to a replication crisis. Always pair p-values with effect sizes and confidence intervals. Report effect size — the actual magnitude of the difference or relationship — because it tells readers whether the difference, however statistically significant, actually matters.</div>
-    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>当你确实有零假设要检验时用P值（如"这个干预有任何效应吗？"）。避免把p &lt; 0.05当成真理的黄金标准。P值0.051与0.049没有有意义的不同。社会科学溺于P值崇拜：研究者通过多重检验、数据挖掘和可疑实践寻找p &lt; 0.05，导致复制危机。总是把P值与效应大小和置信区间配对。报告效应大小——差异或关系的实际幅度——因为它告诉读者差异，无论统计显著，是否实际重要。</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>当你确实有零假设要检验时才用P值（比如"这个干预有任何效应吗？"）。不要把p &lt; 0.05当成判断真理的黄金标准。P值0.051与0.049之间没有实质性的区别。社会科学陷入了对P值的崇拜：研究者通过多重检验、数据挖掘和可疑的操作方式来寻找p &lt; 0.05，导致了复制危机。一定要把P值与效应大小和置信区间配对报告。报告效应大小——差异或关系的实际幅度——因为它能告诉读者，某个差异即使在统计上显著，是否在实际中有意义。</div>
     <div class="method-example" data-lang="en"><strong>Social science example:</strong> A study of voter turnout compares a treatment group (receives reminder texts) and a control group (no reminder). Turnout: treatment = 41%, control = 40%, p = 0.04. The p-value is small, so researchers might claim "the treatment works!" But the effect size is only 1 percentage point. If the study cost $50,000 to increase turnout by 1%, the p-value is irrelevant—the real question is whether that 1% gain is worth the cost. Effect size matters more than p-values.</div>
-    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>投票率研究比较处理组（收到提醒短信）和对照组（无提醒）。投票率：处理=41%，对照=40%，p=0.04。P值很小，研究者可能声称"处理有效！"但效应大小只有1个百分点。如果研究花费5万美元才增加投票率1%，P值无关——真实问题是那1%增益值不值得。效应大小比P值更重要。</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>一项投票率研究比较处理组（收到提醒短信）和对照组（无提醒）。投票率结果：处理组=41%，对照组=40%，p=0.04。P值很小，研究者可能会声称"处理有效！"但实际的效应大小只有1个百分点。如果花费了5万美元的研究经费才将投票率提高了1%，那P值就无关紧要了——真正的问题是那1%的提升是否值得这笔成本。效应大小比P值更重要。</div>
   </div>
 
   <div class="method-section">
     <h3 data-lang="en">Statistical Versus Practical Significance</h3>
     <h3 data-lang="zh">统计显著与实际显著</h3>
     <p class="method-desc" data-lang="en">A result can be statistically significant (p &lt; 0.05) but not practically significant. With a huge sample size, tiny effects become statistically significant. A correlation of 0.05 between two variables might have p &lt; 0.01 if n = 10,000, but r = 0.05 explains only 0.25% of variance — practically negligible.</p>
-    <p class="method-desc" data-lang="zh">一个结果可以统计显著（p &lt; 0.05）但不实际显著。有巨大样本，微小效应变成统计显著。两个变量间0.05的相关，如果n=10000可能p&lt;0.01，但r=0.05仅解释0.25%方差——实际可忽略。</p>
+    <p class="method-desc" data-lang="zh">一个结果可以在统计上显著（p &lt; 0.05），但在实际上不重要。有非常大的样本时，微小的效应也会变得统计显著。比如两个变量之间只有0.05的相关，但如果n=10000，可能会有p&lt;0.01，但r=0.05仅解释了0.25%的方差——这在实际中可以忽略不计。</p>
     <p class="method-desc" data-lang="en">Conversely, a result can be practically large but not statistically significant if you have a small sample. A job training program that increases annual earnings by $5,000 is practically important. But if your sample has only 50 people and high variance, the p-value might be 0.10, and you cannot confidently claim the effect is real.</p>
-    <p class="method-desc" data-lang="zh">反之，如果样本很小，一个结果可以实际很大但不统计显著。一个每年增加收入5000美元的工作培训计划在实践中很重要。但如果样本仅50人且高方差，P值可能0.10，你无法确信效应是真实的。</p>
+    <p class="method-desc" data-lang="zh">反过来说，如果样本很小，一个结果也可能在实际上很大，但在统计上不显著。一个能每年增加收入5000美元的工作培训计划在现实中显然很重要。但如果样本只有50人且方差很大，P值可能是0.10，这时你就无法确信这个效应是真实存在的。</p>
     <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always ask "Does this effect size matter to real people?" before celebrating p &lt; 0.05. Report effect sizes in standardized units (correlation, Cohen's d, odds ratios) so readers can compare across studies. A study with p = 0.001 and a tiny effect size is less informative than a study with p = 0.10 and a medium effect size. Journals increasingly demand effect sizes alongside p-values. Use power analysis before running studies to ensure your sample is large enough to detect effects of practical importance.</div>
-    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>在为p &lt; 0.05庆祝前，总是问"这个效应大小对真实人类重要吗？"用标准化单位报告效应大小（相关、Cohen's d、比值比）以便读者能跨研究比较。p=0.001但微小效应的研究不如p=0.10但中等效应的研究有信息量。期刊越来越要求P值旁报告效应大小。运行研究前用幂分析确保样本足够大以检测实际重要的效应。</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>在为p &lt; 0.05庆祝之前，一定要问自己"这个效应大小对真实的人来说重要吗？"要用标准化的单位来报告效应大小（比如相关、Cohen's d、比值比），这样读者才能跨研究进行比较。一项p=0.001但效应很微小的研究，信息量反而不如p=0.10但效应中等的研究。期刊现在越来越要求在报告P值的同时也报告效应大小。在进行研究之前，要使用幂分析来确保样本足够大，能够检测到实际重要的效应。</div>
     <div class="method-example" data-lang="en"><strong>Social science example:</strong> A large survey (n=5,000) finds that living in an urban area is associated with a 2 percentage point higher voting rate, p = 0.001. Statistically significant, yes. But a 2% difference is small—other factors surely matter far more for explaining voting behavior. A smaller study (n=300) finds that being a poll worker increases voting among election staff by 15 percentage points, p = 0.07. Not statistically significant at the 0.05 level, but the effect size is large and practically meaningful. The second study is more valuable for understanding what really moves voting behavior.</div>
-    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>大型调查（n=5000）发现住在城市地区与投票率高2个百分点相关，p=0.001。统计显著，是的。但2%差异很小——其他因素肯定对解释投票行为重要得多。一个较小研究（n=300）发现做投票工作者在选举工作人员中增加15个百分点投票，p=0.07。在0.05水平不统计显著，但效应大小很大且实际有意义。第二项研究对理解真正推动投票行为的因素更有价值。</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>一项大型调查（n=5000）发现住在城市地区与投票率高2个百分点相关，p=0.001。统计上是显著的。但2%的差异很小——其他因素肯定对解释投票行为的影响大得多。而一项较小的研究（n=300）发现当选举工作人员做投票工作者时，他们的投票率增加了15个百分点，p=0.07。这个结果在0.05的水平上不算统计显著，但效应大小很大且实际有意义。第二项研究对理解什么因素真正推动投票行为的价值要大得多。</div>
   </div>
 
   <div class="method-section">
     <h3 data-lang="en">Multiple Testing and False Discoveries</h3>
     <h3 data-lang="zh">多重检验与虚假发现</h3>
     <p class="method-desc" data-lang="en">If you run 20 tests at p &lt; 0.05, you expect one false positive by chance alone. Researchers who test many hypotheses without correction are likely to find spurious effects. This is the multiple comparisons problem. Solutions include Bonferroni correction (divide 0.05 by the number of tests), pre-registration (commit to one hypothesis before seeing data), and being honest about exploratory analysis (results that are not pre-registered are suggestive, not confirmatory).</p>
-    <p class="method-desc" data-lang="zh">如果你在p &lt; 0.05进行20次检验，仅由机会就预期一个假正。测试许多假设而不纠正的研究者可能找到虚假效应。这是多重比较问题。解决方案包括Bonferroni纠正（把0.05除以检验数），预注册（看数据前承诺一个假设），以及诚实对待探索性分析（非预注册结果是暗示性的，不是确认性的）。</p>
+    <p class="method-desc" data-lang="zh">如果你进行20次p &lt; 0.05的检验，仅仅由于随机机会，就有可能出现一个假正。那些测试许多假设却不进行纠正的研究者，很容易找到虚假的效应。这就是多重比较问题。解决方案包括Bonferroni纠正（把0.05除以检验的总数），预注册（在看数据之前就承诺一个假设），以及坦诚地对待探索性分析（非预注册的结果是暗示性的，而不是确认性的）。</p>
     <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Pre-register your hypotheses whenever possible. If you are doing exploratory analysis (asking "what relationships exist?" rather than "does this specific relationship exist?"), use lower thresholds (p &lt; 0.01 or even p &lt; 0.001), apply Bonferroni or other corrections, or clearly label results as exploratory. Do not report p-values for exploratory findings as if they were confirmatory.</div>
-    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>尽可能预注册你的假设。如果做探索性分析（问"存在什么关系？"而不是"这个特定关系存在吗？"），用更低阈值（p &lt; 0.01甚至p &lt; 0.001），应用Bonferroni或其他纠正，或清楚标记结果为探索性。不要把探索性发现的P值报告得像是确认性的。</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>尽可能预注册你的假设。如果你是在进行探索性分析（问"存在什么关系？"而不是"这个特定的关系存在吗？"），应该使用更严格的阈值（p &lt; 0.01甚至p &lt; 0.001），应用Bonferroni或其他类似的纠正，或者清楚地标记结果为探索性的。不要把探索性发现的P值报告得好像是确认性的一样。</div>
     <div class="method-example" data-lang="en"><strong>Social science example:</strong> A researcher tests whether 30 demographic variables predict political party affiliation. By chance, about 1–2 of these 30 tests will be "significant" at p &lt; 0.05, even if no true relationships exist. The correct approach: pre-register the 5 hypotheses you care most about, test those, and label the other 25 as exploratory. Or apply Bonferroni: 0.05/30 = 0.0017, so only test results with p &lt; 0.0017 count as significant. This avoids mining data for spurious patterns.</div>
-    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究者测试30个人口变量是否预测政治党派。机会上，这30个测试中约1-2个会在p &lt; 0.05"显著"，即使不存在真实关系。正确方法：预注册你最关心的5个假设，测试那些，标记其他25个为探索性。或应用Bonferroni：0.05/30=0.0017，所以仅p &lt; 0.0017的测试结果计为显著。这避免了为虚假模式挖掘数据。</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>一位研究者测试30个人口统计变量是否能预测政治党派。由于纯粹的随机机会，这30个测试中大约有1-2个会在p &lt; 0.05"显著"，即使根本不存在任何真实关系。正确的做法是：预注册你最关心的5个假设，测试那些，把其他25个标记为探索性。或者使用Bonferroni纠正：0.05/30=0.0017，所以只有p &lt; 0.0017的测试结果才计为显著。这样可以避免为了寻找虚假模式而对数据进行挖掘。</div>
   </div>
 </div>
 
@@ -226,14 +313,17 @@ next:
     <h3 data-lang="en">Pearson Correlation and Spearman's Rank Correlation</h3>
     <h3 data-lang="zh">皮尔逊相关与斯皮尔曼秩相关</h3>
     <p class="method-desc" data-lang="en">Pearson correlation (r) ranges from −1 (perfect negative relationship) to +1 (perfect positive relationship), with 0 indicating no linear relationship. It measures how closely two continuous variables move together in a straight-line pattern. Spearman's rank correlation (ρ) does the same thing but for ranked data, making it robust to outliers and monotonic (not necessarily linear) relationships.</p>
-    <p class="method-desc" data-lang="zh">皮尔逊相关（r）范围从−1（完美负相关）到+1（完美正相关），0表示无线性关系。它衡量两个连续变量在直线模式中一起移动有多紧密。斯皮尔曼秩相关（ρ）对排序数据做同样事，对异常值稳健且单调（不一定线性）关系。</p>
+    <p class="method-desc" data-lang="zh">皮尔逊相关（r）的范围从−1（完美负相关）到+1（完美正相关），0表示没有线性关系。它衡量的是两个连续变量一起变动有多紧密。斯皮尔曼秩相关（ρ）的原理类似，但用于排序数据，对异常值更稳健，也能捕捉单调的（但不一定是线性的）关系。</p>
     <p class="method-desc" data-lang="en">An r = 0.7 indicates a strong positive correlation: as one variable increases, the other tends to increase. But r does not tell you the slope or the magnitude of change. Correlation is scale-free: r of 0.7 looks the same whether you measure height in meters or feet. This makes correlation useful for comparing relationships across different units. However, correlation can hide important patterns: a relationship might be perfectly nonlinear (e.g., U-shaped), producing r ≈ 0 even though the relationship is very strong.</p>
-    <p class="method-desc" data-lang="zh">r=0.7表示强正相关：当一个变量增加时，另一个倾向于增加。但r不告诉你斜率或变化幅度。相关是无标度的：r=0.7无论你用米还是英尺衡量高度看起来一样。这使相关对比较不同单位的关系有用。然而，相关可以隐藏重要模式：关系可能完全非线性（如U形），产生r≈0尽管关系很强。</p>
+    <p class="method-desc" data-lang="zh">r=0.7表示强正相关：一个变量增加时，另一个也倾向于增加。但r不会告诉你斜率有多大或变化的幅度如何。相关是无单位的：不管你用米还是英尺来测量高度，r=0.7看起来都一样。这让相关特别适合用来比较不同单位的关系。然而，相关也会隐藏重要的模式：关系可能完全是非线性的（比如U形），导致r≈0，即使关系很强。</p>
     <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Two musicians play simultaneously. Pearson correlation is like asking "Do they start and stop together? Do louder passages align?" If they do, correlation is high. But correlation doesn't ask "Does one cause the other to play?" Maybe both are following a conductor. Spearman correlation is useful when you only care about whether one is "higher" than the other in a monotonic sense, not the precise agreement.</div>
-    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>两个音乐家同时演奏。皮尔逊相关像问"他们一起开始和停止吗？更响亮段落对齐吗？"如果对齐，相关高。但相关不问"一个导致另一个演奏吗？"也许两者都在跟随指挥。斯皮尔曼相关当你仅关心一个是否在单调意义上"高于"另一个时有用，不是精确一致。</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>两个音乐家同时演奏。皮尔逊相关像是问"他们一起开始和停止吗？更响亮的段落是否对齐？"如果对齐，相关就高。但相关不会问"一个导致另一个演奏吗？"也许他们都在跟随指挥。斯皮尔曼相关在你只关心一个是否在单调的意义上"高于"另一个时很有用，而不需要精确的一致性。</div>
     <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use Pearson r for continuous data that are roughly linear and normally distributed. Use Spearman ρ for ordinal data or when you suspect outliers or nonlinearity. Do not use correlation alone to measure relationships — always visualize with a scatter plot. A strong correlation tells you two variables move together, nothing more. To claim causation, you need theory, experimental design, or causal inference methods (like instrumental variables or regression discontinuity).</div>
-    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>对大致线性和正态的连续数据用皮尔逊r。对有序数据或疑似异常值或非线性时用斯皮尔曼ρ。不要仅用相关衡量关系——总是用散点图可视化。强相关告诉你两个变量一起移动，仅此而已。要声称因果，你需要理论、实验设计或因果推断方法（如工具变量或回归断点）。</div>
-    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A researcher finds a correlation of r = 0.6 between years of education and annual income. This is a moderate positive relationship: more education tends to associate with higher income. But this correlation does not prove education causes higher income. Confounding variables could be at work: wealthier families both have more educated parents (who model education) and have more resources for college. An experiment that randomly assigns education to some people and not others would provide causal evidence, but that is infeasible for education. Instead, researchers use methods like regression with control variables to try to isolate education's causal effect.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>对大致呈线性和正态的连续数据，使用皮尔逊r。对于有序数据，或者当你怀疑有异常值或非线性关系时，使用斯皮尔曼ρ。不要只用相关来衡量关系——一定要用散点图把数据可视化。强相关只告诉你两个变量一起变动，仅此而已。要声称因果关系，你需要理论依据、实验设计或因果推断方法（比如工具变量或回归断点）。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A researcher finds a correlation of r = 0.6 between years of education and annual income. This is a moderate positive relationship: more education tends to associate with higher income. But this correlation does not prove education causes higher income. Confounding variables could be at work: wealthier families both have more educated parents (who model education) and have more resources for college. An experiment that randomly assigns education to some people and not others would provide causal evidence, but that is infeasible for education. Instead, researchers use methods like regression with control variables to try to isolate education's causal effect.
+
+    </p>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>一位研究者发现教育年数与年收入之间的相关为r=0.6。这表示中等强度的正相关：更多的教育倾向于伴随更高的收入。但这个相关并不能证明教育导致更高的收入。可能有混淆变量在起作用：较富裕的家庭既有受教育程度较高的父母（他们本身就重视教育），也有更多的大学教育资源。一项随机为某些人而非其他人分配教育的实验可以提供因果证据，但对教育来说这样的实验不可行。相反，研究者使用带有控制变量的回归等方法来尽量隔离教育的因果效应。</div>
     <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究者发现教育年数和年收入间的相关r=0.6。这是中等正相关：更多教育倾向于关联更高收入。但这个相关不证明教育导致更高收入。混淆变量可能起作用：更富裕家庭既有更受教育的父母（建模教育）又有更多大学资源。随机分配教育给某些人而不给其他人的实验会提供因果证据，但对教育不可行。反而，研究者用带控制变量的回归等方法尝试隔离教育的因果效应。</div>
   </div>
 
@@ -254,12 +344,15 @@ next:
     <h3 data-lang="en">Chi-Square Tests for Categorical Data</h3>
     <h3 data-lang="zh">分类数据的卡方检验</h3>
     <p class="method-desc" data-lang="en">When both variables are categorical (religion, party affiliation, employment status), Pearson correlation is inappropriate. Instead, use a chi-square test to assess whether the distribution of one variable differs across levels of the other. The test compares observed counts in a cross-tabulation to the counts you would expect if the variables were independent. A large chi-square statistic (small p-value) suggests the variables are associated.</p>
-    <p class="method-desc" data-lang="zh">当两个变量都是分类的（宗教、政党、就业状态），皮尔逊相关不合适。反而，用卡方检验评估一个变量的分布是否在另一个的各水平间不同。检验比较交叉表中观察计数与变量独立时预期的计数。大卡方统计（小P值）暗示变量关联。</p>
+    <p class="method-desc" data-lang="zh">当两个变量都是分类变量（宗教、政党、就业状态），皮尔逊相关就不适用了。这时应该用卡方检验来评估一个变量的分布是否在另一个变量的不同水平上有所不同。检验会比较交叉表中观察到的计数与在变量独立情况下预期的计数。较大的卡方统计值（即小的P值）表明这两个变量之间存在关联。</p>
     <p class="method-desc" data-lang="en">Chi-square assumes you have large enough sample sizes (typically at least 5 observed counts in each cell of the table). If samples are too small, use Fisher's exact test instead. Chi-square tells you whether an association exists, but not the strength. For effect size with categorical data, use Cramér's V (ranges 0 to 1) or the odds ratio (how many times more likely an outcome is in one group versus another).</p>
-    <p class="method-desc" data-lang="zh">卡方假设样本大小足够大（通常每个表格单元至少5个观察计数）。样本太小，改用Fisher精确检验。卡方告诉你关联是否存在，但不告诉强度。对分类数据效应大小，用Cramér's V（范围0到1）或比值比（在一个组而不是另一个组的结果可能性多少倍）。</p>
+    <p class="method-desc" data-lang="zh">卡方检验假设样本足够大（通常表中每个单元格至少有5个观察计数）。如果样本太小，应该改用Fisher精确检验。卡方告诉你关联是否存在，但不能告诉你强度有多大。对于分类数据的效应大小，可以用Cramér's V（范围0到1）或比值比（一个群体相比另一个群体，某个结果的发生概率要高多少倍）。</p>
     <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Use chi-square for categorical variables. Always report effect size (Cramér's V or odds ratios), not just the p-value. Be careful with small sample sizes: the test becomes unreliable. If many cells have small counts, you may need to collapse categories, but this sacrifices information. Document your decisions.</div>
-    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>对分类变量用卡方。总是报告效应大小（Cramér's V或比值比），不仅仅P值。小心样本大小：检验变成不可靠。如果许多单元有小计数，可能需要折叠类别，但这牺牲信息。记录你的决定。</div>
-    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A researcher tests whether political party affiliation (Democrat, Republican, Independent) is associated with opinion on climate policy (supports, opposes, undecided). They construct a 3×3 table and run a chi-square test. χ² = 45.2, p &lt; 0.001. The association is statistically significant. But what is the effect size? Cramér's V = 0.25, indicating a small-to-moderate association. This nuance — that the association exists but is not enormous — is lost if only the p-value is reported.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用/不用：</strong>对分类变量使用卡方检验。一定要报告效应大小（Cramér's V或比值比），而不是仅仅报告P值。要小心处理样本大小：当样本太小时，检验的可靠性就会下降。如果许多单元格的计数很小，可能需要合并一些类别，但这样做会损失信息。一定要记录你所做的决定。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A researcher tests whether political party affiliation (Democrat, Republican, Independent) is associated with opinion on climate policy (supports, opposes, undecided). They construct a 3×3 table and run a chi-square test. χ² = 45.2, p &lt; 0.001. The association is statistically significant. But what is the effect size? Cramér's V = 0.25, indicating a small-to-moderate association. This nuance — that the association exists but is not enormous — is lost if only the p-value is reported.
+
+    </p>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>一位研究者测试政治党派归属（民主党、共和党、独立人士）是否与对气候政策的意见（支持、反对、未定）相关联。他们构建了一个3×3的列联表并进行卡方检验。χ² = 45.2，p &lt; 0.001。这个关联在统计上显著。但效应大小是多少呢？Cramér's V = 0.25，表示一个小至中等程度的关联。如果仅报告P值，这种细微差别——即存在关联但不是非常强——就会丧失。</div>
     <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>研究者测试政治党派关联（民主党、共和党、独立）是否与气候政策意见（支持、反对、未定）相关。他们构建3×3表并运行卡方检验。χ² = 45.2，p &lt; 0.001。关联统计显著。但效应大小是什么？Cramér's V = 0.25，表示小至中等关联。这种细微差别——关联存在但不巨大——如果仅报告P值就丢失了。</div>
   </div>
 </div>

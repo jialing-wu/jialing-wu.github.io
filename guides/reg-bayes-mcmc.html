@@ -1,0 +1,511 @@
+---
+layout: methods-guide
+title: "MCMC Diagnostics Visualizer"
+title_zh: "MCMC 诊断可视化"
+parent_title: "Bayesian Inference & MCMC"
+parent_title_zh: "贝叶斯推断与 MCMC"
+parent_url: "reg-bayes.html"
+bilingual: true
+mathjax: true
+---
+
+<div class="guide-content">
+
+  <!-- ===== SECTION 1: What is MCMC? ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">1. What is MCMC Sampling?</h2>
+    <h2 data-lang="zh">1. 什么是 MCMC 采样？</h2>
+
+    <p data-lang="en">
+      MCMC (Markov Chain Monte Carlo) is a method to draw random samples from complex probability distributions.
+      Imagine a blindfolded person exploring a mountain in the dark, taking random steps:
+    </p>
+    <p data-lang="zh">
+      MCMC（马尔可夫链蒙特卡洛）是从复杂概率分布中抽取随机样本的方法。想象一个被蒙住眼睛的人在黑暗中探索一座山，随机迈步：
+    </p>
+
+    <ul>
+      <li data-lang="en">
+        <strong>The mountain's shape</strong> represents the posterior distribution (what we want to sample from).
+      </li>
+      <li data-lang="zh">
+        <strong>山的形状</strong>代表后验分布（我们想从中采样）。
+      </li>
+      <li data-lang="en">
+        <strong>Higher ground = higher probability.</strong> The sampler spends more time in high-probability regions.
+      </li>
+      <li data-lang="zh">
+        <strong>较高的地面 = 较高的概率。</strong>采样器在高概率区域花费更多时间。
+      </li>
+      <li data-lang="en">
+        <strong>After enough steps, the path maps out the entire mountain.</strong> The samples
+        form a representation of the posterior distribution.
+      </li>
+      <li data-lang="zh">
+        <strong>足够的步骤后，路径描绘出整座山。</strong>样本形成了后验分布的表示。
+      </li>
+    </ul>
+
+    <p data-lang="en">
+      The challenge: How do we know the sampler has explored enough? That's what diagnostics tell us.
+    </p>
+    <p data-lang="zh">
+      挑战：我们如何知道采样器已经探索充分？这就是诊断告诉我们的。
+    </p>
+  </section>
+
+  <!-- ===== SECTION 2: Trace Plot Simulator ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">2. Interactive Trace Plot Simulator</h2>
+    <h2 data-lang="zh">2. 交互式迹图模拟器</h2>
+
+    <p data-lang="en">
+      Adjust the proposal width below and watch the chain's behavior. A narrower proposal (conservative)
+      leads to slow mixing. A wider proposal (aggressive) leads to lower acceptance rates and worse exploration.
+    </p>
+    <p data-lang="zh">
+      调整下方的建议宽度并观察链的行为。较窄的建议（保守）导致混合缓慢。较宽的建议（激进）导致较低的接受率和较差的探索。
+    </p>
+
+    <div style="margin: 2rem 0; padding: 1rem; background: var(--parchment); border-radius: 0.5rem;">
+      <label>
+        <span data-lang="en">Proposal Width (σ):</span>
+        <span data-lang="zh">建议宽度 (σ)：</span>
+        <input type="range" id="mcmc-proposal-slider" min="0.1" max="3" step="0.1" value="1.0"
+               style="width: 200px; margin: 0 1rem;">
+        <span id="mcmc-proposal-value">1.0</span>
+      </label>
+      <button class="sim-btn" id="mcmc-simulate-btn" data-lang="en">Simulate Chain</button>
+      <button class="sim-btn" id="mcmc-simulate-btn" data-lang="zh">模拟链</button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
+      <div>
+        <h4 data-lang="en">Trace Plot (Iterations vs Parameter Value)</h4>
+        <h4 data-lang="zh">迹图（迭代次数与参数值）</h4>
+        <canvas id="trace-plot-canvas"></canvas>
+      </div>
+      <div>
+        <h4 data-lang="en">Cumulative Mean (Convergence)</h4>
+        <h4 data-lang="zh">累积均值（收敛）</h4>
+        <canvas id="running-mean-canvas"></canvas>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 2rem 0;">
+      <div class="stat-chip">
+        <span class="slabel" data-lang="en">Acceptance Rate:</span>
+        <span class="sval" id="mcmc-acceptance-rate">—</span>
+      </div>
+      <div class="stat-chip">
+        <span class="slabel" data-lang="en">Effective Sample Size:</span>
+        <span class="sval" id="mcmc-ess">—</span>
+      </div>
+      <div class="stat-chip">
+        <span class="slabel" data-lang="en">Autocorrelation (lag 1):</span>
+        <span class="sval" id="mcmc-autocorr">—</span>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <h4 data-lang="en">What Makes a Good Trace?</h4>
+      <h4 data-lang="zh">什么构成好的迹？</h4>
+      <p data-lang="en">
+        A well-mixing MCMC chain looks like a "hairy caterpillar" — it rapidly explores the parameter space
+        with high acceptance rates (20–40%) and low autocorrelation. It should not drift, get stuck,
+        or show obvious trends.
+      </p>
+      <p data-lang="zh">
+        混合良好的MCMC链看起来像"毛毛虫"——它以高接受率（20-40%）和低自相关性快速探索参数空间。
+        它不应该漂移、卡住或显示明显的趋势。
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 3: Convergence Diagnostics ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">3. Convergence Diagnostics</h2>
+    <h2 data-lang="zh">3. 收敛诊断</h2>
+
+    <h3 data-lang="en">3a. Rhat (Gelman-Rubin Statistic)</h3>
+    <h3 data-lang="zh">3a. Rhat（Gelman-Rubin 统计量）</h3>
+
+    <p data-lang="en">
+      Run multiple chains from different starting points. If they all converge to the same region,
+      Rhat ≈ 1.0 (good). If chains are still drifting apart, Rhat > 1.01 (bad).
+    </p>
+    <p data-lang="zh">
+      从不同起点运行多条链。如果它们都收敛到同一区域，Rhat ≈ 1.0（好）。如果链仍在漂离，Rhat > 1.01（坏）。
+    </p>
+
+    <div class="math-note">
+      <p>$$\hat{R} = \sqrt{\frac{\text{Between-chain variance + Within-chain variance}}{\text{Within-chain variance}}}$$</p>
+      <p data-lang="en">Target: Rhat &lt; 1.01. Values &gt; 1.05 suggest non-convergence.</p>
+      <p data-lang="zh">目标：Rhat &lt; 1.01。大于 1.05 的值表示未收敛。</p>
+    </div>
+
+    <h3 data-lang="en">3b. Effective Sample Size (ESS)</h3>
+    <h3 data-lang="zh">3b. 有效样本量 (ESS)</h3>
+
+    <p data-lang="en">
+      MCMC samples are correlated (autocorrelated). ESS is the number of "independent" samples
+      you effectively have. If N = 10,000 samples but ESS = 500, you only have 500 independent pieces of information.
+    </p>
+    <p data-lang="zh">
+      MCMC样本是相关的（自相关）。ESS是你有效拥有的"独立"样本数。如果N = 10,000个样本但ESS = 500，你只有500条独立信息。
+    </p>
+
+    <div class="math-note">
+      <p>$$\text{ESS} = \frac{N}{1 + 2 \sum_{k=1}^{\infty} \rho_k}$$</p>
+      <p data-lang="en">Where ρ_k is autocorrelation at lag k. Target: ESS &gt; 400 for most parameters.</p>
+      <p data-lang="zh">其中 ρ_k 是滞后 k 的自相关。目标：对于大多数参数，ESS > 400。</p>
+    </div>
+
+    <h3 data-lang="en">3c. Divergent Transitions (HMC/NUTS)</h3>
+    <h3 data-lang="zh">3c. 发散转移 (HMC/NUTS)</h3>
+
+    <p data-lang="en">
+      Advanced samplers like Hamiltonian MC detect when the chain is going into bad regions ("divergences").
+      These indicate model misspecification or parameterization problems. Solutions:
+    </p>
+    <p data-lang="zh">
+      像哈密尔顿MC这样的高级采样器可以检测链何时进入不好的区域（"发散"）。这些表示模型错误指定或参数化问题。解决方案：
+    </p>
+
+    <ul>
+      <li data-lang="en"><strong>Reparameterize:</strong> Center/scale predictors, use a different link function.</li>
+      <li data-lang="zh"><strong>重新参数化：</strong>中心化/缩放预测变量，使用不同的链接函数。</li>
+      <li data-lang="en"><strong>Stronger priors:</strong> Narrow priors reduce exploration of extreme regions.</li>
+      <li data-lang="zh"><strong>更强的先验：</strong>窄先验减少对极端区域的探索。</li>
+      <li data-lang="en"><strong>Check the model:</strong> Is the specification reasonable? Are there data quality issues?</li>
+      <li data-lang="zh"><strong>检查模型：</strong>规范是否合理？是否存在数据质量问题？</li>
+    </ul>
+  </section>
+
+  <!-- ===== SECTION 4: brms Diagnostics Code ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">4. R Code: brms Diagnostics</h2>
+    <h2 data-lang="zh">4. R 代码：brms 诊断</h2>
+
+    <p data-lang="en">
+      The brms package (Bayesian Regression Models using Stan) makes Bayesian inference accessible.
+      Here's a complete workflow:
+    </p>
+    <p data-lang="zh">
+      brms包（使用Stan的贝叶斯回归模型）使贝叶斯推断更容易。以下是完整的工作流：
+    </p>
+
+    <pre><code class="language-r">
+library(brms)
+
+# Fit a simple linear model with priors
+fit <- brm(
+  y ~ x1 + x2,
+  data = mydata,
+  family = gaussian(link = "identity"),
+  prior = c(
+    prior(normal(0, 5), class = "b"),
+    prior(exponential(1), class = "sigma")
+  ),
+  chains = 4,           # Run 4 chains
+  iter = 2000,          # Total iterations per chain
+  warmup = 1000,        # Discard first 1000 (burn-in)
+  cores = 4             # Parallel processing
+)
+
+# Summary with diagnostics
+summary(fit)
+# Look at Rhat (should be < 1.01) and Bulk_ESS / Tail_ESS (should be > 400)
+
+# Visual trace plots
+plot(fit)
+# Good traces look like "fat hairy caterpillars"
+
+# More detailed diagnostics
+posterior_samples <- as_draws_df(fit)
+head(posterior_samples)
+
+# Check for divergences (if Rhat is high, run diagnostics)
+rhat(fit)
+
+# Posterior predictive check (does the model generate data like the observed?)
+pp_check(fit, ndraws = 100)
+
+# Extract posterior means and credible intervals
+posterior_summary(fit)
+
+# Compare models with LOO-CV
+fit2 <- brm(y ~ x1 + x2 + x3, data = mydata, ...)
+loo1 <- loo(fit)
+loo2 <- loo(fit2)
+loo_compare(loo1, loo2)
+    </code></pre>
+
+    <p data-lang="en">
+      For frequentist-style interpretation, extract posterior means as point estimates
+      and use credible intervals as uncertainty bounds.
+    </p>
+    <p data-lang="zh">
+      为了进行频率论风格的解释，提取后验均值作为点估计，并使用可信区间作为不确定性边界。
+    </p>
+  </section>
+
+  <!-- ===== SECTION 5: When MCMC Fails ===== -->
+  <section class="guide-section">
+    <h2 data-lang="en">5. Diagnosing MCMC Failure</h2>
+    <h2 data-lang="zh">5. 诊断 MCMC 失败</h2>
+
+    <h3 data-lang="en">Problem: High Rhat (> 1.05)</h3>
+    <h3 data-lang="zh">问题：高 Rhat（> 1.05）</h3>
+
+    <p data-lang="en">
+      <strong>Symptom:</strong> Trace plots show chains drifting in different directions.
+    </p>
+    <p data-lang="zh">
+      <strong>症状：</strong>迹图显示链向不同方向漂移。
+    </p>
+
+    <p data-lang="en">
+      <strong>Cause:</strong> Insufficient iterations, non-convergence, or multi-modal posterior.
+    </p>
+    <p data-lang="zh">
+      <strong>原因：</strong>迭代不足、未收敛或多模态后验。
+    </p>
+
+    <p data-lang="en">
+      <strong>Solution:</strong>
+    </p>
+    <p data-lang="zh">
+      <strong>解决方案：</strong>
+    </p>
+
+    <ul>
+      <li data-lang="en">Increase iterations (e.g., iter = 4000, warmup = 2000)</li>
+      <li data-lang="zh">增加迭代（例如，iter = 4000，warmup = 2000）</li>
+      <li data-lang="en">Scale/center predictors to improve conditioning</li>
+      <li data-lang="zh">缩放/中心化预测变量以改进条件</li>
+      <li data-lang="en">Use stronger, more informative priors</li>
+      <li data-lang="zh">使用更强、更信息丰富的先验</li>
+      <li data-lang="en">Check for data entry errors or extreme outliers</li>
+      <li data-lang="zh">检查数据输入错误或极端异常值</li>
+    </ul>
+
+    <h3 data-lang="en">Problem: Low ESS (< 400)</h3>
+    <h3 data-lang="zh">问题：低 ESS（< 400）</h3>
+
+    <p data-lang="en">
+      <strong>Symptom:</strong> Samples are highly autocorrelated; chain looks "sticky" or slow-moving.
+    </p>
+    <p data-lang="zh">
+      <strong>症状：</strong>样本高度自相关；链看起来"粘性"或缓慢移动。
+    </p>
+
+    <p data-lang="en">
+      <strong>Cause:</strong> Inefficient parameterization, flat likelihood, or poor prior choice.
+    </p>
+    <p data-lang="zh">
+      <strong>原因：</strong>低效的参数化、平坦的似然性或糟糕的先验选择。
+    </p>
+
+    <p data-lang="en">
+      <strong>Solution:</strong>
+    </p>
+    <p data-lang="zh">
+      <strong>解决方案：</strong>
+    </p>
+
+    <ul>
+      <li data-lang="en">Run longer (more iterations)</li>
+      <li data-lang="zh">运行更长时间（更多迭代）</li>
+      <li data-lang="en">Use non-centered parameterization (brms handles this automatically)</li>
+      <li data-lang="zh">使用非中心参数化（brms自动处理）</li>
+      <li data-lang="en">Increase adapt_delta (closer to 1 = more careful steps, slower but better mixing)</li>
+      <li data-lang="zh">增加 adapt_delta（接近 1 = 更仔细的步骤、更慢但混合更好）</li>
+    </ul>
+
+    <h3 data-lang="en">Problem: Many Divergent Transitions</h3>
+    <h3 data-lang="zh">问题：许多发散转移</h3>
+
+    <p data-lang="en">
+      <strong>Symptom:</strong> Warning message "X divergent transitions after warmup."
+    </p>
+    <p data-lang="zh">
+      <strong>症状：</strong>警告消息"X 发散转移在预热后。"
+    </p>
+
+    <p data-lang="en">
+      <strong>Cause:</strong> Model exploring regions of very high curvature (geometry mismatch).
+    </p>
+    <p data-lang="zh">
+      <strong>原因：</strong>模型探索高度曲率的区域（几何不匹配）。
+    </p>
+
+    <p data-lang="en">
+      <strong>Solution:</strong>
+    </p>
+    <p data-lang="zh">
+      <strong>解决方案：</strong>
+    </p>
+
+    <ul>
+      <li data-lang="en">Increase adapt_delta (e.g., control = list(adapt_delta = 0.99))</li>
+      <li data-lang="zh">增加 adapt_delta（例如，control = list(adapt_delta = 0.99)）</li>
+      <li data-lang="en">Use priors that reduce exploration: prior(normal(0, 1), ...)</li>
+      <li data-lang="zh">使用减少探索的先验：prior(normal(0, 1), ...)</li>
+      <li data-lang="en">Reparameterize the model (use non-centered form for hierarchical models)</li>
+      <li data-lang="zh">重新参数化模型（对分层模型使用非中心形式）</li>
+      <li data-lang="en">Check for structural issues (e.g., perfect multicollinearity in predictors)</li>
+      <li data-lang="zh">检查结构问题（例如，预测变量中的完全多重共线性）</li>
+    </ul>
+  </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  // MCMC Simulator
+  const proposalSlider = document.getElementById('mcmc-proposal-slider');
+  const proposalValue = document.getElementById('mcmc-proposal-value');
+  const simulateBtn = document.getElementById('mcmc-simulate-btn');
+
+  proposalSlider.addEventListener('input', function() {
+    proposalValue.textContent = parseFloat(this.value).toFixed(2);
+  });
+
+  function simulateMCMC(proposalWidth) {
+    const n = 1000;
+    const chain = [0]; // Start at 0
+    let accepted = 0;
+
+    // Metropolis-Hastings targeting N(5, 1)
+    for (let i = 1; i < n; i++) {
+      const current = chain[chain.length - 1];
+      const proposal = current + proposalWidth * (Math.random() - 0.5) * 2;
+
+      const logAlpha = -0.5 * (proposal * proposal - current * current) +
+                       -0.5 * (Math.pow(proposal - 5, 2) - Math.pow(current - 5, 2));
+
+      if (Math.log(Math.random()) < logAlpha) {
+        chain.push(proposal);
+        accepted++;
+      } else {
+        chain.push(current);
+      }
+    }
+
+    const acceptanceRate = (accepted / n * 100).toFixed(1);
+
+    // Calculate running mean
+    const runningMean = [];
+    let cumSum = 0;
+    for (let i = 0; i < chain.length; i++) {
+      cumSum += chain[i];
+      runningMean.push(cumSum / (i + 1));
+    }
+
+    // Calculate autocorrelation at lag 1
+    const mean = chain.reduce((a, b) => a + b) / chain.length;
+    let autoCorr = 0;
+    let var0 = 0;
+    for (let i = 0; i < chain.length - 1; i++) {
+      var0 += Math.pow(chain[i] - mean, 2);
+      autoCorr += (chain[i] - mean) * (chain[i + 1] - mean);
+    }
+    autoCorr = autoCorr / var0;
+
+    // ESS approximation
+    const ess = Math.round(n / (1 + 2 * autoCorr));
+
+    return {chain, runningMean, acceptanceRate, autoCorr: autoCorr.toFixed(3), ess};
+  }
+
+  let tracePlotChart = null;
+  let runningMeanChart = null;
+
+  simulateBtn.addEventListener('click', function() {
+    const proposalWidth = parseFloat(proposalSlider.value);
+    const result = simulateMCMC(proposalWidth);
+
+    // Update stats
+    document.getElementById('mcmc-acceptance-rate').textContent = result.acceptanceRate + '%';
+    document.getElementById('mcmc-ess').textContent = result.ess;
+    document.getElementById('mcmc-autocorr').textContent = result.autoCorr;
+
+    // Create trace plot
+    const iterations = Array.from({length: result.chain.length}, (_, i) => i);
+
+    if (tracePlotChart) {
+      tracePlotChart.destroy();
+    }
+
+    const traceCtx = document.getElementById('trace-plot-canvas');
+    tracePlotChart = new Chart(traceCtx, {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: 'Parameter Value',
+          data: iterations.map((i, idx) => ({x: i, y: result.chain[idx]})),
+          borderColor: '#1976d2',
+          backgroundColor: '#1976d2',
+          showLine: true,
+          borderWidth: 1,
+          pointRadius: 0,
+          tension: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: {duration: 0},
+        scales: {
+          x: {title: {display: true, text: 'Iteration'}},
+          y: {title: {display: true, text: 'Parameter Value'}}
+        },
+        plugins: {
+          legend: {display: true}
+        }
+      }
+    });
+
+    // Create running mean chart
+    if (runningMeanChart) {
+      runningMeanChart.destroy();
+    }
+
+    const meanCtx = document.getElementById('running-mean-canvas');
+    runningMeanChart = new Chart(meanCtx, {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: 'Cumulative Mean',
+          data: iterations.map((i, idx) => ({x: i, y: result.runningMean[idx]})),
+          borderColor: '#f57c00',
+          backgroundColor: '#f57c00',
+          showLine: true,
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: {duration: 0},
+        scales: {
+          x: {title: {display: true, text: 'Iteration'}},
+          y: {min: 0, max: 8, title: {display: true, text: 'Mean'}}
+        },
+        plugins: {
+          legend: {display: true}
+        }
+      }
+    });
+  });
+
+  // Initial simulation
+  simulateBtn.click();
+</script>
+
+<style>
+  canvas {
+    max-width: 100%;
+  }
+</style>

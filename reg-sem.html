@@ -17,6 +17,15 @@ next:
 .problem-index a{display:block;font-size:14.5px;line-height:2;color:var(--ink-faded);text-decoration:none;transition:color .2s}
 .problem-index a:hover{color:var(--red)}
 .problem-index a .pi-arrow{font-family:var(--sans);font-size:11px;color:var(--gold);margin-left:6px}
+.paradigm-table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.6}
+.paradigm-table th{background:var(--gold);color:var(--white);padding:10px;text-align:left;font-weight:700}
+.paradigm-table td{border:1px solid var(--parchment);padding:8px 10px}
+.paradigm-table tr:nth-child(even){background:var(--white)}
+.paradigm-table tr:nth-child(odd){background:var(--light)}
+.path-diagram{display:flex;align-items:center;justify-content:space-around;margin:20px 0;padding:20px;background:var(--light);border-radius:4px}
+.path-box{width:80px;height:60px;display:flex;align-items:center;justify-content:center;background:var(--gold);color:var(--white);border-radius:4px;font-weight:700;font-size:13px;text-align:center;padding:8px}
+.path-arrow{font-size:24px;color:var(--red);margin:0 10px}
+.path-label{font-size:12px;color:var(--ink-faded);margin-top:4px}
 </style>
 
 <!-- HEADER -->
@@ -237,6 +246,158 @@ next:
   </div>
 </div>
 
+  <div class="method-section">
+    <h3 data-lang="en">Visual Representation: Path Diagrams</h3>
+    <h3 data-lang="zh">视觉表示：路径图</h3>
+    <p class="method-desc" data-lang="en">SEM is inherently visual. A path diagram shows variables as boxes and causal relationships as arrows. Here's a simple example:</p>
+    <p class="method-desc" data-lang="zh">SEM 本质上是视觉的。路径图显示变量为框，因果关系为箭头。这是一个简单例子：</p>
+    <div class="path-diagram" data-lang="en">
+      <div style="text-align:center">
+        <div class="path-box">Trust</div>
+        <div class="path-label">Latent Variable</div>
+      </div>
+      <div class="path-arrow">→</div>
+      <div style="text-align:center">
+        <div class="path-box">Participation</div>
+        <div class="path-label">Mediator</div>
+      </div>
+      <div class="path-arrow">→</div>
+      <div style="text-align:center">
+        <div class="path-box">Outcomes</div>
+        <div class="path-label">Final Outcome</div>
+      </div>
+    </div>
+    <div class="path-diagram" data-lang="en">
+      <div style="width:100%;text-align:center;margin-top:10px;padding:10px;border-top:2px solid var(--red)">
+        <div style="font-size:12px;color:var(--red);margin-top:8px">↑ Back door: Direct effect (Trust → Outcomes)</div>
+      </div>
+    </div>
+    <div class="path-diagram" data-lang="zh">
+      <div style="text-align:center">
+        <div class="path-box">信任</div>
+        <div class="path-label">潜变量</div>
+      </div>
+      <div class="path-arrow">→</div>
+      <div style="text-align:center">
+        <div class="path-box">参与</div>
+        <div class="path-label">中介</div>
+      </div>
+      <div class="path-arrow">→</div>
+      <div style="text-align:center">
+        <div class="path-box">结果</div>
+        <div class="path-label">最终结果</div>
+      </div>
+    </div>
+    <div class="path-diagram" data-lang="zh">
+      <div style="width:100%;text-align:center;margin-top:10px;padding:10px;border-top:2px solid var(--red)">
+        <div style="font-size:12px;color:var(--red);margin-top:8px">↑ 后门：直接效应（信任 → 结果）</div>
+      </div>
+    </div>
+    <p class="method-desc" data-lang="en"><strong>Reading path diagrams:</strong> Single-headed arrows (→) represent direct causal effects. Double-headed arrows (↔) represent correlations or covariances (not causal). Boxes represent measured variables; ovals or circles represent latent variables. The diagram above shows: Trust and Participation are connected (direct path). Participation and Outcomes are connected. Trust also has a direct effect on Outcomes (the curved arrow). This model asks: how much of Trust's effect on Outcomes goes through Participation (indirect) vs. directly?</p>
+    <p class="method-desc" data-lang="zh"><strong>读路径图：</strong>单头箭头（→）代表直接因果效应。双头箭头（↔）代表相关或协方差（非因果）。框代表测量变量；椭圆或圆代表潜变量。上面的图显示：信任和参与相连（直接路径）。参与和结果相连。信任也对结果有直接效应（曲线箭头）。这个模型问：信任对结果的效应有多少通过参与（间接）对比直接？</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Fit Index Cheat Sheet: Quick Reference</h3>
+    <h3 data-lang="zh">拟合指标速查表：快速参考</h3>
+    <p class="method-desc" data-lang="en">After running an SEM, software outputs a battery of fit indices. This table summarizes cutoffs for interpreting them:</p>
+    <p class="method-desc" data-lang="zh">运行 SEM 后，软件输出一系列拟合指标。这个表总结解释它们的截断值：</p>
+    <div data-lang="en" style="overflow-x:auto;margin:16px 0;">
+      <table class="paradigm-table">
+        <tr>
+          <th>Index</th>
+          <th>Good Fit</th>
+          <th>Acceptable Fit</th>
+          <th>Poor Fit</th>
+          <th>Interpretation</th>
+        </tr>
+        <tr>
+          <td><strong>CFI</strong> (Comparative Fit)</td>
+          <td>&gt; 0.95</td>
+          <td>0.90–0.95</td>
+          <td>&lt; 0.90</td>
+          <td>Relative to baseline (independence); higher is better</td>
+        </tr>
+        <tr>
+          <td><strong>TLI</strong> (Tucker-Lewis)</td>
+          <td>&gt; 0.95</td>
+          <td>0.90–0.95</td>
+          <td>&lt; 0.90</td>
+          <td>Like CFI but penalizes complexity; prefers parsimony</td>
+        </tr>
+        <tr>
+          <td><strong>RMSEA</strong> (Approx. Error)</td>
+          <td>&lt; 0.06</td>
+          <td>0.06–0.08</td>
+          <td>&gt; 0.08</td>
+          <td>Average discrepancy; lower is better; report 90% CI</td>
+        </tr>
+        <tr>
+          <td><strong>SRMR</strong> (Std. Residual)</td>
+          <td>&lt; 0.08</td>
+          <td>0.08–0.10</td>
+          <td>&gt; 0.10</td>
+          <td>Average standardized residual; lower is better</td>
+        </tr>
+        <tr>
+          <td><strong>χ²/df</strong> (Chi-sq Ratio)</td>
+          <td>&lt; 2</td>
+          <td>2–3</td>
+          <td>&gt; 3</td>
+          <td>Divide χ² by degrees of freedom; rough rule of thumb</td>
+        </tr>
+      </table>
+    </div>
+    <div data-lang="zh" style="overflow-x:auto;margin:16px 0;">
+      <table class="paradigm-table">
+        <tr>
+          <th>指标</th>
+          <th>良好拟合</th>
+          <th>可接受拟合</th>
+          <th>差拟合</th>
+          <th>解释</th>
+        </tr>
+        <tr>
+          <td><strong>CFI</strong> (比较拟合)</td>
+          <td>&gt; 0.95</td>
+          <td>0.90–0.95</td>
+          <td>&lt; 0.90</td>
+          <td>相对于基线（独立）；更高更好</td>
+        </tr>
+        <tr>
+          <td><strong>TLI</strong> (Tucker-Lewis)</td>
+          <td>&gt; 0.95</td>
+          <td>0.90–0.95</td>
+          <td>&lt; 0.90</td>
+          <td>像 CFI 但惩罚复杂性；偏好简洁</td>
+        </tr>
+        <tr>
+          <td><strong>RMSEA</strong> (近似误差)</td>
+          <td>&lt; 0.06</td>
+          <td>0.06–0.08</td>
+          <td>&gt; 0.08</td>
+          <td>平均差异；更低更好；报告 90% CI</td>
+        </tr>
+        <tr>
+          <td><strong>SRMR</strong> (标准残差)</td>
+          <td>&lt; 0.08</td>
+          <td>0.08–0.10</td>
+          <td>&gt; 0.10</td>
+          <td>平均标准化残差；更低更好</td>
+        </tr>
+        <tr>
+          <td><strong>χ²/df</strong> (卡方比)</td>
+          <td>&lt; 2</td>
+          <td>2–3</td>
+          <td>&gt; 3</td>
+          <td>χ² 除以自由度；粗略经验法则</td>
+        </tr>
+      </table>
+    </div>
+    <p class="method-desc" data-lang="en"><strong>Quick decision rule:</strong> If all four indices (CFI, TLI, RMSEA, SRMR) suggest good fit, your model is solid. If one index is borderline or poor while others are good, investigate further. Poor fit usually means model misspecification (missing paths, incorrect causal direction, or unmeasured confounding). Do not use fit indices to hunt for significant paths — that leads to overfitting. Instead, let theory guide your model, then check fit.</p>
+    <p class="method-desc" data-lang="zh"><strong>快速决策规则：</strong>如果四个指标（CFI、TLI、RMSEA、SRMR）都表示良好拟合，你的模型很坚实。如果一个指标边界或差，而其他好，进一步调查。差拟合通常意味着模型误设（缺失路径、错误因果方向或未测量混淆）。别用拟合指标来寻找显著路径——那导致过度拟合。反而，让理论指导你的模型，然后检查拟合。</p>
+  </div>
+
 <hr class="section-divider">
 <!-- GUIDES -->
 <div class="section" id="sem-guides">
@@ -250,6 +411,16 @@ next:
         <div class="m-title" data-lang="zh">结构方程模型：lavaan 实战</div>
         <div class="m-desc" data-lang="en">CFA, full SEM, indirect effects with bootstrap, and model fit indices — complete R workflow.</div>
         <div class="m-desc" data-lang="zh">CFA、完整 SEM、自助法间接效应与模型拟合指标——完整 R 工作流。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
+    <a class="m-card" href="/methods/guides/reg-sem-pathviz.html">
+      <div class="m-num">▶</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Interactive Path Diagram Builder</div>
+        <div class="m-title" data-lang="zh">交互式路径图构建器</div>
+        <div class="m-desc" data-lang="en">Draw SEM path diagrams visually, decode lavaan syntax, and check fit indices — all interactive.</div>
+        <div class="m-desc" data-lang="zh">可视化绘制 SEM 路径图、解读 lavaan 语法、检查拟合指标——全程交互。</div>
       </div>
       <div class="m-arrow">→</div>
     </a>
