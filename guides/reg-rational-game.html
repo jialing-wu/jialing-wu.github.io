@@ -19,7 +19,7 @@ Game theory models strategic interaction between rational agents. A <strong>game
 </p>
 
 <p data-lang="zh">
-博弈论模型理性代理之间的战略互动。一个<strong>博弈</strong>由以下部分组成：
+博弈论研究理性参与者之间的战略互动。一个<strong>博弈</strong>包含以下三个要素：
 </p>
 
 <ul style="margin-left: 2rem;">
@@ -42,7 +42,7 @@ A <strong>normal form game</strong> represents all information in a payoff matri
 </p>
 
 <p data-lang="zh">
-<strong>正常形式博弈</strong>用收益矩阵表示所有信息，其中行是一个参与者的策略，列是另一个的。每个单元格显示两个参与者的收益。
+<strong>标准形式博弈</strong>用一个收益矩阵来表示：行代表一个参与者的策略，列代表另一个参与者的策略。矩阵的每个格子里填的是两个参与者各自的收益。
 </p>
 
 <p data-lang="en">
@@ -55,12 +55,12 @@ A <strong>normal form game</strong> represents all information in a payoff matri
 
 <ul style="margin-left: 2rem;">
   <li data-lang="en"><strong>Dominant strategy:</strong> A strategy that is best for a player regardless of what the opponent does. Not all games have dominant strategies.</li>
-  <li data-lang="zh"><strong>支配策略：</strong>无论对手做什么，都是玩家最佳的策略。并非所有博弈都有支配策略。</li>
+  <li data-lang="zh"><strong>支配策略：</strong>无论对方如何行动，这个策略对你来说都是最好的选择。但并不是所有博弈都有支配策略。</li>
 </ul>
 
 <ul style="margin-left: 2rem;">
   <li data-lang="en"><strong>Nash equilibrium:</strong> A strategy pair where no player can improve their payoff by unilaterally deviating. Both players are satisfied—no incentive to change.</li>
-  <li data-lang="zh"><strong>纳什均衡：</strong>一对策略，其中没有参与者通过单方面偏离来改善其收益。两个参与者都满意——没有改变的激励。</li>
+  <li data-lang="zh"><strong>纳什均衡：</strong>一对策略配置，使得每个参与者都无法通过单独改变自己的策略来改善自己的收益。双方都没有动力去改变——这就是均衡。</li>
 </ul>
 
 <p data-lang="en">
@@ -68,7 +68,7 @@ Example: Driving on the left or right side of the road. Once society coordinates
 </p>
 
 <p data-lang="zh">
-例子：在道路的左侧或右侧行驶。一旦社会在一个方面协调，没有司机想要切换（两侧都会导致碰撞）。存在多个均衡；惯例选择一个。
+例子：开车时靠左还是靠右。一旦大家都靠左了，没人想改靠右（要不就撞车了）。这个博弈有多个纳什均衡，最后是通过社会惯例选择其中一个。
 </p>
 
 <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
@@ -83,13 +83,13 @@ Build a 2×2 game or load a famous preset. Edit payoff cells and find Nash equil
 </p>
 
 <p data-lang="zh">
-构建一个 2×2 的博弈或加载一个著名的预设。编辑收益单元格并找到纳什均衡。
+下面你可以构建自己的 2×2 博弈，或者加载一个经典博弈。编辑收益数字，点击按钮找出纳什均衡。
 </p>
 
 <div class="sim-panel" style="background: var(--parchment); padding: 1.5rem; border-radius: 0.5rem; margin: 1.5rem 0;">
   <div class="ctrl-group" style="margin-bottom: 1rem;">
     <label class="ctrl-label" style="display: block; margin-bottom: 0.5rem; font-weight: bold;" data-lang="en">Load Preset:</label>
-    <label class="ctrl-label" style="display: block; margin-bottom: 0.5rem; font-weight: bold;" data-lang="zh">加载预设：</label>
+    <label class="ctrl-label" style="display: block; margin-bottom: 0.5rem; font-weight: bold;" data-lang="zh">选择经典博弈：</label>
     <select id="preset-select" onchange="loadPreset()" style="padding: 0.5rem; border: 1px solid var(--ink); border-radius: 0.3rem; width: 250px;">
       <option value="custom" data-en="Custom" data-zh="自定义">Custom</option>
       <option value="pd" data-en="Prisoner's Dilemma" data-zh="囚徒困境">Prisoner's Dilemma</option>

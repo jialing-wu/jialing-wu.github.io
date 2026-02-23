@@ -12,71 +12,71 @@ mathjax: false
 <div style="background: linear-gradient(135deg, var(--parchment) 0%, var(--cream) 100%); padding: 32px 24px; border-radius: 4px; margin-bottom: 28px; border-left: 5px solid var(--gold);">
   <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
     <span style="font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 1px;" data-lang="en">INTERACTIVE SIMULATION · GUIDE 1</span>
-    <span style="font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; display: none;" data-lang="zh">互动模拟 · 指南一</span>
+    <span style="font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 1px;" data-lang="zh">互动模拟 · 指南一</span>
   </div>
   <h1 style="font-family: var(--serif); font-size: 36px; color: var(--ink); margin: 16px 0 8px 0; font-weight: 700;" data-lang="en">Randomization & Potential Outcomes</h1>
-  <h1 style="font-family: var(--serif); font-size: 36px; color: var(--ink); margin: 16px 0 8px 0; font-weight: 700; display: none;" data-lang="zh">随机化与潜在结果</h1>
+  <h1 style="font-family: var(--serif); font-size: 36px; color: var(--ink); margin: 16px 0 8px 0; font-weight: 700;" data-lang="zh">随机化与潜在结果</h1>
   <p style="font-family: var(--sans); font-size: 17px; color: var(--ink-faded); margin: 0; font-weight: 400;" data-lang="en">See selection bias emerge with non-random assignment — and disappear with randomization.</p>
-  <p style="font-family: var(--sans); font-size: 17px; color: var(--ink-faded); margin: 0; font-weight: 400; display: none;" data-lang="zh">观察非随机分配如何产生选择偏差，以及随机化如何消除它。</p>
+  <p style="font-family: var(--sans); font-size: 17px; color: var(--ink-faded); margin: 0; font-weight: 400;" data-lang="zh">观察非随机分配如何产生选择偏差，以及随机化如何消除它。</p>
 </div>
 
 <section style="margin-bottom: 32px;">
   <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">The Fundamental Problem</h2>
-  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">根本问题</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="zh">根本问题</h2>
   
   <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 12px;" data-lang="en">For each person, we can observe either Y(1) — the outcome if treated — or Y(0) — the outcome if untreated. We can never observe both for the same person simultaneously. This is the <strong>Fundamental Problem of Causal Inference</strong>.</p>
-  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 12px; display: none;" data-lang="zh">对于每个人，我们可以观察到 Y(1)（如果接受治疗的结果）或 Y(0)（如果未接受治疗的结果），但永远无法同时观察到两者。这就是因果推断的根本问题。</p>
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 12px;" data-lang="zh">对于每个人，我们可以观察到 Y(1)（如果接受治疗的结果）或 Y(0)（如果未接受治疗的结果），但永远无法同时观察到两者。这就是因果推断的根本问题。</p>
 
   <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px;" data-lang="en">The treatment effect for person i is τᵢ = Y₁(i) - Y₀(i). But we cannot compute this. Instead, we estimate the <strong>Average Treatment Effect (ATE)</strong>:</p>
-  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px; display: none;" data-lang="zh">个人 i 的处理效应是 τᵢ = Y₁(i) - Y₀(i)。但我们无法计算这个值。取而代之，我们估计平均处理效应（ATE）：</p>
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px;" data-lang="zh">个人 i 的处理效应是 τᵢ = Y₁(i) - Y₀(i)。但我们无法计算这个值。取而代之，我们估计平均处理效应（ATE）：</p>
 
   <div class="math-note" style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; border-left: 4px solid var(--gold); margin: 16px 0; font-family: var(--mono); font-size: 13px; color: var(--ink); line-height: 1.8;">
     <div data-lang="en">ATE = E[Y(1) - Y(0)] = E[Y|T=1] - E[Y|T=0]</div>
-    <div data-lang="zh" style="display: none;">ATE = E[Y(1) - Y(0)] = E[Y|T=1] - E[Y|T=0]</div>
+    <div data-lang="zh">ATE = E[Y(1) - Y(0)] = E[Y|T=1] - E[Y|T=0]</div>
   </div>
 
   <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 12px;" data-lang="en">This simple equation is only valid if treatment T is <strong>independent of potential outcomes</strong>. If not, selection bias appears:</p>
-  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 12px; display: none;" data-lang="zh">这个简单的方程只有在处理 T 与潜在结果相独立时才有效。如果不是这样，就会出现选择偏差：</p>
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 12px;" data-lang="zh">这个简单的方程只有在处理 T 与潜在结果相独立时才有效。如果不是这样，就会出现选择偏差：</p>
 
   <div class="math-note" style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; border-left: 4px solid var(--gold); margin: 16px 0; font-family: var(--mono); font-size: 13px; color: var(--ink); line-height: 1.8;">
     <div data-lang="en">E[Y|T=1] - E[Y|T=0] = ATE + Selection Bias</div>
     <div data-lang="en" style="margin-top: 8px; font-size: 12px;">Selection Bias = E[Y(0)|T=1] - E[Y(0)|T=0]</div>
-    <div data-lang="zh" style="display: none;">E[Y|T=1] - E[Y|T=0] = ATE + 选择偏差</div>
-    <div data-lang="zh" style="display: none; margin-top: 8px; font-size: 12px;">选择偏差 = E[Y(0)|T=1] - E[Y(0)|T=0]</div>
+    <div data-lang="zh">E[Y|T=1] - E[Y|T=0] = ATE + 选择偏差</div>
+    <div data-lang="zh" style="margin-top: 8px; font-size: 12px;">选择偏差 = E[Y(0)|T=1] - E[Y(0)|T=0]</div>
   </div>
 
   <div class="insight-box" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 16px 20px; border-radius: 3px; margin: 20px 0;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en"><strong>The intuition:</strong> Without randomization, high-ability students seek tutoring. Even if tutoring has zero effect, the treated group has higher baseline ability (Y(0)), so they appear to benefit more. Randomization breaks this correlation: high-ability and low-ability students are equally likely to be assigned tutoring, so we isolate the true effect.</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh"><strong>直观理解：</strong>没有随机化时，高能力学生会主动寻求辅导。即使辅导没有效果，受处理的组也有更高的基础能力（Y(0)），所以他们看起来受益更大。随机化打破了这种关联：高能力和低能力学生同样可能被分配到辅导，所以我们隔离了真正的效应。</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="zh"><strong>直观理解：</strong>没有随机化时，高能力学生会主动寻求辅导。即使辅导没有效果，受处理的组也有更高的基础能力（Y(0)），所以他们看起来受益更大。随机化打破了这种关联：高能力和低能力学生同样可能被分配到辅导，所以我们隔离了真正的效应。</p>
   </div>
 </section>
 
 <section style="margin-bottom: 32px;">
   <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Interactive Simulation</h2>
-  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">交互式模拟</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="zh">交互式模拟</h2>
 
   <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 20px;" data-lang="en">Run the simulation below. Choose between self-selection (biased) and randomization (unbiased). Watch how the estimated treatment effect changes.</p>
-  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 20px; display: none;" data-lang="zh">运行下面的模拟。选择自我选择（有偏）或随机化（无偏）。观察估计的处理效应如何变化。</p>
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 20px;" data-lang="zh">运行下面的模拟。选择自我选择（有偏）或随机化（无偏）。观察估计的处理效应如何变化。</p>
 
   <div class="sim-panel" style="background: var(--cream); border: 1px solid var(--sand); padding: 20px; border-radius: 3px; margin-bottom: 24px;">
     <div style="margin-bottom: 16px;">
       <label style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin-right: 16px; cursor: pointer;">
         <input type="radio" name="assignment-mode" value="self-selection" checked style="margin-right: 6px;">
         <span data-lang="en">Self-Selection (Biased)</span>
-        <span data-lang="zh" style="display: none;">自我选择（有偏）</span>
+        <span data-lang="zh">自我选择（有偏）</span>
       </label>
       <label style="font-family: var(--sans); font-size: 14px; color: var(--ink); cursor: pointer;">
         <input type="radio" name="assignment-mode" value="randomization" style="margin-right: 6px;">
         <span data-lang="en">Randomization (Unbiased)</span>
-        <span data-lang="zh" style="display: none;">随机化（无偏）</span>
+        <span data-lang="zh">随机化（无偏）</span>
       </label>
     </div>
 
     <div style="display: flex; gap: 12px; margin-bottom: 20px;">
       <button id="sim-single" style="font-family: var(--sans); font-size: 13px; padding: 8px 16px; background: var(--gold); color: white; border: none; border-radius: 3px; cursor: pointer; font-weight: 600;" data-lang="en">Run 1 Simulation</button>
-      <button id="sim-single" data-lang="zh" style="display: none; font-family: var(--sans); font-size: 13px; padding: 8px 16px; background: var(--gold); color: white; border: none; border-radius: 3px; cursor: pointer; font-weight: 600;">运行1次模拟</button>
+      <button id="sim-single" data-lang="zh" style="font-family: var(--sans); font-size: 13px; padding: 8px 16px; background: var(--gold); color: white; border: none; border-radius: 3px; cursor: pointer; font-weight: 600;">运行1次模拟</button>
       <button id="sim-many" style="font-family: var(--sans); font-size: 13px; padding: 8px 16px; background: var(--gold); color: white; border: none; border-radius: 3px; cursor: pointer; font-weight: 600;" data-lang="en">Run 1000 Simulations</button>
-      <button id="sim-many" data-lang="zh" style="display: none; font-family: var(--sans); font-size: 13px; padding: 8px 16px; background: var(--gold); color: white; border: none; border-radius: 3px; cursor: pointer; font-weight: 600;">运行1000次模拟</button>
+      <button id="sim-many" data-lang="zh" style="font-family: var(--sans); font-size: 13px; padding: 8px 16px; background: var(--gold); color: white; border: none; border-radius: 3px; cursor: pointer; font-weight: 600;">运行1000次模拟</button>
     </div>
 
     <div style="margin-bottom: 20px;">
@@ -86,17 +86,17 @@ mathjax: false
     <div id="sim-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 16px;">
       <div style="background: var(--parchment); padding: 12px; border-radius: 3px; text-align: center;">
         <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-faded); text-transform: uppercase;" data-lang="en">Estimated Effect</div>
-        <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-faded); text-transform: uppercase; display: none;" data-lang="zh">估计效应</div>
+        <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-faded); text-transform: uppercase;" data-lang="zh">估计效应</div>
         <div id="stat-est" style="font-family: var(--mono); font-size: 18px; color: var(--ink); font-weight: 700; margin-top: 4px;">—</div>
       </div>
       <div style="background: var(--parchment); padding: 12px; border-radius: 3px; text-align: center;">
         <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-faded); text-transform: uppercase;" data-lang="en">True Effect</div>
-        <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-faded); text-transform: uppercase; display: none;" data-lang="zh">真实效应</div>
+        <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-faded); text-transform: uppercase;" data-lang="zh">真实效应</div>
         <div id="stat-true" style="font-family: var(--mono); font-size: 18px; color: var(--ink); font-weight: 700; margin-top: 4px;">5.0</div>
       </div>
       <div style="background: var(--parchment); padding: 12px; border-radius: 3px; text-align: center;">
         <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-faded); text-transform: uppercase;" data-lang="en">Bias</div>
-        <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-faded); text-transform: uppercase; display: none;" data-lang="zh">偏差</div>
+        <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-faded); text-transform: uppercase;" data-lang="zh">偏差</div>
         <div id="stat-bias" style="font-family: var(--mono); font-size: 18px; color: var(--ink); font-weight: 700; margin-top: 4px;">—</div>
       </div>
     </div>
@@ -105,26 +105,26 @@ mathjax: false
 
 <section style="margin-bottom: 32px;">
   <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">What You'll See</h2>
-  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">你会看到什么</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="zh">你会看到什么</h2>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <h3 style="font-family: var(--serif); font-size: 16px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Self-Selection Mode</h3>
-    <h3 style="font-family: var(--serif); font-size: 16px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">自我选择模式</h3>
+    <h3 style="font-family: var(--serif); font-size: 16px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="zh">自我选择模式</h3>
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en">People with high baseline ability (Y(0) > 55) choose treatment with 80% probability. Low-ability people choose with only 20% probability. Result: the treated group has much higher baseline ability, making tutoring appear to work even though the true effect is only 5 points. Estimated effects typically range from 8-12, not 5.</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh">基础能力高（Y(0) > 55）的人有80%的概率选择接受处理。低能力的人只有20%的概率选择。结果：受处理的组有更高的基线能力，使得辅导看起来有效，即使真实效应只有5分。估计的效应通常在8-12之间，而不是5。</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="zh">基础能力高（Y(0) > 55）的人有80%的概率选择接受处理。低能力的人只有20%的概率选择。结果：受处理的组有更高的基线能力，使得辅导看起来有效，即使真实效应只有5分。估计的效应通常在8-12之间，而不是5。</p>
   </div>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <h3 style="font-family: var(--serif); font-size: 16px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Randomization Mode</h3>
-    <h3 style="font-family: var(--serif); font-size: 16px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">随机化模式</h3>
+    <h3 style="font-family: var(--serif); font-size: 16px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="zh">随机化模式</h3>
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en">Each person has exactly 50% probability of treatment, independent of ability. High-ability and low-ability students are equally likely to be treated. Result: estimates cluster around 5. The distribution is unbiased. You will see variation due to random sampling, but the mean is correct.</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh">每个人有50%的概率接受处理，与能力无关。高能力和低能力学生同样可能被处理。结果：估计值聚集在5周围。分布是无偏的。你会看到由于随机抽样而产生的变异，但平均值是正确的。</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="zh">每个人有50%的概率接受处理，与能力无关。高能力和低能力学生同样可能被处理。结果：估计值聚集在5周围。分布是无偏的。你会看到由于随机抽样而产生的变异，但平均值是正确的。</p>
   </div>
 </section>
 
 <section style="margin-bottom: 32px;">
   <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Key Lessons</h2>
-  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">关键课程</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="zh">关键课程</h2>
 
   <ol style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.8; margin-bottom: 16px;">
     <li data-lang="en">Self-selection consistently overestimates treatment effects when high-ability people are more likely to choose treatment.</li>
@@ -133,7 +133,7 @@ mathjax: false
     <li data-lang="en">This is why large experiments are more reliable than small ones: more samples reduces variance while keeping the estimate unbiased.</li>
   </ol>
 
-  <ol style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.8; margin-bottom: 16px; display: none;" data-lang="zh">
+  <ol style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.8; margin-bottom: 16px;" data-lang="zh">
     <li>当高能力的人更可能选择接受处理时，自我选择会系统性地高估处理效应。</li>
     <li>随机化平均而言产生无偏估计，即使任何单一估计都有方差。</li>
     <li>无偏不等于"总是正确"——它意味着"在许多实验中平均正确"。</li>
@@ -142,7 +142,7 @@ mathjax: false
 
   <div class="insight-box" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 16px 20px; border-radius: 3px; margin: 20px 0;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en"><strong>The central insight:</strong> Randomization doesn't eliminate variance in any single estimate. It ensures that estimates are correct ON AVERAGE across repeated experiments. With 1,000 simulations, you'll see that self-selection produces a distribution centered far from 5 (biased), while randomization produces a distribution centered at 5 (unbiased).</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh"><strong>核心洞见：</strong>随机化不会消除任何单一估计中的方差。它确保估计在重复实验中平均是正确的。在1000次模拟中，你会看到自我选择产生的分布远离5（有偏），而随机化产生的分布以5为中心（无偏）。</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="zh"><strong>核心洞见：</strong>随机化不会消除任何单一估计中的方差。它确保估计在重复实验中平均是正确的。在1000次模拟中，你会看到自我选择产生的分布远离5（有偏），而随机化产生的分布以5为中心（无偏）。</p>
   </div>
 </section>
 

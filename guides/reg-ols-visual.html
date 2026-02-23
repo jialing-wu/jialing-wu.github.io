@@ -14,7 +14,7 @@ bilingual: true
 </div>
 
 <h1 data-lang="en">OLS Regression: Interactive Playground</h1>
-<h1 data-lang="zh" style="display:none;">OLS 回归互动演示</h1>
+<h1 data-lang="zh">OLS 回归互动演示</h1>
 
 <p class="method-subtitle">
   <span data-lang="en">Click to add data points. Watch how OLS minimizes the sum of squared residuals.</span>
@@ -30,26 +30,26 @@ bilingual: true
   <p data-lang="en">
     Ordinary Least Squares (OLS) regression finds the line that best fits your data by minimizing the sum of squared residuals. A <strong>residual</strong> is the vertical distance from a data point to the fitted line. By squaring residuals, OLS penalizes large deviations more heavily than small ones.
   </p>
-  <p data-lang="zh" style="display:none;">
+  <p data-lang="zh">
     普通最小二乘法（OLS）回归通过最小化平方残差的和来找到最适合你数据的线。<strong>残差</strong>是从数据点到拟合线的垂直距离。通过对残差平方，OLS 对大的偏差施加比小偏差更重的惩罚。
   </p>
 
   <div class="math-note">
     <strong data-lang="en">The OLS Objective:</strong>
-    <strong data-lang="zh" style="display:none;">OLS 目标：</strong>
+    <strong data-lang="zh">OLS 目标：</strong>
     <br>Minimize: RSS = Σ(yᵢ - ŷᵢ)²
     <br>where yᵢ are observed values and ŷᵢ = β₀ + β₁xᵢ are fitted values.
     <br><br><strong data-lang="en">The Solution:</strong>
-    <strong data-lang="zh" style="display:none;">解决方案：</strong>
+    <strong data-lang="zh">解决方案：</strong>
     <br>β₁ = Σ(xᵢ - x̄)(yᵢ - ȳ) / Σ(xᵢ - x̄)²
     <br>β₀ = ȳ - β₁x̄
   </div>
 
   <div class="insight-box">
     <strong data-lang="en">Why Squares?</strong>
-    <strong data-lang="zh" style="display:none;">为什么要平方？</strong>
+    <strong data-lang="zh">为什么要平方？</strong>
     <p data-lang="en">You might ask: why not minimize the sum of absolute residuals (|yᵢ - ŷᵢ|)? The answer: squaring makes the problem mathematically tractable (we can take derivatives and solve), and it heavily penalizes outliers. A residual of 10 contributes 100 to RSS, while a residual of 1 contributes only 1. This gives the fitted line a strong incentive to "chase" extreme points.</p>
-    <p data-lang="zh" style="display:none;">你可能会问：为什么不最小化绝对残差的和（|yᵢ - ŷᵢ|）？答案是：平方使问题在数学上易于处理（我们可以取导数并求解），并且它重度惩罚异常值。残差为 10 对 RSS 的贡献是 100，而残差为 1 仅贡献 1。这给拟合线一个强大的激励来"追逐"极端点。</p>
+    <p data-lang="zh">你可能会问：为什么不最小化绝对残差的和（|yᵢ - ŷᵢ|）？答案是：平方使问题在数学上易于处理（我们可以取导数并求解），并且它重度惩罚异常值。残差为 10 对 RSS 的贡献是 100，而残差为 1 仅贡献 1。这给拟合线一个强大的激励来"追逐"极端点。</p>
   </div>
 </section>
 
@@ -62,7 +62,7 @@ bilingual: true
   <p data-lang="en">
     Use the canvas below to add, remove, and manipulate data points. The red line shows the OLS fit, and gray dashed lines show residuals. Try adding an outlier to see how one extreme point can pull the entire line.
   </p>
-  <p data-lang="zh" style="display:none;">
+  <p data-lang="zh">
     使用下面的画布来添加、删除和操纵数据点。红线显示 OLS 拟合，灰色虚线显示残差。尝试添加异常值以查看一个极端点如何拉动整条线。
   </p>
 
@@ -70,55 +70,55 @@ bilingual: true
     <canvas id="canvas" width="600" height="450" style="border: 1px solid var(--sand); display: block; margin: 0 auto; background: var(--paper); cursor: crosshair;"></canvas>
     <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--ink-faded);">
       <span data-lang="en">Click to add points • Click a point to remove it • Use buttons below to generate data</span>
-      <span data-lang="zh" style="display:none;">点击添加点 • 点击一个点来删除它 • 使用下面的按钮生成数据</span>
+      <span data-lang="zh">点击添加点 • 点击一个点来删除它 • 使用下面的按钮生成数据</span>
     </p>
   </div>
 
   <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin: 1.5rem 0;">
     <button class="sim-btn" id="addRandomBtn" style="background: var(--gold); color: var(--ink); border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
       <span data-lang="en">Add Random Data</span>
-      <span data-lang="zh" style="display:none;">添加随机数据</span>
+      <span data-lang="zh">添加随机数据</span>
     </button>
     <button class="sim-btn" id="addOutlierBtn" style="background: var(--red); color: var(--paper); border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
       <span data-lang="en">Add Outlier</span>
-      <span data-lang="zh" style="display:none;">添加异常值</span>
+      <span data-lang="zh">添加异常值</span>
     </button>
     <button class="sim-btn" id="clearBtn" style="background: var(--ink-faded); color: var(--paper); border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
       <span data-lang="en">Clear All</span>
-      <span data-lang="zh" style="display:none;">清除全部</span>
+      <span data-lang="zh">清除全部</span>
     </button>
   </div>
 
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
     <div class="stat-chip">
-      <div class="slabel"><span data-lang="en">Points (n)</span><span data-lang="zh" style="display:none;">点数(n)</span></div>
+      <div class="slabel"><span data-lang="en">Points (n)</span><span data-lang="zh">点数(n)</span></div>
       <div class="sval" id="nPoints">0</div>
     </div>
     <div class="stat-chip">
-      <div class="slabel"><span data-lang="en">Intercept (β₀)</span><span data-lang="zh" style="display:none;">截距(β₀)</span></div>
+      <div class="slabel"><span data-lang="en">Intercept (β₀)</span><span data-lang="zh">截距(β₀)</span></div>
       <div class="sval" id="intercept">—</div>
     </div>
     <div class="stat-chip">
-      <div class="slabel"><span data-lang="en">Slope (β₁)</span><span data-lang="zh" style="display:none;">斜率(β₁)</span></div>
+      <div class="slabel"><span data-lang="en">Slope (β₁)</span><span data-lang="zh">斜率(β₁)</span></div>
       <div class="sval" id="slope">—</div>
     </div>
     <div class="stat-chip">
-      <div class="slabel"><span data-lang="en">R²</span><span data-lang="zh" style="display:none;">R²</span></div>
+      <div class="slabel"><span data-lang="en">R²</span><span data-lang="zh">R²</span></div>
       <div class="sval" id="rsq">—</div>
     </div>
     <div class="stat-chip">
-      <div class="slabel"><span data-lang="en">RSS</span><span data-lang="zh" style="display:none;">RSS</span></div>
+      <div class="slabel"><span data-lang="en">RSS</span><span data-lang="zh">RSS</span></div>
       <div class="sval" id="rss">—</div>
     </div>
   </div>
 
   <div class="insight-box">
     <strong data-lang="en">Experiment:</strong>
-    <strong data-lang="zh" style="display:none;">实验：</strong>
+    <strong data-lang="zh">实验：</strong>
     <p data-lang="en">
       Start with a few points in a nice linear pattern. Click "Add Random Data" to see a denser cloud. Now click "Add Outlier" and watch the line shift dramatically to accommodate that one extreme point. This demonstrates why <strong>outliers matter</strong> in regression and why diagnostics are crucial before trusting your results.
     </p>
-    <p data-lang="zh" style="display:none;">
+    <p data-lang="zh">
       从一些点开始，形成一个很好的线性模式。点击"添加随机数据"以查看更密集的云。现在点击"添加异常值"并观察线条急剧移动以适应那个极端点。这说明了为什么<strong>异常值很重要</strong>在回归中，以及为什么诊断在相信你的结果之前是至关重要的。
     </p>
   </div>
@@ -133,7 +133,7 @@ bilingual: true
   <p data-lang="en">
     When you run <code>lm(y ~ x, data = df)</code> in R and call <code>summary()</code>, you get output like this:
   </p>
-  <p data-lang="zh" style="display:none;">
+  <p data-lang="zh">
     当你在 R 中运行 <code>lm(y ~ x, data = df)</code> 并调用 <code>summary()</code> 时，你会得到这样的输出：
   </p>
 
@@ -160,37 +160,37 @@ F-statistic: 688.3 on 1 and 98 DF,  p-value: < 2.2e-16
   <p data-lang="en">
     <strong>Breaking it down:</strong>
   </p>
-  <p data-lang="zh" style="display:none;">
+  <p data-lang="zh">
     <strong>分解：</strong>
   </p>
 
   <ul>
     <li data-lang="en"><strong>Estimate:</strong> The point estimate for each coefficient. β₀ = 5.234, β₁ = 0.892. These are the intercept and slope.</li>
-    <li data-lang="zh" style="display:none;"><strong>估计值：</strong>每个系数的点估计。β₀ = 5.234，β₁ = 0.892。这些是截距和斜率。</li>
+    <li data-lang="zh"><strong>估计值：</strong>每个系数的点估计。β₀ = 5.234，β₁ = 0.892。这些是截距和斜率。</li>
     
     <li data-lang="en"><strong>Std. Error:</strong> Standard error of each coefficient. Smaller is better — it means we're confident about that estimate.</li>
-    <li data-lang="zh" style="display:none;"><strong>标准误：</strong>每个系数的标准误。越小越好——这意味着我们对该估计很有信心。</li>
+    <li data-lang="zh"><strong>标准误：</strong>每个系数的标准误。越小越好——这意味着我们对该估计很有信心。</li>
     
     <li data-lang="en"><strong>t value:</strong> The test statistic. t = Estimate / Std. Error. Larger absolute values suggest the coefficient is significantly different from zero.</li>
-    <li data-lang="zh" style="display:none;"><strong>t 值：</strong>检验统计量。t = 估计值 / 标准误。较大的绝对值表明系数与零显著不同。</li>
+    <li data-lang="zh"><strong>t 值：</strong>检验统计量。t = 估计值 / 标准误。较大的绝对值表明系数与零显著不同。</li>
     
     <li data-lang="en"><strong>Pr(>|t|):</strong> The p-value. Probability of observing this t-value (or more extreme) if the true coefficient were zero. Small p-values (< 0.05) indicate statistical significance.</li>
-    <li data-lang="zh" style="display:none;"><strong>Pr(>|t|)：</strong>p 值。如果真实系数为零，观察到这个 t 值（或更极端的）的概率。小 p 值（< 0.05）表示统计显著性。</li>
+    <li data-lang="zh"><strong>Pr(>|t|)：</strong>p 值。如果真实系数为零，观察到这个 t 值（或更极端的）的概率。小 p 值（< 0.05）表示统计显著性。</li>
     
     <li data-lang="en"><strong>R²:</strong> The proportion of variance in y explained by x. Here, 87.55% of variance is explained. Range: 0 to 1.</li>
-    <li data-lang="zh" style="display:none;"><strong>R²：</strong>y 中由 x 解释的方差的比例。这里，87.55% 的方差被解释。范围：0 到 1。</li>
+    <li data-lang="zh"><strong>R²：</strong>y 中由 x 解释的方差的比例。这里，87.55% 的方差被解释。范围：0 到 1。</li>
     
     <li data-lang="en"><strong>F-statistic:</strong> Tests whether <em>any</em> of the predictors are significant. For simple regression, F = t². Here, p < 0.0001, so the model is highly significant.</li>
-    <li data-lang="zh" style="display:none;"><strong>F 统计量：</strong>测试<em>任何</em>预测因子是否显著。对于简单回归，F = t²。这里，p < 0.0001，所以模型高度显著。</li>
+    <li data-lang="zh"><strong>F 统计量：</strong>测试<em>任何</em>预测因子是否显著。对于简单回归，F = t²。这里，p < 0.0001，所以模型高度显著。</li>
   </ul>
 
   <div class="insight-box">
     <strong data-lang="en">Key Insight:</strong>
-    <strong data-lang="zh" style="display:none;">关键见解：</strong>
+    <strong data-lang="zh">关键见解：</strong>
     <p data-lang="en">
       OLS is just arithmetic—it finds the line that minimizes RSS. But the p-values and confidence intervals rely on the assumption that errors are normally distributed (or approximately so, given the CLT with large samples). This is why checking residuals for normality and homoscedasticity is essential before interpreting your regression results.
     </p>
-    <p data-lang="zh" style="display:none;">
+    <p data-lang="zh">
       OLS 只是算术——它找到最小化 RSS 的线。但是 p 值和置信区间依赖于错误正态分布的假设（或者在给定大样本 CLT 的情况下近似如此）。这就是为什么在解释回归结果之前检查残差的正态性和同方差性是必需的。
     </p>
   </div>
@@ -205,28 +205,28 @@ F-statistic: 688.3 on 1 and 98 DF,  p-value: < 2.2e-16
   <p data-lang="en">
     For OLS to be a <strong>BLUE</strong> (Best Linear Unbiased Estimator), we need:
   </p>
-  <p data-lang="zh" style="display:none;">
+  <p data-lang="zh">
     为了使 OLS 成为<strong>BLUE</strong>（最佳线性无偏估计器），我们需要：
   </p>
 
   <ol>
     <li data-lang="en"><strong>Linearity:</strong> The relationship between x and y is linear.</li>
-    <li data-lang="zh" style="display:none;"><strong>线性性：</strong>x 和 y 之间的关系是线性的。</li>
+    <li data-lang="zh"><strong>线性性：</strong>x 和 y 之间的关系是线性的。</li>
     
     <li data-lang="en"><strong>Independence:</strong> Observations are independent (no time-series or clustered data).</li>
-    <li data-lang="zh" style="display:none;"><strong>独立性：</strong>观测值是独立的（没有时间序列或聚类数据）。</li>
+    <li data-lang="zh"><strong>独立性：</strong>观测值是独立的（没有时间序列或聚类数据）。</li>
     
     <li data-lang="en"><strong>Homoscedasticity:</strong> Residuals have constant variance (not fanning out).</li>
-    <li data-lang="zh" style="display:none;"><strong>同方差性：</strong>残差有恒定的方差（不会扩大）。</li>
+    <li data-lang="zh"><strong>同方差性：</strong>残差有恒定的方差（不会扩大）。</li>
     
     <li data-lang="en"><strong>No Perfect Multicollinearity:</strong> Predictors are not perfectly correlated with each other.</li>
-    <li data-lang="zh" style="display:none;"><strong>无完全多重共线性：</strong>预测因子彼此不是完全相关的。</li>
+    <li data-lang="zh"><strong>无完全多重共线性：</strong>预测因子彼此不是完全相关的。</li>
   </ol>
 
   <p data-lang="en">
     If these assumptions hold, the Gauss-Markov theorem guarantees that OLS is the best linear unbiased estimator—no other linear estimator will have lower variance. For inference (p-values, confidence intervals), we additionally need approximately normal errors (or rely on the CLT with large samples).
   </p>
-  <p data-lang="zh" style="display:none;">
+  <p data-lang="zh">
     如果这些假设成立，Gauss-Markov 定理保证 OLS 是最佳线性无偏估计器——没有其他线性估计器会有更低的方差。为了进行推断（p 值、置信区间），我们还需要大约正态分布的误差（或在大样本下依靠中心极限定理）。
   </p>
 </section>

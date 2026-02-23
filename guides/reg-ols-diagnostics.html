@@ -12,20 +12,20 @@ mathjax: false
 <div style="background: linear-gradient(135deg, var(--parchment) 0%, var(--cream) 100%); padding: 32px 24px; border-radius: 4px; margin-bottom: 28px; border-left: 5px solid var(--gold);">
   <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
     <span style="font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 1px;" data-lang="en">CODE WALKTHROUGH · GUIDE 4</span>
-    <span style="font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; display: none;" data-lang="zh">代码指南 · 指南四</span>
+    <span style="font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 1px;" data-lang="zh">代码指南 · 指南四</span>
   </div>
   <h1 style="font-family: var(--serif); font-size: 36px; color: var(--ink); margin: 16px 0 8px 0; font-weight: 700;" data-lang="en">OLS Regression Diagnostics</h1>
-  <h1 style="font-family: var(--serif); font-size: 36px; color: var(--ink); margin: 16px 0 8px 0; font-weight: 700; display: none;" data-lang="zh">OLS 回归诊断</h1>
+  <h1 style="font-family: var(--serif); font-size: 36px; color: var(--ink); margin: 16px 0 8px 0; font-weight: 700;" data-lang="zh">OLS 回归诊断</h1>
   <p style="font-family: var(--sans); font-size: 17px; color: var(--ink-faded); margin: 0; font-weight: 400;" data-lang="en">Check every GAUSS-MARKOV assumption with diagnostic plots and tests. Detect violations before publishing.</p>
-  <p style="font-family: var(--sans); font-size: 17px; color: var(--ink-faded); margin: 0; font-weight: 400; display: none;" data-lang="zh">使用诊断图和测试检查每个GAUSS-MARKOV假设。在发表前发现违规。</p>
+  <p style="font-family: var(--sans); font-size: 17px; color: var(--ink-faded); margin: 0; font-weight: 400;" data-lang="zh">使用诊断图和测试检查每个GAUSS-MARKOV假设。在发表前发现违规。</p>
 </div>
 
 <section style="margin-bottom: 32px;">
   <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Quick Start: The Standard 4 Plots</h2>
-  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">快速开始：标准4个图表</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="zh">快速开始：标准4个图表</h2>
 
   <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px;" data-lang="en">Run a regression and call plot() to see 4 diagnostic plots:</p>
-  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px; display: none;" data-lang="zh">运行回归并调用 plot() 查看 4 个诊断图：</p>
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px;" data-lang="zh">运行回归并调用 plot() 查看 4 个诊断图：</p>
 
   <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code># Fit a model
 model <- lm(turnout ~ education + income + competitiveness, data = states)
@@ -42,26 +42,26 @@ plot(model, which = 5)  # Residuals vs Leverage (influential points)</code></pre
 
 <section style="margin-bottom: 32px;">
   <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Assumption 1: Linearity</h2>
-  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">假设1：线性性</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="zh">假设1：线性性</h2>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0;" data-lang="en"><strong>What it means:</strong> The relationship between X and Y is linear (not curved, not exponential).</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; display: none;" data-lang="zh"><strong>含义：</strong>X 和 Y 之间的关系是线性的（不是曲线、不是指数）。</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0;" data-lang="zh"><strong>含义：</strong>X 和 Y 之间的关系是线性的（不是曲线、不是指数）。</p>
   </div>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Test: Residuals vs Fitted Plot</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">测试：残差 vs 拟合图</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="zh">测试：残差 vs 拟合图</p>
 
     <pre style="background: var(--cream); padding: 12px; border-radius: 2px; font-family: var(--mono); font-size: 12px; overflow-x: auto; line-height: 1.6; margin: 8px 0;"><code>plot(model, which = 1)</code></pre>
 
     <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en">Good sign: residuals scattered randomly around the red line (no pattern). Bad sign: residuals show a curve or funnel shape.</p>
-    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh">好的迹象：残差随机散布在红线周围（无模式）。坏的迹象：残差显示曲线或漏斗形状。</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="zh">好的迹象：残差随机散布在红线周围（无模式）。坏的迹象：残差显示曲线或漏斗形状。</p>
   </div>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Fix If Violated</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">如果违反则修复</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="zh">如果违反则修复</p>
 
     <pre style="background: var(--cream); padding: 12px; border-radius: 2px; font-family: var(--mono); font-size: 12px; overflow-x: auto; line-height: 1.6; margin: 8px 0;"><code># Add polynomial term
 model2 <- lm(turnout ~ education + I(education^2) + income, 
@@ -79,16 +79,16 @@ model4 <- lm(turnout ~ education * competitiveness + income,
 
 <section style="margin-bottom: 32px;">
   <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Assumption 2: Independence (No Autocorrelation)</h2>
-  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">假设2：独立性（无自相关）</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="zh">假设2：独立性（无自相关）</h2>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0;" data-lang="en"><strong>What it means:</strong> Observations are independent. Residual for observation i doesn't depend on residual for observation j.</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; display: none;" data-lang="zh"><strong>含义：</strong>观测值是独立的。观测值 i 的残差不依赖于观测值 j 的残差。</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0;" data-lang="zh"><strong>含义：</strong>观测值是独立的。观测值 i 的残差不依赖于观测值 j 的残差。</p>
   </div>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Test: Durbin-Watson & ACF</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">测试：Durbin-Watson & ACF</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="zh">测试：Durbin-Watson & ACF</p>
 
     <pre style="background: var(--cream); padding: 12px; border-radius: 2px; font-family: var(--mono); font-size: 12px; overflow-x: auto; line-height: 1.6; margin: 8px 0;"><code>library(lmtest)
 
@@ -101,12 +101,12 @@ dwtest(model)
 acf(residuals(model))  # Should drop to 0 quickly</code></pre>
 
     <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6;" data-lang="en">Good sign: DW ≈ 2 and ACF is near 0 for all lags. Bad sign: DW near 0 or 4, or ACF shows significant spikes.</p>
-    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6; display: none;" data-lang="zh">好的迹象：DW ≈ 2，所有滞后的 ACF 接近 0。坏的迹象：DW 接近 0 或 4，或 ACF 显示显著的尖峰。</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6;" data-lang="zh">好的迹象：DW ≈ 2，所有滞后的 ACF 接近 0。坏的迹象：DW 接近 0 或 4，或 ACF 显示显著的尖峰。</p>
   </div>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Fix If Violated</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">如果违反则修复</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="zh">如果违反则修复</p>
 
     <pre style="background: var(--cream); padding: 12px; border-radius: 2px; font-family: var(--mono); font-size: 12px; overflow-x: auto; line-height: 1.6; margin: 8px 0;"><code># Add lagged dependent variable
 model2 <- lm(turnout ~ lag(turnout, 1) + education + income, 
@@ -120,16 +120,16 @@ auto.arima(turnout ~ education + income, data = states)</code></pre>
 
 <section style="margin-bottom: 32px;">
   <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Assumption 3: Homoscedasticity</h2>
-  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">假设3：同方差性</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="zh">假设3：同方差性</h2>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0;" data-lang="en"><strong>What it means:</strong> Variance of residuals is constant (doesn't depend on fitted values).</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; display: none;" data-lang="zh"><strong>含义：</strong>残差的方差是常数（不依赖于拟合值）。</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0;" data-lang="zh"><strong>含义：</strong>残差的方差是常数（不依赖于拟合值）。</p>
   </div>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Test: Breusch-Pagan & Scale-Location Plot</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">测试：Breusch-Pagan & Scale-Location 图</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="zh">测试：Breusch-Pagan & Scale-Location 图</p>
 
     <pre style="background: var(--cream); padding: 12px; border-radius: 2px; font-family: var(--mono); font-size: 12px; overflow-x: auto; line-height: 1.6; margin: 8px 0;"><code># Breusch-Pagan test
 # H0: Homoscedasticity. p < 0.05 suggests heteroscedasticity
@@ -141,12 +141,12 @@ plot(model, which = 3)  # Scale-Location plot
 # Bad: line slopes up or down (funnel shape)</code></pre>
 
     <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6;" data-lang="en">Good sign: BP test p > 0.05, and Scale-Location plot is horizontal. Bad sign: p < 0.05 or plot shows trend.</p>
-    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6; display: none;" data-lang="zh">好的迹象：BP 检验 p > 0.05，Scale-Location 图是水平的。坏的迹象：p < 0.05 或图显示趋势。</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6;" data-lang="zh">好的迹象：BP 检验 p > 0.05，Scale-Location 图是水平的。坏的迹象：p < 0.05 或图显示趋势。</p>
   </div>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Fix If Violated: Heteroscedasticity-Robust SE</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">如果违反则修复：异方差稳健标准误</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="zh">如果违反则修复：异方差稳健标准误</p>
 
     <pre style="background: var(--cream); padding: 12px; border-radius: 2px; font-family: var(--mono); font-size: 12px; overflow-x: auto; line-height: 1.6; margin: 8px 0;"><code">library(sandwich)
 library(lmtest)
@@ -160,22 +160,22 @@ model_hc <- feols(turnout ~ education + income, data = states)
 summary(model_hc, vcov = "HC1")</code></pre>
 
     <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6;" data-lang="en">This gives correct standard errors and confidence intervals even with heteroscedasticity.</p>
-    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6; display: none;" data-lang="zh">这给出了正确的标准误和置信区间，即使存在异方差。</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6;" data-lang="zh">这给出了正确的标准误和置信区间，即使存在异方差。</p>
   </div>
 </section>
 
 <section style="margin-bottom: 32px;">
   <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Assumption 4: Normality of Residuals</h2>
-  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">假设4：残差正态性</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="zh">假设4：残差正态性</h2>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0;" data-lang="en"><strong>What it means:</strong> Residuals follow a normal (Gaussian) distribution.</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; display: none;" data-lang="zh"><strong>含义：</strong>残差遵循正态（高斯）分布。</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0;" data-lang="zh"><strong>含义：</strong>残差遵循正态（高斯）分布。</p>
   </div>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Test: Q-Q Plot & Shapiro-Wilk</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">测试：Q-Q 图 & Shapiro-Wilk</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="zh">测试：Q-Q 图 & Shapiro-Wilk</p>
 
     <pre style="background: var(--cream); padding: 12px; border-radius: 2px; font-family: var(--mono); font-size: 12px; overflow-x: auto; line-height: 1.6; margin: 8px 0;"><code># Q-Q plot visual test
 plot(model, which = 2)  # Points should lie on diagonal line
@@ -185,27 +185,27 @@ plot(model, which = 2)  # Points should lie on diagonal line
 shapiro.test(residuals(model))</code></pre>
 
     <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6;" data-lang="en">Good sign: Q-Q points lie on diagonal, Shapiro-Wilk p > 0.05. Bad sign: Q-Q shows S-shape or fat tails, p < 0.05.</p>
-    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6; display: none;" data-lang="zh">好的迹象：Q-Q 点在对角线上，Shapiro-Wilk p > 0.05。坏的迹象：Q-Q 显示 S 形或厚尾，p < 0.05。</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6;" data-lang="zh">好的迹象：Q-Q 点在对角线上，Shapiro-Wilk p > 0.05。坏的迹象：Q-Q 显示 S 形或厚尾，p < 0.05。</p>
   </div>
 
   <div class="insight-box" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 16px 20px; border-radius: 3px; margin: 20px 0;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="en"><strong>Important:</strong> With large n (n > 30), the Central Limit Theorem makes normality less critical. Your coefficient estimates and t-tests are valid asymptotically even if residuals are non-normal. Worry more about normality with small samples.</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6; display: none;" data-lang="zh"><strong>重要：</strong>对于大样本（n > 30），中心极限定理使得正态性不太关键。即使残差非正态，你的系数估计和t检验在渐近意义下也是有效的。小样本时更要关注正态性。</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0; line-height: 1.6;" data-lang="zh"><strong>重要：</strong>对于大样本（n > 30），中心极限定理使得正态性不太关键。即使残差非正态，你的系数估计和t检验在渐近意义下也是有效的。小样本时更要关注正态性。</p>
   </div>
 </section>
 
 <section style="margin-bottom: 32px;">
   <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Assumption 5: No Multicollinearity</h2>
-  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">假设5：无多重共线性</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="zh">假设5：无多重共线性</h2>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0;" data-lang="en"><strong>What it means:</strong> Predictors are not highly correlated with each other.</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; display: none;" data-lang="zh"><strong>含义：</strong>预测变量之间不高度相关。</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0;" data-lang="zh"><strong>含义：</strong>预测变量之间不高度相关。</p>
   </div>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Test: VIF (Variance Inflation Factor)</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">测试：VIF（方差膨胀因子）</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="zh">测试：VIF（方差膨胀因子）</p>
 
     <pre style="background: var(--cream); padding: 12px; border-radius: 2px; font-family: var(--mono); font-size: 12px; overflow-x: auto; line-height: 1.6; margin: 8px 0;"><code">library(car)
 
@@ -217,12 +217,12 @@ vif(model)
 # All < 10, so no severe multicollinearity</code></pre>
 
     <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6;" data-lang="en">Rule of thumb: VIF < 5 is good, VIF 5-10 is concerning, VIF > 10 is problematic.</p>
-    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6; display: none;" data-lang="zh">经验法则：VIF < 5 是好的，VIF 5-10 令人担忧，VIF > 10 是有问题的。</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6;" data-lang="zh">经验法则：VIF < 5 是好的，VIF 5-10 令人担忧，VIF > 10 是有问题的。</p>
   </div>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Fix If Violated</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">如果违反则修复</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="zh">如果违反则修复</p>
 
     <pre style="background: var(--cream); padding: 12px; border-radius: 2px; font-family: var(--mono); font-size: 12px; overflow-x: auto; line-height: 1.6; margin: 8px 0;"><code"># Remove correlated predictor
 model2 <- lm(turnout ~ education + income, data = states)
@@ -241,16 +241,16 @@ model4 <- linearRidge(turnout ~ education + income + competitiveness,
 
 <section style="margin-bottom: 32px;">
   <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Assumption 6: No Influential Observations</h2>
-  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">假设6：无有影响力的观察</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="zh">假设6：无有影响力的观察</h2>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0;" data-lang="en"><strong>What it means:</strong> No single observation heavily influences the regression results.</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; display: none;" data-lang="zh"><strong>含义：</strong>没有单个观测值大幅影响回归结果。</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0;" data-lang="zh"><strong>含义：</strong>没有单个观测值大幅影响回归结果。</p>
   </div>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">Test: Cook's Distance & Leverage Plot</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">测试：Cook's Distance & 杠杆图</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="zh">测试：Cook's Distance & 杠杆图</p>
 
     <pre style="background: var(--cream); padding: 12px; border-radius: 2px; font-family: var(--mono); font-size: 12px; overflow-x: auto; line-height: 1.6; margin: 8px 0;"><code># Cook's Distance plot
 plot(model, which = 4)  # Points above 4/n are potentially influential
@@ -264,21 +264,21 @@ threshold <- 4 / nrow(data)
 influential <- which(cooks.distance(model) > threshold)</code></pre>
 
     <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6;" data-lang="en">Good sign: All Cook's D < 4/n, no points in upper corners of influence plot. Bad sign: Some points above threshold.</p>
-    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6; display: none;" data-lang="zh">好的迹象：所有 Cook's D < 4/n，影响图上角没有点。坏的迹象：某些点在阈值上方。</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6;" data-lang="zh">好的迹象：所有 Cook's D < 4/n，影响图上角没有点。坏的迹象：某些点在阈值上方。</p>
   </div>
 
   <div style="background: var(--parchment); padding: 16px 20px; border-radius: 3px; margin-bottom: 16px;">
     <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="en">What to Do If Found</p>
-    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600; display: none;" data-lang="zh">如果发现如何处理</p>
+    <p style="font-family: var(--sans); font-size: 14px; color: var(--ink); margin: 0 0 8px 0; font-weight: 600;" data-lang="zh">如果发现如何处理</p>
 
     <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6;" data-lang="en">Don't automatically drop influential observations. Instead: (1) Check if they are data entry errors. (2) Run regression both with and without them, report both. (3) Use robust regression or outlier-resistant methods if you're concerned.</p>
-    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6; display: none;" data-lang="zh">不要自动删除有影响力的观察。相反：（1）检查它们是否是数据输入错误。（2）用和不用它们运行回归，报告两者。（3）如果你担心，使用稳健回归或异常值抵抗方法。</p>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.6;" data-lang="zh">不要自动删除有影响力的观察。相反：（1）检查它们是否是数据输入错误。（2）用和不用它们运行回归，报告两者。（3）如果你担心，使用稳健回归或异常值抵抗方法。</p>
   </div>
 </section>
 
 <section style="margin-bottom: 32px;">
   <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Quick Diagnostic Checklist</h2>
-  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">快速诊断检查清单</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="zh">快速诊断检查清单</h2>
 
   <div style="overflow-x: auto; margin: 20px 0;">
     <table style="width: 100%; border-collapse: collapse; font-family: var(--sans); font-size: 13px;">
@@ -289,10 +289,10 @@ influential <- which(cooks.distance(model) > threshold)</code></pre>
           <th style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--gold);" data-lang="en">Pass if...</th>
           <th style="padding: 12px; text-align: left; color: var(--ink); font-weight: 600; border: 1px solid var(--gold);" data-lang="en">Fix</th>
           
-          <th style="padding: 12px; text-align: left; color: var(--ink); font-weight: 600; border: 1px solid var(--gold); display: none;" data-lang="zh">假设</th>
-          <th style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--gold); display: none;" data-lang="zh">测试函数</th>
-          <th style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--gold); display: none;" data-lang="zh">如果...通过</th>
-          <th style="padding: 12px; text-align: left; color: var(--ink); font-weight: 600; border: 1px solid var(--gold); display: none;" data-lang="zh">修复</th>
+          <th style="padding: 12px; text-align: left; color: var(--ink); font-weight: 600; border: 1px solid var(--gold);" data-lang="zh">假设</th>
+          <th style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--gold);" data-lang="zh">测试函数</th>
+          <th style="padding: 12px; text-align: center; color: var(--ink); font-weight: 600; border: 1px solid var(--gold);" data-lang="zh">如果...通过</th>
+          <th style="padding: 12px; text-align: left; color: var(--ink); font-weight: 600; border: 1px solid var(--gold);" data-lang="zh">修复</th>
         </tr>
       </thead>
       <tbody>
@@ -302,7 +302,7 @@ influential <- which(cooks.distance(model) > threshold)</code></pre>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand);">Random scatter</td>
           <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand);">Polynomial, log</td>
           
-          <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand); display: none;" data-lang="zh">线性性</td>
+          <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand);" data-lang="zh">线性性</td>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;"><code style="background: var(--sand); padding: 2px 4px;">plot(m,1)</code></td>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;">随机散布</td>
           <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand); display: none;">多项式、对数</td>
@@ -313,7 +313,7 @@ influential <- which(cooks.distance(model) > threshold)</code></pre>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand);">DW ≈ 2, p > 0.05</td>
           <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand);">Lagged DV, ARIMA</td>
           
-          <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand); display: none;" data-lang="zh">独立性</td>
+          <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand);" data-lang="zh">独立性</td>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;"><code style="background: var(--sand); padding: 2px 4px;">dwtest()</code></td>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;">DW ≈ 2, p > 0.05</td>
           <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand); display: none;">滞后DV、ARIMA</td>
@@ -324,7 +324,7 @@ influential <- which(cooks.distance(model) > threshold)</code></pre>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand);">p > 0.05</td>
           <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand);">HC SE, log Y</td>
           
-          <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand); display: none;" data-lang="zh">同方差性</td>
+          <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand);" data-lang="zh">同方差性</td>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;"><code style="background: var(--sand); padding: 2px 4px;">bptest()</code></td>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;">p > 0.05</td>
           <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand); display: none;">HC SE、log Y</td>
@@ -335,7 +335,7 @@ influential <- which(cooks.distance(model) > threshold)</code></pre>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand);">Points on line</td>
           <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand);">Large n is OK</td>
           
-          <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand); display: none;" data-lang="zh">正态性</td>
+          <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand);" data-lang="zh">正态性</td>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;"><code style="background: var(--sand); padding: 2px 4px;">plot(m,2)</code></td>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;">点在线上</td>
           <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand); display: none;">大样本没问题</td>
@@ -346,7 +346,7 @@ influential <- which(cooks.distance(model) > threshold)</code></pre>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand);">VIF < 5</td>
           <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand);">Drop var, PCA</td>
           
-          <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand); display: none;" data-lang="zh">无多重共线性</td>
+          <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand);" data-lang="zh">无多重共线性</td>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;"><code style="background: var(--sand); padding: 2px 4px;">vif()</code></td>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;">VIF < 5</td>
           <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand); display: none;">删除变量、PCA</td>
@@ -357,7 +357,7 @@ influential <- which(cooks.distance(model) > threshold)</code></pre>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand);">Cook's D < 4/n</td>
           <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand);">Robust regression</td>
           
-          <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand); display: none;" data-lang="zh">无有影响力的观测</td>
+          <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand);" data-lang="zh">无有影响力的观测</td>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;"><code style="background: var(--sand); padding: 2px 4px;">plot(m,5)</code></td>
           <td style="padding: 12px; text-align: center; color: var(--ink); border: 1px solid var(--sand); display: none;">Cook's D < 4/n</td>
           <td style="padding: 12px; color: var(--ink); border: 1px solid var(--sand); display: none;">稳健回归</td>
@@ -369,10 +369,10 @@ influential <- which(cooks.distance(model) > threshold)</code></pre>
 
 <section style="margin-bottom: 32px;">
   <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="en">Complete Worked Example</h2>
-  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700; display: none;" data-lang="zh">完整工作示例</h2>
+  <h2 style="font-family: var(--serif); font-size: 24px; color: var(--ink); margin: 28px 0 16px 0; font-weight: 700;" data-lang="zh">完整工作示例</h2>
 
   <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px;" data-lang="en">Run all diagnostics in sequence:</p>
-  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px; display: none;" data-lang="zh">按顺序运行所有诊断：</p>
+  <p style="font-family: var(--sans); font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 16px;" data-lang="zh">按顺序运行所有诊断：</p>
 
   <pre style="background: var(--parchment); padding: 16px; border-radius: 3px; font-family: var(--mono); font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 12px 0"><code"># Load packages
 library(tidyverse); library(car); library(lmtest); library(sandwich)

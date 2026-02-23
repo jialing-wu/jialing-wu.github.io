@@ -13,7 +13,7 @@ mathjax: true
 
 <p data-lang="en">A fundamental problem in machine learning is that training error always decreases as we add complexity to our model. This creates a dangerous illusion: the model appears to be improving, but it's actually overfitting to noise in the training data. The true measure of model quality is how well it generalizes to new, unseen data—and training error tells us nothing about this.</p>
 
-<p data-lang="zh">机器学习中一个根本性问题是：训练误差总是随着模型复杂度增加而下降。这造成了一个危险的错觉：模型似乎在改进，但实际上是在过度拟合训练数据中的噪声。模型质量的真实衡量标准是它在新的、未见过的数据上的表现——训练误差对此毫无启示。</p>
+<p data-lang="zh">机器学习的一个基本难题是这样的：训练误差总是随着模型复杂度增加而下降。这造成了一个危险的假象——看起来模型在不断改进，但其实你只是在过度拟合训练数据中的噪声。判断模型真正好坏的标准，是它在新的、从没见过的数据上的表现——训练误差完全反映不出这一点。</p>
 
 <div class="insight-box">
   <p data-lang="en"><strong>The Central Problem:</strong> Test error follows a U-shaped curve with model complexity. Simple models underfit; complex models overfit. We need held-out data to find the sweet spot.</p>
@@ -22,17 +22,17 @@ mathjax: true
 
 <p data-lang="en">The naive solution—keep a separate test set—wastes data. With limited samples (common in social science), this is expensive. Moreover, if we evaluate multiple models on the same test set and pick the best one, we're "peeking" at the test set and inflating our estimates of generalization performance.</p>
 
-<p data-lang="zh">天真的解决方案——保留一个独立的测试集——会浪费数据。在样本量有限的情况下（社会科学中很常见），这代价很大。而且，如果我们在同一个测试集上评估多个模型并选择最好的，我们就是在"窥视"测试集，夸大了泛化性能的估计。</p>
+<p data-lang="zh">简单粗暴的办法——留一个独立的测试集——会白白浪费数据。在样本很珍贵的时候（社会科学经常是这样），这个成本很高。而且如果你在同一个测试集上评估了多个模型，然后挑选表现最好的那个，你其实是在"偷看"测试集，这会虚高你对泛化能力的估计。</p>
 
 <p data-lang="en"><strong>Cross-validation solves both problems:</strong> it estimates out-of-sample performance without wasting data, and it provides an honest estimate even when selecting among multiple models.</p>
 
-<p data-lang="zh"><strong>交叉验证解决了两个问题：</strong>它在不浪费数据的情况下估计样本外性能，即使在选择多个模型时也能提供诚实的估计。</p>
+<p data-lang="zh"><strong>交叉验证巧妙地解决了这两个问题：</strong>它让你在不浪费数据的前提下估计模型的真实性能，同时即使在多个模型之间比较选择时，估计也是公正可靠的。</p>
 
 <h2 id="cv-kfold"><span data-lang="en">K-Fold Cross-Validation Visualizer</span><span data-lang="zh">K折交叉验证可视化</span></h2>
 
 <p data-lang="en">The core idea of K-fold CV is elegant: divide your data into K equal parts (folds). For each fold k, train on the other K−1 folds and evaluate on fold k. Average the K performance metrics to get your final estimate.</p>
 
-<p data-lang="zh">K折交叉验证的核心思想很优雅：将数据分成K个相等的部分（折）。对于每一折k，在其他K−1折上训练，在第k折上评估。对K个性能指标求平均得到最终估计。</p>
+<p data-lang="zh">K折交叉验证的原理很简单优雅：把数据分成K个等份（每份叫一"折"）。然后轮流来：第k折作为测试集，其他K−1折拿来训练。重复K次，最后把K次的结果平均，就是你的最终估计。</p>
 
 <div class="sim-panel" style="background-color: var(--cream); padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid var(--gold);">
   <p data-lang="en"><strong>Adjust K:</strong></p>
@@ -80,14 +80,14 @@ mathjax: true
 
 <div class="insight-box">
   <p data-lang="en"><strong>Standard Choices:</strong> K=5 or K=10 are industry standards for most applications. K=10 gives lower bias but higher variance of the CV estimate itself. K=5 is more conservative and computationally cheaper. Leave-One-Out CV (K=n) is unbiased but has high variance and is expensive for large n.</p>
-  <p data-lang="zh"><strong>标准选择：</strong>K=5或K=10是大多数应用的行业标准。K=10降低偏差但增加CV估计本身的方差。K=5更保守、计算成本更低。留一法交叉验证（K=n）无偏但方差高，对大n来说计算成本高。</p>
+  <p data-lang="zh"><strong>常见选择：</strong>K=5或K=10是大多数场景的标准。K=10能降低偏差，但会增加CV估计本身的波动。K=5比较保守，计算也快一些。留一法（K=n）估计最无偏，但方差大，计算代价也高，只有小数据集才用。</p>
 </div>
 
 <h2 id="cv-r-caret"><span data-lang="en">Cross-Validation in R (caret)</span><span data-lang="zh">R中的交叉验证（caret包）</span></h2>
 
 <p data-lang="en">The <code>caret</code> package (Classification and Regression Training) provides a unified interface for training hundreds of models with cross-validation built in. Here's a practical workflow:</p>
 
-<p data-lang="zh"><code>caret</code>包（分类和回归训练）为使用内置交叉验证训练数百个模型提供了统一接口。以下是实际工作流程：</p>
+<p data-lang="zh"><code>caret</code>包是一个很好用的工具库，为各种不同的机器学习模型提供了统一的接口，内置交叉验证功能。以下是一个实际的工作流程：</p>
 
 <pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
 <code data-lang="en">library(caret)
@@ -121,18 +121,18 @@ dotplot(compare)  # Visualize CV RMSE for both models</code>
 
 <p data-lang="en"><strong>Key insight:</strong> When you print <code>fit_lm</code>, the reported RMSE is the cross-validated estimate, not the training error. This is an honest estimate of what your model will achieve on new data.</p>
 
-<p data-lang="zh"><strong>关键要点：</strong>当你打印<code>fit_lm</code>时，报告的RMSE是交叉验证估计，不是训练误差。这是模型在新数据上将达到什么的诚实估计。</p>
+<p data-lang="zh"><strong>关键：</strong>当你打印<code>fit_lm</code>的结果时，里面报告的RMSE其实是交叉验证的估计，而不是训练误差。这给了你一个诚实的估计——模型在陌生数据上真正能达到什么水平。</p>
 
 <div class="math-note">
   <p data-lang="en"><strong>Advanced:</strong> You can also use stratified K-fold (preserve class balance), repeated CV, or time-series CV by changing the <code>method</code> argument in <code>trainControl()</code>.</p>
-  <p data-lang="zh"><strong>高级用法：</strong>您也可以通过更改<code>trainControl()</code>中的<code>method</code>参数来使用分层K折、重复CV或时间序列CV。</p>
+  <p data-lang="zh"><strong>进阶用法：</strong>只需改一下<code>trainControl()</code>里的<code>method</code>参数，你就能实现分层K折（保持类别平衡）、重复CV或时间序列CV等更复杂的策略。</p>
 </div>
 
 <h2 id="cv-tidymodels"><span data-lang="en">Cross-Validation in tidymodels</span><span data-lang="zh">tidymodels中的交叉验证</span></h2>
 
 <p data-lang="en">The <code>tidymodels</code> ecosystem (modern alternative to caret) uses a modular workflow: recipe (preprocessing), model specification, and workflow composition. CV is seamlessly integrated:</p>
 
-<p data-lang="zh"><code>tidymodels</code>生态（caret的现代替代品）使用模块化工作流：recipe（预处理）、模型规范和工作流组合。CV无缝集成：</p>
+<p data-lang="zh"><code>tidymodels</code>生态是caret的现代继任者，采用模块化的工作流：先定义数据预处理（recipe），再定义模型，最后组合在一起。交叉验证自然地集成在这个框架里：</p>
 
 <pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
 <code data-lang="en">library(tidymodels)
@@ -172,23 +172,23 @@ head(preds)  # See actual vs predicted for each fold</code>
 
 <p data-lang="en">The tidymodels approach shines when doing hyperparameter tuning: use <code>tune()</code> placeholders in your model spec, then <code>tune_grid()</code> to search over values.</p>
 
-<p data-lang="zh">tidymodels方法在进行超参数调优时特别有用：在模型规范中使用<code>tune()</code>占位符，然后使用<code>tune_grid()</code>搜索值。</p>
+<p data-lang="zh">tidymodels的真正强大之处在于超参数调优：在模型规范中用<code>tune()</code>作占位符，然后用<code>tune_grid()</code>来网格搜索最优值。</p>
 
 <h2 id="cv-social"><span data-lang="en">Special Considerations for Social Science Data</span><span data-lang="zh">社会科学数据的特殊考虑</span></h2>
 
 <p data-lang="en">Social science datasets often have structure that violates the standard i.i.d. assumption underlying basic K-fold CV. Here are common scenarios and solutions:</p>
 
-<p data-lang="zh">社会科学数据集经常具有违反基本K折CV基础的i.i.d.假设的结构。以下是常见场景和解决方案：</p>
+<p data-lang="zh">社会科学的数据经常有一些特殊的结构，会违反K折CV所假设的"数据点独立同分布"这个假设。以下是几个常见的情况和解决办法：</p>
 
 <h3 style="margin-top: 20px;"><span data-lang="en">Temporal Data (Time-Series)</span><span data-lang="zh">时间数据（时间序列）</span></h3>
 
 <p data-lang="en"><strong>Problem:</strong> If you split randomly, your "test" fold may contain earlier time periods than your training fold. Your model travels back in time to predict the past—not realistic.</p>
 
-<p data-lang="zh"><strong>问题：</strong>如果随机分割，"测试"折可能包含比训练折更早的时间段。您的模型会在时间中倒退以预测过去——不现实。</p>
+<p data-lang="zh"><strong>问题：</strong>如果你完全随机分割数据，测试折可能包含比训练折更早的时间段。这就像让模型倒回时间去预测过去——根本不现实。</p>
 
 <p data-lang="en"><strong>Solution:</strong> Use time-series CV: for each fold k, train on all time points before t<sub>k</sub>, test on period [t<sub>k</sub>, t<sub>k+1</sub>]. No future leakage.</p>
 
-<p data-lang="zh"><strong>解决方案：</strong>使用时间序列CV：对于每一折k，在t<sub>k</sub>之前的所有时间点训练，在[t<sub>k</sub>, t<sub>k+1</sub>]期间测试。没有未来泄漏。</p>
+<p data-lang="zh"><strong>解决办法：</strong>用时间序列CV：对每一折k，你都用t<sub>k</sub>之前的所有数据来训练，然后在[t<sub>k</sub>, t<sub>k+1</sub>]这段时间上测试。这样就不会有"未来信息泄漏"的问题。</p>
 
 <pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
 <code data-lang="en"># Time-series CV in caret
@@ -205,11 +205,11 @@ fit <- train(y ~ ., data = ts_data,
 
 <p data-lang="en"><strong>Problem:</strong> Your data has nested structure: students within schools, individuals within families, observations within countries. Random splitting violates the hierarchy.</p>
 
-<p data-lang="zh"><strong>问题：</strong>您的数据有嵌套结构：学校内的学生、家庭内的个人、国家内的观察。随机分割违反了层级结构。</p>
+<p data-lang="zh"><strong>问题：</strong>数据常常有嵌套结构：学生嵌套在学校里、个人嵌套在家庭里、观察嵌套在国家里。完全随机分割会破坏这种层级结构。</p>
 
 <p data-lang="en"><strong>Solution:</strong> Group-stratified K-fold: keep all members of a group in the same fold.</p>
 
-<p data-lang="zh"><strong>解决方案：</strong>分组分层K折：将一个组的所有成员放在同一折中。</p>
+<p data-lang="zh"><strong>解决办法：</strong>用分组K折：同一个组（比如同一所学校）的所有观察必须全部进训练折或全部进测试折。</p>
 
 <pre style="background-color: var(--paper); padding: 15px; border-radius: 4px; border-left: 4px solid var(--leather); overflow-x: auto; font-family: var(--mono); font-size: 0.9em;">
 <code data-lang="en"># Group K-fold in tidymodels
@@ -228,7 +228,7 @@ cv_results <- fit_resamples(wf, folds)</code>
 
 <p data-lang="en"><strong>Problem:</strong> Binary outcome where rare class is ~1% of data. Random fold assignment may create folds with very different class proportions, inflating variance of CV estimates.</p>
 
-<p data-lang="zh"><strong>问题：</strong>二元结果，其中稀有类约占数据的1%。随机折分配可能会创建具有非常不同类比例的折，增加CV估计的方差。</p>
+<p data-lang="zh"><strong>问题：</strong>有的分类任务中，稀有类只占1%左右。随机分割可能导致某些折中稀有类过多或过少，这会大大增加CV估计的不稳定性。</p>
 
 <p data-lang="en"><strong>Solution:</strong> Stratified K-fold: maintain class proportions within each fold.</p>
 

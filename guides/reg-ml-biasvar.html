@@ -19,14 +19,14 @@ mathjax: true
 </p>
 
 <p data-lang="zh">
-  所有预测错误都可以分解为三个组成部分：
+  所有预测错误都能分解成三个来源：
 </p>
 
 <div class="math-note">
   MSE(x) = Bias²(x) + Variance(x) + σ²<sub>irreducible</sub>
   <div style="margin-top: 12px; font-size: 13px;">
     <span data-lang="en">where Bias = how far off the predictions are on average, Variance = how much they bounce around, and σ² is the irreducible noise in the data.</span>
-    <span data-lang="zh">其中Bias = 预测平均偏差多远，Variance = 它们波动有多大，σ²是数据中的不可约噪声。</span>
+    <span data-lang="zh">其中Bias = 预测系统偏离真实值有多远，Variance = 预测波动有多大，σ²是数据中无法消除的噪声。</span>
   </div>
 </div>
 
@@ -35,7 +35,7 @@ mathjax: true
 </p>
 
 <p data-lang="zh" style="margin-top: 16px;">
-  <strong>直观类比：</strong> 想象向靶子射箭。
+  <strong>直观类比：</strong> 想象你在靶场射箭。
 </p>
 
 <ul style="margin: 16px 0; padding-left: 24px;">
@@ -47,8 +47,8 @@ mathjax: true
       Like underfitting: the model is too rigid and always misses in the same direction.
     </span>
     <span data-lang="zh">
-      所有箭都聚集在靶子的左侧。射手有系统误差(偏差)，但很一致。
-      像欠拟合：模型太刚硬，总是以相同的方向错过。
+      所有箭都聚集在靶子左边。射手有系统性的偏差，但箭簇很紧密。
+      就像欠拟合模型：模型过于僵化，总是朝同一个方向偏离。
     </span>
   </li>
 
@@ -61,9 +61,9 @@ mathjax: true
       so predictions bounce around wildly on new data.
     </span>
     <span data-lang="zh">
-      箭分散到各处，但平均而言击中中心。
-      像过度拟合：模型对训练数据中的噪声和变化做出反应，
-      所以在新数据上预测会大幅波动。
+      箭散落四处，但平均位置在靶心。
+      就像过度拟合模型：模型被训练数据中的噪声所迷惑，
+      所以在新数据上的预测会大幅波动。
     </span>
   </li>
 
@@ -75,8 +75,8 @@ mathjax: true
       The model captures the true signal while ignoring noise.
     </span>
     <span data-lang="zh">
-      箭紧密聚集在靶心周围。
-      该模型捕捉真实信号，同时忽略噪声。
+      箭紧密聚集在靶心。
+      模型既捕捉了真实的信号，又有效忽略了噪声。
     </span>
   </li>
 </ul>
@@ -88,8 +88,8 @@ mathjax: true
     that minimizes the sum of both errors.
   </p>
   <p data-lang="zh">
-    <strong>关键洞察：</strong> 没有免费午餐。当我们增加模型复杂性以减少偏差时，
-    方差往往会增加。反之亦然。我们的工作是找到最小化两个错误之和的"金发"复杂性。
+    <strong>关键洞察：</strong> 天下没有免费午餐。当我们增加模型的复杂度来降低偏差时，
+    方差往往会上升。反之亦然。我们的目标是找到最优的复杂度，使偏差和方差的总和最小。
   </p>
 </div>
 
@@ -106,8 +106,8 @@ mathjax: true
 </p>
 
 <p data-lang="zh">
-  下面，我们将不同次数的多项式拟合到从sin(2πx)采样的噪声数据。
-  调整滑块以查看欠拟合(低次)和过度拟合(高次)如何进行。
+  下面，我们用不同次数的多项式拟合含噪声的数据（数据来自sin(2πx)）。
+  通过调整滑块，你会看到欠拟合（低次多项式）和过度拟合（高次多项式）的不同表现。
 </p>
 
 <div class="sim-panel" style="background: var(--parchment); padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -163,10 +163,10 @@ mathjax: true
     <br>• <strong>Degree 10+:</strong> Fits the noise in the training data too closely. Low bias, high variance. Test error climbs as the curve wiggles to fit each training point.
   </p>
   <p data-lang="zh">
-    <strong>你看到的是什么：</strong>
-    <br>• <strong>次数1(线性)：</strong> 无法拟合曲折的正弦曲线。高偏差，低方差。大的训练误差。
-    <br>• <strong>次数3-4(最优)：</strong> 相当好地捕捉正弦形状。低偏差，低方差。测试误差最小。
-    <br>• <strong>次数10+：</strong> 过度拟合训练数据中的噪声。低偏差，高方差。随着曲线扭曲以拟合每个训练点，测试误差会上升。
+    <strong>你会看到什么：</strong>
+    <br>• <strong>1次多项式（直线）：</strong> 无法捕捉蜿蜒的正弦曲线。高偏差，低方差。训练误差很大。
+    <br>• <strong>3-4次多项式（最优）：</strong> 很好地抓住了正弦的大致形状。低偏差，低方差。测试误差最小。
+    <br>• <strong>10次以上多项式：</strong> 模型被训练数据中的噪声所迷惑，竭力去拟合每个点。低偏差，高方差。曲线扭曲得越来越厉害，导致测试误差大幅上升。
   </p>
 </div>
 
@@ -184,9 +184,9 @@ mathjax: true
 </p>
 
 <p data-lang="zh">
-  与其限制模型复杂性(如限制多项式次数)，
-  我们可以使用正则化：惩罚大系数。
-  这鼓励模型变得简洁，而不放弃灵活性。
+  与其直接限制模型的复杂度（比如限制多项式的次数），
+  我们可以用正则化的办法：对大的系数进行惩罚。
+  这样模型就被鼓励保持简洁，同时又不失去灵活性。
 </p>
 
 <p data-lang="en" style="margin-top: 16px;">
@@ -205,7 +205,7 @@ mathjax: true
   </div>
   <div style="margin-top: 8px; font-size: 12px;">
     <span data-lang="en">Penalizes large coefficients. Shrinks toward zero but doesn't eliminate. Good when all predictors matter.</span>
-    <span data-lang="zh">惩罚大系数。收缩到零但不消除。当所有预测因子都很重要时很好。</span>
+    <span data-lang="zh">惩罚过大的系数。系数会缩小，但通常不会完全变为零。当你认为所有预测变量都可能有用时，这个办法很好。</span>
   </div>
 </div>
 
@@ -217,7 +217,7 @@ mathjax: true
   </div>
   <div style="margin-top: 8px; font-size: 12px;">
     <span data-lang="en">Can shrink coefficients to exactly zero. Does variable selection. Good when you suspect many predictors are irrelevant.</span>
-    <span data-lang="zh">可以将系数精确收缩到零。进行变量选择。当你怀疑许多预测因子不相关时很好。</span>
+    <span data-lang="zh">可以把某些系数精确地推到零，自动进行变量选择。当你怀疑很多预测变量其实没用时，这个很合适。</span>
   </div>
 </div>
 
@@ -229,7 +229,7 @@ mathjax: true
   </div>
   <div style="margin-top: 8px; font-size: 12px;">
     <span data-lang="en">Combines Ridge and Lasso. Balances selection with shrinkage.</span>
-    <span data-lang="zh">结合岭和套索。平衡选择和收缩。</span>
+    <span data-lang="zh">结合岭回归和Lasso的优点。既能收缩系数，也能进行变量选择。</span>
   </div>
 </div>
 
@@ -269,9 +269,9 @@ predict(fit_ridge, newx = X_test, s = "lambda.min")</code>
 </p>
 
 <p data-lang="zh" style="margin-top: 16px;">
-  <strong>cv.glmnet()：</strong> 交叉验证自动选择最优λ。
-  图表显示训练误差(叉)和测试误差(误差条)。
-  最优点平衡两者。
+  <strong>cv.glmnet()：</strong> 自动通过交叉验证找到最优的λ。
+  图中显示训练误差（叉号）和测试误差（误差条）。
+  你需要找到平衡两者的那个λ值。
 </p>
 
 <div class="insight-box">
@@ -284,9 +284,9 @@ predict(fit_ridge, newx = X_test, s = "lambda.min")</code>
   </p>
   <p data-lang="zh">
     <strong>正则化为什么有效：</strong>
-    <br>通过惩罚系数大小，我们强制模型只使用真正能减少误差的特征和大小。
-    这隐含地减少方差(更少的扭曲来拟合噪声)，同时接受少量偏差
-    (我们找不到绝对最好的系数，但已经足够接近)。
+    <br>通过惩罚大系数，我们迫使模型只关注那些真正能降低误差的特征。
+    这间接地降低了方差（模型对噪声的过度反应减少了），同时接受了一点偏差
+    （我们找不到全局最优的系数，但已经足够接近）。
   </p>
 </div>
 
@@ -303,8 +303,8 @@ predict(fit_ridge, newx = X_test, s = "lambda.min")</code>
 </p>
 
 <p data-lang="zh">
-  你不能在用来训练的同一数据上评估模型性能——你会高估它的好坏。
-  交叉验证估计真实的泛化误差。
+  你不能用训练模型的同一批数据来评估模型表现——这样会严重高估模型的好坏。
+  交叉验证可以给你一个更真实的泛化误差估计。
 </p>
 
 <p data-lang="en" style="margin-top: 16px;">
@@ -427,9 +427,9 @@ predict(fit, newdata = test_data)</code>
     <span data-lang="en"><strong>For Inference:</strong> We care about bias! An unbiased but noisy estimate of a causal effect
     is preferable to a highly regularized estimate that's systematically off.
     This is why economists favor simple OLS over machine learning for causal inference.</span>
-    <span data-lang="zh"><strong>对于推断：</strong> 我们关心偏差！一个无偏但有噪声的因果效应估计
-    比系统地偏离的高度正则化估计更可取。
-    这就是为什么经济学家在因果推断中倾向于简单OLS而不是机器学习。</span>
+    <span data-lang="zh"><strong>对于推断：</strong> 偏差问题很严重！一个无偏但嘈杂的因果效应估计，
+    比一个高度正则化但系统性偏离的估计要好得多。
+    这就是为什么经济学家在做因果推断时往往坚持用简单OLS而不是机器学习。</span>
   </li>
 </ul>
 
@@ -449,10 +449,10 @@ predict(fit, newdata = test_data)</code>
 </p>
 
 <p data-lang="zh">
-  在分析文本数据时，特征数量(唯一词汇、n-grams)通常远远超过n(文档数量)。
-  这是"宽数据"状态：p >> n。OLS会发生灾难性过度拟合。
-  解决方案：使用Lasso或岭。Lasso特别有用，因为它进行特征选择——
-  识别哪些词汇实际预测结果。
+  处理文本数据时，你常常面临特征(唯一词汇、n-grams等)远远超过样本的情况。
+  这就是著名的"宽数据"问题：p >> n。直接用OLS会发生灾难性的过度拟合。
+  解决办法：用Lasso或岭回归。Lasso特别好用，因为它会自动进行特征选择——
+  自动识别出哪些词汇对预测结果真正有用。
 </p>
 
 <p data-lang="en" style="margin-top: 24px; font-weight: 500;">
@@ -470,9 +470,9 @@ predict(fit, newdata = test_data)</code>
 </p>
 
 <p data-lang="zh">
-  随机森林通过平均从许多决策树获得的预测来减少方差，每个树都在bootstrap样本上训练。
-  每棵树都是高方差但低偏差(它可以学习数据的完全复杂性)。
-  平均它们降低方差而不会过多增加偏差。缺点：不如单个树或回归模型可解释。
+  随机森林的秘诀是：许多不同的树各自训练一个bootstrap样本，然后把它们的预测平均起来。
+  每棵单独的树都是高方差但低偏差（它可以学习数据的复杂细节）。
+  通过平均，你就能大幅降低方差，而不会过度增加偏差。缺点是：不如单棵树或回归模型那么好解释。
 </p>
 
 <div class="insight-box">
@@ -485,12 +485,12 @@ predict(fit, newdata = test_data)</code>
     <br>5. <strong>Validate on held-out data:</strong> Better yet, replicate on new samples or different countries/time periods.
   </p>
   <p data-lang="zh">
-    <strong>CSS的最佳实践：</strong>
-    <br>1. <strong>明确说明你的目标：</strong> 预测还是推断？
-    <br>2. <strong>总是使用训练/测试分割：</strong> 永远不要在训练数据上评估。
-    <br>3. <strong>使用交叉验证进行模型选择：</strong> 选择正则化参数、多项式次数等。
-    <br>4. <strong>报告偏差和方差组件：</strong> 如果使用复杂模型，显示方差减少是真实的。
-    <br>5. <strong>在保留数据上验证：</strong> 最好的是在新样本或不同国家/时期进行复制。
+    <strong>计算社会科学的最佳实践：</strong>
+    <br>1. <strong>先想清楚目标：</strong> 你是想做预测，还是想做因果推断？
+    <br>2. <strong>一定要分离训练集和测试集：</strong> 千万不要在训练数据上评估模型性能。
+    <br>3. <strong>用交叉验证来选模型：</strong> 用它来选择正则化参数、多项式次数之类的。
+    <br>4. <strong>报告偏差-方差的分解：</strong> 如果用了复杂模型，要展示出方差确实下降了。
+    <br>5. <strong>在新的独立数据上验证：</strong> 最好的做法是在新样本、不同国家或不同时期上复现你的发现。
   </p>
 </div>
 
