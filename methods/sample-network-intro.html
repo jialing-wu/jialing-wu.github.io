@@ -278,8 +278,8 @@ body.presenting .pres-progress{
   <h2 data-lang="en">Why Study Relationships, Not Just Individuals?</h2>
   <h2 data-lang="zh">为什么要研究关系，而不只是个体？</h2>
 
-  <p class="method-desc" data-lang="en">Most methods treat observations as independent rows. But many social phenomena are relational — who co-sponsors legislation with whom reveals hidden political alliances that individual attributes cannot explain. Network analysis shifts the question from "what are this person's attributes?" to "what is their position in a web of relationships?"</p>
-  <p class="method-desc" data-lang="zh">大多数方法把观测当作独立的行。但许多社会现象是关系性的——谁和谁联署法案揭示了个体属性无法解释的政治联盟。网络分析把问题从"这个人有什么属性？"转变为"这个人在关系网中处于什么位置？"</p>
+  <p class="method-desc" data-lang="en">Most methods treat observations as independent rows. But many social phenomena are relational — who asks whom for study help reveals hidden learning communities that GPA alone cannot explain. Network analysis shifts the question from "what are this person's attributes?" to "what is their position in a web of relationships?"</p>
+  <p class="method-desc" data-lang="zh">大多数方法把观测当作独立的行。但许多社会现象是关系性的——谁找谁请教功课揭示了 GPA 无法解释的隐性学习社群。网络分析把问题从"这个人有什么属性？"转变为"这个人在关系网中处于什么位置？"</p>
 
   <!-- VIS: Spreadsheet vs Network -->
   <div class="vis-row">
@@ -499,35 +499,59 @@ body.presenting .pres-progress{
 <div class="slide" id="slide-methods-overview">
   <div class="slide-num" data-lang="en">Part 1 · Slide 5</div>
   <div class="slide-num" data-lang="zh">第一部分 · 第 5 页</div>
-  <h2 data-lang="en">Common Network Methods at a Glance</h2>
-  <h2 data-lang="zh">常用网络方法一览</h2>
+  <h2 data-lang="en">From Description to Inference</h2>
+  <h2 data-lang="zh">从描述到推断</h2>
 
-  <p class="method-desc" data-lang="en">Once you have network data, several methods are available. Each answers a different question:</p>
-  <p class="method-desc" data-lang="zh">有了网络数据后，有多种方法可用，每种回答不同的问题：</p>
+  <p class="method-desc" data-lang="en">Network methods fall into two layers. <strong>Descriptive methods</strong> tell you <em>what</em> the network looks like; <strong>inferential models</strong> test <em>why</em> it looks that way.</p>
+  <p class="method-desc" data-lang="zh">网络方法分两层。<strong>描述性方法</strong>告诉你网络<em>长什么样</em>；<strong>推断模型</strong>检验它<em>为什么</em>长这样。</p>
 
-  <div class="check-grid">
+  <h3 data-lang="en">Descriptive: What Does the Network Look Like?</h3>
+  <h3 data-lang="zh">描述层：网络长什么样？</h3>
+  <div class="check-grid" style="grid-template-columns:1fr 1fr">
     <div class="check-card">
-      <div class="check-title" data-lang="en">QAP Regression</div>
-      <div class="check-title" data-lang="zh">QAP 回归</div>
-      <div class="check-desc" data-lang="en"><em>Question:</em> Do two networks correlate? E.g. do friendship ties predict advice ties? <em>How:</em> permutation-based test that handles non-independence. Think of shuffling one network many times and checking if the real correlation is unusually strong.</div>
-      <div class="check-desc" data-lang="zh"><em>问题：</em>两个网络是否相关？如友谊关系能预测建议关系吗？<em>方法：</em>基于置换的检验，处理非独立性。想象把一个网络洗牌很多次，看真实相关是否异常强。</div>
+      <div class="check-icon">01</div>
+      <div class="check-title" data-lang="en">Centrality Measures</div>
+      <div class="check-title" data-lang="zh">中心性指标</div>
+      <div class="check-desc" data-lang="en">Who is important? Degree, betweenness, eigenvector — each captures a different structural role. Covered in Slide 3.</div>
+      <div class="check-desc" data-lang="zh">谁重要？度、中介、特征向量——各自捕捉不同的结构角色。见第 3 页。</div>
     </div>
     <div class="check-card">
-      <div class="check-title" data-lang="en">SAOM / Siena</div>
-      <div class="check-title" data-lang="zh">SAOM / Siena</div>
-      <div class="check-desc" data-lang="en"><em>Question:</em> Does the network shape behavior, or does behavior shape the network? <em>How:</em> longitudinal model that separates <em>selection</em> (who befriends whom) from <em>influence</em> (do friends become similar). Requires panel data (≥2 time points).</div>
-      <div class="check-desc" data-lang="zh"><em>问题：</em>是网络塑造行为，还是行为塑造网络？<em>方法：</em>纵向模型，区分<em>选择</em>（谁和谁交友）与<em>影响</em>（朋友是否变得相似）。需要面板数据（≥2 个时间点）。</div>
-    </div>
-    <div class="check-card">
-      <div class="check-title" data-lang="en">ERGM</div>
-      <div class="check-title" data-lang="zh">ERGM</div>
-      <div class="check-desc" data-lang="en"><em>Question:</em> What local tendencies (reciprocity, homophily, popularity) make the observed network more likely than random? <em>How:</em> like logistic regression, but for networks — models the probability of the whole network as a function of structural patterns. <strong>Today's focus.</strong></div>
-      <div class="check-desc" data-lang="zh"><em>问题：</em>什么局部倾向（互惠、同质性、人气）使观测网络比随机网络更可能出现？<em>方法：</em>相当于网络的逻辑回归——将整个网络的概率建模为结构模式的函数。<strong>今天的重点。</strong></div>
+      <div class="check-icon">02</div>
+      <div class="check-title" data-lang="en">Community Detection</div>
+      <div class="check-title" data-lang="zh">社区检测</div>
+      <div class="check-desc" data-lang="en">Where are the clusters? Algorithms like <strong>Louvain</strong> optimize modularity to find dense subgroups automatically. Fast, scalable, widely used. Covered in Slide 4.</div>
+      <div class="check-desc" data-lang="zh">聚类在哪？<strong>Louvain</strong> 等算法优化模块性，自动发现密集子群。快速、可扩展、应用广泛。见第 4 页。</div>
     </div>
   </div>
 
-  <div class="method-when" data-lang="en"><strong>Today we focus on ERGM</strong> — because our paper (Köhler et al. 2024) uses it to answer: what drives advice-seeking ties in an organization? Part 2 walks through this paper step by step.</div>
-  <div class="method-when" data-lang="zh"><strong>今天我们聚焦 ERGM</strong>——因为我们要拆解的论文（Köhler et al. 2024）用它来回答：什么驱动了组织中的求助关系？第二部分将逐步拆解这篇论文。</div>
+  <h3 data-lang="en">Inferential: Why Does the Network Look This Way?</h3>
+  <h3 data-lang="zh">推断层：网络为什么长这样？</h3>
+  <div class="check-grid">
+    <div class="check-card">
+      <div class="check-icon">Q</div>
+      <div class="check-title" data-lang="en">QAP</div>
+      <div class="check-title" data-lang="zh">QAP</div>
+      <div class="check-desc" data-lang="en">Do two networks correlate? Permutation-based test. E.g. do students who study together also hang out socially? Shuffle one matrix thousands of times and check if the real correlation is unusually strong.</div>
+      <div class="check-desc" data-lang="zh">两个网络是否相关？基于置换的检验。例如：一起学习的学生是否也在课外社交？把一个矩阵洗牌上千次，看真实相关是否异常强。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">E</div>
+      <div class="check-title" data-lang="en">ERGM</div>
+      <div class="check-title" data-lang="zh">ERGM</div>
+      <div class="check-desc" data-lang="en">What drives tie formation? E.g. do students seek help from same-major peers (homophily), or from high-GPA classmates (popularity)? Like logistic regression for networks. <strong>Today's focus.</strong></div>
+      <div class="check-desc" data-lang="zh">什么驱动关系形成？例如：学生倾向找同专业的人请教（同质性），还是找 GPA 高的人（人气效应）？相当于网络的逻辑回归。<strong>今天的重点。</strong></div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">L</div>
+      <div class="check-title" data-lang="en">Latent Space</div>
+      <div class="check-title" data-lang="zh">潜在空间模型</div>
+      <div class="check-desc" data-lang="en">Embed nodes in a latent space where proximity predicts ties. E.g. map a classroom's friendship network into 2D — students close in the space are likely friends, revealing cliques invisible in raw data.</div>
+      <div class="check-desc" data-lang="zh">将节点嵌入潜在空间，距离近的更可能有关系。例如：把一个班级的友谊网络映射到二维空间——空间中靠近的学生更可能是朋友，揭示原始数据中看不到的小圈子。</div>
+    </div>
+  </div>
+
+  <div class="method-when" data-lang="en"><strong>Today we focus on ERGM</strong> — our paper (Köhler et al. 2024) uses it to ask: what drives advice-seeking ties in an organization? Part 2 walks through this step by step.</div>
+  <div class="method-when" data-lang="zh"><strong>今天我们聚焦 ERGM</strong>——我们要拆解的论文（Köhler et al. 2024）用它来问：什么驱动了组织中的求助关系？第二部分逐步拆解。</div>
 </div>
 
 <!-- SLIDE: When to Use -->
@@ -573,32 +597,44 @@ body.presenting .pres-progress{
   <h2 data-lang="en">From Idea to Paper: A Network Analysis Workflow</h2>
   <h2 data-lang="zh">从想法到论文：网络分析的工作流程</h2>
 
-  <!-- VIS: Flow diagram with descriptions -->
-  <div class="flow-row">
-    <div class="flow-step"><div class="flow-num">STEP 1</div><div class="flow-title" data-lang="en">Define</div><div class="flow-title" data-lang="zh">定义</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="flow-num">STEP 2</div><div class="flow-title" data-lang="en">Construct</div><div class="flow-title" data-lang="zh">构建</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="flow-num">STEP 3</div><div class="flow-title" data-lang="en">Describe</div><div class="flow-title" data-lang="zh">描述</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="flow-num">STEP 4</div><div class="flow-title" data-lang="en">Model</div><div class="flow-title" data-lang="zh">建模</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="flow-num">STEP 5</div><div class="flow-title" data-lang="en">Robustness</div><div class="flow-title" data-lang="zh">稳健性</div></div>
+  <div class="check-grid">
+    <div class="check-card">
+      <div class="check-icon">01</div>
+      <div class="check-title" data-lang="en">Define</div>
+      <div class="check-title" data-lang="zh">定义</div>
+      <div class="check-desc" data-lang="en">What are nodes and edges? E.g. "Nodes = students; edge = asked for help at least twice." The most important decision.</div>
+      <div class="check-desc" data-lang="zh">节点和边是什么？如"节点 = 学生；边 = 至少请教过两次"。最重要的决定。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">02</div>
+      <div class="check-title" data-lang="en">Construct</div>
+      <div class="check-title" data-lang="zh">构建</div>
+      <div class="check-desc" data-lang="en">Build edge list or adjacency matrix from survey / archival data. Visualize early to spot errors.</div>
+      <div class="check-desc" data-lang="zh">从问卷或档案数据建立边表/邻接矩阵。尽早可视化以发现问题。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">03</div>
+      <div class="check-title" data-lang="en">Describe</div>
+      <div class="check-title" data-lang="zh">描述</div>
+      <div class="check-desc" data-lang="en">Density, centrality, communities — the network's descriptive statistics.</div>
+      <div class="check-desc" data-lang="zh">密度、中心性、社区——网络的描述性统计。</div>
+    </div>
   </div>
-
-  <div class="step-details" data-lang="en">
-    <div class="step-item"><strong>1 Define</strong> — what are nodes and edges? Be explicit (e.g. "Nodes = senators; edge = co-sponsored ≥3 bills"). This is the most important decision.</div>
-    <div class="step-item"><strong>2 Construct</strong> — build edge list / adjacency matrix; visualize early to spot issues.</div>
-    <div class="step-item"><strong>3 Describe</strong> — compute density, centrality, communities — this is your descriptive statistics.</div>
-    <div class="step-item"><strong>4 Model</strong> — if causal questions arise, use ERGM, QAP, or latent space models.</div>
-    <div class="step-item"><strong>5 Robustness</strong> — vary thresholds, measures, and node removals to test fragility.</div>
-  </div>
-  <div class="step-details" data-lang="zh">
-    <div class="step-item"><strong>1 定义</strong>——节点和边是什么？要明确（如"节点 = 参议员；边 = 共同联署 ≥3 项法案"）。这是最重要的决定。</div>
-    <div class="step-item"><strong>2 构建</strong>——建立边表/邻接矩阵，尽早可视化以发现问题。</div>
-    <div class="step-item"><strong>3 描述</strong>——计算密度、中心性、社区——这是你的描述性统计。</div>
-    <div class="step-item"><strong>4 建模</strong>——如果涉及因果问题，使用 ERGM、QAP 或潜在空间模型。</div>
-    <div class="step-item"><strong>5 稳健性</strong>——改变阈值、指标和节点移除来测试结果的脆弱性。</div>
+  <div class="check-grid" style="grid-template-columns:1fr 1fr">
+    <div class="check-card">
+      <div class="check-icon">04</div>
+      <div class="check-title" data-lang="en">Model</div>
+      <div class="check-title" data-lang="zh">建模</div>
+      <div class="check-desc" data-lang="en">Test hypotheses with ERGM, QAP, or latent space models (see Slide 5).</div>
+      <div class="check-desc" data-lang="zh">用 ERGM、QAP 或潜在空间模型检验假设（见第 5 页）。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">05</div>
+      <div class="check-title" data-lang="en">Robustness</div>
+      <div class="check-title" data-lang="zh">稳健性</div>
+      <div class="check-desc" data-lang="en">Vary thresholds and measures; remove key nodes to test stability.</div>
+      <div class="check-desc" data-lang="zh">改变阈值和指标，移除关键节点测试结果是否稳定。</div>
+    </div>
   </div>
 
   <div class="method-when" data-lang="en"><strong>Now let's see this workflow in action.</strong> Part 2 walks through a real published paper — from research question to findings.</div>
