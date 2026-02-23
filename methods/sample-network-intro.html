@@ -78,6 +78,34 @@ body.presenting .pres-progress{
   letter-spacing:.12em;text-transform:uppercase;
   color:var(--gold);margin-bottom:12px;
 }
+
+/* ── Visualization panels ─────────────────────────── */
+.vis-row{display:flex;gap:24px;margin:20px 0;flex-wrap:wrap;align-items:flex-start}
+.vis-panel{flex:1;min-width:260px;background:var(--warm);border:1px solid var(--parchment);border-radius:6px;padding:20px;text-align:center}
+.vis-panel svg{max-width:100%;height:auto}
+.vis-label{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.vis-caption{font-family:var(--sans);font-size:12px;color:var(--ink-faded);margin-top:8px;line-height:1.5}
+
+/* Centrality interactive buttons */
+.cent-btns{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.cent-btn{font-family:var(--sans);font-size:12px;font-weight:600;padding:6px 16px;border:1px solid var(--parchment);border-radius:4px;background:var(--warm);color:var(--ink-faded);cursor:pointer;transition:all .2s}
+.cent-btn:hover,.cent-btn.active{background:var(--gold);color:var(--paper);border-color:var(--gold)}
+
+/* Flow diagram */
+.flow-row{display:flex;align-items:center;gap:0;margin:20px 0;flex-wrap:wrap;justify-content:center}
+.flow-step{background:var(--warm);border:1px solid var(--parchment);border-radius:6px;padding:12px 18px;text-align:center;min-width:120px}
+.flow-step .flow-num{font-family:var(--sans);font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.1em}
+.flow-step .flow-title{font-family:var(--serif);font-size:14px;color:var(--ink);margin-top:4px}
+.flow-arrow{font-size:20px;color:var(--gold);padding:0 6px}
+@media(max-width:700px){.flow-row{flex-direction:column}.flow-arrow{transform:rotate(90deg)}}
+
+/* Decision checklist */
+.check-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:20px 0}
+.check-card{background:var(--warm);border:1px solid var(--parchment);border-radius:6px;padding:18px;text-align:center}
+.check-icon{font-size:28px;margin-bottom:8px}
+.check-title{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.check-desc{font-family:var(--sans);font-size:12px;color:var(--ink-faded);line-height:1.5}
+@media(max-width:700px){.check-grid{grid-template-columns:1fr}}
 </style>
 
 <!-- PRESENTATION TOGGLE -->
@@ -129,6 +157,53 @@ body.presenting .pres-progress{
   <p class="method-desc" data-lang="en">Network analysis provides the tools to study these relational structures. Instead of asking "what are this person's attributes?", we ask "what is this person's position in a web of relationships?" — and that position often explains outcomes better than individual characteristics alone.</p>
   <p class="method-desc" data-lang="zh">网络分析提供研究这些关系结构的工具。不是问"这个人有什么属性？"，而是问"这个人在关系网中处于什么位置？"——这个位置往往比个体特征更能解释结果。</p>
 
+  <!-- VIS: Spreadsheet vs Network -->
+  <div class="vis-row">
+    <div class="vis-panel">
+      <div class="vis-label" data-lang="en">Traditional Data</div>
+      <div class="vis-label" data-lang="zh">传统数据</div>
+      <svg viewBox="0 0 260 150" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
+        <rect x="10" y="8" width="240" height="28" rx="3" fill="#c29a3d" opacity=".15"/>
+        <text x="30" y="27" font-size="11" fill="#3a3632" font-weight="600">Name</text>
+        <text x="110" y="27" font-size="11" fill="#3a3632" font-weight="600">Age</text>
+        <text x="175" y="27" font-size="11" fill="#3a3632" font-weight="600">GPA</text>
+        <line x1="10" y1="36" x2="250" y2="36" stroke="#c29a3d" opacity=".3"/>
+        <text x="30" y="55" font-size="11" fill="#6b6560">Alice</text><text x="110" y="55" font-size="11" fill="#6b6560">22</text><text x="175" y="55" font-size="11" fill="#6b6560">3.8</text>
+        <text x="30" y="75" font-size="11" fill="#6b6560">Bob</text><text x="110" y="75" font-size="11" fill="#6b6560">23</text><text x="175" y="75" font-size="11" fill="#6b6560">3.5</text>
+        <text x="30" y="95" font-size="11" fill="#6b6560">Carol</text><text x="110" y="95" font-size="11" fill="#6b6560">21</text><text x="175" y="95" font-size="11" fill="#6b6560">3.9</text>
+        <text x="30" y="115" font-size="11" fill="#6b6560">Dave</text><text x="110" y="115" font-size="11" fill="#6b6560">24</text><text x="175" y="115" font-size="11" fill="#6b6560">3.2</text>
+        <text x="30" y="135" font-size="11" fill="#6b6560">Eve</text><text x="110" y="135" font-size="11" fill="#6b6560">22</text><text x="175" y="135" font-size="11" fill="#6b6560">3.6</text>
+      </svg>
+      <div class="vis-caption" data-lang="en">Each row = one person, independent</div>
+      <div class="vis-caption" data-lang="zh">每行 = 一个人，互相独立</div>
+    </div>
+    <div class="vis-panel">
+      <div class="vis-label" data-lang="en">Network Data</div>
+      <div class="vis-label" data-lang="zh">网络数据</div>
+      <svg viewBox="0 0 260 150" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
+        <!-- edges -->
+        <line x1="70" y1="45" x2="140" y2="40" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
+        <line x1="70" y1="45" x2="100" y2="100" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
+        <line x1="140" y1="40" x2="100" y2="100" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
+        <line x1="140" y1="40" x2="190" y2="90" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
+        <line x1="190" y1="90" x2="230" y2="130" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
+        <!-- nodes -->
+        <circle cx="70" cy="45" r="16" fill="#c29a3d" opacity=".2" stroke="#c29a3d" stroke-width="1.5"/>
+        <text x="70" y="49" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600">Alice</text>
+        <circle cx="140" cy="40" r="18" fill="#c29a3d" opacity=".35" stroke="#c29a3d" stroke-width="1.5"/>
+        <text x="140" y="44" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600">Bob</text>
+        <circle cx="100" cy="100" r="16" fill="#c29a3d" opacity=".2" stroke="#c29a3d" stroke-width="1.5"/>
+        <text x="100" y="104" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600">Carol</text>
+        <circle cx="190" cy="90" r="16" fill="#c29a3d" opacity=".2" stroke="#c29a3d" stroke-width="1.5"/>
+        <text x="190" y="94" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600">Dave</text>
+        <circle cx="230" cy="130" r="14" fill="#c29a3d" opacity=".12" stroke="#c29a3d" stroke-width="1.5"/>
+        <text x="230" y="134" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600">Eve</text>
+      </svg>
+      <div class="vis-caption" data-lang="en">Relationships create structure</div>
+      <div class="vis-caption" data-lang="zh">关系创造结构</div>
+    </div>
+  </div>
+
   <div class="method-analogy" data-lang="en"><strong>Think of it this way:</strong> A resume tells you about a person. A phone log tells you about their world.</div>
   <div class="method-analogy" data-lang="zh"><strong>换个方式想：</strong>简历告诉你一个人。通话记录告诉你他的世界。</div>
 </div>
@@ -146,6 +221,65 @@ body.presenting .pres-progress{
   <p class="method-desc" data-lang="en">Three key distinctions to remember:</p>
   <p class="method-desc" data-lang="zh">三个关键区分：</p>
 
+  <!-- VIS: Three network types -->
+  <div class="vis-row">
+    <div class="vis-panel">
+      <div class="vis-label" data-lang="en">Undirected</div>
+      <div class="vis-label" data-lang="zh">无向</div>
+      <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+        <line x1="40" y1="30" x2="120" y2="30" stroke="#c29a3d" stroke-width="2"/>
+        <line x1="40" y1="30" x2="80" y2="80" stroke="#c29a3d" stroke-width="2"/>
+        <line x1="120" y1="30" x2="80" y2="80" stroke="#c29a3d" stroke-width="2"/>
+        <circle cx="40" cy="30" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
+        <circle cx="120" cy="30" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
+        <circle cx="80" cy="80" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
+        <text x="40" y="34" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">A</text>
+        <text x="120" y="34" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">B</text>
+        <text x="80" y="84" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">C</text>
+      </svg>
+      <div class="vis-caption" data-lang="en">A↔B symmetric</div>
+      <div class="vis-caption" data-lang="zh">A↔B 对称</div>
+    </div>
+    <div class="vis-panel">
+      <div class="vis-label" data-lang="en">Directed</div>
+      <div class="vis-label" data-lang="zh">有向</div>
+      <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#c29a3d"/></marker></defs>
+        <line x1="52" y1="30" x2="108" y2="30" stroke="#c29a3d" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="46" y1="40" x2="74" y2="72" stroke="#c29a3d" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="86" y1="72" x2="114" y2="40" stroke="#c29a3d" stroke-width="2" marker-end="url(#arr)"/>
+        <circle cx="40" cy="30" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
+        <circle cx="120" cy="30" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
+        <circle cx="80" cy="80" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
+        <text x="40" y="34" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">A</text>
+        <text x="120" y="34" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">B</text>
+        <text x="80" y="84" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">C</text>
+      </svg>
+      <div class="vis-caption" data-lang="en">A→B ≠ B→A</div>
+      <div class="vis-caption" data-lang="zh">A→B ≠ B→A</div>
+    </div>
+    <div class="vis-panel">
+      <div class="vis-label" data-lang="en">Weighted</div>
+      <div class="vis-label" data-lang="zh">加权</div>
+      <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+        <line x1="40" y1="30" x2="120" y2="30" stroke="#c29a3d" stroke-width="5" opacity=".6"/>
+        <line x1="40" y1="30" x2="80" y2="80" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
+        <line x1="120" y1="30" x2="80" y2="80" stroke="#c29a3d" stroke-width="3" opacity=".5"/>
+        <circle cx="40" cy="30" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
+        <circle cx="120" cy="30" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
+        <circle cx="80" cy="80" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
+        <text x="40" y="34" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">A</text>
+        <text x="120" y="34" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">B</text>
+        <text x="80" y="84" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">C</text>
+        <text x="80" y="22" font-size="9" fill="#6b6560" text-anchor="middle" font-family="'IBM Plex Sans',sans-serif">w=5</text>
+        <text x="52" y="62" font-size="9" fill="#6b6560" text-anchor="middle" font-family="'IBM Plex Sans',sans-serif">w=1</text>
+        <text x="108" y="62" font-size="9" fill="#6b6560" text-anchor="middle" font-family="'IBM Plex Sans',sans-serif">w=3</text>
+      </svg>
+      <div class="vis-caption" data-lang="en">Edge thickness = strength</div>
+      <div class="vis-caption" data-lang="zh">边的粗细 = 强度</div>
+    </div>
+  </div>
+
   <p class="method-desc" data-lang="en"><strong>Directed vs. undirected:</strong> "A follows B on Twitter" is directed (A→B ≠ B→A). "A and B are co-authors" is undirected (symmetric). <strong>Weighted vs. binary:</strong> Trade volume between countries is weighted (a number); friendship is often binary (yes/no). <strong>Bipartite:</strong> Two types of nodes — e.g., people and organizations, students and courses.</p>
   <p class="method-desc" data-lang="zh"><strong>有向 vs. 无向：</strong>"A 在 Twitter 上关注 B"是有向的（A→B ≠ B→A）。"A 和 B 是合著者"是无向的（对称）。<strong>加权 vs. 二元：</strong>国家间贸易量是加权的（一个数字）；友谊通常是二元的（是/否）。<strong>二部网络：</strong>两类节点——如人与组织、学生与课程。</p>
 </div>
@@ -159,6 +293,39 @@ body.presenting .pres-progress{
 
   <p class="method-desc" data-lang="en">Imagine five people: Alice, Bob, Carol, Dave, Eve. Bob knows everyone in a tight cluster. Dave is the only bridge to Eve, who's otherwise isolated. Which one is "important"?</p>
   <p class="method-desc" data-lang="zh">想象五个人：Alice、Bob、Carol、Dave、Eve。Bob 认识紧密群体里的每个人。Dave 是通往孤立的 Eve 的唯一桥梁。谁"重要"？</p>
+
+  <!-- VIS: Interactive centrality network -->
+  <div class="cent-btns">
+    <button class="cent-btn active" onclick="showCent('degree')" data-lang="en">Degree</button>
+    <button class="cent-btn active" onclick="showCent('degree')" data-lang="zh">度中心性</button>
+    <button class="cent-btn" onclick="showCent('between')" data-lang="en">Betweenness</button>
+    <button class="cent-btn" onclick="showCent('between')" data-lang="zh">中介中心性</button>
+    <button class="cent-btn" onclick="showCent('eigen')" data-lang="en">Eigenvector</button>
+    <button class="cent-btn" onclick="showCent('eigen')" data-lang="zh">特征向量</button>
+  </div>
+  <div class="vis-panel" style="max-width:500px">
+    <svg id="cent-svg" viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
+      <!-- edges -->
+      <line x1="80" y1="60" x2="200" y2="50" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
+      <line x1="80" y1="60" x2="140" y2="140" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
+      <line x1="200" y1="50" x2="140" y2="140" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
+      <line x1="200" y1="50" x2="290" y2="100" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
+      <line x1="290" y1="100" x2="360" y2="140" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
+      <!-- nodes — sizes will be updated by JS -->
+      <circle id="cn-alice" cx="80" cy="60" r="18" fill="#c29a3d" opacity=".3" stroke="#c29a3d" stroke-width="2"/>
+      <text x="80" y="64" font-size="11" fill="#3a3632" text-anchor="middle" font-weight="600">Alice</text>
+      <circle id="cn-bob" cx="200" cy="50" r="24" fill="#c29a3d" opacity=".5" stroke="#c29a3d" stroke-width="2"/>
+      <text x="200" y="54" font-size="11" fill="#3a3632" text-anchor="middle" font-weight="600">Bob</text>
+      <circle id="cn-carol" cx="140" cy="140" r="18" fill="#c29a3d" opacity=".3" stroke="#c29a3d" stroke-width="2"/>
+      <text x="140" y="144" font-size="11" fill="#3a3632" text-anchor="middle" font-weight="600">Carol</text>
+      <circle id="cn-dave" cx="290" cy="100" r="18" fill="#c29a3d" opacity=".3" stroke="#c29a3d" stroke-width="2"/>
+      <text x="290" y="104" font-size="11" fill="#3a3632" text-anchor="middle" font-weight="600">Dave</text>
+      <circle id="cn-eve" cx="360" cy="140" r="12" fill="#c29a3d" opacity=".15" stroke="#c29a3d" stroke-width="2"/>
+      <text x="360" y="144" font-size="11" fill="#3a3632" text-anchor="middle" font-weight="600">Eve</text>
+    </svg>
+    <div class="vis-caption" id="cent-caption" data-lang="en">Degree: node size = number of connections. Bob has the most (3).</div>
+    <div class="vis-caption" id="cent-caption-zh" data-lang="zh">度中心性：节点大小 = 连接数。Bob 最多（3 条）。</div>
+  </div>
 
   <p class="method-desc" data-lang="en"><strong>Degree centrality</strong> — who has the most connections? Bob wins. This is the simplest measure: just count the edges. <strong>Betweenness centrality</strong> — who is a bridge? Dave is critical: remove him and Eve is completely cut off. Betweenness counts how often a node lies on the shortest path between others. <strong>Eigenvector centrality</strong> — who is connected to important people? Alice's two connections are both to Bob (the most connected), making her more central than Eve whose only tie is to the peripheral Dave.</p>
   <p class="method-desc" data-lang="zh"><strong>度中心性</strong>——谁连接最多？Bob 赢。最简单的指标：数边的数量。<strong>中介中心性</strong>——谁是桥梁？Dave 至关重要：移除他，Eve 完全孤立。中介性统计节点出现在其他节点对之间最短路上的频率。<strong>特征向量中心性</strong>——谁和重要的人相连？Alice 的两条连接都通向 Bob（连接最多的人），这使她比 Eve 更中心——Eve 唯一的关系是边缘的 Dave。</p>
@@ -177,6 +344,44 @@ body.presenting .pres-progress{
   <p class="method-desc" data-lang="en">Real networks are cliquish. Think of a high school cafeteria: the drama kids sit together, the athletes at another table. Within each group, everyone knows everyone; between groups, only a few cross-group ties exist.</p>
   <p class="method-desc" data-lang="zh">真实网络是小团体的。想象高中食堂：戏剧社的孩子坐一起，运动员坐另一桌。每个群体内部大家互相认识；群体之间只有少数跨组联系。</p>
 
+  <!-- VIS: Community network -->
+  <div class="vis-row">
+    <div class="vis-panel" style="max-width:500px">
+      <svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
+        <!-- Community A edges (dense) -->
+        <line x1="60" y1="50" x2="120" y2="40" stroke="#b85450" stroke-width="2" opacity=".4"/>
+        <line x1="60" y1="50" x2="90" y2="110" stroke="#b85450" stroke-width="2" opacity=".4"/>
+        <line x1="120" y1="40" x2="90" y2="110" stroke="#b85450" stroke-width="2" opacity=".4"/>
+        <line x1="120" y1="40" x2="150" y2="100" stroke="#b85450" stroke-width="2" opacity=".4"/>
+        <line x1="60" y1="50" x2="150" y2="100" stroke="#b85450" stroke-width="2" opacity=".4"/>
+        <!-- Community B edges (dense) -->
+        <line x1="270" y1="45" x2="330" y2="50" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
+        <line x1="270" y1="45" x2="280" y2="110" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
+        <line x1="330" y1="50" x2="280" y2="110" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
+        <line x1="330" y1="50" x2="350" y2="120" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
+        <line x1="280" y1="110" x2="350" y2="120" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
+        <!-- Bridge edge -->
+        <line x1="150" y1="100" x2="270" y2="45" stroke="#c29a3d" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>
+        <!-- Community A nodes -->
+        <circle cx="60" cy="50" r="14" fill="#b85450" opacity=".25" stroke="#b85450" stroke-width="1.5"/>
+        <circle cx="120" cy="40" r="14" fill="#b85450" opacity=".25" stroke="#b85450" stroke-width="1.5"/>
+        <circle cx="90" cy="110" r="14" fill="#b85450" opacity=".25" stroke="#b85450" stroke-width="1.5"/>
+        <circle cx="150" cy="100" r="14" fill="#b85450" opacity=".25" stroke="#b85450" stroke-width="1.5"/>
+        <!-- Community B nodes -->
+        <circle cx="270" cy="45" r="14" fill="#5b8c85" opacity=".25" stroke="#5b8c85" stroke-width="1.5"/>
+        <circle cx="330" cy="50" r="14" fill="#5b8c85" opacity=".25" stroke="#5b8c85" stroke-width="1.5"/>
+        <circle cx="280" cy="110" r="14" fill="#5b8c85" opacity=".25" stroke="#5b8c85" stroke-width="1.5"/>
+        <circle cx="350" cy="120" r="14" fill="#5b8c85" opacity=".25" stroke="#5b8c85" stroke-width="1.5"/>
+        <!-- Labels -->
+        <text x="95" y="155" font-size="11" fill="#b85450" text-anchor="middle" font-weight="600">Community A</text>
+        <text x="305" y="155" font-size="11" fill="#5b8c85" text-anchor="middle" font-weight="600">Community B</text>
+        <text x="210" y="68" font-size="9" fill="#c29a3d" text-anchor="middle" font-style="italic">bridge</text>
+      </svg>
+      <div class="vis-caption" data-lang="en">Dense within groups, sparse between — the dashed line is the only bridge</div>
+      <div class="vis-caption" data-lang="zh">组内密集、组间稀疏——虚线是唯一的桥梁</div>
+    </div>
+  </div>
+
   <p class="method-desc" data-lang="en"><strong>Community detection</strong> algorithms discover these groups automatically from the connection data alone — no labels needed. The most common approach maximizes <strong>modularity</strong>: a score that measures how many more within-group edges exist than you'd expect by chance. Applications range from identifying political factions in Congress to finding echo chambers on social media.</p>
   <p class="method-desc" data-lang="zh"><strong>社区检测</strong>算法仅从连接数据就能自动发现这些群体——不需要标签。最常用的方法是最大化<strong>模块性</strong>：衡量组内边比随机预期多多少的分数。应用从识别国会政治派系到发现社交媒体回音室。</p>
 </div>
@@ -190,6 +395,31 @@ body.presenting .pres-progress{
 
   <p class="method-desc" data-lang="en">Ask yourself three questions:</p>
   <p class="method-desc" data-lang="zh">问自己三个问题：</p>
+
+  <!-- VIS: Decision checklist -->
+  <div class="check-grid">
+    <div class="check-card">
+      <div class="check-icon">🔗</div>
+      <div class="check-title" data-lang="en">Relational Data?</div>
+      <div class="check-title" data-lang="zh">关系数据？</div>
+      <div class="check-desc" data-lang="en">Pairs: who↔whom, trade flows, citations, co-authorship</div>
+      <div class="check-desc" data-lang="zh">配对：谁↔谁、贸易流、引用、合著</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">📍</div>
+      <div class="check-title" data-lang="en">Position Matters?</div>
+      <div class="check-title" data-lang="zh">位置重要？</div>
+      <div class="check-desc" data-lang="en">Connections, brokerage, community shape outcomes beyond attributes</div>
+      <div class="check-desc" data-lang="zh">连接、中介角色、社区归属影响结果，超越个体属性</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">🌊</div>
+      <div class="check-title" data-lang="en">Dependence Is the Story?</div>
+      <div class="check-title" data-lang="zh">依赖性是核心？</div>
+      <div class="check-desc" data-lang="en">Behavior spills over: friends influence friends, policies spread</div>
+      <div class="check-desc" data-lang="zh">行为溢出：朋友影响朋友，政策扩散</div>
+    </div>
+  </div>
 
   <p class="method-desc" data-lang="en"><strong>1. Is your data relational?</strong> If you have pairs — who knows whom, who trades with whom, who cites whom — you have network data. If each row is an independent person with no ties, standard methods may suffice.</p>
   <p class="method-desc" data-lang="zh"><strong>1. 你的数据是关系性的吗？</strong>如果你有配对数据——谁认识谁、谁和谁贸易、谁引用谁——你就有网络数据。如果每行是独立的人且没有联系，标准方法可能足够。</p>
@@ -207,6 +437,19 @@ body.presenting .pres-progress{
   <div class="slide-num" data-lang="zh">第一部分 · 第 6 页</div>
   <h2 data-lang="en">From Idea to Paper: A Network Analysis Workflow</h2>
   <h2 data-lang="zh">从想法到论文：网络分析的工作流程</h2>
+
+  <!-- VIS: Flow diagram -->
+  <div class="flow-row">
+    <div class="flow-step"><div class="flow-num">STEP 1</div><div class="flow-title" data-lang="en">Define</div><div class="flow-title" data-lang="zh">定义</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-num">STEP 2</div><div class="flow-title" data-lang="en">Construct</div><div class="flow-title" data-lang="zh">构建</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-num">STEP 3</div><div class="flow-title" data-lang="en">Describe</div><div class="flow-title" data-lang="zh">描述</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-num">STEP 4</div><div class="flow-title" data-lang="en">Model</div><div class="flow-title" data-lang="zh">建模</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-num">STEP 5</div><div class="flow-title" data-lang="en">Robustness</div><div class="flow-title" data-lang="zh">稳健性</div></div>
+  </div>
 
   <p class="method-desc" data-lang="en"><strong>Step 1 — Define the network.</strong> What are the nodes? What constitutes an edge? This is the most important decision. A poorly defined network leads to meaningless results. Be explicit: "Nodes = U.S. senators; edge = co-sponsored at least 3 bills in the 116th Congress."</p>
   <p class="method-desc" data-lang="zh"><strong>第一步——定义网络。</strong>节点是什么？什么构成边？这是最重要的决定。定义不好的网络导致无意义的结果。要明确："节点 = 美国参议员；边 = 在第 116 届国会中共同联署至少 3 项法案。"</p>
@@ -320,6 +563,47 @@ body.presenting .pres-progress{
     <span><span class="pn-title" data-lang="en">Network Analysis</span><span class="pn-title" data-lang="zh">网络分析</span></span>
   </a>
 </div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  CENTRALITY INTERACTIVE                            -->
+<!-- ═══════════════════════════════════════════════════ -->
+<script>
+(function(){
+  const centData = {
+    degree:  { alice:18, bob:24, carol:18, dave:18, eve:12,
+      en:'Degree: node size = number of connections. Bob has the most (3).',
+      zh:'度中心性：节点大小 = 连接数。Bob 最多（3 条）。' },
+    between: { alice:12, bob:22, carol:12, dave:22, eve:10,
+      en:'Betweenness: Bob and Dave are bridges. Remove either and the network splits.',
+      zh:'中介中心性：Bob 和 Dave 是桥梁。移除任一个，网络就断裂。' },
+    eigen:   { alice:20, bob:24, carol:20, dave:16, eve:10,
+      en:'Eigenvector: Alice & Carol are tied to the well-connected Bob, boosting their score.',
+      zh:'特征向量：Alice 和 Carol 连接着高连接度的 Bob，提升了她们的得分。' }
+  };
+  window.showCent = function(type){
+    var d = centData[type];
+    if(!d) return;
+    var ids = ['alice','bob','carol','dave','eve'];
+    ids.forEach(function(n){
+      var el = document.getElementById('cn-'+n);
+      if(el){ el.setAttribute('r', d[n]); el.setAttribute('opacity', d[n]/30); }
+    });
+    var cap = document.getElementById('cent-caption');
+    var capZh = document.getElementById('cent-caption-zh');
+    if(cap) cap.textContent = d.en;
+    if(capZh) capZh.textContent = d.zh;
+    // Update button states
+    document.querySelectorAll('.cent-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('.cent-btn').forEach(function(b){
+      if(b.textContent.toLowerCase().indexOf(type) >= 0 ||
+         (type==='degree' && b.textContent.indexOf('度中心') >= 0) ||
+         (type==='between' && b.textContent.indexOf('中介') >= 0) ||
+         (type==='eigen' && b.textContent.indexOf('特征') >= 0))
+        b.classList.add('active');
+    });
+  };
+})();
+</script>
 
 <!-- ═══════════════════════════════════════════════════ -->
 <!--  PRESENTATION ENGINE                               -->
