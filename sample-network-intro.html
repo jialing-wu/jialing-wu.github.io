@@ -6,7 +6,11 @@ bilingual: true
 ---
 
 <style>
-/* ── Presentation Toggle Button ─────────────────────── */
+/* ══════════════════════════════════════════════════════
+   PRESENTATION MODE
+   ══════════════════════════════════════════════════════ */
+
+/* Toggle button */
 .pres-toggle{
   display:inline-flex;align-items:center;gap:8px;
   font-family:var(--sans);font-size:12px;font-weight:600;
@@ -19,7 +23,7 @@ bilingual: true
 .pres-toggle:hover{background:var(--gold);color:var(--paper);border-color:var(--gold)}
 .pres-toggle .pres-icon{font-size:16px}
 
-/* ── Presentation Mode: Hide chrome ─────────────────── */
+/* Hide chrome */
 body.presenting .sidebar,
 body.presenting .sidebar-overlay,
 body.presenting .topbar,
@@ -30,91 +34,84 @@ body.presenting .pres-hide{display:none!important}
 
 body.presenting .layout{display:block}
 body.presenting .main{margin:0;padding:0;width:100vw}
-body.presenting .content{
-  max-width:100vw!important;padding:0!important;margin:0!important;
-}
+body.presenting .content{max-width:100vw!important;padding:0!important;margin:0!important}
 
-/* ── Slide container ────────────────────────────────── */
+/* Slide container */
 body.presenting .slide{
-  display:none;
-  width:100vw;height:100vh;
-  padding:48px 0;
-  box-sizing:border-box;
-  overflow-y:auto;
-  background:var(--paper);
+  display:none;width:100vw;height:100vh;
+  padding:48px 0;box-sizing:border-box;
+  overflow-y:auto;background:var(--paper);
 }
-body.presenting .slide.active{display:flex;flex-direction:column;justify-content:center;align-items:center}
-
-/* Inner wrapper for consistent max-width centering */
+body.presenting .slide.active{
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+}
+/* Max-width centering for all children */
 body.presenting .slide > *{
-  width:100%;
-  max-width:880px;
-  padding-left:40px;
-  padding-right:40px;
+  width:100%;max-width:880px;
+  padding-left:40px;padding-right:40px;
   box-sizing:border-box;
 }
 
-/* ── Presentation typography hierarchy ──────────────── */
-body.presenting .slide .slide-num{
-  font-size:11px;margin-bottom:8px;
-  position:relative;
-}
-body.presenting .slide h2{
-  font-size:2.2rem;margin-bottom:20px;
-  line-height:1.25;letter-spacing:-.01em;
-}
+/* Presentation typography */
+body.presenting .slide .slide-num{font-size:11px;margin-bottom:8px}
+body.presenting .slide h2{font-size:2.2rem;margin-bottom:20px;line-height:1.25;letter-spacing:-.01em}
 body.presenting .slide h3{font-size:1.5rem;margin-bottom:12px}
 body.presenting .slide p,
 body.presenting .slide li{font-size:1.1rem;line-height:1.9}
 body.presenting .slide .method-desc{font-size:1.1rem;line-height:1.9;margin-bottom:16px}
 body.presenting .slide .method-analogy{font-size:1.05rem;line-height:1.8}
 body.presenting .slide .method-when{font-size:1.05rem;line-height:1.8}
-body.presenting .slide .method-example{font-size:1.05rem}
 
-/* ── Presentation: vis panels larger ────────────────── */
+/* Presentation: vis panels */
 body.presenting .vis-panel{padding:24px 28px}
-body.presenting .vis-panel svg{max-width:420px;margin:0 auto}
-body.presenting .vis-caption{font-size:13px;margin-top:10px}
+body.presenting .vis-panel svg{max-width:420px;margin:0 auto;display:block}
+body.presenting .vis-caption{font-size:13px;margin-top:12px}
 body.presenting .vis-label{font-size:12px}
 
-/* ── Presentation: check cards larger ───────────────── */
+/* Presentation: check cards */
 body.presenting .check-grid{gap:20px;margin:24px 0}
 body.presenting .check-card{padding:22px 20px}
 body.presenting .check-icon{font-size:32px;margin-bottom:10px}
 body.presenting .check-title{font-size:14px;margin-bottom:8px}
-body.presenting .check-desc{font-size:13.5px;line-height:1.6}
+body.presenting .check-desc{font-size:13.5px;line-height:1.65}
 
-/* ── Presentation: flow diagram wider ───────────────── */
+/* Presentation: flow diagram */
 body.presenting .flow-step{padding:14px 22px;min-width:130px}
 body.presenting .flow-step .flow-title{font-size:15px}
 body.presenting .flow-arrow{font-size:22px;padding:0 8px}
 
-/* ── Presentation: centrality buttons ───────────────── */
+/* Presentation: centrality */
 body.presenting .cent-btns{margin:12px 0 16px}
 body.presenting .cent-btn{font-size:13px;padding:8px 20px}
 
-/* Slide counter */
+/* Presentation: step details */
+body.presenting .step-item{font-size:1rem;line-height:1.8;padding:6px 16px}
+
+/* Slide counter, ESC hint, progress bar */
 body.presenting .slide-counter{
   position:fixed;bottom:24px;right:32px;
   font-family:var(--sans);font-size:13px;
-  color:var(--ink-ghost);letter-spacing:.05em;
-  z-index:999;
+  color:var(--ink-ghost);letter-spacing:.05em;z-index:999;
 }
-/* ESC hint */
 body.presenting .pres-esc{
   position:fixed;top:20px;right:28px;
   font-family:var(--sans);font-size:11px;
   color:var(--ink-ghost);letter-spacing:.05em;
   opacity:.6;z-index:999;
 }
-/* Progress bar */
 body.presenting .pres-progress{
   position:fixed;top:0;left:0;height:3px;
   background:var(--gold);z-index:999;
   transition:width .3s ease;
 }
 
-/* ── Section number badge ───────────────────────────── */
+/* ══════════════════════════════════════════════════════
+   NORMAL MODE — PAGE-SPECIFIC COMPONENTS
+   (all scoped to avoid conflicts with style.css)
+   ══════════════════════════════════════════════════════ */
+
+/* Section number badge */
 .slide-num{
   font-family:var(--sans);font-size:11px;font-weight:700;
   letter-spacing:.12em;text-transform:uppercase;
@@ -129,21 +126,24 @@ body.presenting .pres-progress{
 .vis-panel{
   flex:1;min-width:220px;
   background:var(--warm);border:1px solid var(--parchment);
-  border-radius:6px;padding:20px;text-align:center;
-  display:flex;flex-direction:column;justify-content:center;
+  border-radius:6px;padding:18px 20px;text-align:center;
+  display:flex;flex-direction:column;
 }
-.vis-panel svg{max-width:100%;height:auto;margin:0 auto}
+.vis-panel svg{
+  max-width:100%;height:auto;margin:4px auto 0;
+  display:block;flex:1;min-height:0;
+}
 .vis-label{
   font-family:var(--sans);font-size:11px;font-weight:700;
   letter-spacing:.1em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:10px;flex-shrink:0;
+  color:var(--gold);margin-bottom:8px;flex-shrink:0;
 }
 .vis-caption{
-  font-family:var(--sans);font-size:12px;
+  font-family:var(--sans);font-size:11.5px;
   color:var(--ink-faded);margin-top:10px;line-height:1.5;flex-shrink:0;
 }
 
-/* ── Centrality interactive buttons ─────────────────── */
+/* ── Centrality interactive ───────────────────────── */
 .cent-btns{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 16px}
 .cent-btn{
   font-family:var(--sans);font-size:12px;font-weight:600;
@@ -153,91 +153,79 @@ body.presenting .pres-progress{
 }
 .cent-btn:hover,.cent-btn.active{background:var(--gold);color:var(--paper);border-color:var(--gold)}
 
-/* ── Centrality detail box ──────────────────────────── */
+/* Centrality detail box — override .method-desc base */
 #cent-detail-en,
 #cent-detail-zh{
-  background:var(--warm);border-left:3px solid var(--gold);
+  background:var(--warm);
+  border-left:3px solid var(--gold);border:1px solid var(--parchment);
+  border-left:3px solid var(--gold);
   padding:14px 18px;border-radius:0 4px 4px 0;
   margin:16px 0 12px;
 }
 
-/* ── Flow diagram ───────────────────────────────────── */
+/* ── Flow diagram ─────────────────────────────────── */
 .flow-row{
   display:flex;align-items:center;gap:0;
   margin:24px 0;flex-wrap:wrap;justify-content:center;
 }
 .flow-step{
   background:var(--warm);border:1px solid var(--parchment);
-  border-radius:6px;padding:12px 18px;text-align:center;min-width:120px;
+  border-radius:6px;padding:12px 18px;text-align:center;min-width:110px;
 }
 .flow-step .flow-num{font-family:var(--sans);font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.1em}
 .flow-step .flow-title{font-family:var(--body);font-size:14px;color:var(--ink);margin-top:4px}
-.flow-arrow{font-size:20px;color:var(--gold);padding:0 8px}
+.flow-arrow{font-size:18px;color:var(--gold);padding:0 6px}
 
-/* ── Decision checklist ─────────────────────────────── */
-.check-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:24px 0}
+/* ── Decision checklist ───────────────────────────── */
+.check-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:20px 0}
 .check-card{
   background:var(--warm);border:1px solid var(--parchment);
-  border-radius:6px;padding:20px 18px;text-align:center;
-  display:flex;flex-direction:column;align-items:center;
+  border-radius:6px;padding:18px 16px;
+  text-align:left;
 }
-.check-icon{font-size:28px;margin-bottom:10px}
-.check-title{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px}
-.check-desc{font-family:var(--sans);font-size:12.5px;color:var(--ink-faded);line-height:1.6}
+.check-icon{font-size:24px;margin-bottom:8px}
+.check-title{font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.check-desc{font-family:var(--sans);font-size:12px;color:var(--ink-faded);line-height:1.6}
 
-/* ── Step details (workflow breakdown) ───────────────── */
-.step-details{
-  display:grid;grid-template-columns:1fr;gap:8px;
-  margin:16px 0;
-}
+/* ── Step details (workflow breakdown) ─────────────── */
+.step-details{display:grid;grid-template-columns:1fr;gap:6px;margin:16px 0}
 .step-item{
-  font-family:var(--body);font-size:15px;line-height:1.7;
-  color:var(--ink-faded);
+  font-size:14px;line-height:1.7;color:var(--ink-faded);
   padding:8px 14px;
   border-left:2px solid var(--parchment);
   transition:border-color .2s;
 }
 .step-item:hover{border-left-color:var(--gold)}
 .step-item strong{color:var(--ink-soft)}
-body.presenting .step-item{font-size:1rem;line-height:1.8;padding:6px 16px}
 
-/* ── method-analogy & method-when decorations ────────── */
-.method-analogy{
-  border-left:3px solid var(--gold);
-  padding:10px 16px;margin:16px 0;
-  background:rgba(194,153,61,.04);border-radius:0 4px 4px 0;
-}
+/* ── method-when (not in style.css — define from scratch) */
 .method-when{
-  border-left:3px solid var(--red);
-  padding:10px 16px;margin:16px 0;
-  background:rgba(181,55,42,.03);border-radius:0 4px 4px 0;
+  margin:12px 0;padding:10px 14px;border-radius:4px;
+  background:rgba(90,122,107,.05);border:1px solid rgba(90,122,107,.2);
+  font-size:14.5px;line-height:1.65;color:var(--ink-faded);
 }
+.method-when strong{color:var(--leather);font-style:normal}
 
-/* ── Title slide intro-cards grid ───────────────────── */
-.intro-cards{
-  display:grid;grid-template-columns:1fr 1fr;gap:16px;
-}
+/* ── Override intro-cards to 2-col for this page (has 2 cards, not 3) */
+.intro-cards{grid-template-columns:1fr 1fr!important}
 
-/* ── Responsive: medium screens ─────────────────────── */
+/* ── Responsive ───────────────────────────────────── */
 @media(max-width:1000px){
   .check-grid{grid-template-columns:1fr 1fr}
-  .intro-cards{grid-template-columns:1fr 1fr}
 }
-/* ── Responsive: small screens ──────────────────────── */
 @media(max-width:700px){
   .flow-row{flex-direction:column;gap:4px}
   .flow-arrow{transform:rotate(90deg);padding:2px 0}
   .check-grid{grid-template-columns:1fr}
   .vis-row{flex-direction:column}
   .vis-panel{min-width:100%}
-  .intro-cards{grid-template-columns:1fr}
+  .intro-cards{grid-template-columns:1fr!important}
   body.presenting .slide > *{padding-left:24px;padding-right:24px}
 }
-/* ── Responsive: presentation on smaller screens ────── */
 @media(max-width:900px){
   body.presenting .slide h2{font-size:1.8rem}
   body.presenting .slide .method-desc{font-size:1rem}
-  body.presenting .check-desc{font-size:12.5px}
+  body.presenting .check-desc{font-size:12px}
 }
 </style>
 
@@ -425,7 +413,7 @@ body.presenting .step-item{font-size:1rem;line-height:1.8;padding:6px 16px}
     <button class="cent-btn" onclick="showCent('eigen')" data-lang="en">Eigenvector</button>
     <button class="cent-btn" onclick="showCent('eigen')" data-lang="zh">特征向量</button>
   </div>
-  <div class="vis-panel" style="max-width:620px">
+  <div class="vis-panel" style="max-width:540px">
     <svg id="cent-svg" viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
       <line x1="80" y1="60" x2="200" y2="50" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
       <line x1="80" y1="60" x2="140" y2="140" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
@@ -467,7 +455,7 @@ body.presenting .step-item{font-size:1rem;line-height:1.8;padding:6px 16px}
 
   <!-- VIS: Community network -->
   <div class="vis-row">
-    <div class="vis-panel" style="max-width:620px">
+    <div class="vis-panel" style="max-width:540px">
       <svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
         <line x1="60" y1="50" x2="120" y2="40" stroke="#b85450" stroke-width="2" opacity=".4"/>
         <line x1="60" y1="50" x2="90" y2="110" stroke="#b85450" stroke-width="2" opacity=".4"/>
