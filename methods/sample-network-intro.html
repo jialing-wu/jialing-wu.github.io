@@ -151,11 +151,8 @@ body.presenting .pres-progress{
   <h2 data-lang="en">Why Study Relationships, Not Just Individuals?</h2>
   <h2 data-lang="zh">为什么要研究关系，而不只是个体？</h2>
 
-  <p class="method-desc" data-lang="en">Most quantitative methods treat each observation as independent: one row per person, each row unrelated to others. But many social phenomena are fundamentally relational. Who you know shapes what you know. Who trades with whom shapes which economies grow. Who co-sponsors legislation with whom reveals hidden political alliances.</p>
-  <p class="method-desc" data-lang="zh">大多数定量方法把每个观测视为独立的：每人一行，行与行无关。但许多社会现象本质上是关系性的。你认识谁影响你知道什么。谁与谁贸易决定哪些经济体增长。谁和谁联署法案揭示隐藏的政治联盟。</p>
-
-  <p class="method-desc" data-lang="en">Network analysis provides the tools to study these relational structures. Instead of asking "what are this person's attributes?", we ask "what is this person's position in a web of relationships?" — and that position often explains outcomes better than individual characteristics alone.</p>
-  <p class="method-desc" data-lang="zh">网络分析提供研究这些关系结构的工具。不是问"这个人有什么属性？"，而是问"这个人在关系网中处于什么位置？"——这个位置往往比个体特征更能解释结果。</p>
+  <p class="method-desc" data-lang="en">Most methods treat observations as independent rows. But many social phenomena are relational — who co-sponsors legislation with whom reveals hidden political alliances that individual attributes cannot explain. Network analysis shifts the question from "what are this person's attributes?" to "what is their position in a web of relationships?"</p>
+  <p class="method-desc" data-lang="zh">大多数方法把观测当作独立的行。但许多社会现象是关系性的——谁和谁联署法案揭示了个体属性无法解释的政治联盟。网络分析把问题从"这个人有什么属性？"转变为"这个人在关系网中处于什么位置？"</p>
 
   <!-- VIS: Spreadsheet vs Network -->
   <div class="vis-row">
@@ -181,13 +178,11 @@ body.presenting .pres-progress{
       <div class="vis-label" data-lang="en">Network Data</div>
       <div class="vis-label" data-lang="zh">网络数据</div>
       <svg viewBox="0 0 260 150" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
-        <!-- edges -->
         <line x1="70" y1="45" x2="140" y2="40" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
         <line x1="70" y1="45" x2="100" y2="100" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
         <line x1="140" y1="40" x2="100" y2="100" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
         <line x1="140" y1="40" x2="190" y2="90" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
         <line x1="190" y1="90" x2="230" y2="130" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
-        <!-- nodes -->
         <circle cx="70" cy="45" r="16" fill="#c29a3d" opacity=".2" stroke="#c29a3d" stroke-width="1.5"/>
         <text x="70" y="49" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600">Alice</text>
         <circle cx="140" cy="40" r="18" fill="#c29a3d" opacity=".35" stroke="#c29a3d" stroke-width="1.5"/>
@@ -215,11 +210,8 @@ body.presenting .pres-progress{
   <h2 data-lang="en">The Language of Networks</h2>
   <h2 data-lang="zh">网络的语言</h2>
 
-  <p class="method-desc" data-lang="en">A network has two building blocks: <strong>nodes</strong> (the actors — people, organizations, countries) and <strong>edges</strong> (the relationships — friendships, trade, co-authorship). That's it. Everything else builds on these two.</p>
-  <p class="method-desc" data-lang="zh">网络有两个基本构件：<strong>节点</strong>（行动者——人、组织、国家）和<strong>边</strong>（关系——友谊、贸易、合著）。就这些。其他一切都建立在这两者之上。</p>
-
-  <p class="method-desc" data-lang="en">Three key distinctions to remember:</p>
-  <p class="method-desc" data-lang="zh">三个关键区分：</p>
+  <p class="method-desc" data-lang="en">A network has two building blocks: <strong>nodes</strong> (actors) and <strong>edges</strong> (relationships). Mathematically, a network is a graph <em>G = (V, E)</em> where <em>V</em> is the vertex set and <em>E</em> the edge set. Everything else builds on these two. Three key distinctions:</p>
+  <p class="method-desc" data-lang="zh">网络有两个基本构件：<strong>节点</strong>（行动者）和<strong>边</strong>（关系）。数学上，网络是一个图 <em>G = (V, E)</em>，其中 <em>V</em> 是顶点集，<em>E</em> 是边集。其他一切都建立在这两者之上。三个关键区分：</p>
 
   <!-- VIS: Three network types -->
   <div class="vis-row">
@@ -237,8 +229,8 @@ body.presenting .pres-progress{
         <text x="120" y="34" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">B</text>
         <text x="80" y="84" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">C</text>
       </svg>
-      <div class="vis-caption" data-lang="en">A↔B symmetric</div>
-      <div class="vis-caption" data-lang="zh">A↔B 对称</div>
+      <div class="vis-caption" data-lang="en">Symmetric adjacency matrix (A<sub>ij</sub> = A<sub>ji</sub>). E.g. co-authorship.</div>
+      <div class="vis-caption" data-lang="zh">对称邻接矩阵（A<sub>ij</sub> = A<sub>ji</sub>）。如：合著关系。</div>
     </div>
     <div class="vis-panel">
       <div class="vis-label" data-lang="en">Directed</div>
@@ -255,8 +247,8 @@ body.presenting .pres-progress{
         <text x="120" y="34" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">B</text>
         <text x="80" y="84" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">C</text>
       </svg>
-      <div class="vis-caption" data-lang="en">A→B ≠ B→A</div>
-      <div class="vis-caption" data-lang="zh">A→B ≠ B→A</div>
+      <div class="vis-caption" data-lang="en">Asymmetric (A<sub>ij</sub> ≠ A<sub>ji</sub>). E.g. Twitter follows, citations.</div>
+      <div class="vis-caption" data-lang="zh">非对称（A<sub>ij</sub> ≠ A<sub>ji</sub>）。如：关注、引用。</div>
     </div>
     <div class="vis-panel">
       <div class="vis-label" data-lang="en">Weighted</div>
@@ -275,13 +267,10 @@ body.presenting .pres-progress{
         <text x="52" y="62" font-size="9" fill="#6b6560" text-anchor="middle" font-family="'IBM Plex Sans',sans-serif">w=1</text>
         <text x="108" y="62" font-size="9" fill="#6b6560" text-anchor="middle" font-family="'IBM Plex Sans',sans-serif">w=3</text>
       </svg>
-      <div class="vis-caption" data-lang="en">Edge thickness = strength</div>
-      <div class="vis-caption" data-lang="zh">边的粗细 = 强度</div>
+      <div class="vis-caption" data-lang="en">A<sub>ij</sub> ∈ ℝ (continuous). E.g. trade volume between countries.</div>
+      <div class="vis-caption" data-lang="zh">A<sub>ij</sub> ∈ ℝ（连续值）。如：国家间贸易量。</div>
     </div>
   </div>
-
-  <p class="method-desc" data-lang="en"><strong>Directed vs. undirected:</strong> "A follows B on Twitter" is directed (A→B ≠ B→A). "A and B are co-authors" is undirected (symmetric). <strong>Weighted vs. binary:</strong> Trade volume between countries is weighted (a number); friendship is often binary (yes/no). <strong>Bipartite:</strong> Two types of nodes — e.g., people and organizations, students and courses.</p>
-  <p class="method-desc" data-lang="zh"><strong>有向 vs. 无向：</strong>"A 在 Twitter 上关注 B"是有向的（A→B ≠ B→A）。"A 和 B 是合著者"是无向的（对称）。<strong>加权 vs. 二元：</strong>国家间贸易量是加权的（一个数字）；友谊通常是二元的（是/否）。<strong>二部网络：</strong>两类节点——如人与组织、学生与课程。</p>
 </div>
 
 <!-- SLIDE: Who Is Important -->
@@ -291,8 +280,8 @@ body.presenting .pres-progress{
   <h2 data-lang="en">Who Is "Important"? Three Answers</h2>
   <h2 data-lang="zh">谁"重要"？三种回答</h2>
 
-  <p class="method-desc" data-lang="en">Imagine five people: Alice, Bob, Carol, Dave, Eve. Bob knows everyone in a tight cluster. Dave is the only bridge to Eve, who's otherwise isolated. Which one is "important"?</p>
-  <p class="method-desc" data-lang="zh">想象五个人：Alice、Bob、Carol、Dave、Eve。Bob 认识紧密群体里的每个人。Dave 是通往孤立的 Eve 的唯一桥梁。谁"重要"？</p>
+  <p class="method-desc" data-lang="en">"Importance" depends on what you mean. Click each measure below — watch the node sizes change and read why.</p>
+  <p class="method-desc" data-lang="zh">"重要"取决于你的定义。点击下方每个指标——观察节点大小变化，阅读原因。</p>
 
   <!-- VIS: Interactive centrality network -->
   <div class="cent-btns">
@@ -305,13 +294,11 @@ body.presenting .pres-progress{
   </div>
   <div class="vis-panel" style="max-width:500px">
     <svg id="cent-svg" viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
-      <!-- edges -->
       <line x1="80" y1="60" x2="200" y2="50" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
       <line x1="80" y1="60" x2="140" y2="140" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
       <line x1="200" y1="50" x2="140" y2="140" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
       <line x1="200" y1="50" x2="290" y2="100" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
       <line x1="290" y1="100" x2="360" y2="140" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
-      <!-- nodes — sizes will be updated by JS -->
       <circle id="cn-alice" cx="80" cy="60" r="18" fill="#c29a3d" opacity=".3" stroke="#c29a3d" stroke-width="2"/>
       <text x="80" y="64" font-size="11" fill="#3a3632" text-anchor="middle" font-weight="600">Alice</text>
       <circle id="cn-bob" cx="200" cy="50" r="24" fill="#c29a3d" opacity=".5" stroke="#c29a3d" stroke-width="2"/>
@@ -327,11 +314,12 @@ body.presenting .pres-progress{
     <div class="vis-caption" id="cent-caption-zh" data-lang="zh">度中心性：节点大小 = 连接数。Bob 最多（3 条）。</div>
   </div>
 
-  <p class="method-desc" data-lang="en"><strong>Degree centrality</strong> — who has the most connections? Bob wins. This is the simplest measure: just count the edges. <strong>Betweenness centrality</strong> — who is a bridge? Dave is critical: remove him and Eve is completely cut off. Betweenness counts how often a node lies on the shortest path between others. <strong>Eigenvector centrality</strong> — who is connected to important people? Alice's two connections are both to Bob (the most connected), making her more central than Eve whose only tie is to the peripheral Dave.</p>
-  <p class="method-desc" data-lang="zh"><strong>度中心性</strong>——谁连接最多？Bob 赢。最简单的指标：数边的数量。<strong>中介中心性</strong>——谁是桥梁？Dave 至关重要：移除他，Eve 完全孤立。中介性统计节点出现在其他节点对之间最短路上的频率。<strong>特征向量中心性</strong>——谁和重要的人相连？Alice 的两条连接都通向 Bob（连接最多的人），这使她比 Eve 更中心——Eve 唯一的关系是边缘的 Dave。</p>
+  <!-- Dynamic explanation area — updated by JS -->
+  <div id="cent-detail-en" class="method-desc" data-lang="en"><strong>Degree centrality</strong> — simply count edges: C<sub>D</sub>(i) = k<sub>i</sub> / (n−1). <em>Intuition:</em> who has the most direct contacts? Bob wins with 3. The most popular kid at the party. <em>Theory:</em> based on the adjacency matrix row sum, normalized by max possible ties.</div>
+  <div id="cent-detail-zh" class="method-desc" data-lang="zh"><strong>度中心性</strong>——直接数边：C<sub>D</sub>(i) = k<sub>i</sub> / (n−1)。<em>直觉：</em>谁的直接联系最多？Bob 以 3 条胜出。派对上最受欢迎的人。<em>理论：</em>基于邻接矩阵行和，除以最大可能连接数进行标准化。</div>
 
-  <div class="method-when" data-lang="en"><strong>Key insight:</strong> There is no single "right" measure of importance. Each captures a different structural role. Choose based on your research question.</div>
-  <div class="method-when" data-lang="zh"><strong>核心洞见：</strong>没有单一"正确"的重要性指标。每个捕捉不同的结构角色。根据研究问题选择。</div>
+  <div class="method-when" data-lang="en"><strong>Key insight:</strong> No single "right" measure — each captures a different structural role. Choose based on your research question.</div>
+  <div class="method-when" data-lang="zh"><strong>核心洞见：</strong>没有单一"正确"的指标——每个捕捉不同的结构角色。根据研究问题选择。</div>
 </div>
 
 <!-- SLIDE: Communities -->
@@ -341,38 +329,32 @@ body.presenting .pres-progress{
   <h2 data-lang="en">Finding Groups: Community Detection</h2>
   <h2 data-lang="zh">发现群体：社区检测</h2>
 
-  <p class="method-desc" data-lang="en">Real networks are cliquish. Think of a high school cafeteria: the drama kids sit together, the athletes at another table. Within each group, everyone knows everyone; between groups, only a few cross-group ties exist.</p>
-  <p class="method-desc" data-lang="zh">真实网络是小团体的。想象高中食堂：戏剧社的孩子坐一起，运动员坐另一桌。每个群体内部大家互相认识；群体之间只有少数跨组联系。</p>
+  <p class="method-desc" data-lang="en">Real networks are cliquish — dense within groups, sparse between them. Community detection algorithms discover these groups automatically from connections alone, no labels needed.</p>
+  <p class="method-desc" data-lang="zh">真实网络是小团体的——组内密集、组间稀疏。社区检测算法仅从连接数据就能自动发现这些群体，不需要标签。</p>
 
   <!-- VIS: Community network -->
   <div class="vis-row">
     <div class="vis-panel" style="max-width:500px">
       <svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
-        <!-- Community A edges (dense) -->
         <line x1="60" y1="50" x2="120" y2="40" stroke="#b85450" stroke-width="2" opacity=".4"/>
         <line x1="60" y1="50" x2="90" y2="110" stroke="#b85450" stroke-width="2" opacity=".4"/>
         <line x1="120" y1="40" x2="90" y2="110" stroke="#b85450" stroke-width="2" opacity=".4"/>
         <line x1="120" y1="40" x2="150" y2="100" stroke="#b85450" stroke-width="2" opacity=".4"/>
         <line x1="60" y1="50" x2="150" y2="100" stroke="#b85450" stroke-width="2" opacity=".4"/>
-        <!-- Community B edges (dense) -->
         <line x1="270" y1="45" x2="330" y2="50" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
         <line x1="270" y1="45" x2="280" y2="110" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
         <line x1="330" y1="50" x2="280" y2="110" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
         <line x1="330" y1="50" x2="350" y2="120" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
         <line x1="280" y1="110" x2="350" y2="120" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
-        <!-- Bridge edge -->
         <line x1="150" y1="100" x2="270" y2="45" stroke="#c29a3d" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>
-        <!-- Community A nodes -->
         <circle cx="60" cy="50" r="14" fill="#b85450" opacity=".25" stroke="#b85450" stroke-width="1.5"/>
         <circle cx="120" cy="40" r="14" fill="#b85450" opacity=".25" stroke="#b85450" stroke-width="1.5"/>
         <circle cx="90" cy="110" r="14" fill="#b85450" opacity=".25" stroke="#b85450" stroke-width="1.5"/>
         <circle cx="150" cy="100" r="14" fill="#b85450" opacity=".25" stroke="#b85450" stroke-width="1.5"/>
-        <!-- Community B nodes -->
         <circle cx="270" cy="45" r="14" fill="#5b8c85" opacity=".25" stroke="#5b8c85" stroke-width="1.5"/>
         <circle cx="330" cy="50" r="14" fill="#5b8c85" opacity=".25" stroke="#5b8c85" stroke-width="1.5"/>
         <circle cx="280" cy="110" r="14" fill="#5b8c85" opacity=".25" stroke="#5b8c85" stroke-width="1.5"/>
         <circle cx="350" cy="120" r="14" fill="#5b8c85" opacity=".25" stroke="#5b8c85" stroke-width="1.5"/>
-        <!-- Labels -->
         <text x="95" y="155" font-size="11" fill="#b85450" text-anchor="middle" font-weight="600">Community A</text>
         <text x="305" y="155" font-size="11" fill="#5b8c85" text-anchor="middle" font-weight="600">Community B</text>
         <text x="210" y="68" font-size="9" fill="#c29a3d" text-anchor="middle" font-style="italic">bridge</text>
@@ -382,8 +364,8 @@ body.presenting .pres-progress{
     </div>
   </div>
 
-  <p class="method-desc" data-lang="en"><strong>Community detection</strong> algorithms discover these groups automatically from the connection data alone — no labels needed. The most common approach maximizes <strong>modularity</strong>: a score that measures how many more within-group edges exist than you'd expect by chance. Applications range from identifying political factions in Congress to finding echo chambers on social media.</p>
-  <p class="method-desc" data-lang="zh"><strong>社区检测</strong>算法仅从连接数据就能自动发现这些群体——不需要标签。最常用的方法是最大化<strong>模块性</strong>：衡量组内边比随机预期多多少的分数。应用从识别国会政治派系到发现社交媒体回音室。</p>
+  <p class="method-desc" data-lang="en"><em>Intuition:</em> find groups where members are more connected to each other than to outsiders — like identifying lunch tables in a high school cafeteria. <em>Theory:</em> the most common approach maximizes <strong>modularity</strong> Q = (1/2m) Σ [A<sub>ij</sub> − k<sub>i</sub>k<sub>j</sub>/2m] δ(c<sub>i</sub>, c<sub>j</sub>), which compares actual within-group edges to what you'd expect under a random null model. The Louvain algorithm solves this efficiently even for million-node networks.</p>
+  <p class="method-desc" data-lang="zh"><em>直觉：</em>找到成员之间联系比对外联系更紧密的群体——就像识别高中食堂里的午餐桌。<em>理论：</em>最常用的方法最大化<strong>模块性</strong> Q = (1/2m) Σ [A<sub>ij</sub> − k<sub>i</sub>k<sub>j</sub>/2m] δ(c<sub>i</sub>, c<sub>j</sub>)，比较实际组内边与随机零模型的预期。Louvain 算法即使面对百万节点网络也能高效求解。</p>
 </div>
 
 <!-- SLIDE: When to Use -->
@@ -393,8 +375,8 @@ body.presenting .pres-progress{
   <h2 data-lang="en">Should You Use Network Analysis?</h2>
   <h2 data-lang="zh">你应该用网络分析吗？</h2>
 
-  <p class="method-desc" data-lang="en">Ask yourself three questions:</p>
-  <p class="method-desc" data-lang="zh">问自己三个问题：</p>
+  <p class="method-desc" data-lang="en">If you can answer "yes" to all three, network analysis is likely the right tool:</p>
+  <p class="method-desc" data-lang="zh">如果三个问题都能答"是"，网络分析很可能是合适的工具：</p>
 
   <!-- VIS: Decision checklist -->
   <div class="check-grid">
@@ -402,33 +384,24 @@ body.presenting .pres-progress{
       <div class="check-icon">🔗</div>
       <div class="check-title" data-lang="en">Relational Data?</div>
       <div class="check-title" data-lang="zh">关系数据？</div>
-      <div class="check-desc" data-lang="en">Pairs: who↔whom, trade flows, citations, co-authorship</div>
-      <div class="check-desc" data-lang="zh">配对：谁↔谁、贸易流、引用、合著</div>
+      <div class="check-desc" data-lang="en">Your data has pairs (who↔whom). If each row is an independent person with no ties, standard methods may suffice.</div>
+      <div class="check-desc" data-lang="zh">你的数据包含配对（谁↔谁）。如果每行是独立个体且没有联系，标准方法可能足够。</div>
     </div>
     <div class="check-card">
       <div class="check-icon">📍</div>
       <div class="check-title" data-lang="en">Position Matters?</div>
       <div class="check-title" data-lang="zh">位置重要？</div>
-      <div class="check-desc" data-lang="en">Connections, brokerage, community shape outcomes beyond attributes</div>
-      <div class="check-desc" data-lang="zh">连接、中介角色、社区归属影响结果，超越个体属性</div>
+      <div class="check-desc" data-lang="en">Structural position (connections, brokerage, community) shapes outcomes beyond individual attributes. Network analysis captures what regression cannot.</div>
+      <div class="check-desc" data-lang="zh">结构位置（连接、中介角色、社区归属）影响结果，超越个体属性。网络分析能捕捉回归无法捕捉的东西。</div>
     </div>
     <div class="check-card">
       <div class="check-icon">🌊</div>
       <div class="check-title" data-lang="en">Dependence Is the Story?</div>
       <div class="check-title" data-lang="zh">依赖性是核心？</div>
-      <div class="check-desc" data-lang="en">Behavior spills over: friends influence friends, policies spread</div>
-      <div class="check-desc" data-lang="zh">行为溢出：朋友影响朋友，政策扩散</div>
+      <div class="check-desc" data-lang="en">Observations are <em>not</em> independent — your friend's behavior affects yours, one country's policy spills over to neighbors.</div>
+      <div class="check-desc" data-lang="zh">观测<em>不</em>独立——你朋友的行为影响你，一国的政策溢出到邻国。</div>
     </div>
   </div>
-
-  <p class="method-desc" data-lang="en"><strong>1. Is your data relational?</strong> If you have pairs — who knows whom, who trades with whom, who cites whom — you have network data. If each row is an independent person with no ties, standard methods may suffice.</p>
-  <p class="method-desc" data-lang="zh"><strong>1. 你的数据是关系性的吗？</strong>如果你有配对数据——谁认识谁、谁和谁贸易、谁引用谁——你就有网络数据。如果每行是独立的人且没有联系，标准方法可能足够。</p>
-
-  <p class="method-desc" data-lang="en"><strong>2. Does position matter?</strong> If you suspect that someone's structural position — their connections, their brokerage role, their community membership — affects their outcomes, network analysis can capture what regression cannot.</p>
-  <p class="method-desc" data-lang="zh"><strong>2. 位置重要吗？</strong>如果你怀疑某人的结构位置——他们的连接、中介角色、社区归属——影响他们的结果，网络分析能捕捉回归无法捕捉的东西。</p>
-
-  <p class="method-desc" data-lang="en"><strong>3. Is dependence the story?</strong> If the interesting part is that observations are <em>not</em> independent — your friend's behavior affects yours, one country's policy spills over to neighbors — then network analysis is your framework.</p>
-  <p class="method-desc" data-lang="zh"><strong>3. 依赖性是核心吗？</strong>如果有趣的部分正是观测<em>不</em>独立——你朋友的行为影响你，一国的政策溢出到邻国——那网络分析就是你的框架。</p>
 </div>
 
 <!-- SLIDE: Steps to a Network Analysis Paper -->
@@ -438,7 +411,7 @@ body.presenting .pres-progress{
   <h2 data-lang="en">From Idea to Paper: A Network Analysis Workflow</h2>
   <h2 data-lang="zh">从想法到论文：网络分析的工作流程</h2>
 
-  <!-- VIS: Flow diagram -->
+  <!-- VIS: Flow diagram with descriptions -->
   <div class="flow-row">
     <div class="flow-step"><div class="flow-num">STEP 1</div><div class="flow-title" data-lang="en">Define</div><div class="flow-title" data-lang="zh">定义</div></div>
     <div class="flow-arrow">→</div>
@@ -451,20 +424,8 @@ body.presenting .pres-progress{
     <div class="flow-step"><div class="flow-num">STEP 5</div><div class="flow-title" data-lang="en">Robustness</div><div class="flow-title" data-lang="zh">稳健性</div></div>
   </div>
 
-  <p class="method-desc" data-lang="en"><strong>Step 1 — Define the network.</strong> What are the nodes? What constitutes an edge? This is the most important decision. A poorly defined network leads to meaningless results. Be explicit: "Nodes = U.S. senators; edge = co-sponsored at least 3 bills in the 116th Congress."</p>
-  <p class="method-desc" data-lang="zh"><strong>第一步——定义网络。</strong>节点是什么？什么构成边？这是最重要的决定。定义不好的网络导致无意义的结果。要明确："节点 = 美国参议员；边 = 在第 116 届国会中共同联署至少 3 项法案。"</p>
-
-  <p class="method-desc" data-lang="en"><strong>Step 2 — Construct and validate.</strong> Build your edge list or adjacency matrix. Check: Is it sparse or dense? Are there isolates? Is the network connected? Visualize it early — a hairball means you need to filter or threshold.</p>
-  <p class="method-desc" data-lang="zh"><strong>第二步——构建并验证。</strong>建立边表或邻接矩阵。检查：稀疏还是密集？有孤立节点吗？网络是连通的吗？尽早可视化——一团乱麻意味着你需要过滤或设阈值。</p>
-
-  <p class="method-desc" data-lang="en"><strong>Step 3 — Describe.</strong> Compute global properties (density, diameter, clustering coefficient) and node-level measures (centrality, community membership). This is your descriptive statistics — the network equivalent of means and standard deviations.</p>
-  <p class="method-desc" data-lang="zh"><strong>第三步——描述。</strong>计算全局属性（密度、直径、聚类系数）和节点级指标（中心性、社区归属）。这是你的描述性统计——均值和标准差的网络等价物。</p>
-
-  <p class="method-desc" data-lang="en"><strong>Step 4 — Model (if needed).</strong> If your research question is causal or explanatory — "What drives tie formation?" "Does network position affect outcomes?" — use ERGM, QAP, or latent space models. This is your regression equivalent.</p>
-  <p class="method-desc" data-lang="zh"><strong>第四步——建模（如需要）。</strong>如果你的研究问题是因果或解释性的——"什么驱动关系形成？""网络位置是否影响结果？"——使用 ERGM、QAP 或潜在空间模型。这是回归的等价物。</p>
-
-  <p class="method-desc" data-lang="en"><strong>Step 5 — Robustness.</strong> Test sensitivity: Does the result change if you threshold edges differently? If you use a different centrality measure? If you remove the top 5% most connected nodes? Network results can be fragile — robustness checks are essential.</p>
-  <p class="method-desc" data-lang="zh"><strong>第五步——稳健性检验。</strong>测试敏感性：如果用不同阈值定义边，结果变吗？用不同中心性指标呢？移除连接最多的 5% 节点呢？网络结果可能脆弱——稳健性检验必不可少。</p>
+  <p class="method-desc" data-lang="en"><strong>1 Define</strong> — what are nodes and edges? Be explicit (e.g. "Nodes = senators; edge = co-sponsored ≥3 bills"). This is the most important decision. <strong>2 Construct</strong> — build edge list / adjacency matrix; visualize early to spot issues. <strong>3 Describe</strong> — compute density, centrality, communities — this is your descriptive statistics. <strong>4 Model</strong> — if causal questions arise, use ERGM, QAP, or latent space models. <strong>5 Robustness</strong> — vary thresholds, measures, and node removals to test fragility.</p>
+  <p class="method-desc" data-lang="zh"><strong>1 定义</strong>——节点和边是什么？要明确（如"节点 = 参议员；边 = 共同联署 ≥3 项法案"）。这是最重要的决定。<strong>2 构建</strong>——建立边表/邻接矩阵，尽早可视化以发现问题。<strong>3 描述</strong>——计算密度、中心性、社区——这是你的描述性统计。<strong>4 建模</strong>——如果涉及因果问题，使用 ERGM、QAP 或潜在空间模型。<strong>5 稳健性</strong>——改变阈值、指标和节点移除来测试结果的脆弱性。</p>
 
   <div class="method-when" data-lang="en"><strong>Now let's see this workflow in action.</strong> Part 2 walks through a real published paper — from research question to findings.</div>
   <div class="method-when" data-lang="zh"><strong>现在让我们看看这个流程的实战。</strong>第二部分将逐步拆解一篇真实发表的论文——从研究问题到发现。</div>
@@ -572,13 +533,19 @@ body.presenting .pres-progress{
   const centData = {
     degree:  { alice:18, bob:24, carol:18, dave:18, eve:12,
       en:'Degree: node size = number of connections. Bob has the most (3).',
-      zh:'度中心性：节点大小 = 连接数。Bob 最多（3 条）。' },
+      zh:'度中心性：节点大小 = 连接数。Bob 最多（3 条）。',
+      detailEn:'<strong>Degree centrality</strong> — simply count edges: C<sub>D</sub>(i) = k<sub>i</sub> / (n−1). <em>Intuition:</em> who has the most direct contacts? Bob wins with 3. The most popular kid at the party. <em>Theory:</em> based on the adjacency matrix row sum, normalized by max possible ties.',
+      detailZh:'<strong>度中心性</strong>——直接数边：C<sub>D</sub>(i) = k<sub>i</sub> / (n−1)。<em>直觉：</em>谁的直接联系最多？Bob 以 3 条胜出。派对上最受欢迎的人。<em>理论：</em>基于邻接矩阵行和，除以最大可能连接数进行标准化。' },
     between: { alice:12, bob:22, carol:12, dave:22, eve:10,
       en:'Betweenness: Bob and Dave are bridges. Remove either and the network splits.',
-      zh:'中介中心性：Bob 和 Dave 是桥梁。移除任一个，网络就断裂。' },
+      zh:'中介中心性：Bob 和 Dave 是桥梁。移除任一个，网络就断裂。',
+      detailEn:'<strong>Betweenness centrality</strong> — count shortest paths passing through a node: C<sub>B</sub>(i) = Σ σ<sub>st</sub>(i) / σ<sub>st</sub>. <em>Intuition:</em> who is the gatekeeper? Dave controls all information flow to Eve. Remove him, and Eve is completely cut off. <em>Theory:</em> based on Brandes\' algorithm; measures how often a node lies on geodesic paths between all other pairs.',
+      detailZh:'<strong>中介中心性</strong>——统计经过节点的最短路径数：C<sub>B</sub>(i) = Σ σ<sub>st</sub>(i) / σ<sub>st</sub>。<em>直觉：</em>谁是看门人？Dave 控制着通向 Eve 的所有信息流。移除他，Eve 完全孤立。<em>理论：</em>基于 Brandes 算法，衡量节点出现在所有其他节点对之间测地路径上的频率。' },
     eigen:   { alice:20, bob:24, carol:20, dave:16, eve:10,
       en:'Eigenvector: Alice & Carol are tied to the well-connected Bob, boosting their score.',
-      zh:'特征向量：Alice 和 Carol 连接着高连接度的 Bob，提升了她们的得分。' }
+      zh:'特征向量：Alice 和 Carol 连接着高连接度的 Bob，提升了她们的得分。',
+      detailEn:'<strong>Eigenvector centrality</strong> — your score depends on your neighbors\' scores: x<sub>i</sub> = (1/λ) Σ A<sub>ij</sub> x<sub>j</sub>. <em>Intuition:</em> it\'s not just who you know, but how well-connected they are. Alice knows Bob (the hub), making her more central than Eve who only knows the peripheral Dave. <em>Theory:</em> the leading eigenvector of the adjacency matrix A. Google\'s PageRank is a variant of this idea.',
+      detailZh:'<strong>特征向量中心性</strong>——你的得分取决于邻居的得分：x<sub>i</sub> = (1/λ) Σ A<sub>ij</sub> x<sub>j</sub>。<em>直觉：</em>不只看你认识谁，还看他们的连接度。Alice 认识 Bob（枢纽），因此比只认识边缘 Dave 的 Eve 更中心。<em>理论：</em>邻接矩阵 A 的主特征向量。Google 的 PageRank 是此思想的变体。' }
   };
   window.showCent = function(type){
     var d = centData[type];
@@ -592,6 +559,11 @@ body.presenting .pres-progress{
     var capZh = document.getElementById('cent-caption-zh');
     if(cap) cap.textContent = d.en;
     if(capZh) capZh.textContent = d.zh;
+    // Update detail text
+    var detEn = document.getElementById('cent-detail-en');
+    var detZh = document.getElementById('cent-detail-zh');
+    if(detEn) detEn.innerHTML = d.detailEn;
+    if(detZh) detZh.innerHTML = d.detailZh;
     // Update button states
     document.querySelectorAll('.cent-btn').forEach(function(b){ b.classList.remove('active'); });
     document.querySelectorAll('.cent-btn').forEach(function(b){
