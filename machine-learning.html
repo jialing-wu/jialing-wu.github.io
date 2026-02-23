@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine Learning — Research Methods Notebook</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── KNOWLEDGE TREE v2 ── */
+.tree{margin:20px 0}
+.node{margin:5px 0;border-radius:5px}
+.node-head{display:flex;align-items:center;gap:11px;padding:11px 16px;cursor:pointer;border:1px solid var(--parchment);border-radius:5px;background:var(--paper);transition:all .25s;user-select:none}
+.node-head:hover{background:var(--warm);border-color:var(--tea);transform:translateX(2px)}
+.node-arrow{font-size:9px;color:var(--ink-ghost);transition:transform .3s ease;flex-shrink:0;width:14px;text-align:center}
+.node.open>.node-head .node-arrow{transform:rotate(90deg)}
+.node-label{font-family:var(--sans);font-size:13.5px;font-weight:500;color:var(--ink);flex:1;line-height:1.4}
+.node-tag{font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;color:var(--paper);flex-shrink:0}
+.tag-problem{background:var(--red)}
+.tag-model{background:var(--leather)}
+.tag-math{background:var(--ink-ghost)}
+.tag-tip{background:var(--gold)}
+.tag-data{background:#5a7a6b}
+
+/* node icon — elegant circle with letter */
+.nd-ico{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--sans);font-size:11px;font-weight:600;flex-shrink:0;letter-spacing:0}
+.ico-reg{background:rgba(181,55,42,.1);color:var(--red)}
+.ico-cls{background:rgba(194,153,61,.12);color:var(--gold)}
+.ico-uns{background:rgba(90,122,107,.12);color:#5a7a6b}
+.ico-opt{background:rgba(139,115,85,.1);color:var(--leather)}
+.ico-loss{background:rgba(181,55,42,.08);color:var(--red)}
+.ico-reg2{background:rgba(30,24,15,.08);color:var(--ink-soft)}
+.ico-arch{background:rgba(194,153,61,.1);color:var(--gold)}
+.ico-act{background:rgba(181,55,42,.1);color:var(--red)}
+.ico-bp{background:rgba(90,122,107,.1);color:#5a7a6b}
+.ico-cnn{background:rgba(139,115,85,.1);color:var(--leather)}
+.ico-la{background:rgba(181,55,42,.1);color:var(--red)}
+.ico-prob{background:rgba(194,153,61,.12);color:var(--gold)}
+.ico-optm{background:rgba(90,122,107,.12);color:#5a7a6b}
+
+.node-body{display:none;padding:0 0 0 22px;margin-top:3px}
+.node.open>.node-body{display:block}
+
+/* leaf detail card */
+.leaf{margin:5px 0;padding:14px 18px;border-left:3px solid var(--parchment);background:rgba(242,235,222,.45);border-radius:0 5px 5px 0;transition:border-color .2s}
+.leaf:hover{border-left-color:var(--tea)}
+.leaf-title{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--red);margin-bottom:6px}
+.leaf p{font-size:14.5px;line-height:1.75;color:var(--ink-faded);margin-bottom:8px}
+.leaf .formula{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);background:var(--warm);padding:9px 14px;border-radius:4px;margin:8px 0;line-height:1.6;overflow-x:auto;white-space:nowrap;border:1px solid rgba(222,212,192,.5)}
+.leaf .when{font-family:var(--sans);font-size:12.5px;color:var(--gold);margin-top:8px;padding:8px 12px;background:rgba(194,153,61,.06);border-radius:4px;line-height:1.5}
+.leaf .when strong{color:var(--leather)}
+.leaf ul{padding-left:18px;margin:6px 0}
+.leaf li{font-size:13.5px;line-height:1.7;color:var(--ink-faded);margin-bottom:4px}
+.leaf .vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
+.leaf .vs-col{font-size:12.5px;line-height:1.65;color:var(--ink-faded);padding:10px 12px;background:var(--paper);border-radius:4px;border:1px solid var(--parchment)}
+.leaf .vs-col strong{color:var(--ink);font-weight:600;display:block;margin-bottom:3px;font-family:var(--sans);font-size:11px;letter-spacing:.04em}
+
+/* example callout — for real-world examples */
+.eg{margin:8px 0;padding:10px 14px;border-radius:4px;background:rgba(181,55,42,.04);border:1px solid rgba(181,55,42,.1);font-size:13px;line-height:1.65;color:var(--ink-faded)}
+.eg::before{content:'';display:inline-block;width:6px;height:6px;background:var(--red);border-radius:50%;margin-right:8px;vertical-align:middle}
+.eg strong{color:var(--red);font-weight:600;font-family:var(--sans);font-size:11px;letter-spacing:.03em}
+
+/* analogy box */
+.analogy{margin:8px 0;padding:10px 14px;border-radius:4px;background:rgba(194,153,61,.06);border:1px solid rgba(194,153,61,.15);font-size:13.5px;line-height:1.65;color:var(--ink-faded);font-style:italic}
+
+/* root level highlight */
+.node-root>.node-head{background:var(--ink);border-color:var(--ink);padding:13px 18px}
+.node-root>.node-head .node-label{color:var(--paper);font-size:15px}
+.node-root>.node-head .node-arrow{color:var(--gold)}
+.node-root>.node-head:hover{background:var(--ink-soft);transform:none}
+.node-root>.node-head .nd-ico{background:rgba(248,244,236,.15);color:var(--gold)}
+
+/* guide text */
+.tree-guide{font-family:var(--sans);font-size:12px;color:var(--ink-ghost);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.tree-guide::before{content:'';display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%}
+
+/* expand/collapse all */
+.tree-controls{display:flex;gap:8px;margin-bottom:14px}
+.tree-btn{font-family:var(--sans);font-size:11px;padding:5px 12px;border:1px solid var(--parchment);border-radius:3px;background:var(--paper);color:var(--ink-faded);cursor:pointer;transition:all .2s}
+.tree-btn:hover{background:var(--warm);color:var(--ink);border-color:var(--tea)}
+
+/* language toggle */
+
+/* info-box for beginner-friendly intro */
+.info-box{margin:16px 0;padding:16px 20px;border-left:4px solid var(--gold);background:rgba(194,153,61,.08);border-radius:0 5px 5px 0;font-size:14.5px;line-height:1.7;color:var(--ink-faded)}
+.info-box p{margin-bottom:8px}
+.info-box p:last-child{margin-bottom:0}
+
+/* intro section */
+.ml-intro{margin-bottom:28px;padding:20px 24px;background:var(--warm);border-radius:6px;border:1px solid var(--parchment)}
+.ml-intro p{font-size:15px;line-height:1.8;color:var(--ink-faded);margin-bottom:10px}
+.ml-intro p:last-child{margin-bottom:0}
+
+/* video lecture links */
+.vid{margin:8px 0;padding:8px 12px;border-radius:4px;background:rgba(90,122,107,.06);border:1px solid rgba(90,122,107,.12);font-family:var(--sans);font-size:11.5px;line-height:1.6;color:var(--ink-faded)}
+.vid::before{content:'VIDEO';font-size:9px;font-weight:600;letter-spacing:.1em;color:#5a7a6b;margin-right:8px}
+.vid a{color:#5a7a6b;text-decoration:none;border-bottom:1px solid rgba(90,122,107,.3);transition:all .2s;margin:0 2px}
+.vid a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
+@media(max-width:860px){
+  .leaf .vs{grid-template-columns:1fr}
+  .node-head{padding:10px 12px}
+  .node-body{padding:0 0 0 14px}
+}
+</style>
+</head>
+<body class="zh">
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="sb-brand" href="index.html"><h2>Methods <span>Notebook</span></h2><div class="sb-sub">Jialing Wu</div></a>
+    <div class="sb-cat">Person-Centered Quantitative Methods</div>
+    <a class="sb-link" href="lpa.html"><span class="sb-num">01</span> Latent Profile Analysis</a>
+    <div class="sb-cat">Computational Social Science</div>
+    <div class="sb-subcat">Foundations</div>
+    <a class="sb-link active" href="machine-learning.html"><span class="sb-num">01</span> Machine Learning</a>
+    <a class="sb-link" href="llm.html"><span class="sb-num">02</span> LLM &amp; NLP</a>
+    <a class="sb-link" href="text-analysis.html"><span class="sb-num">03</span> Text as Data</a>
+    <a class="sb-link" href="theoretical-modeling.html"><span class="sb-num">04</span> Theoretical Modeling</a>
+    <div class="sb-cat">Statistics</div>
+    <div class="sb-subcat">Foundations</div>
+    <a class="sb-link" href="empirical-modeling.html"><span class="sb-num">01</span> Empirical Modeling</a>
+    <div class="sb-footer"><a href="https://jialing-wu.github.io">&larr; My Website</a></div>
+  </aside>
+  <div class="sidebar-overlay" id="overlay" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"></div>
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"><span></span></button>
+      <div class="breadcrumb">Computational Social Science<span class="sep">/</span> Foundations<span class="sep">/</span> Machine Learning</div>
+      <div class="topbar-lang">
+        <button class="lang-btn" id="btn-zh" onclick="setLang('zh')">中文</button>
+        <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <div class="method-header">
+        <h1>Machine Learning</h1>
+        <div class="method-meta">Computational Social Science &middot; Foundations 01</div>
+        <div data-lang="en"><p class="subtitle">Notes from ECE 5307, The Ohio State University &middot; <a href="https://www.youtube.com/playlist?list=PLsN6ERo2QGXKeQ7QFwbTxLW0sXPB-kFmq" target="_blank" style="color:var(--red);border-bottom:1px solid var(--red)">Video Lectures</a> &middot; <a href="https://ece.osu.edu/people/schniter.1" target="_blank" style="color:var(--red);border-bottom:1px solid var(--red)">Prof. Schniter</a></p></div>
+        <div data-lang="zh"><p class="subtitle">笔记整理自 ECE 5307, The Ohio State University &middot; <a href="https://www.youtube.com/playlist?list=PLsN6ERo2QGXKeQ7QFwbTxLW0sXPB-kFmq" target="_blank" style="color:var(--red);border-bottom:1px solid var(--red)">课程视频</a> &middot; <a href="https://ece.osu.edu/people/schniter.1" target="_blank" style="color:var(--red);border-bottom:1px solid var(--red)">Prof. Schniter</a></p></div>
+      </div>
+
+
+      <!-- INTRO -->
+      <div class="ml-intro">
+        <div data-lang="en">
+          <p>Machine learning is the science of getting computers to learn patterns from data, rather than being explicitly programmed with rules. Instead of telling the computer "if the email contains 'free money', mark it as spam," we show it thousands of emails labeled as spam or not-spam, and it figures out the rules on its own.</p>
+          <p>This knowledge tree organizes the core concepts into four questions: <strong>What problem are you solving?</strong> (choosing the right model), <strong>How do you train it?</strong> (optimization &amp; evaluation), <strong>How do neural networks work?</strong> (deep learning), and <strong>What math do you need?</strong> (foundations). Click any node to explore.</p>
+        </div>
+        <div data-lang="zh">
+          <p>机器学习是一门让计算机从数据中自动学习规律的科学，而不是由人类手动编写规则。举个例子：我们不需要告诉计算机"如果邮件里包含'免费赢大奖'就标记为垃圾邮件"——我们只需要给它看成千上万封已经标记好的邮件，它就能自己总结出判断垃圾邮件的规则。</p>
+          <p>这棵知识树把核心概念组织成四个问题：<strong>你要解决什么问题？</strong>（选对模型）、<strong>模型怎么训练？</strong>（优化与评估）、<strong>神经网络怎么工作？</strong>（深度学习）、<strong>需要什么数学？</strong>（基础知识）。点击任意节点即可展开。</p>
+        </div>
+      </div>
+
+      <!-- BEGINNER-FRIENDLY INFO BOX -->
+      <div class="info-box">
+        <div data-lang="en">
+          <p><strong>New to machine learning?</strong> Don't worry — this course starts from scratch. "Machine learning" sounds fancy, but at its core, it's about finding patterns in data using math you mostly already know (linear algebra, calculus, probability). The tree below builds up from simple models (linear regression) to complex ones (neural networks). Prerequisites: comfort with basic calculus (derivatives) and matrix notation helps, but each concept includes intuitive analogies. Software: Python with scikit-learn or PyTorch is standard, though the concepts are language-agnostic.</p>
+        </div>
+        <div data-lang="zh">
+          <p><strong>机器学习新手？</strong>没关系——这门课从头开始教。"机器学习"听起来高深，但核心其实是用你大多已经了解的数学（线性代数、微积分、概率论）在数据中寻找规律。下面的知识树从简单模型（线性回归）逐步建立到复杂模型（神经网络）。前置知识：熟悉基础微积分（导数）和矩阵记号会有帮助，但每个概念都配有直观的类比。软件：Python 搭配 scikit-learn 或 PyTorch 是标准工具，但概念本身不限语言。</p>
+        </div>
+      </div>
+
+      <div data-lang="en"><div class="tree-guide">Click any node to expand / collapse</div></div>
+      <div data-lang="zh"><div class="tree-guide">点击任意节点展开 / 收起</div></div>
+
+      <div class="tree-controls">
+        <button class="tree-btn" onclick="toggleAll(true)"><span data-lang="en">Expand All</span><span data-lang="zh">全部展开</span></button>
+        <button class="tree-btn" onclick="toggleAll(false)"><span data-lang="en">Collapse All</span><span data-lang="zh">全部收起</span></button>
+      </div>
+
+      <div class="tree">
+
+<!-- ============================== -->
+<!-- ROOT 1: WHAT IS YOUR PROBLEM? -->
+<!-- ============================== -->
+<div class="node node-root">
+  <div class="node-head" onclick="tog(this)">
+    <span class="node-arrow">&#9654;</span>
+    <span class="nd-ico">Q1</span>
+    <span class="node-label"><span data-lang="en">What Is Your Problem?</span><span data-lang="zh">你要解决什么问题？</span></span>
+    <span class="node-tag tag-problem"><span data-lang="en">Start Here</span><span data-lang="zh">从这里开始</span></span>
+  </div>
+  <div class="node-body">
+
+    <!-- REGRESSION -->
+    <div class="node">
+      <div class="node-head" onclick="tog(this)">
+        <span class="node-arrow">&#9654;</span>
+        <span class="nd-ico ico-reg">R</span>
+        <span class="node-label"><span data-lang="en">Predict a Continuous Number (Regression)</span><span data-lang="zh">预测一个连续的数值（回归）</span></span>
+        <span class="node-tag tag-problem">Regression</span>
+      </div>
+      <div class="node-body">
+
+        <div class="leaf">
+          <div data-lang="zh">
+            <p>回归问题就是：你想预测的东西是一个<strong>数字</strong>，比如房价、温度、考试分数。它和分类不同——分类是选答案（A/B/C），回归是算出一个具体的值。</p>
+            <div class="analogy">打个比方：分类像选择题（"这封邮件是不是垃圾邮件？"），回归像填空题（"这套房子值多少钱？"）。</div>
+          </div>
+          <div data-lang="en">
+            <p>Regression problems are about predicting a <strong>number</strong> — like a house price, temperature, or exam score. Unlike classification (picking a label), regression outputs a continuous value.</p>
+            <div class="analogy">Think of it this way: classification is multiple choice ("Is this email spam?"), regression is fill-in-the-blank ("How much is this house worth?").</div>
+          </div>
+        </div>
+
+        <div class="node">
+          <div class="node-head" onclick="tog(this)">
+            <span class="node-arrow">&#9654;</span>
+            <span class="nd-ico ico-reg">L</span>
+            <span class="node-label"><span data-lang="en">Linear Regression</span><span data-lang="zh">线性回归</span></span>
+          </div>
+          <div class="node-body">
+            <div class="leaf">
+              <div class="leaf-title">Linear Regression</div>
+              <div data-lang="zh">
+                <p>最基础的回归模型。核心思想很简单：假设输出 y 和输入 x 之间是<strong>直线关系</strong>（y = wx + b），然后找到让预测误差最小的那条直线。</p>
+                <p>怎么找？用<strong>最小二乘法</strong>——把所有预测值和真实值的差的平方加起来，找让这个总和最小的 w 和 b：</p>
+                <div class="formula">J(&#x3B8;) = (1/2n) &#x2211;&#x1D62;&#x2081;&#x207F; (y&#x1D62; &#x2212; x&#x1D62;&#x1D40;&#x3B8;)&#xB2; = (1/2n)||y &#x2212; X&#x3B8;||&#xB2;</div>
+                <p>对 J(&#x3B8;) 求导令其等于零，可以得到一个漂亮的<strong>闭式解（Normal Equation）</strong>：</p>
+                <div class="formula">&#x2207;J = &#x2212;(1/n)X&#x1D40;(y &#x2212; X&#x3B8;) = 0 &#x27F9; &#x3B8;* = (X&#x1D40;X)&#x207B;&#xB9; X&#x1D40;y</div>
+                <p>注意：这个解要求 X&#x1D40;X 可逆。当特征数 d &gt; 样本数 n 时，矩阵不可逆；即使可逆，d 很大时计算 O(d&#xB3;) 也很慢——这时用梯度下降更实际。</p>
+                <p>当特征变量很多时，模型可能会"过拟合"（训练数据拟合得很好但对新数据预测很差）。这时需要<strong>正则化</strong>来约束模型复杂度：</p>
+                <div class="vs">
+                  <div class="vs-col"><strong>Ridge 回归 (L2)</strong><div class="formula">min (1/2n)||y &#x2212; X&#x3B8;||&#xB2; + &#x3BB;||&#x3B8;||&#xB2;&#x2082;</div>闭式解: &#x3B8;* = (X&#x1D40;X + &#x3BB;I)&#x207B;&#xB9; X&#x1D40;y — 加了 &#x3BB;I 后矩阵一定可逆。系数被压缩变小但不会变成零，适合所有特征可能都有用的情况。</div>
+                  <div class="vs-col"><strong>Lasso 回归 (L1)</strong><div class="formula">min (1/2n)||y &#x2212; X&#x3B8;||&#xB2; + &#x3BB;||&#x3B8;||&#x2081;</div>没有闭式解（L1 范数在零点不可导），需用坐标下降法求解。能把不重要的系数直接压到零——相当于自动帮你做特征选择。</div>
+                </div>
+                <div class="eg"><strong>例 1：</strong>根据房屋面积、卧室数量、地段预测房价——面积每增加 1 平米，房价大约上升 X 万元。</div>
+                <div class="eg"><strong>例 2：</strong>教育研究中预测学生的 GPA——分析学习时间、出勤率、家庭收入等因素对成绩的影响。</div>
+                <div class="when"><strong>何时用：</strong>特征和结果大致呈线性关系；需要可解释的系数（比如论文中报告"每增加 1 单位 X，Y 变化多少"）。</div>
+              </div>
+              <div data-lang="en">
+                <p>The most fundamental regression model. The core idea is simple: assume a <strong>straight-line relationship</strong> between output y and input x (y = wx + b), then find the line that minimizes prediction error.</p>
+                <p>How? Using <strong>Least Squares</strong> — sum up the squared differences between predicted and actual values, then find the w and b that minimize this total:</p>
+                <div class="formula">J(&#x3B8;) = (1/2n) &#x2211;&#x1D62;&#x2081;&#x207F; (y&#x1D62; &#x2212; x&#x1D62;&#x1D40;&#x3B8;)&#xB2; = (1/2n)||y &#x2212; X&#x3B8;||&#xB2;</div>
+                <p>Taking the derivative of J(&#x3B8;) and setting it to zero yields a clean <strong>closed-form solution (Normal Equation)</strong>:</p>
+                <div class="formula">&#x2207;J = &#x2212;(1/n)X&#x1D40;(y &#x2212; X&#x3B8;) = 0 &#x27F9; &#x3B8;* = (X&#x1D40;X)&#x207B;&#xB9; X&#x1D40;y</div>
+                <p>Note: this requires X&#x1D40;X to be invertible. When features d &gt; samples n, the matrix is singular; even when invertible, computing O(d&#xB3;) is slow for large d — gradient descent is more practical then.</p>
+                <p>With many features, the model may <strong>overfit</strong> (performs well on training data but poorly on new data). Regularization constrains model complexity:</p>
+                <div class="vs">
+                  <div class="vs-col"><strong>Ridge (L2)</strong><div class="formula">min (1/2n)||y &#x2212; X&#x3B8;||&#xB2; + &#x3BB;||&#x3B8;||&#xB2;&#x2082;</div>Closed-form: &#x3B8;* = (X&#x1D40;X + &#x3BB;I)&#x207B;&#xB9; X&#x1D40;y — adding &#x3BB;I guarantees invertibility. Shrinks coefficients toward zero but never exactly zero. Best when all features may be relevant.</div>
+                  <div class="vs-col"><strong>Lasso (L1)</strong><div class="formula">min (1/2n)||y &#x2212; X&#x3B8;||&#xB2; + &#x3BB;||&#x3B8;||&#x2081;</div>No closed-form (L1 norm is non-differentiable at zero), solved by coordinate descent. Can shrink coefficients to exactly zero — automatic feature selection.</div>
+                </div>
+                <div class="eg"><strong>Ex 1:</strong> Predict house prices from square footage, bedrooms, and location — each extra sqft adds roughly $X to the price.</div>
+                <div class="eg"><strong>Ex 2:</strong> In education research, predict student GPA from study hours, attendance, and family income.</div>
+                <div class="when"><strong>When to use:</strong> Roughly linear relationship between features and outcome; need interpretable coefficients (e.g., reporting "a 1-unit increase in X corresponds to a Y change").</div>
+              </div>
+              <div class="vid"><a href="https://www.youtube.com/watch?v=DVTxmGjosXw" target="_blank">Lec 2d &amp; 3a</a> · <a href="https://www.youtube.com/watch?v=8adqy8KDpG8" target="_blank">Lec 3b</a> · <a href="https://www.youtube.com/watch?v=6NTILJ-Il78" target="_blank">Lec 3c</a> · <a href="https://www.youtube.com/watch?v=1c5fuMnmoxo" target="_blank">Lec 3d</a> · <a href="https://www.youtube.com/watch?v=WTrN0QJsPCY" target="_blank">Lec 3e</a></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="node">
+          <div class="node-head" onclick="tog(this)">
+            <span class="node-arrow">&#9654;</span>
+            <span class="nd-ico ico-reg">P</span>
+            <span class="node-label"><span data-lang="en">Polynomial &amp; Nonlinear Regression</span><span data-lang="zh">多项式与非线性回归</span></span>
+          </div>
+          <div class="node-body">
+            <div class="leaf">
+              <div class="leaf-title">Polynomial Regression</div>
+              <div data-lang="zh">
+                <p>现实中很多关系不是一条直线，而是曲线。多项式回归的做法是把原始特征做<strong>多项式展开</strong>——构造特征映射：</p>
+                <div class="formula">&#x3C6;(x) = [1, x, x&#xB2;, x&#xB3;, ..., x&#x1D48;]</div>
+                <p>然后对新特征 &#x3C6;(x) 用线性回归拟合：y = &#x3B8;&#x1D40;&#x3C6;(x)。本质上还是线性模型（对参数 &#x3B8; 线性），只不过输入空间变成了 x 的各次方组合。</p>
+                <p>一个关键问题：d 阶多项式有 d+1 个参数，当 d 太大时模型自由度过高。<strong>Bias-Variance Tradeoff</strong>：d 太小 &#x2192; 欠拟合（高偏差），d 太大 &#x2192; 过拟合（高方差）。需要用交叉验证选择最优的 d。</p>
+                <div class="analogy">就像拿一条橡皮筋去贴合数据点——直线只能拟合简单趋势，多项式可以弯曲去贴合更复杂的形状。</div>
+                <div class="eg"><strong>例：</strong>研究年龄和收入的关系——收入不是随年龄线性增长的，年轻时快速上升，中年到达峰值，退休后下降，这是一条抛物线。</div>
+                <div class="when"><strong>何时用：</strong>关系明显是曲线形的，但维度不高。注意：阶数太高容易过拟合（训练集完美拟合，测试集一塌糊涂）。</div>
+              </div>
+              <div data-lang="en">
+                <p>Many real relationships are curves, not straight lines. Polynomial regression constructs a <strong>feature mapping</strong>:</p>
+                <div class="formula">&#x3C6;(x) = [1, x, x&#xB2;, x&#xB3;, ..., x&#x1D48;]</div>
+                <p>Then fits y = &#x3B8;&#x1D40;&#x3C6;(x) using linear regression. It's still linear in parameters &#x3B8; — just with transformed inputs.</p>
+                <p>A key issue: a degree-d polynomial has d+1 parameters; too many degrees of freedom when d is large. <strong>Bias-Variance Tradeoff</strong>: d too small &#x2192; underfitting (high bias), d too large &#x2192; overfitting (high variance). Use cross-validation to select optimal d.</p>
+                <div class="analogy">Like bending a rubber band to fit data points — a straight line can only capture simple trends, but polynomials can curve to match more complex shapes.</div>
+                <div class="eg"><strong>Ex:</strong> Income vs. age — income rises quickly when young, peaks at mid-career, then drops after retirement. A parabola fits better than a line.</div>
+                <div class="when"><strong>When to use:</strong> Clearly curved relationship, low-dimensional data. Caution: high-degree polynomials overfit easily.</div>
+              </div>
+              <div class="vid"><a href="https://www.youtube.com/watch?v=WTrN0QJsPCY" target="_blank">Lec 3e &amp; 4a</a> · <a href="https://www.youtube.com/watch?v=LwPD967_lB0" target="_blank">Lec 4b</a> · <a href="https://www.youtube.com/watch?v=oF1wKcujD-4" target="_blank">Lec 4c</a></div>
+            </div>
+            <div class="leaf">
+              <div class="leaf-title">Neural Network Regression</div>
+              <div data-lang="zh">
+                <p>当数据中的关系非常复杂、无法用简单公式描述时，可以让神经网络自动学习非线性特征变换。输出层不加激活函数，直接输出一个数值，用 L2 Loss（均方误差）训练。</p>
+                <div class="formula">J(&#x3B8;) = &#x2211;&#x1D62; (y&#x1D62; &#x2212; &#x177;&#x1D62;)&#xB2;</div>
+                <div class="eg"><strong>例：</strong>预测城市的空气质量指数（AQI）——受温度、湿度、风速、交通流量、工厂排放等几十个因素的复杂交互影响，简单模型很难捕捉。</div>
+                <div class="when"><strong>何时用：</strong>关系非常复杂、数据量大、不需要知道"哪个特征有多重要"（即不需要可解释性）。</div>
+              </div>
+              <div data-lang="en">
+                <p>When relationships in data are too complex for simple formulas, neural networks can automatically learn nonlinear feature transformations. The output layer has no activation, directly outputting a number, trained with L2 loss (MSE).</p>
+                <div class="formula">J(&#x3B8;) = &#x2211;&#x1D62; (y&#x1D62; &#x2212; &#x177;&#x1D62;)&#xB2;</div>
+                <div class="eg"><strong>Ex:</strong> Predicting air quality index (AQI) — influenced by dozens of interacting factors (temperature, humidity, traffic, factory emissions). Simple models can't capture these interactions.</div>
+                <div class="when"><strong>When to use:</strong> Very complex relationships, large datasets, interpretability not required.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CLASSIFICATION -->
+    <div class="node">
+      <div class="node-head" onclick="tog(this)">
+        <span class="node-arrow">&#9654;</span>
+        <span class="nd-ico ico-cls">C</span>
+        <span class="node-label"><span data-lang="en">Assign Data to Categories (Classification)</span><span data-lang="zh">把数据分到类别里（分类）</span></span>
+        <span class="node-tag tag-problem">Classification</span>
+      </div>
+      <div class="node-body">
+
+        <div class="leaf">
+          <div data-lang="zh">
+            <p>分类问题就是：给定一些特征信息，判断它<strong>属于哪一类</strong>。输出不是数字，而是标签。比如：这封邮件是"垃圾邮件"还是"正常邮件"？这张照片里是猫还是狗？这个患者的肿瘤是良性还是恶性？</p>
+            <div class="analogy">打个比方：分类就像是分拣员——看到一个东西，把它放进对应的箱子里。箱子可以是两个（二分类），也可以是好多个（多分类）。</div>
+          </div>
+          <div data-lang="en">
+            <p>Classification is about <strong>assigning a label</strong> given some features. The output is a category, not a number. For example: Is this email spam or not? Is this photo a cat or dog? Is this tumor benign or malignant?</p>
+            <div class="analogy">Think of it as a sorting worker — they see an item and put it into the right bin. There can be two bins (binary) or many (multiclass).</div>
+          </div>
+        </div>
+
+        <div class="node">
+          <div class="node-head" onclick="tog(this)">
+            <span class="node-arrow">&#9654;</span>
+            <span class="nd-ico ico-cls">2</span>
+            <span class="node-label"><span data-lang="en">Binary Classification (Two Classes)</span><span data-lang="zh">二分类（只有两个类别）</span></span>
+          </div>
+          <div class="node-body">
+            <div class="leaf">
+              <div class="leaf-title">Logistic Regression</div>
+              <div data-lang="zh">
+                <p>别被名字骗了——虽然叫"回归"，但它其实是一个<strong>分类模型</strong>。核心思想：先像线性回归一样算出一个分数（w&#x1D40;x + b），然后通过 Sigmoid 函数把分数"压缩"到 0 和 1 之间，变成一个概率。</p>
+                <div class="formula">P(y=1|x) = &#x3C3;(w&#x1D40;x + b) = 1 / (1 + e&#x207B;&#x207D;&#x02B7;&#x1D40;&#x02E3;&#x207A;&#x1D47;&#x207E;)</div>
+                <p>如果概率 > 0.5，预测为类别 1；否则预测为类别 0。</p>
+                <p><strong>从 MLE 推导损失函数：</strong>假设 n 个样本独立，则似然函数为：</p>
+                <div class="formula">L(&#x3B8;) = &#x220F;&#x1D62; p&#x1D62;&#x207F;&#x1D62; (1&#x2212;p&#x1D62;)&#xB9;&#x207B;&#x207F;&#x1D62;，其中 p&#x1D62; = &#x3C3;(x&#x1D62;&#x1D40;&#x3B8;)</div>
+                <p>取负对数似然得到<strong>交叉熵损失</strong>（Binary Cross-Entropy）：</p>
+                <div class="formula">J(&#x3B8;) = &#x2212;(1/n) &#x2211;&#x1D62; [y&#x1D62; log p&#x1D62; + (1&#x2212;y&#x1D62;) log(1&#x2212;p&#x1D62;)]</div>
+                <p>梯度形式和线性回归惊人地相似：&#x2207;J = (1/n) X&#x1D40;(&#x3C3;(X&#x3B8;) &#x2212; y)，但 J(&#x3B8;) 没有闭式解，需要用梯度下降或牛顿法（IRLS）求解。好消息：J(&#x3B8;) 是凸函数，保证收敛到全局最优。</p>
+                <p>Logistic Regression 最大的优势是<strong>可解释性</strong>——每个特征的系数可以转化为 odds ratio（几率比）：e&#x1D9D;&#x2096;，在医学和社会科学中非常有价值。</p>
+                <div class="eg"><strong>例 1：</strong>判断一封邮件是否为垃圾邮件——根据"免费"、"赢大奖"等关键词出现的频率，算出是垃圾邮件的概率。</div>
+                <div class="eg"><strong>例 2：</strong>在教育研究中，预测学生是否会退学——输入特征包括 GPA、出勤率、家庭经济状况，输出概率可以帮助学校提前干预。</div>
+                <div class="eg"><strong>例 3：</strong>医学诊断——根据血液检测指标预测患者是否有某种疾病，系数告诉医生哪个指标影响最大。</div>
+                <div class="when"><strong>何时用：</strong>需要概率输出、需要可解释性（尤其是论文中报告 odds ratio）、数据量不大也能用。</div>
+              </div>
+              <div data-lang="en">
+                <p>Don't be fooled by the name — despite being called "regression," this is a <strong>classification model</strong>. Core idea: compute a score (w&#x1D40;x + b) like linear regression, then squeeze it through the Sigmoid function into a probability between 0 and 1.</p>
+                <div class="formula">P(y=1|x) = &#x3C3;(w&#x1D40;x + b) = 1 / (1 + e&#x207B;&#x207D;&#x02B7;&#x1D40;&#x02E3;&#x207A;&#x1D47;&#x207E;)</div>
+                <p>If probability > 0.5, predict class 1; otherwise class 0.</p>
+                <p><strong>Deriving the loss from MLE:</strong> Assuming n independent samples, the likelihood is:</p>
+                <div class="formula">L(&#x3B8;) = &#x220F;&#x1D62; p&#x1D62;&#x207F;&#x1D62; (1&#x2212;p&#x1D62;)&#xB9;&#x207B;&#x207F;&#x1D62;, where p&#x1D62; = &#x3C3;(x&#x1D62;&#x1D40;&#x3B8;)</div>
+                <p>Taking the negative log-likelihood yields <strong>Binary Cross-Entropy</strong>:</p>
+                <div class="formula">J(&#x3B8;) = &#x2212;(1/n) &#x2211;&#x1D62; [y&#x1D62; log p&#x1D62; + (1&#x2212;y&#x1D62;) log(1&#x2212;p&#x1D62;)]</div>
+                <p>The gradient is strikingly similar to linear regression: &#x2207;J = (1/n) X&#x1D40;(&#x3C3;(X&#x3B8;) &#x2212; y), but J(&#x3B8;) has no closed-form solution — use gradient descent or Newton's method (IRLS). Good news: J(&#x3B8;) is convex, guaranteeing convergence to the global optimum.</p>
+                <p>The biggest advantage is <strong>interpretability</strong> — each coefficient converts to an odds ratio: e&#x1D9C;&#x2096;, invaluable in medicine and social science.</p>
+                <div class="eg"><strong>Ex 1:</strong> Spam detection — compute spam probability from keyword frequencies like "free" and "win big."</div>
+                <div class="eg"><strong>Ex 2:</strong> Predict student dropout — input GPA, attendance, family income; output probability enables early intervention.</div>
+                <div class="eg"><strong>Ex 3:</strong> Medical diagnosis — predict disease from blood test indicators; coefficients tell doctors which markers matter most.</div>
+                <div class="when"><strong>When to use:</strong> Need probability output, need interpretability (especially odds ratios in papers), works even with small samples.</div>
+              </div>
+              <div class="vid"><a href="https://www.youtube.com/watch?v=CTJ6_qIezrQ" target="_blank">Lec 5a</a> · <a href="https://www.youtube.com/watch?v=BSfAFwJNh5M" target="_blank">Lec 5b</a> · <a href="https://www.youtube.com/watch?v=INDZhwJTIAI" target="_blank">Lec 5c</a></div>
+            </div>
+            <div class="leaf">
+              <div class="leaf-title">Support Vector Machine (SVM)</div>
+              <div data-lang="zh">
+                <p>SVM 的目标是找到一个<strong>"最宽的马路"</strong>来分开两类数据。想象一下：你在桌上放了两堆不同颜色的棋子，要用一根直尺把它们分开——SVM 找的是让直尺两侧"空白区域"最大的那个位置。这个空白区域就叫<strong>间距（margin）</strong>，越大说明分类越有把握。</p>
+                <p><strong>Hard-Margin 原问题：</strong></p>
+                <div class="formula">min (1/2)||w||&#xB2;　s.t.　y&#x1D62;(w&#x1D40;x&#x1D62; + b) &#x2265; 1,　&#x2200;i</div>
+                <p><strong>Soft-Margin（允许误分类）：</strong>引入松弛变量 &#x3BE;&#x1D62; &#x2265; 0 和惩罚参数 C：</p>
+                <div class="formula">min (1/2)||w||&#xB2; + C &#x2211;&#x1D62; &#x3BE;&#x1D62;　s.t.　y&#x1D62;(w&#x1D40;x&#x1D62; + b) &#x2265; 1 &#x2212; &#x3BE;&#x1D62;</div>
+                <p>用<strong>拉格朗日乘数法</strong>转化为<strong>对偶问题</strong>（这也是 SVM 理论最精妙的地方）：</p>
+                <div class="formula">max &#x2211;&#x1D62; &#x3B1;&#x1D62; &#x2212; (1/2) &#x2211;&#x1D62;&#x2C7; &#x3B1;&#x1D62;&#x3B1;&#x2C7; y&#x1D62;y&#x2C7; x&#x1D62;&#x1D40;x&#x2C7;　s.t.　0 &#x2264; &#x3B1;&#x1D62; &#x2264; C,　&#x2211;&#x1D62; &#x3B1;&#x1D62;y&#x1D62; = 0</div>
+                <p>对偶问题的好处：(1) 只依赖内积 x&#x1D62;&#x1D40;x&#x2C7;，可以用<strong>核技巧</strong>替换；(2) &#x3B1;&#x1D62; > 0 的样本就是支持向量。</p>
+                <p><strong>核技巧（Kernel Trick）：</strong>用核函数 K(x&#x1D62;, x&#x2C7;) = &#x3C6;(x&#x1D62;)&#x1D40;&#x3C6;(x&#x2C7;) 隐式映射到高维空间而不需要显式计算 &#x3C6;。常用核：</p>
+                <ul>
+                  <li><strong>线性核</strong>：K(x,z) = x&#x1D40;z</li>
+                  <li><strong>RBF（高斯）核</strong>：K(x,z) = exp(&#x2212;&#x3B3;||x&#x2212;z||&#xB2;)，隐式映射到无穷维空间</li>
+                  <li><strong>多项式核</strong>：K(x,z) = (x&#x1D40;z + c)&#x1D48;</li>
+                </ul>
+                <div class="eg"><strong>例 1：</strong>文本分类——判断一条电影评论是正面还是负面。SVM 在文本分类（特征维度高但样本量适中）上表现出色。</div>
+                <div class="eg"><strong>例 2：</strong>图像中检测人脸——传统方法（在深度学习之前）用 SVM + HOG 特征做人脸检测非常经典。</div>
+                <div class="when"><strong>何时用：</strong>样本量中等（几百到几万）、特征维度可以很高、想要最大间距的几何直觉、非线性时用核技巧。</div>
+              </div>
+              <div data-lang="en">
+                <p>SVM aims to find the <strong>"widest road"</strong> separating two classes. Imagine two piles of different-colored chess pieces on a table — you want to place a ruler between them so the empty space on both sides is as wide as possible. This empty space is the <strong>margin</strong>; wider means more confident.</p>
+                <p><strong>Hard-Margin primal problem:</strong></p>
+                <div class="formula">min (1/2)||w||&#xB2;　s.t.　y&#x1D62;(w&#x1D40;x&#x1D62; + b) &#x2265; 1,　&#x2200;i</div>
+                <p><strong>Soft-Margin (allowing misclassification):</strong> Introduce slack variables &#x3BE;&#x1D62; &#x2265; 0 and penalty C:</p>
+                <div class="formula">min (1/2)||w||&#xB2; + C &#x2211;&#x1D62; &#x3BE;&#x1D62;　s.t.　y&#x1D62;(w&#x1D40;x&#x1D62; + b) &#x2265; 1 &#x2212; &#x3BE;&#x1D62;</div>
+                <p>Via <strong>Lagrange multipliers</strong>, transform into the <strong>dual problem</strong> (the theoretical gem of SVM):</p>
+                <div class="formula">max &#x2211;&#x1D62; &#x3B1;&#x1D62; &#x2212; (1/2) &#x2211;&#x1D62;&#x2C7; &#x3B1;&#x1D62;&#x3B1;&#x2C7; y&#x1D62;y&#x2C7; x&#x1D62;&#x1D40;x&#x2C7;　s.t.　0 &#x2264; &#x3B1;&#x1D62; &#x2264; C,　&#x2211;&#x1D62; &#x3B1;&#x1D62;y&#x1D62; = 0</div>
+                <p>The dual's benefits: (1) depends only on inner products x&#x1D62;&#x1D40;x&#x2C7;, enabling the <strong>kernel trick</strong>; (2) samples with &#x3B1;&#x1D62; > 0 are support vectors.</p>
+                <p><strong>Kernel Trick:</strong> Replace inner products with K(x&#x1D62;, x&#x2C7;) = &#x3C6;(x&#x1D62;)&#x1D40;&#x3C6;(x&#x2C7;), implicitly mapping to high-dimensional space without computing &#x3C6; explicitly. Common kernels:</p>
+                <ul>
+                  <li><strong>Linear</strong>: K(x,z) = x&#x1D40;z</li>
+                  <li><strong>RBF (Gaussian)</strong>: K(x,z) = exp(&#x2212;&#x3B3;||x&#x2212;z||&#xB2;), implicit infinite-dimensional mapping</li>
+                  <li><strong>Polynomial</strong>: K(x,z) = (x&#x1D40;z + c)&#x1D48;</li>
+                </ul>
+                <div class="eg"><strong>Ex 1:</strong> Text classification — classifying movie reviews as positive or negative. SVM excels with high-dimensional text features.</div>
+                <div class="eg"><strong>Ex 2:</strong> Face detection — before deep learning, SVM + HOG features was the classic approach.</div>
+                <div class="when"><strong>When to use:</strong> Moderate sample size (hundreds to tens of thousands), high-dimensional features, non-linear boundaries via kernels.</div>
+              </div>
+              <div class="vid"><a href="https://www.youtube.com/watch?v=Bh3lXNuEiJw" target="_blank">Lec 7b</a> · <a href="https://www.youtube.com/watch?v=wTU48m9g1zI" target="_blank">Lec 7c</a></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="node">
+          <div class="node-head" onclick="tog(this)">
+            <span class="node-arrow">&#9654;</span>
+            <span class="nd-ico ico-cls">M</span>
+            <span class="node-label"><span data-lang="en">Multiclass Classification (Three or More Classes)</span><span data-lang="zh">多分类（三个类别以上）</span></span>
+          </div>
+          <div class="node-body">
+            <div class="leaf">
+              <div class="leaf-title">Softmax / Multinomial Logistic Regression</div>
+              <div data-lang="zh">
+                <p>Logistic Regression 的多类推广。对每一类计算一个线性得分 z&#x2096; = b&#x2096; + w&#x2096;&#x1D40;x，然后通过 <strong>Softmax 函数</strong>把所有类的得分归一化成概率（加起来等于 1）：</p>
+                <div class="formula">P(y=k|x) = e&#x1D83;&#x2096; / &#x2211;&#x2C7; e&#x1D83;&#x2C7;，其中 z&#x2096; = w&#x2096;&#x1D40;x + b&#x2096;</div>
+                <p>对应的<strong>Categorical Cross-Entropy 损失</strong>（从 MLE 推导）：</p>
+                <div class="formula">J(&#x3B8;) = &#x2212;(1/n) &#x2211;&#x1D62; &#x2211;&#x1D4C;&#x2081;&#x1D37; &#x1D7D9;(y&#x1D62;=k) log P(y&#x1D62;=k|x&#x1D62;)</div>
+                <p>Softmax 的梯度也很优雅：&#x2202;J/&#x2202;z&#x2096; = p&#x2096; &#x2212; &#x1D7D9;(y=k)，即"预测概率减去真实标签"——形式上和 Logistic Regression 完全一致。</p>
+                <p>Softmax 的精妙之处在于：它不仅告诉你"选哪个类"，还给出了对每个类的"信心"。模型很自信时，一个类的概率会接近 1；不确定时，概率分布会更均匀。</p>
+                <div class="eg"><strong>例 1：</strong>手写数字识别 (MNIST) — 识别 0-9 十个数字。仅用 Softmax 就能达到约 90% 的准确率，是最简单的多分类基线。</div>
+                <div class="eg"><strong>例 2：</strong>新闻文章自动分类 — 给定文章文本，判断它属于体育、财经、科技、娱乐中的哪一类。</div>
+                <div class="when"><strong>何时用：</strong>多类问题的首选基线模型；简单高效；也是神经网络分类的输出层标配。</div>
+              </div>
+              <div data-lang="en">
+                <p>Multiclass extension of Logistic Regression. Computes a linear score z&#x2096; = b&#x2096; + w&#x2096;&#x1D40;x for each class, then normalizes via <strong>Softmax</strong> to probabilities that sum to 1:</p>
+                <div class="formula">P(y=k|x) = e&#x1D83;&#x2096; / &#x2211;&#x2C7; e&#x1D83;&#x2C7;, where z&#x2096; = w&#x2096;&#x1D40;x + b&#x2096;</div>
+                <p>The corresponding <strong>Categorical Cross-Entropy loss</strong> (derived from MLE):</p>
+                <div class="formula">J(&#x3B8;) = &#x2212;(1/n) &#x2211;&#x1D62; &#x2211;&#x1D4C;&#x2081;&#x1D37; &#x1D7D9;(y&#x1D62;=k) log P(y&#x1D62;=k|x&#x1D62;)</div>
+                <p>The gradient is elegant: &#x2202;J/&#x2202;z&#x2096; = p&#x2096; &#x2212; &#x1D7D9;(y=k), i.e., "predicted probability minus true label" — identical in form to Logistic Regression.</p>
+                <p>Softmax's elegance: it not only picks a class but gives a "confidence" for each. When confident, one class's probability approaches 1; when uncertain, probabilities spread out.</p>
+                <div class="eg"><strong>Ex 1:</strong> Handwritten digit recognition (MNIST) — classifying digits 0-9. Softmax alone achieves ~90% accuracy, the simplest multiclass baseline.</div>
+                <div class="eg"><strong>Ex 2:</strong> News article classification — given article text, predict whether it's Sports, Finance, Tech, or Entertainment.</div>
+                <div class="when"><strong>When to use:</strong> Default baseline for multiclass problems; also the standard output layer for neural network classifiers.</div>
+              </div>
+              <div class="vid"><a href="https://www.youtube.com/watch?v=IX1QP0TLM8g" target="_blank">Lec 6d &amp; 7a</a> · <a href="https://www.youtube.com/watch?v=Bh3lXNuEiJw" target="_blank">Lec 7b</a></div>
+            </div>
+            <div class="leaf">
+              <div class="leaf-title"><span data-lang="en">Multiclass Strategies</span><span data-lang="zh">多分类拆解策略</span></div>
+              <div data-lang="zh">
+                <p>如果你手上的模型天生只能做二分类（比如 SVM），怎么解决多分类问题？两种经典策略：</p>
+                <div class="vs">
+                  <div class="vs-col"><strong>One-vs-Rest (OvR)</strong>每类训练一个"这类 vs. 其余所有类"的二分类器。K 个类就训练 K 个分类器，选得分最高的类。</div>
+                  <div class="vs-col"><strong>One-vs-One (OvO)</strong>每两类之间训练一个分类器。K 个类共训练 K(K-1)/2 个，投票决定最终类别。</div>
+                </div>
+                <div class="eg"><strong>例：</strong>假设你要识别猫、狗、鸟三种动物。OvR 训练 3 个分类器（猫 vs 非猫、狗 vs 非狗、鸟 vs 非鸟）。OvO 训练 3 个分类器（猫 vs 狗、猫 vs 鸟、狗 vs 鸟）。</div>
+              </div>
+              <div data-lang="en">
+                <p>If your model can only do binary classification natively (e.g., SVM), how to handle multiclass? Two classic strategies:</p>
+                <div class="vs">
+                  <div class="vs-col"><strong>One-vs-Rest (OvR)</strong>Train one "this class vs. all others" classifier per class. K classes = K classifiers; pick the highest score.</div>
+                  <div class="vs-col"><strong>One-vs-One (OvO)</strong>Train one classifier for every pair. K classes = K(K-1)/2 classifiers; majority vote decides.</div>
+                </div>
+                <div class="eg"><strong>Ex:</strong> Classify cat, dog, bird. OvR: 3 classifiers (cat vs not-cat, dog vs not-dog, bird vs not-bird). OvO: 3 classifiers (cat vs dog, cat vs bird, dog vs bird).</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="node">
+          <div class="node-head" onclick="tog(this)">
+            <span class="node-arrow">&#9654;</span>
+            <span class="nd-ico ico-cls">I</span>
+            <span class="node-label"><span data-lang="en">Image Classification (CNN)</span><span data-lang="zh">图像分类（CNN）</span></span>
+          </div>
+          <div class="node-body">
+            <div class="leaf">
+              <div class="leaf-title">Convolutional Neural Network (CNN)</div>
+              <div data-lang="zh">
+                <p>当输入是图像时，传统方法效果很差——因为图像是像素的二维矩阵，位置关系很重要。CNN 专门为图像设计，用一组小的<strong>卷积核（filter）</strong>在图像上"滑动扫描"，自动学习从边缘到语义的层次化特征。</p>
+                <div class="analogy">想象你在用放大镜看一幅画：先看到线条和颜色（边缘），再看到眼睛鼻子嘴（部件），最后认出"这是一张人脸"（语义）。CNN 的每一层做的就是这种从低级到高级的特征提取。</div>
+                <p>关键组件的流程：卷积层（提取局部特征）&#x2192; ReLU 激活（引入非线性）&#x2192; 池化层（缩小尺寸、保留关键信息）&#x2192; 全连接层（汇总特征做分类）</p>
+                <div class="formula">Z[j&#x2081;,j&#x2082;] = &#x2211;&#x1D4C;&#x2081; &#x2211;&#x1D4C;&#x2082; W[k&#x2081;,k&#x2082;] &#xB7; X[j&#x2081;+k&#x2081;, j&#x2082;+k&#x2082;]</div>
+                <p>里程碑：AlexNet (2012) 在 ImageNet (140 万张图, 1000 个类别) 上 top-5 错误率从 25.6% 降到 15.3%，一举开启了深度学习时代。</p>
+                <div class="eg"><strong>例 1：</strong>手机相册自动分类——识别照片中是风景、美食、人物还是宠物。</div>
+                <div class="eg"><strong>例 2：</strong>医学影像——从 X 光片、CT 扫描中自动检测肿瘤、骨折等异常。</div>
+                <div class="eg"><strong>例 3：</strong>自动驾驶——识别路上的行人、车辆、交通标志。</div>
+                <div class="when"><strong>何时用：</strong>输入是图像（或有空间结构的 2D 数据，如频谱图）。深度学习时代几乎所有图像任务的基础。</div>
+              </div>
+              <div data-lang="en">
+                <p>When input is an image, traditional methods struggle because images are 2D pixel matrices where spatial relationships matter. CNN is purpose-built for images: small <strong>convolutional filters</strong> slide across the image, automatically learning hierarchical features from edges to semantics.</p>
+                <div class="analogy">Imagine examining a painting with a magnifying glass: first you see lines and colors (edges), then eyes, nose, mouth (parts), finally you recognize "this is a face" (semantics). Each CNN layer does exactly this low-to-high feature extraction.</div>
+                <p>Pipeline: Conv layers (local features) &#x2192; ReLU (nonlinearity) &#x2192; Pooling (downsampling) &#x2192; Fully-connected (classification)</p>
+                <div class="formula">Z[j&#x2081;,j&#x2082;] = &#x2211;&#x1D4C;&#x2081; &#x2211;&#x1D4C;&#x2082; W[k&#x2081;,k&#x2082;] &#xB7; X[j&#x2081;+k&#x2081;, j&#x2082;+k&#x2082;]</div>
+                <p>Milestone: AlexNet (2012) reduced ImageNet (1.4M images, 1000 classes) top-5 error from 25.6% to 15.3%, launching the deep learning era.</p>
+                <div class="eg"><strong>Ex 1:</strong> Phone photo auto-tagging — recognizing landscape, food, people, or pets.</div>
+                <div class="eg"><strong>Ex 2:</strong> Medical imaging — detecting tumors and fractures from X-rays and CT scans.</div>
+                <div class="eg"><strong>Ex 3:</strong> Self-driving — identifying pedestrians, vehicles, and traffic signs.</div>
+                <div class="when"><strong>When to use:</strong> Image inputs (or any data with 2D spatial structure like spectrograms). The foundation of virtually all image tasks in deep learning.</div>
+              </div>
+              <div class="vid"><a href="https://www.youtube.com/watch?v=wOuD9dGhymU" target="_blank">Lec 9a</a> · <a href="https://www.youtube.com/watch?v=oDrpiosMEFg" target="_blank">Lec 9b</a> · <a href="https://www.youtube.com/watch?v=8m5G2RGrYyY" target="_blank">Lec 9c</a> · <a href="https://www.youtube.com/watch?v=kirstWYhIyA" target="_blank">Lec 9d</a> · <a href="https://www.youtube.com/watch?v=qPZF37bMyiQ" target="_blank">Lec 9e</a></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- UNSUPERVISED -->
+    <div class="node">
+      <div class="node-head" onclick="tog(this)">
+        <span class="node-arrow">&#9654;</span>
+        <span class="nd-ico ico-uns">U</span>
+        <span class="node-label"><span data-lang="en">No Labels &mdash; Discover Hidden Structure (Unsupervised)</span><span data-lang="zh">没有标签——发现数据中的隐藏结构（无监督学习）</span></span>
+        <span class="node-tag tag-data">Unsupervised</span>
+      </div>
+      <div class="node-body">
+
+        <div class="leaf">
+          <div data-lang="zh">
+            <p>前面的回归和分类都有一个前提：每条数据都有一个"正确答案"（标签）供模型学习。但很多时候我们<strong>没有标签</strong>，只有一堆原始数据，想从中发现规律。这就是无监督学习。</p>
+            <div class="analogy">就像你走进一个完全陌生的超市，没有任何分类标签——你自然会发现"这一片都是饮料"、"那边都是零食"。无监督学习就是让机器做同样的事情。</div>
+          </div>
+          <div data-lang="en">
+            <p>Regression and classification above both assume each data point has a "correct answer" (label). But often we <strong>have no labels</strong> — just raw data from which we want to discover patterns. That's unsupervised learning.</p>
+            <div class="analogy">Like walking into an unfamiliar supermarket with no section labels — you'd naturally notice "this area is all drinks" and "that corner is snacks." Unsupervised learning lets machines do the same thing.</div>
+          </div>
+        </div>
+
+        <div class="node">
+          <div class="node-head" onclick="tog(this)">
+            <span class="node-arrow">&#9654;</span>
+            <span class="nd-ico ico-uns">G</span>
+            <span class="node-label"><span data-lang="en">Grouping Data (Clustering)</span><span data-lang="zh">把数据分组（聚类）</span></span>
+          </div>
+          <div class="node-body">
+            <div class="leaf">
+              <div class="leaf-title">K-Means Clustering</div>
+              <div data-lang="zh">
+                <p>最经典的聚类算法。目标函数（最小化组内平方和）：</p>
+                <div class="formula">J = &#x2211;&#x1D4C;&#x2081;&#x1D37; &#x2211;&#x1D62;&#x2208;C&#x2096; ||x&#x1D62; &#x2212; &#x3BC;&#x2096;||&#xB2;，其中 &#x3BC;&#x2096; = (1/|C&#x2096;|) &#x2211;&#x1D62;&#x2208;C&#x2096; x&#x1D62;</div>
+                <p>步骤很简单：(1) 随机初始化 K 个中心 &#x3BC;&#x2096;；(2) 每个数据点分配到最近的中心（E 步）；(3) 重新计算每组的均值作为新中心（M 步）；(4) 重复直到收敛。每步都保证 J 不增，但只能收敛到<strong>局部最优</strong>——所以实践中常用 K-Means++ 初始化来找到更好的起点。</p>
+                <p>局限是需要提前指定 K（组数），可以用<strong>肘部法则</strong>来帮助判断——画出不同 K 值对应的 J 曲线，找误差下降趋缓的拐点。</p>
+                <div class="eg"><strong>例 1：</strong>客户分群——电商平台根据用户的消费金额、频率、偏好把客户分成"高价值客户"、"偶尔消费客户"、"流失风险客户"等，然后做精准营销。</div>
+                <div class="eg"><strong>例 2：</strong>图像压缩——用 K-Means 将一张图片的颜色从上百万种减少到 16 种，大幅减小文件大小同时保持视觉效果。</div>
+                <div class="when"><strong>何时用：</strong>簇大致呈球形、数量已知或可以通过实验确定。简单高效，适合大数据。</div>
+              </div>
+              <div data-lang="en">
+                <p>The most classic clustering algorithm. Objective (minimize within-cluster sum of squares):</p>
+                <div class="formula">J = &#x2211;&#x1D4C;&#x2081;&#x1D37; &#x2211;&#x1D62;&#x2208;C&#x2096; ||x&#x1D62; &#x2212; &#x3BC;&#x2096;||&#xB2;, where &#x3BC;&#x2096; = (1/|C&#x2096;|) &#x2211;&#x1D62;&#x2208;C&#x2096; x&#x1D62;</div>
+                <p>Steps: (1) randomly initialize K centers &#x3BC;&#x2096;; (2) assign each point to nearest center (E-step); (3) recompute group means as new centers (M-step); (4) repeat until convergence. Each step guarantees J never increases, but only converges to a <strong>local optimum</strong> — so K-Means++ initialization is used in practice for better starting points.</p>
+                <p>Limitation: K must be specified in advance. The <strong>elbow method</strong> helps — plot J vs. K and look for the point where improvement levels off.</p>
+                <div class="eg"><strong>Ex 1:</strong> Customer segmentation — e-commerce platforms group users by spending amount, frequency, and preferences into "high-value," "occasional," and "at-risk" segments for targeted marketing.</div>
+                <div class="eg"><strong>Ex 2:</strong> Image compression — reduce millions of colors in a photo to just 16 using K-Means, dramatically shrinking file size while preserving appearance.</div>
+                <div class="when"><strong>When to use:</strong> Roughly spherical clusters; K known or determinable experimentally. Simple, efficient, scales to big data.</div>
+              </div>
+              <div class="vid"><a href="https://www.youtube.com/watch?v=Qfq6dUiCfcU" target="_blank">Lec 11a</a> · <a href="https://www.youtube.com/watch?v=4gd2kukZFEc" target="_blank">Lec 11b</a></div>
+            </div>
+            <div class="leaf">
+              <div class="leaf-title">Hierarchical Clustering</div>
+              <div data-lang="zh">
+                <p>不需要预设分几组——它自底向上（凝聚法）逐步合并最相似的数据点/簇，形成一棵<strong>树状图（dendrogram）</strong>。你可以在任意"高度"横切一刀，得到不同粒度的分组。</p>
+                <div class="eg"><strong>例：</strong>基因表达分析——在生物学中，研究者用层次聚类对基因做分组，发现功能相似的基因会自然聚在一起。树状图还能直观展示基因之间的"亲缘关系"。</div>
+                <div class="when"><strong>何时用：</strong>想观察数据在多个粒度下的聚类结构；数据量不太大（计算复杂度 O(n&#xB2;)）；需要可视化层次关系。</div>
+              </div>
+              <div data-lang="en">
+                <p>No need to pre-specify K — it builds a <strong>dendrogram</strong> by iteratively merging the most similar points/clusters (agglomerative). Cut at any height to get different levels of grouping.</p>
+                <div class="eg"><strong>Ex:</strong> Gene expression analysis — biologists use hierarchical clustering to group genes, discovering that functionally related genes naturally cluster together. The dendrogram visually reveals evolutionary relationships.</div>
+                <div class="when"><strong>When to use:</strong> Want to explore cluster structure at multiple granularities; moderate dataset size (O(n&#xB2;) complexity); need hierarchical visualization.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="node">
+          <div class="node-head" onclick="tog(this)">
+            <span class="node-arrow">&#9654;</span>
+            <span class="nd-ico ico-uns">D</span>
+            <span class="node-label"><span data-lang="en">Reduce Dimensions / Find Main Patterns</span><span data-lang="zh">降低维度 / 找出主要模式</span></span>
+          </div>
+          <div class="node-body">
+            <div class="leaf">
+              <div class="leaf-title">PCA &mdash; Principal Component Analysis</div>
+              <div data-lang="zh">
+                <p>当数据有几十甚至上百个特征时，很难直接分析。PCA 的核心思想是找到数据<strong>变化最大的方向</strong>（主成分），把高维数据投影到少数几个方向上，用最少的维度保留最多的信息。</p>
+                <div class="analogy">打个比方：想象你在拍一栋建筑物的照片——从不同角度拍出的效果差别很大。PCA 就是帮你找到"信息量最大的那个拍摄角度"，让你只用一张照片就能最大限度地理解这栋建筑。</div>
+                <p>数学上，PCA 是对<strong>中心化数据</strong>的协方差矩阵做特征值分解：</p>
+                <div class="formula">C = (1/n) X&#x1D40;X = V &#x39B; V&#x1D40;，取前 k 列 V&#x2096;，投影 X&#x2096; = X V&#x2096;</div>
+                <p>等价于求解：max ||Xv||&#xB2; s.t. ||v|| = 1，即找方差最大的投影方向。第一主成分是方差最大的方向，第二主成分是与第一正交且方差最大的方向，以此类推。</p>
+                <div class="eg"><strong>例 1：</strong>人脸识别——原始图像可能有上万个像素维度，PCA 将其压缩到几十个"特征脸"（eigenface），既节省计算又去除噪声。</div>
+                <div class="eg"><strong>例 2：</strong>问卷数据分析——一份有 50 道题的心理学问卷，PCA 可以帮你发现其实只有 5-6 个潜在的心理维度在起作用。</div>
+                <div class="when"><strong>何时用：</strong>可视化高维数据（投影到 2D/3D）；去噪；做其他模型的预处理步骤；探索数据结构。</div>
+              </div>
+              <div data-lang="en">
+                <p>When data has dozens or hundreds of features, direct analysis is impractical. PCA finds the <strong>directions of maximum variance</strong> (principal components) and projects high-dimensional data onto a few key dimensions, preserving maximum information with minimum dimensions.</p>
+                <div class="analogy">Imagine photographing a building from different angles — some angles reveal much more than others. PCA finds the "most informative angle" so you understand the building from just one photo.</div>
+                <p>Mathematically, PCA eigendecomposes the <strong>centered data</strong>'s covariance matrix:</p>
+                <div class="formula">C = (1/n) X&#x1D40;X = V &#x39B; V&#x1D40;, take top k columns V&#x2096;, project X&#x2096; = X V&#x2096;</div>
+                <p>Equivalently: max ||Xv||&#xB2; s.t. ||v|| = 1 — find the projection direction with maximum variance. The 1st PC has max variance; the 2nd is orthogonal to the 1st with max remaining variance, and so on.</p>
+                <div class="eg"><strong>Ex 1:</strong> Face recognition — raw images have thousands of pixel dimensions; PCA compresses them into dozens of "eigenfaces," saving computation and removing noise.</div>
+                <div class="eg"><strong>Ex 2:</strong> Survey data — a 50-item psychology questionnaire may have only 5-6 underlying dimensions that PCA can reveal.</div>
+                <div class="when"><strong>When to use:</strong> Visualizing high-dimensional data (project to 2D/3D); denoising; preprocessing for downstream models; exploring data structure.</div>
+              </div>
+              <div class="vid"><a href="https://www.youtube.com/watch?v=UBhFmLHGLB8" target="_blank">Lec 12a</a> · <a href="https://www.youtube.com/watch?v=bS2Rez5suYU" target="_blank">Lec 12b</a></div>
+            </div>
+            <div class="leaf">
+              <div class="leaf-title">t-SNE</div>
+              <div data-lang="zh">
+                <p>一种非线性降维方法，特别擅长将高维数据<strong>可视化</strong>到 2D 或 3D。PCA 保留全局结构（远近关系），t-SNE 更注重保留<strong>局部邻域关系</strong>——所以 t-SNE 的可视化图中，相似的点会明显聚成一团，看起来非常直观。</p>
+                <div class="eg"><strong>例：</strong>用 t-SNE 把 MNIST 手写数字（784 维）投影到 2D，你会看到 0-9 十个数字自然形成十个清晰的簇——不需要任何标签信息！</div>
+                <div class="when"><strong>何时用：</strong>纯粹用于可视化（不能用来做特征提取或预处理）。跑起来比较慢，适合中小规模数据。</div>
+              </div>
+              <div data-lang="en">
+                <p>A nonlinear dimensionality reduction method that excels at <strong>visualizing</strong> high-dimensional data in 2D/3D. While PCA preserves global structure, t-SNE focuses on <strong>local neighborhoods</strong> — similar points form clear clusters in the visualization.</p>
+                <div class="eg"><strong>Ex:</strong> Apply t-SNE to MNIST digits (784 dimensions) projected to 2D — you'll see digits 0-9 naturally forming 10 clean clusters, without any label information!</div>
+                <div class="when"><strong>When to use:</strong> Visualization only (not for feature extraction). Slower, suitable for small-to-medium datasets.</div>
+              </div>
+              <div class="vid"><a href="https://www.youtube.com/watch?v=q84uTX18Px8" target="_blank">Lec 13a</a> · <a href="https://www.youtube.com/watch?v=Hr3klMhMDuA" target="_blank">Lec 13b</a></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- ROOT 2: HOW TO TRAIN? -->
+<!-- ============================== -->
+<div class="node node-root">
+  <div class="node-head" onclick="tog(this)">
+    <span class="node-arrow">&#9654;</span>
+    <span class="nd-ico">Q2</span>
+    <span class="node-label"><span data-lang="en">How Do You Train a Model?</span><span data-lang="zh">模型怎么训练？</span></span>
+    <span class="node-tag tag-model"><span data-lang="en">Training</span><span data-lang="zh">训练</span></span>
+  </div>
+  <div class="node-body">
+
+    <div class="leaf">
+      <div data-lang="zh">
+        <p>训练一个机器学习模型，本质上就是在做一件事：<strong>调整参数，让预测尽可能接近真实值</strong>。这个过程分三步：(1) 定义一个"损失函数"衡量预测有多差，(2) 用优化算法不断调整参数降低损失，(3) 用正则化防止模型"死记硬背"。</p>
+        <div class="analogy">就像调收音机——你转旋钮（参数），听到噪音就继续转（损失高），直到声音最清晰（损失最低）。</div>
+      </div>
+      <div data-lang="en">
+        <p>Training a model is essentially one thing: <strong>adjusting parameters to make predictions as close to reality as possible</strong>. Three steps: (1) define a "loss function" measuring how bad predictions are, (2) use optimization to adjust parameters and reduce loss, (3) use regularization to prevent memorization.</p>
+        <div class="analogy">Like tuning a radio — you turn the dial (parameters), keep turning if there's static (high loss), until the signal is clearest (lowest loss).</div>
+      </div>
+    </div>
+
+    <div class="node">
+      <div class="node-head" onclick="tog(this)">
+        <span class="node-arrow">&#9654;</span>
+        <span class="nd-ico ico-opt">O</span>
+        <span class="node-label"><span data-lang="en">Optimization: Finding the Best Parameters</span><span data-lang="zh">优化算法：找到最好的参数</span></span>
+      </div>
+      <div class="node-body">
+        <div class="leaf">
+          <div class="leaf-title">Gradient Descent (GD)</div>
+          <div data-lang="zh">
+            <p>最基础的优化算法。想象你在一座雾蒙蒙的山上，看不到全貌，只知道脚下的坡度。梯度下降的策略就是：<strong>每一步都朝最陡的下坡方向走</strong>，一步一步走到山谷（损失最小的地方）。</p>
+            <div class="formula">&#x3B8;&#x207D;&#x1D57;&#x207A;&#xB9;&#x207E; = &#x3B8;&#x207D;&#x1D57;&#x207E; &#x2212; &#x3B1; &#x2207;J(&#x3B8;&#x207D;&#x1D57;&#x207E;)</div>
+            <p>其中 &#x3B1; 是<strong>学习率</strong>（步长），&#x2207;J 是损失函数的梯度（坡度方向）。学习率太大会跳过最低点甚至发散，太小会走得很慢。</p>
+            <p>问题：经典 GD 每走一步都需要用全部数据计算梯度，数据量大时非常慢。</p>
+          </div>
+          <div data-lang="en">
+            <p>The most basic optimizer. Imagine standing on a foggy mountain — you can't see the full landscape, only the slope at your feet. Gradient descent's strategy: <strong>always step in the steepest downhill direction</strong>, walking step by step to the valley (minimum loss).</p>
+            <div class="formula">&#x3B8;&#x207D;&#x1D57;&#x207A;&#xB9;&#x207E; = &#x3B8;&#x207D;&#x1D57;&#x207E; &#x2212; &#x3B1; &#x2207;J(&#x3B8;&#x207D;&#x1D57;&#x207E;)</div>
+            <p>&#x3B1; is the <strong>learning rate</strong> (step size), &#x2207;J is the loss gradient (slope direction). Too large = overshoot or diverge; too small = painfully slow.</p>
+            <p>Problem: classic GD uses the entire dataset for each step — extremely slow with large data.</p>
+          </div>
+          <div class="vid"><a href="https://www.youtube.com/watch?v=6jZtn5KgWnE" target="_blank">Lec 6a</a> · <a href="https://www.youtube.com/watch?v=qgVybCRe2B4" target="_blank">Lec 6b</a></div>
+        </div>
+        <div class="leaf">
+          <div class="leaf-title">Stochastic Gradient Descent (SGD)</div>
+          <div data-lang="zh">
+            <p>解决方案：不用全部数据，每步只随机取一小批数据（mini-batch）来估算梯度方向。虽然每步的方向不那么精确，但走得快得多！这就是深度学习的标准训练方法。</p>
+            <div class="formula">g&#x2032; &#x2248; (1/|I&#x1D57;|) &#x2211;&#x1D62;&#x2208;I&#x1D57; &#x2207;J&#x1D62;(x&#x1D62;, y&#x1D62;)</div>
+            <p>一个 <strong>epoch</strong> = 所有 mini-batch 都用过一遍 = n/B 步（n 是总样本数，B 是 batch size）。通常需要训练几十到上百个 epoch。</p>
+            <div class="eg"><strong>例：</strong>训练一个图像分类模型，有 50,000 张图。如果 batch size = 64，每个 epoch 就是 50000/64 &#x2248; 781 步。训练 100 个 epoch 就是约 78,100 次参数更新。</div>
+          </div>
+          <div data-lang="en">
+            <p>Solution: instead of the full dataset, use a random <strong>mini-batch</strong> each step to estimate the gradient. Less precise per step, but much faster! This is the standard training method for deep learning.</p>
+            <div class="formula">g&#x2032; &#x2248; (1/|I&#x1D57;|) &#x2211;&#x1D62;&#x2208;I&#x1D57; &#x2207;J&#x1D62;(x&#x1D62;, y&#x1D62;)</div>
+            <p>One <strong>epoch</strong> = all mini-batches seen once = n/B steps (n = total samples, B = batch size). Typically need tens to hundreds of epochs.</p>
+            <div class="eg"><strong>Ex:</strong> Training an image classifier with 50,000 images, batch size = 64 means each epoch is ~781 steps. 100 epochs = ~78,100 parameter updates.</div>
+          </div>
+          <div class="vid"><a href="https://www.youtube.com/watch?v=qgVybCRe2B4" target="_blank">Lec 6b</a> · <a href="https://www.youtube.com/watch?v=Z_UatM_fmhM" target="_blank">Lec 6c</a></div>
+        </div>
+        <div class="leaf">
+          <div class="leaf-title">Newton's Method</div>
+          <div data-lang="zh">
+            <p>用二阶导数（Hessian 矩阵）信息来加速收敛——不仅知道坡度方向，还知道"坡度变化得有多快"，所以能用更少的步数到达最低点。更新公式：</p>
+            <div class="formula">&#x3B8;&#x207D;&#x1D57;&#x207A;&#xB9;&#x207E; = &#x3B8;&#x207D;&#x1D57;&#x207E; &#x2212; H&#x207B;&#xB9; &#x2207;J(&#x3B8;&#x207D;&#x1D57;&#x207E;)，其中 H = &#x2207;&#xB2;J（Hessian 矩阵）</div>
+            <p>直觉：梯度下降用"平面"近似损失函数，每步走固定步长；牛顿法用"二次曲面"近似，能在一步内跳到近似曲面的极小值——所以收敛速度是<strong>二次的</strong>（quadratic convergence），远快于梯度下降的线性收敛。</p>
+            <p>但计算 H&#x207B;&#xB9; 需要 O(d&#xB3;)，存储 H 需要 O(d&#xB2;) 内存。当 d = 100 万时完全不可行。实际中常用<strong>拟牛顿法</strong>（如 L-BFGS）来近似 H&#x207B;&#xB9;，在中等规模的凸优化问题中非常有效。</p>
+          </div>
+          <div data-lang="en">
+            <p>Uses second-order derivatives (Hessian matrix) for faster convergence — knowing not just the slope but "how fast the slope changes" enables reaching the minimum in fewer steps. Update rule:</p>
+            <div class="formula">&#x3B8;&#x207D;&#x1D57;&#x207A;&#xB9;&#x207E; = &#x3B8;&#x207D;&#x1D57;&#x207E; &#x2212; H&#x207B;&#xB9; &#x2207;J(&#x3B8;&#x207D;&#x1D57;&#x207E;), where H = &#x2207;&#xB2;J (Hessian matrix)</div>
+            <p>Intuition: GD approximates the loss with a "plane" and takes fixed steps; Newton's method uses a "quadratic surface" and jumps to its minimum in one step — hence <strong>quadratic convergence</strong>, far faster than GD's linear convergence.</p>
+            <p>But computing H&#x207B;&#xB9; is O(d&#xB3;), storing H is O(d&#xB2;). When d = 1 million, this is infeasible. In practice, <strong>Quasi-Newton methods</strong> (e.g., L-BFGS) approximate H&#x207B;&#xB9; and work well for medium-scale convex problems.</p>
+          </div>
+          <div class="vid"><a href="https://www.youtube.com/watch?v=Z_UatM_fmhM" target="_blank">Lec 6c</a> · <a href="https://www.youtube.com/watch?v=IX1QP0TLM8g" target="_blank">Lec 6d</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="node">
+      <div class="node-head" onclick="tog(this)">
+        <span class="node-arrow">&#9654;</span>
+        <span class="nd-ico ico-loss">L</span>
+        <span class="node-label"><span data-lang="en">Loss Functions: Measuring Prediction Error</span><span data-lang="zh">损失函数：衡量预测有多差</span></span>
+      </div>
+      <div class="node-body">
+        <div class="leaf">
+          <div class="leaf-title"><span data-lang="en">Choosing the Right Loss Function</span><span data-lang="zh">如何选择损失函数</span></div>
+          <div data-lang="zh">
+            <p>损失函数就是你给模型的"评分标准"——告诉它"预测得多差"。不同类型的问题用不同的损失函数：</p>
+            <ul>
+              <li><strong>回归 &#x2192; MSE（均方误差）</strong>：
+                <div class="formula">J = (1/n) &#x2211;&#x1D62;&#x2081;&#x207F; (y&#x1D62; &#x2212; &#x177;&#x1D62;)&#xB2;</div>
+                对大误差惩罚更重（因为要平方）。梯度 &#x2202;J/&#x2202;&#x177;&#x1D62; = &#x2212;2(y&#x1D62; &#x2212; &#x177;&#x1D62;)/n，简单直观。假设噪声服从高斯分布时，最小化 MSE 等价于 MLE。</li>
+              <li><strong>二分类 &#x2192; Binary Cross-Entropy</strong>：
+                <div class="formula">J = &#x2212;(1/n) &#x2211;&#x1D62; [y&#x1D62; log(p&#x1D62;) + (1&#x2212;y&#x1D62;) log(1&#x2212;p&#x1D62;)]</div>
+                当模型很自信地预测错（比如 p=0.99 但 y=0）时，&#x2212;log(0.01) &#x2248; 4.6，惩罚非常大。这就是为什么 Cross-Entropy 比 MSE 更适合分类——它对自信的错误惩罚更重。</li>
+              <li><strong>多分类 &#x2192; Categorical Cross-Entropy</strong>：
+                <div class="formula">J = &#x2212;(1/n) &#x2211;&#x1D62; &#x2211;&#x1D4C;&#x2081;&#x1D37; y&#x1D62;&#x1D4C; log(&#x177;&#x1D62;&#x1D4C;)</div>
+                搭配 Softmax 使用。y&#x1D62;&#x1D4C; 是 one-hot 编码，所以求和实际上只保留正确类别的那一项。</li>
+              <li><strong>SVM &#x2192; Hinge Loss</strong>：
+                <div class="formula">J = &#x2211;&#x1D62; max(0, 1 &#x2212; y&#x1D62; f(x&#x1D62;))</div>
+                只要分类正确且置信度 &#x2265; 1 就不罚分，否则线性惩罚。这就是"最大间距"的来源。</li>
+            </ul>
+            <div class="analogy">打个比方：MSE 像老师打分，错 1 分扣 1，错 10 分扣 100（平方惩罚）。Cross-Entropy 像老师说"你答 A 我可以接受，但你很自信地答错我要重罚"——越自信的错误惩罚越重。</div>
+          </div>
+          <div data-lang="en">
+            <p>The loss function is the model's "grading rubric" — it defines how bad a prediction is. Different problems need different loss functions:</p>
+            <ul>
+              <li><strong>Regression &#x2192; MSE</strong>:
+                <div class="formula">J = (1/n) &#x2211;&#x1D62;&#x2081;&#x207F; (y&#x1D62; &#x2212; &#x177;&#x1D62;)&#xB2;</div>
+                Penalizes large errors more (squared). Gradient: &#x2202;J/&#x2202;&#x177;&#x1D62; = &#x2212;2(y&#x1D62; &#x2212; &#x177;&#x1D62;)/n — simple and intuitive. Under Gaussian noise assumption, minimizing MSE is equivalent to MLE.</li>
+              <li><strong>Binary Classification &#x2192; Binary Cross-Entropy</strong>:
+                <div class="formula">J = &#x2212;(1/n) &#x2211;&#x1D62; [y&#x1D62; log(p&#x1D62;) + (1&#x2212;y&#x1D62;) log(1&#x2212;p&#x1D62;)]</div>
+                When the model is confidently wrong (e.g., p=0.99 but y=0), &#x2212;log(0.01) &#x2248; 4.6, a severe penalty. This is why Cross-Entropy suits classification better than MSE — it punishes confident mistakes heavily.</li>
+              <li><strong>Multiclass &#x2192; Categorical Cross-Entropy</strong>:
+                <div class="formula">J = &#x2212;(1/n) &#x2211;&#x1D62; &#x2211;&#x1D4C;&#x2081;&#x1D37; y&#x1D62;&#x1D4C; log(&#x177;&#x1D62;&#x1D4C;)</div>
+                Paired with Softmax. y&#x1D62;&#x1D4C; is one-hot encoded, so the sum retains only the correct class's term.</li>
+              <li><strong>SVM &#x2192; Hinge Loss</strong>:
+                <div class="formula">J = &#x2211;&#x1D62; max(0, 1 &#x2212; y&#x1D62; f(x&#x1D62;))</div>
+                No penalty as long as classification is correct with confidence &#x2265; 1; linear penalty otherwise. This is the source of "maximum margin."</li>
+            </ul>
+            <div class="analogy">MSE is like a teacher deducting 1 point for a small error but 100 for a big one (squared). Cross-Entropy is like saying "I accept uncertainty, but confidently wrong answers get severely punished."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="node">
+      <div class="node-head" onclick="tog(this)">
+        <span class="node-arrow">&#9654;</span>
+        <span class="nd-ico ico-reg2">R</span>
+        <span class="node-label"><span data-lang="en">Preventing Overfitting: Regularization</span><span data-lang="zh">防止过拟合：正则化</span></span>
+      </div>
+      <div class="node-body">
+        <div class="leaf">
+          <div class="leaf-title"><span data-lang="en">What Is Overfitting?</span><span data-lang="zh">什么是过拟合？</span></div>
+          <div data-lang="zh">
+            <p>过拟合就是模型<strong>"死记硬背"了训练数据</strong>，包括其中的噪声和偶然规律，导致在新数据上表现很差。就像一个学生把课本上的例题答案背下来了，但遇到新题就不会做。</p>
+            <p>正则化是一套"防作弊"手段，让模型学到真正的规律而不是噪声：</p>
+            <ul>
+              <li><strong>L2 正则化 (Ridge)</strong> — 在损失函数中加 &#x3BB;||&#x3B8;||&#xB2;，限制参数不能太大。效果：模型更平滑、更"保守"。</li>
+              <li><strong>L1 正则化 (Lasso)</strong> — 加 &#x3BB;||&#x3B8;||&#x2081;，能把不重要的参数压到零——相当于自动丢弃无用特征。</li>
+              <li><strong>Dropout</strong> — 训练时随机"关闭"一部分神经元（比如 50%），迫使网络不过度依赖某几条路径。测试时全部神经元都打开。</li>
+              <li><strong>Batch Normalization</strong> — 对每层的输入做标准化（均值=0, 方差=1），加速训练、稳定梯度。</li>
+              <li><strong>交叉验证 (Cross-Validation)</strong> — 把数据分成 K 份，轮流用其中 1 份做测试、其余做训练。K 次结果的平均值就是对泛化能力的客观评估。</li>
+            </ul>
+            <div class="eg"><strong>例：</strong>假设你用 100 个特征预测房价，但其实只有 10 个特征真正有用。Lasso 可以自动帮你把另外 90 个特征的系数压到零，只保留重要的。Ridge 会把所有系数变小但不会完全归零。</div>
+          </div>
+          <div data-lang="en">
+            <p>Overfitting is when a model <strong>memorizes training data</strong>, including noise and coincidental patterns, performing poorly on new data. Like a student who memorized textbook answers but can't solve new problems.</p>
+            <p>Regularization is the "anti-cheating" toolkit, ensuring models learn genuine patterns:</p>
+            <ul>
+              <li><strong>L2 (Ridge)</strong> — Adds &#x3BB;||&#x3B8;||&#xB2; to loss, keeping parameters small. Effect: smoother, more "conservative" model.</li>
+              <li><strong>L1 (Lasso)</strong> — Adds &#x3BB;||&#x3B8;||&#x2081;, can zero out unimportant parameters — automatic feature selection.</li>
+              <li><strong>Dropout</strong> — Randomly deactivates neurons during training (e.g., 50%), preventing over-reliance on specific pathways. All neurons active during testing.</li>
+              <li><strong>Batch Normalization</strong> — Normalizes each layer's inputs (mean=0, variance=1), speeding up training and stabilizing gradients.</li>
+              <li><strong>Cross-Validation</strong> — Split data into K folds; rotate one fold as test, rest as training. Average over K trials gives an objective estimate of generalization.</li>
+            </ul>
+            <div class="eg"><strong>Ex:</strong> Predicting house prices with 100 features, but only 10 actually matter. Lasso zeros out the other 90; Ridge shrinks all of them but none to exactly zero.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- ROOT 3: NEURAL NETWORKS -->
+<!-- ============================== -->
+<div class="node node-root">
+  <div class="node-head" onclick="tog(this)">
+    <span class="node-arrow">&#9654;</span>
+    <span class="nd-ico">Q3</span>
+    <span class="node-label"><span data-lang="en">How Do Neural Networks Work?</span><span data-lang="zh">神经网络是怎么工作的？</span></span>
+    <span class="node-tag tag-model">Deep Learning</span>
+  </div>
+  <div class="node-body">
+
+    <div class="leaf">
+      <div data-lang="zh">
+        <p>神经网络是一种受大脑启发（但并不真正模拟大脑）的计算模型。它的强大之处在于：只要网络够大，理论上可以拟合<strong>任意复杂的函数</strong>（万能逼近定理）。近年来深度学习的爆发正是因为我们终于有了足够的数据和算力来训练大型神经网络。</p>
+      </div>
+      <div data-lang="en">
+        <p>Neural networks are brain-inspired (but don't literally simulate brains) computational models. Their power: given sufficient size, they can theoretically approximate <strong>any function</strong> (Universal Approximation Theorem). The deep learning explosion happened because we finally had enough data and compute to train large networks.</p>
+      </div>
+    </div>
+
+    <div class="node">
+      <div class="node-head" onclick="tog(this)">
+        <span class="node-arrow">&#9654;</span>
+        <span class="nd-ico ico-arch">A</span>
+        <span class="node-label"><span data-lang="en">Architecture: Feed-Forward Network</span><span data-lang="zh">基本结构：前馈神经网络</span></span>
+      </div>
+      <div class="node-body">
+        <div class="leaf">
+          <div class="leaf-title"><span data-lang="en">The Building Blocks</span><span data-lang="zh">基本构成</span></div>
+          <div data-lang="zh">
+            <p>最简单的神经网络由三层组成：<strong>输入层</strong>（接收特征数据）&#x2192; <strong>隐藏层</strong>（做可学习的特征变换）&#x2192; <strong>输出层</strong>（给出预测结果）。</p>
+            <div class="formula">z&#x2095; = W&#x2095;x + b&#x2095;　&#x2192;　a&#x2095; = h(z&#x2095;)　&#x2192;　z&#x2092; = W&#x2092;a&#x2095; + b&#x2092;</div>
+            <p>每一层做两件事：(1) 线性变换（矩阵乘法 + 偏置），(2) 非线性激活。<strong>没有激活函数的话，多层网络等价于单层线性模型</strong>——激活函数才是让网络能学习复杂模式的关键。</p>
+            <div class="analogy">可以把神经网络想象成一个工厂流水线：每一层是一个加工车间，把半成品（特征）加工成更有用的形式，最终车间输出成品（预测）。</div>
+            <div class="eg"><strong>例：</strong>识别手写数字——输入层 784 个神经元（28x28 像素），隐藏层 256 个神经元（学习笔画模式），输出层 10 个神经元（代表 0-9 十个数字的概率）。</div>
+          </div>
+          <div data-lang="en">
+            <p>The simplest neural network has three layers: <strong>Input</strong> (receives features) &#x2192; <strong>Hidden</strong> (learnable feature transformation) &#x2192; <strong>Output</strong> (produces predictions).</p>
+            <div class="formula">z&#x2095; = W&#x2095;x + b&#x2095;　&#x2192;　a&#x2095; = h(z&#x2095;)　&#x2192;　z&#x2092; = W&#x2092;a&#x2095; + b&#x2092;</div>
+            <p>Each layer does two things: (1) linear transformation (matrix multiply + bias), (2) nonlinear activation. <strong>Without activations, a multi-layer network collapses to a single linear model</strong> — activations are the key to learning complex patterns.</p>
+            <div class="analogy">Think of a neural network as a factory assembly line: each layer is a processing station that refines raw materials (features) into increasingly useful forms, with the final station outputting the finished product (prediction).</div>
+            <div class="eg"><strong>Ex:</strong> Recognizing handwritten digits — input layer: 784 neurons (28x28 pixels); hidden layer: 256 neurons (learning stroke patterns); output layer: 10 neurons (probabilities for digits 0-9).</div>
+          </div>
+          <div class="vid"><a href="https://www.youtube.com/watch?v=Dvl_nEKSF4Y" target="_blank">Lec 8a</a> · <a href="https://www.youtube.com/watch?v=pdOWc7iQE3Y" target="_blank">Lec 8b</a> · <a href="https://www.youtube.com/watch?v=pcWOzLhmBxU" target="_blank">Lec 8c</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="node">
+      <div class="node-head" onclick="tog(this)">
+        <span class="node-arrow">&#9654;</span>
+        <span class="nd-ico ico-act">F</span>
+        <span class="node-label"><span data-lang="en">Activation Functions: Why Nonlinearity Matters</span><span data-lang="zh">激活函数：为什么非线性如此重要</span></span>
+      </div>
+      <div class="node-body">
+        <div class="leaf">
+          <div class="leaf-title"><span data-lang="en">Three Main Activation Functions</span><span data-lang="zh">三种主要激活函数</span></div>
+          <div data-lang="zh">
+            <p>激活函数的作用是在每层的线性变换后引入<strong>非线性</strong>。没有它，再深的网络也只能画直线（做线性分割）。有了它，网络才能画出任意复杂的曲线来分开数据。</p>
+          </div>
+          <div data-lang="en">
+            <p>Activation functions introduce <strong>nonlinearity</strong> after each layer's linear transformation. Without them, even a deep network can only draw straight lines. With them, the network can draw arbitrarily complex decision boundaries.</p>
+          </div>
+          <div class="vs">
+            <div class="vs-col"><strong>Sigmoid</strong><div class="formula">h(z) = 1/(1+e&#x207B;&#x1D83;)</div><div class="formula">h&#x2032;(z) = h(z)(1 &#x2212; h(z)) &#x2264; 0.25</div><span data-lang="zh">输出 (0,1)。导数最大值只有 0.25，10 层连乘后梯度衰减为 0.25&#xB9;&#x2070; &#x2248; 10&#x207B;&#x2076;，这就是梯度消失。</span><span data-lang="en">Output (0,1). Max derivative is only 0.25; after 10 layers of multiplication, gradient decays to 0.25&#xB9;&#x2070; &#x2248; 10&#x207B;&#x2076; — vanishing gradients.</span></div>
+            <div class="vs-col"><strong>Tanh</strong><div class="formula">h(z) = (e&#x1D83; &#x2212; e&#x207B;&#x1D83;)/(e&#x1D83; + e&#x207B;&#x1D83;)</div><div class="formula">h&#x2032;(z) = 1 &#x2212; h(z)&#xB2; &#x2264; 1</div><span data-lang="zh">输出 (-1,1)。零中心化，导数最大为 1，比 Sigmoid 好但仍有饱和区（|z| 大时 h&#x2032; &#x2248; 0）。</span><span data-lang="en">Output (-1,1). Zero-centered, max derivative = 1, better than Sigmoid but still saturates (h&#x2032; &#x2248; 0 for large |z|).</span></div>
+          </div>
+          <div class="leaf-title" style="margin-top:10px">ReLU — <span data-lang="en">The Default Choice</span><span data-lang="zh">深度学习的默认选择</span></div>
+          <div class="formula">h(z) = max(0, z)，　h&#x2032;(z) = &#x1D7D9;(z > 0) = { 1 if z > 0,　0 if z &#x2264; 0 }</div>
+          <div data-lang="zh">
+            <p>极其简单：正数原样通过，负数变成零。梯度要么是 1 要么是 0，<strong>永远不会消失</strong>。计算速度快。今天几乎所有深度网络都用 ReLU 或其变体（Leaky ReLU、GELU 等）。</p>
+            <p><strong>梯度消失问题详解：</strong>Sigmoid 和 Tanh 的梯度始终小于 1。在多层网络中，反向传播需要将各层梯度连乘——很多个小于 1 的数相乘，结果趋近于零。这意味着靠近输入的前面几层几乎无法学习。ReLU 的梯度是 1（正数区域），完美解决了这个问题。</p>
+          </div>
+          <div data-lang="en">
+            <p>Extremely simple: positive values pass through, negatives become zero. Gradient is either 1 or 0 — <strong>it never vanishes</strong>. Fast to compute. Nearly all modern deep networks use ReLU or variants (Leaky ReLU, GELU, etc.).</p>
+            <p><strong>Vanishing gradient explained:</strong> Sigmoid/Tanh gradients are always &lt;1. In deep networks, backpropagation multiplies gradients across layers — many numbers &lt;1 multiplied together approach zero. Early layers barely learn. ReLU's gradient is 1 (for positive inputs), solving this completely.</p>
+          </div>
+          <div class="vid"><a href="https://www.youtube.com/watch?v=Dvl_nEKSF4Y" target="_blank">Lec 8a</a> · <a href="https://www.youtube.com/watch?v=pdOWc7iQE3Y" target="_blank">Lec 8b</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="node">
+      <div class="node-head" onclick="tog(this)">
+        <span class="node-arrow">&#9654;</span>
+        <span class="nd-ico ico-bp">B</span>
+        <span class="node-label"><span data-lang="en">Backpropagation: How Networks Learn</span><span data-lang="zh">反向传播：网络如何学习</span></span>
+      </div>
+      <div class="node-body">
+        <div class="leaf">
+          <div class="leaf-title">Backpropagation</div>
+          <div data-lang="zh">
+            <p>反向传播是训练神经网络的<strong>核心算法</strong>。整个过程分两步：</p>
+            <p><strong>前向传播：</strong>数据从输入层流过每一层，最终得到预测结果，计算出损失。</p>
+            <p><strong>反向传播：</strong>从输出层开始，利用<strong>链式法则</strong>逐层往回算。以一个两层网络为例（输入 x &#x2192; 隐藏层 &#x2192; 输出 &#x177;）：</p>
+            <div class="formula">前向：z&#x2095; = W&#x2095;x + b&#x2095;,　a&#x2095; = h(z&#x2095;),　z&#x2092; = W&#x2092;a&#x2095; + b&#x2092;,　&#x177; = z&#x2092;</div>
+            <p>定义<strong>误差信号</strong> &#x3B4;（每层对最终损失的"贡献"）：</p>
+            <div class="formula">&#x3B4;&#x2092; = &#x2202;J/&#x2202;z&#x2092; = (&#x177; &#x2212; y)　（输出层）</div>
+            <div class="formula">&#x3B4;&#x2095; = &#x2202;J/&#x2202;z&#x2095; = (W&#x2092;&#x1D40; &#x3B4;&#x2092;) &#x2299; h&#x2032;(z&#x2095;)　（隐藏层，&#x2299; 表示逐元素乘法）</div>
+            <p>有了 &#x3B4;，每层的梯度就很简单了：&#x2202;J/&#x2202;W&#x2095; = &#x3B4;&#x2095; x&#x1D40;，&#x2202;J/&#x2202;W&#x2092; = &#x3B4;&#x2092; a&#x2095;&#x1D40;。这就是为什么激活函数的导数 h&#x2032;(z) 如此重要——Sigmoid 的 h&#x2032; 很小，导致 &#x3B4; 层层衰减（梯度消失）。</p>
+            <div class="analogy">就像工厂出了次品，你从最后的检测环节倒着追溯："是包装的问题？还是组装的问题？还是原材料的问题？"每一步都追溯到是哪个环节、哪个工人（参数）出了差错，然后针对性地改进。</div>
+          </div>
+          <div data-lang="en">
+            <p>Backpropagation is the <strong>core algorithm</strong> for training neural networks. Two phases:</p>
+            <p><strong>Forward pass:</strong> Data flows through each layer to produce predictions, then compute loss.</p>
+            <p><strong>Backward pass:</strong> Starting from the output, use the <strong>chain rule</strong> layer by layer. For a two-layer network (input x &#x2192; hidden &#x2192; output &#x177;):</p>
+            <div class="formula">Forward: z&#x2095; = W&#x2095;x + b&#x2095;,　a&#x2095; = h(z&#x2095;),　z&#x2092; = W&#x2092;a&#x2095; + b&#x2092;,　&#x177; = z&#x2092;</div>
+            <p>Define the <strong>error signal</strong> &#x3B4; (each layer's "contribution" to the final loss):</p>
+            <div class="formula">&#x3B4;&#x2092; = &#x2202;J/&#x2202;z&#x2092; = (&#x177; &#x2212; y)　(output layer)</div>
+            <div class="formula">&#x3B4;&#x2095; = &#x2202;J/&#x2202;z&#x2095; = (W&#x2092;&#x1D40; &#x3B4;&#x2092;) &#x2299; h&#x2032;(z&#x2095;)　(hidden layer, &#x2299; = element-wise multiply)</div>
+            <p>With &#x3B4;, each layer's gradients are simple: &#x2202;J/&#x2202;W&#x2095; = &#x3B4;&#x2095; x&#x1D40;, &#x2202;J/&#x2202;W&#x2092; = &#x3B4;&#x2092; a&#x2095;&#x1D40;. This is why the activation function's derivative h&#x2032;(z) matters so much — Sigmoid's h&#x2032; is tiny, causing &#x3B4; to decay layer by layer (vanishing gradients).</p>
+            <div class="analogy">Like a factory tracing a defective product back through the assembly line: "Was it packaging? Assembly? Raw materials?" Each step traces which station and which worker (parameter) contributed to the defect, enabling targeted improvement.</div>
+          </div>
+          <div class="vid"><a href="https://www.youtube.com/watch?v=pcWOzLhmBxU" target="_blank">Lec 8c</a> · <a href="https://www.youtube.com/watch?v=wOuD9dGhymU" target="_blank">Lec 9a</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="node">
+      <div class="node-head" onclick="tog(this)">
+        <span class="node-arrow">&#9654;</span>
+        <span class="nd-ico ico-cnn">C</span>
+        <span class="node-label"><span data-lang="en">CNN Architecture Deep Dive</span><span data-lang="zh">CNN 架构详解</span></span>
+      </div>
+      <div class="node-body">
+        <div class="leaf">
+          <div class="leaf-title"><span data-lang="en">Convolutional Layers — Local Feature Extraction</span><span data-lang="zh">卷积层 — 局部特征提取</span></div>
+          <div data-lang="zh">
+            <p>卷积核（比如 3&#xD7;3 的小方块）像一个小窗口在图像上滑动，每到一个位置就和图像的对应区域做点乘求和。不同的卷积核学会检测不同的模式——有的检测水平线，有的检测颜色变化，有的检测角点。</p>
+            <p>Padding 模式决定了卷积后图像的大小：</p>
+            <ul>
+              <li><strong>Valid</strong>（不填充）：输出尺寸 = (N&#x2212;K+1)，图像会越来越小</li>
+              <li><strong>Same</strong>（零填充）：输出尺寸 = N，保持大小不变</li>
+              <li><strong>Full</strong>（完全填充）：输出尺寸 = (N+K&#x2212;1)，图像反而变大</li>
+            </ul>
+          </div>
+          <div data-lang="en">
+            <p>Convolution kernels (e.g., 3&#xD7;3 patches) slide across the image like a small window, computing dot products at each position. Different kernels learn to detect different patterns — horizontal edges, color changes, corners, etc.</p>
+            <p>Padding modes determine output size:</p>
+            <ul>
+              <li><strong>Valid</strong> (no padding): output = (N&#x2212;K+1), image shrinks</li>
+              <li><strong>Same</strong> (zero-pad): output = N, size preserved</li>
+              <li><strong>Full</strong> (full padding): output = (N+K&#x2212;1), image grows</li>
+            </ul>
+          </div>
+        </div>
+        <div class="leaf">
+          <div class="leaf-title"><span data-lang="en">Feature Hierarchy — Simple to Semantic</span><span data-lang="zh">特征层次 — 从简单到语义</span></div>
+          <div data-lang="zh">
+            <p>CNN 最迷人的特性：浅层自动学到边缘和角点 &#x2192; 中层学到纹理和部件 &#x2192; 深层学到完整的语义概念（人脸、汽车、动物）。这种层次结构惊人地类似于人类视觉皮层 V1 &#x2192; V2 &#x2192; ... 的信息处理方式。</p>
+          </div>
+          <div data-lang="en">
+            <p>CNN's most fascinating property: early layers automatically learn edges and corners &#x2192; middle layers learn textures and parts &#x2192; deep layers learn full semantic concepts (faces, cars, animals). This hierarchy remarkably mirrors the human visual cortex V1 &#x2192; V2 &#x2192; ... processing pipeline.</p>
+          </div>
+        </div>
+        <div class="leaf">
+          <div class="leaf-title">AlexNet (2012) — <span data-lang="en">The Deep Learning Big Bang</span><span data-lang="zh">深度学习的"大爆炸"</span></div>
+          <div data-lang="zh">
+            <p>5 层卷积 + 3 层全连接，6000 万参数。三大关键创新：<strong>ReLU</strong> 替代 Sigmoid、<strong>Max Pooling</strong> 做降采样、<strong>Dropout</strong> 防过拟合。在 ImageNet（140 万张图，1000 个类别）上，top-5 错误率从传统方法的 25.6% 降到 15.3%——第一次让世界意识到深度学习的威力。从此之后，深度学习统治了计算机视觉领域。</p>
+          </div>
+          <div data-lang="en">
+            <p>5 conv + 3 FC layers, 60 million parameters. Three key innovations: <strong>ReLU</strong> replacing Sigmoid, <strong>Max Pooling</strong> for downsampling, <strong>Dropout</strong> for regularization. Reduced ImageNet (1.4M images, 1000 classes) top-5 error from 25.6% to 15.3% — the moment the world realized deep learning's power. Deep learning has dominated computer vision ever since.</p>
+          </div>
+          <div class="vid"><a href="https://www.youtube.com/watch?v=oDrpiosMEFg" target="_blank">Lec 9b</a> · <a href="https://www.youtube.com/watch?v=8m5G2RGrYyY" target="_blank">Lec 9c</a> · <a href="https://www.youtube.com/watch?v=kirstWYhIyA" target="_blank">Lec 9d</a> · <a href="https://www.youtube.com/watch?v=qPZF37bMyiQ" target="_blank">Lec 9e</a></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- ROOT 4: MATHEMATICAL FOUNDATIONS -->
+<!-- ============================== -->
+<div class="node node-root">
+  <div class="node-head" onclick="tog(this)">
+    <span class="node-arrow">&#9654;</span>
+    <span class="nd-ico">Q4</span>
+    <span class="node-label"><span data-lang="en">What Math Do You Need?</span><span data-lang="zh">需要什么数学基础？</span></span>
+    <span class="node-tag tag-math">Math</span>
+  </div>
+  <div class="node-body">
+
+    <div class="leaf">
+      <div data-lang="zh">
+        <p>机器学习的数学基础主要有三块：线性代数（处理数据和变换）、概率统计（从数据中推理）、优化理论（训练模型）。不需要一开始就全学会——可以边用边学，遇到不懂的概念再回来查。</p>
+      </div>
+      <div data-lang="en">
+        <p>ML math has three pillars: linear algebra (handling data and transformations), probability &amp; statistics (reasoning from data), and optimization (training models). You don't need to learn everything upfront — learn as you go, and come back to look things up as needed.</p>
+      </div>
+    </div>
+
+    <div class="node">
+      <div class="node-head" onclick="tog(this)">
+        <span class="node-arrow">&#9654;</span>
+        <span class="nd-ico ico-la">V</span>
+        <span class="node-label"><span data-lang="en">Linear Algebra (Unit 1)</span><span data-lang="zh">线性代数 (Unit 1)</span></span>
+      </div>
+      <div class="node-body">
+        <div class="leaf">
+          <div data-lang="zh">
+            <p>ML 中的数据、参数和变换都是矩阵和向量。线性代数就是处理它们的工具。</p>
+            <ul>
+              <li><strong>SVD 分解</strong> — 任何矩阵 A 都可以分解为 A = U&#x3A3;V&#x1D40;，其中 U, V 是正交矩阵，&#x3A3; 是对角矩阵（奇异值）。PCA 的数学核心：对数据的协方差矩阵做 SVD，前 k 个奇异向量就是主成分。
+                <div class="formula">A = U&#x3A3;V&#x1D40;,　A &#x2208; &#x211D;&#x1D50;&#xD7;&#x207F;,　U &#x2208; &#x211D;&#x1D50;&#xD7;&#x1D50;,　&#x3A3; &#x2208; &#x211D;&#x1D50;&#xD7;&#x207F;,　V &#x2208; &#x211D;&#x207F;&#xD7;&#x207F;</div>
+              </li>
+              <li><strong>特征值/特征向量</strong> — Av = &#x3BB;v。协方差矩阵 C = (1/n)X&#x1D40;X 的特征值 &#x3BB;&#x1D62; 就是第 i 个主成分的方差。PCA 保留前 k 个特征值对应的方向，使得保留的方差比最大：
+                <div class="formula">保留方差比 = &#x2211;&#x1D62;&#x2081;&#x1D4C; &#x3BB;&#x1D62; / &#x2211;&#x1D62;&#x2081;&#x1D48; &#x3BB;&#x1D62;</div>
+              </li>
+              <li><strong>矩阵求逆与伪逆</strong> — 闭式解需要 (X&#x1D40;X)&#x207B;&#xB9;。当不可逆时，用 Moore-Penrose 伪逆 X&#x207A; = V&#x3A3;&#x207A;U&#x1D40;（从 SVD 直接得到）。</li>
+              <li><strong>向量范数</strong> — L2 范数 ||x||&#x2082; = &#x221A;(&#x2211;x&#x1D62;&#xB2;)，L1 范数 ||x||&#x2081; = &#x2211;|x&#x1D62;|。正则化项就是参数的范数。</li>
+              <li><strong>正定矩阵</strong> — 矩阵 A 正定 &#x21D4; x&#x1D40;Ax > 0 对所有 x &#x2260; 0。Hessian 正定意味着函数是严格凸的（有唯一全局最优解）。</li>
+            </ul>
+            <div class="eg"><strong>为什么重要：</strong>一张 28&#xD7;28 的灰度图像就是一个 784 维向量。一个有 1000 个样本、50 个特征的数据集就是一个 1000&#xD7;50 的矩阵。训练模型就是在这些矩阵上做运算。</div>
+          </div>
+          <div data-lang="en">
+            <p>In ML, data, parameters, and transformations are all matrices and vectors. Linear algebra is the toolkit for working with them.</p>
+            <ul>
+              <li><strong>SVD</strong> — Any matrix A can be decomposed as A = U&#x3A3;V&#x1D40;, where U, V are orthogonal and &#x3A3; is diagonal (singular values). The math behind PCA: apply SVD to the covariance matrix; the top k singular vectors are the principal components.
+                <div class="formula">A = U&#x3A3;V&#x1D40;,　A &#x2208; &#x211D;&#x1D50;&#xD7;&#x207F;,　U &#x2208; &#x211D;&#x1D50;&#xD7;&#x1D50;,　&#x3A3; &#x2208; &#x211D;&#x1D50;&#xD7;&#x207F;,　V &#x2208; &#x211D;&#x207F;&#xD7;&#x207F;</div>
+              </li>
+              <li><strong>Eigenvalues/Eigenvectors</strong> — Av = &#x3BB;v. Covariance matrix C = (1/n)X&#x1D40;X eigenvalues &#x3BB;&#x1D62; are the variance along the i-th principal component. PCA retains the top k eigenvectors to maximize explained variance:
+                <div class="formula">Explained variance ratio = &#x2211;&#x1D62;&#x2081;&#x1D4C; &#x3BB;&#x1D62; / &#x2211;&#x1D62;&#x2081;&#x1D48; &#x3BB;&#x1D62;</div>
+              </li>
+              <li><strong>Matrix Inverse &amp; Pseudoinverse</strong> — Closed-form needs (X&#x1D40;X)&#x207B;&#xB9;. When singular, use Moore-Penrose pseudoinverse X&#x207A; = V&#x3A3;&#x207A;U&#x1D40; (directly from SVD).</li>
+              <li><strong>Vector Norms</strong> — L2 norm ||x||&#x2082; = &#x221A;(&#x2211;x&#x1D62;&#xB2;), L1 norm ||x||&#x2081; = &#x2211;|x&#x1D62;|. Regularization terms are parameter norms.</li>
+              <li><strong>Positive Definite Matrices</strong> — A is positive definite &#x21D4; x&#x1D40;Ax > 0 for all x &#x2260; 0. A positive definite Hessian means the function is strictly convex (unique global optimum).</li>
+            </ul>
+            <div class="eg"><strong>Why it matters:</strong> A 28&#xD7;28 grayscale image is a 784-dimensional vector. A dataset of 1000 samples with 50 features is a 1000&#xD7;50 matrix. Training models means computing with these matrices.</div>
+          </div>
+          <div class="vid"><a href="https://www.youtube.com/watch?v=zggmj1h0zbA" target="_blank">Lec 1a</a> · <a href="https://www.youtube.com/watch?v=dGqOfseBR3U" target="_blank">Lec 1b &amp; 2a</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="node">
+      <div class="node-head" onclick="tog(this)">
+        <span class="node-arrow">&#9654;</span>
+        <span class="nd-ico ico-prob">P</span>
+        <span class="node-label"><span data-lang="en">Probability &amp; Statistics (Unit 2)</span><span data-lang="zh">概率与统计 (Unit 2)</span></span>
+      </div>
+      <div class="node-body">
+        <div class="leaf">
+          <div data-lang="zh">
+            <p>从数据中学习的理论基础——如何在不确定性中做出最优推断。</p>
+            <ul>
+              <li><strong>贝叶斯定理</strong>：
+                <div class="formula">P(&#x3B8;|D) = P(D|&#x3B8;) P(&#x3B8;) / P(D) &#x221D; likelihood &#xD7; prior</div>
+                核心思想："在看到数据之后，我对世界的信念应该如何更新？"MAP（最大后验估计）= MLE + 先验，当先验为高斯时，MAP 等价于 L2 正则化！</li>
+              <li><strong>最大似然估计 (MLE)</strong>：
+                <div class="formula">&#x3B8;&#x2098;&#x2097;&#x2091; = argmax &#x220F;&#x1D62; P(x&#x1D62;|&#x3B8;) = argmax &#x2211;&#x1D62; log P(x&#x1D62;|&#x3B8;)</div>
+                取对数把连乘变成求和（数值稳定且方便求导）。MSE 是高斯假设下的 MLE，Cross-Entropy 是伯努利假设下的 MLE。</li>
+              <li><strong>KL 散度</strong> — 衡量两个分布的"距离"：
+                <div class="formula">D&#x2096;&#x2097;(P||Q) = &#x2211; P(x) log(P(x)/Q(x)) &#x2265; 0</div>
+                最小化 Cross-Entropy &#x21D4; 最小化预测分布 Q 和真实分布 P 之间的 KL 散度。</li>
+              <li><strong>协方差矩阵</strong> — C = E[(X&#x2212;&#x3BC;)(X&#x2212;&#x3BC;)&#x1D40;]，对角元素是方差，非对角元素是协方差。多元高斯分布 N(&#x3BC;, &#x3A3;) 完全由均值和协方差矩阵决定。</li>
+            </ul>
+            <div class="eg"><strong>例：</strong>一个简单的垃圾邮件过滤器（朴素贝叶斯）：先验概率 P(垃圾邮件)=20%，如果邮件中出现"免费赠送"这个词，P("免费赠送"|垃圾邮件) 很高但 P("免费赠送"|正常邮件) 很低，所以看到这个词后，P(垃圾邮件|这封邮件) 会大幅上升。</div>
+          </div>
+          <div data-lang="en">
+            <p>The theoretical foundation for learning from data — making optimal inferences under uncertainty.</p>
+            <ul>
+              <li><strong>Bayes' Theorem</strong>:
+                <div class="formula">P(&#x3B8;|D) = P(D|&#x3B8;) P(&#x3B8;) / P(D) &#x221D; likelihood &#xD7; prior</div>
+                Core idea: "After seeing data, how should I update my beliefs?" MAP (Maximum A Posteriori) = MLE + prior; with a Gaussian prior, MAP is equivalent to L2 regularization!</li>
+              <li><strong>Maximum Likelihood (MLE)</strong>:
+                <div class="formula">&#x3B8;&#x2098;&#x2097;&#x2091; = argmax &#x220F;&#x1D62; P(x&#x1D62;|&#x3B8;) = argmax &#x2211;&#x1D62; log P(x&#x1D62;|&#x3B8;)</div>
+                Log transforms products into sums (numerically stable, easy to differentiate). MSE is MLE under Gaussian noise; Cross-Entropy is MLE under Bernoulli.</li>
+              <li><strong>KL Divergence</strong> — Measures "distance" between distributions:
+                <div class="formula">D&#x2096;&#x2097;(P||Q) = &#x2211; P(x) log(P(x)/Q(x)) &#x2265; 0</div>
+                Minimizing Cross-Entropy &#x21D4; minimizing KL divergence between predicted Q and true P.</li>
+              <li><strong>Covariance Matrix</strong> — C = E[(X&#x2212;&#x3BC;)(X&#x2212;&#x3BC;)&#x1D40;]; diagonal = variances, off-diagonal = covariances. Multivariate Gaussian N(&#x3BC;, &#x3A3;) is fully defined by mean and covariance.</li>
+            </ul>
+            <div class="eg"><strong>Ex:</strong> A simple spam filter (Naive Bayes): prior P(spam)=20%; if "free gift" appears, P("free gift"|spam) is high but P("free gift"|ham) is low, so P(spam|this email) jumps after seeing those words.</div>
+          </div>
+          <div class="vid"><a href="https://www.youtube.com/watch?v=dGqOfseBR3U" target="_blank">Lec 1b &amp; 2a</a> · <a href="https://www.youtube.com/watch?v=xA45cYeCV8w" target="_blank">Lec 2b</a> · <a href="https://www.youtube.com/watch?v=wg3VY3Vg8hU" target="_blank">Lec 2c</a> · <a href="https://www.youtube.com/watch?v=DVTxmGjosXw" target="_blank">Lec 2d</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="node">
+      <div class="node-head" onclick="tog(this)">
+        <span class="node-arrow">&#9654;</span>
+        <span class="nd-ico ico-optm">O</span>
+        <span class="node-label"><span data-lang="en">Optimization Theory (Unit 3)</span><span data-lang="zh">优化理论 (Unit 3)</span></span>
+      </div>
+      <div class="node-body">
+        <div class="leaf">
+          <div data-lang="zh">
+            <p>训练模型 = 最小化损失函数 = 优化问题。理解优化理论能帮你解决"为什么模型训不好"的问题。</p>
+            <ul>
+              <li><strong>凸函数</strong> — f 是凸的 &#x21D4; f(&#x3BB;x + (1&#x2212;&#x3BB;)y) &#x2264; &#x3BB;f(x) + (1&#x2212;&#x3BB;)f(y)，等价于 Hessian H &#x2AB0; 0（半正定）。凸函数只有一个全局最优解。线性回归和 Logistic 回归的损失都是凸的，SVM 也是凸的（二次规划）。深度学习的损失是非凸的（存在鞍点和局部最优）。</li>
+              <li><strong>梯度 &amp; Hessian</strong> — 梯度向量 &#x2207;f &#x2208; &#x211D;&#x1D48; 指向函数增长最快的方向。Hessian 矩阵 H &#x2208; &#x211D;&#x1D48;&#xD7;&#x1D48; 描述曲率：
+                <div class="formula">&#x2207;f = [&#x2202;f/&#x2202;&#x3B8;&#x2081;, ..., &#x2202;f/&#x2202;&#x3B8;&#x1D48;]&#x1D40;，　H&#x1D62;&#x2C7; = &#x2202;&#xB2;f / &#x2202;&#x3B8;&#x1D62;&#x2202;&#x3B8;&#x2C7;</div>
+                最优性条件（无约束）：一阶 &#x2207;f = 0，二阶 H &#x2AB0; 0。</li>
+              <li><strong>拉格朗日乘数与 KKT 条件</strong> — 有约束优化 min f(x) s.t. g&#x1D62;(x) &#x2264; 0 的最优性条件：
+                <div class="formula">L(x, &#x3B1;) = f(x) + &#x2211;&#x1D62; &#x3B1;&#x1D62; g&#x1D62;(x)，　&#x3B1;&#x1D62; &#x2265; 0,　&#x3B1;&#x1D62; g&#x1D62;(x) = 0（互补松弛）</div>
+                SVM 的对偶问题就是用 KKT 条件推导的，互补松弛条件解释了为什么只有支持向量的 &#x3B1;&#x1D62; > 0。</li>
+              <li><strong>收敛速率</strong> — GD 线性收敛 O(1/t)，牛顿法二次收敛 O(1/t&#xB2;)，SGD 收敛速率约 O(1/&#x221A;t)。Adam 等自适应方法结合了动量和学习率调节：
+                <div class="formula">Adam: m&#x1D57; = &#x3B2;&#x2081;m&#x1D57;&#x207B;&#xB9; + (1&#x2212;&#x3B2;&#x2081;)g&#x1D57;,　v&#x1D57; = &#x3B2;&#x2082;v&#x1D57;&#x207B;&#xB9; + (1&#x2212;&#x3B2;&#x2082;)g&#x1D57;&#xB2;,　&#x3B8; = &#x3B8; &#x2212; &#x3B1; m&#x302;&#x1D57;/(&#x221A;v&#x302;&#x1D57; + &#x3B5;)</div>
+              </li>
+            </ul>
+          </div>
+          <div data-lang="en">
+            <p>Training models = minimizing loss = optimization. Understanding optimization helps diagnose "why isn't my model learning?"</p>
+            <ul>
+              <li><strong>Convex Functions</strong> — f is convex &#x21D4; f(&#x3BB;x + (1&#x2212;&#x3BB;)y) &#x2264; &#x3BB;f(x) + (1&#x2212;&#x3BB;)f(y), equivalently Hessian H &#x2AB0; 0 (positive semi-definite). Convex functions have a single global optimum. Linear/Logistic regression losses are convex; SVM is convex (quadratic program). Deep learning losses are non-convex (saddle points and local optima exist).</li>
+              <li><strong>Gradient &amp; Hessian</strong> — Gradient &#x2207;f &#x2208; &#x211D;&#x1D48; points in the steepest ascent direction. Hessian H &#x2208; &#x211D;&#x1D48;&#xD7;&#x1D48; describes curvature:
+                <div class="formula">&#x2207;f = [&#x2202;f/&#x2202;&#x3B8;&#x2081;, ..., &#x2202;f/&#x2202;&#x3B8;&#x1D48;]&#x1D40;,　H&#x1D62;&#x2C7; = &#x2202;&#xB2;f / &#x2202;&#x3B8;&#x1D62;&#x2202;&#x3B8;&#x2C7;</div>
+                Optimality conditions (unconstrained): first-order &#x2207;f = 0, second-order H &#x2AB0; 0.</li>
+              <li><strong>Lagrange Multipliers &amp; KKT</strong> — For constrained optimization min f(x) s.t. g&#x1D62;(x) &#x2264; 0:
+                <div class="formula">L(x, &#x3B1;) = f(x) + &#x2211;&#x1D62; &#x3B1;&#x1D62; g&#x1D62;(x),　&#x3B1;&#x1D62; &#x2265; 0,　&#x3B1;&#x1D62; g&#x1D62;(x) = 0 (complementary slackness)</div>
+                SVM's dual is derived via KKT; complementary slackness explains why only support vectors have &#x3B1;&#x1D62; > 0.</li>
+              <li><strong>Convergence Rates</strong> — GD: linear O(1/t), Newton: quadratic O(1/t&#xB2;), SGD: ~O(1/&#x221A;t). Adaptive methods like Adam combine momentum and learning rate scaling:
+                <div class="formula">Adam: m&#x1D57; = &#x3B2;&#x2081;m&#x1D57;&#x207B;&#xB9; + (1&#x2212;&#x3B2;&#x2081;)g&#x1D57;,　v&#x1D57; = &#x3B2;&#x2082;v&#x1D57;&#x207B;&#xB9; + (1&#x2212;&#x3B2;&#x2082;)g&#x1D57;&#xB2;,　&#x3B8; = &#x3B8; &#x2212; &#x3B1; m&#x302;&#x1D57;/(&#x221A;v&#x302;&#x1D57; + &#x3B5;)</div>
+              </li>
+            </ul>
+          </div>
+          <div class="vid"><a href="https://www.youtube.com/watch?v=6jZtn5KgWnE" target="_blank">Lec 6a</a> · <a href="https://www.youtube.com/watch?v=qgVybCRe2B4" target="_blank">Lec 6b</a> · <a href="https://www.youtube.com/watch?v=Z_UatM_fmhM" target="_blank">Lec 6c</a> · <a href="https://www.youtube.com/watch?v=IX1QP0TLM8g" target="_blank">Lec 6d</a></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+      </div><!-- /tree -->
+
+      <!-- PAGE NAV -->
+      <div class="page-nav">
+        <a href="lpa.html">
+          <div class="nav-label">&larr; Previous</div>
+          <div class="nav-title">Latent Profile Analysis</div>
+        </a>
+        <a class="next" href="llm.html">
+          <div class="nav-label">Next &rarr;</div>
+          <div class="nav-title">LLM &amp; NLP</div>
+        </a>
+      </div>
+
+    </div><!-- /content -->
+  </div>
+</div>
+
+<script>
+function tog(el){el.parentElement.classList.toggle('open')}
+function toggleAll(open){
+  document.querySelectorAll('.tree .node').forEach(n=>{
+    open?n.classList.add('open'):n.classList.remove('open')
+  })
+}
+function setLang(lang){
+  document.body.className=lang==='zh'?'zh':'';
+  document.getElementById('btn-en').className='lang-btn'+(lang==='en'?' active':'');
+  document.getElementById('btn-zh').className='lang-btn'+(lang==='zh'?' active':'');
+  localStorage.setItem('selectedLang',lang);
+}
+window.addEventListener('DOMContentLoaded',function(){
+  var lang=localStorage.getItem('selectedLang')||'zh';
+  setLang(lang);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+---
+layout: methods-course
+title: "Regression Analysis"
+breadcrumb: "Statistics"
+bilingual: true
+prev:
+  url: reg-dataviz.html
+  title: "Data Visualization"
+next:
+  url: reg-mle.html
+  title: "MLE & Generalized Linear Models"
+---
+
+<style>
+.problem-index{margin:0 0 8px;padding:16px 20px;border:1px solid var(--parchment);border-radius:4px;background:var(--warm)}
+.problem-index-title{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.problem-index a{display:block;font-size:14.5px;line-height:2;color:var(--ink-faded);text-decoration:none;transition:color .2s}
+.problem-index a:hover{color:var(--red)}
+.problem-index a .pi-arrow{font-family:var(--sans);font-size:11px;color:var(--gold);margin-left:6px}
+</style>
+
+<!-- HEADER -->
+<div class="method-header">
+  <h1>Regression Analysis</h1>
+  <div class="method-meta">Statistics &middot; Foundations 03</div>
+</div>
+
+<!-- INTRO CARDS -->
+<div class="intro-cards">
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">What Is This?</div>
+    <div class="card-label" data-lang="zh">这一页讲什么？</div>
+    <div data-lang="en"><p>Regression is the workhorse of quantitative social science. It lets you estimate how much X changes Y, while holding other things constant. This page covers OLS from first intuition to diagnostics.</p></div>
+    <div data-lang="zh"><p>回归是量化社会科学的主力工具。它让你估计 X 变化多少会改变 Y，同时控制其他因素。本页从直觉到诊断，完整介绍 OLS。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Prerequisites</div>
+    <div class="card-label" data-lang="zh">前置知识</div>
+    <div data-lang="en"><p>Statistical Foundations (§3 on hypothesis testing). Basic algebra.</p></div>
+    <div data-lang="zh"><p>统计基础（§3 假设检验）。基础代数。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Software &amp; Tools</div>
+    <div class="card-label" data-lang="zh">软件工具</div>
+    <div data-lang="en"><p>R (lm, modelsummary) or Stata (reg).</p></div>
+    <div data-lang="zh"><p>R（lm、modelsummary）或 Stata（reg）。</p></div>
+  </div>
+</div>
+
+<!-- PROBLEM INDEX -->
+<div class="problem-index">
+  <div class="problem-index-title" data-lang="en">What problem are you facing?</div>
+  <div class="problem-index-title" data-lang="zh">你遇到了什么问题？</div>
+  <a href="#ols-s1" data-lang="en">Can X predict Y — and by how much? <span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#ols-s1" data-lang="zh">X 能预测 Y 吗？能预测多少？<span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#ols-s2" data-lang="en">What if other variables are confounding my result? <span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#ols-s2" data-lang="zh">如果其他变量在干扰我的结果怎么办？<span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#ols-s3" data-lang="en">How do I know if my regression assumptions hold? <span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#ols-s3" data-lang="zh">我怎么知道回归假设是否成立？<span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#ols-s4" data-lang="en">Does the effect of X on Y change across contexts? <span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#ols-s4" data-lang="zh">X 对 Y 的影响会随情境变化吗？<span class="pi-arrow">&rarr; &sect;4</span></a>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 1 -->
+<div class="section" id="ols-s1">
+  <h2 data-lang="en">OLS Basics: The Line That Minimizes Errors</h2>
+  <h2 data-lang="zh">OLS 基础：最小化误差的那条线</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 2 -->
+<div class="section" id="ols-s2">
+  <h2 data-lang="en">Multiple Regression: Controlling for Confounders</h2>
+  <h2 data-lang="zh">多元回归：控制混淆变量</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 3 -->
+<div class="section" id="ols-s3">
+  <h2 data-lang="en">Regression Diagnostics: Are the Assumptions Met?</h2>
+  <h2 data-lang="zh">回归诊断：假设是否成立？</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 4 -->
+<div class="section" id="ols-s4">
+  <h2 data-lang="en">Interactions and Nonlinearity</h2>
+  <h2 data-lang="zh">交互项与非线性</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+
+<!-- RESOURCES -->
+<hr class="section-divider">
+<div class="section" id="ols-resources">
+  <h2 data-lang="en">Resources</h2>
+  <h2 data-lang="zh">资源</h2>
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Key references and further reading — coming soon.</p>
+    <p class="method-desc" data-lang="zh">关键参考文献与延伸阅读——整理中。</p>
+  </div>
+</div>
+
+<!-- PAGE NAV -->
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/reg-dataviz.html">
+    <span class="pn-arrow">&larr;</span>
+    <span><span class="pn-title">Data Visualization</span></span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/reg-mle.html">
+    <span><span class="pn-title">MLE & Generalized Linear Models</span></span>
+    <span class="pn-arrow">&rarr;</span>
+  </a>
+</div>

@@ -1,0 +1,160 @@
+---
+layout: methods-course
+title: "Time Series & Panel Data"
+breadcrumb: "Statistics"
+bilingual: true
+prev:
+  url: reg-measurement.html
+  title: "Measurement & Scaling"
+next:
+  url: reg-robustness.html
+  title: "Evaluating Model Robustness"
+---
+
+<style>
+.problem-index{margin:0 0 8px;padding:16px 20px;border:1px solid var(--parchment);border-radius:4px;background:var(--warm)}
+.problem-index-title{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.problem-index a{display:block;font-size:14.5px;line-height:2;color:var(--ink-faded);text-decoration:none;transition:color .2s}
+.problem-index a:hover{color:var(--red)}
+.problem-index a .pi-arrow{font-family:var(--sans);font-size:11px;color:var(--gold);margin-left:6px}
+</style>
+
+<!-- HEADER -->
+<div class="method-header">
+  <h1>Time Series, Panel &amp; Longitudinal Data Analysis</h1>
+  <div class="method-meta">Statistics &middot; Intermediate 07</div>
+</div>
+
+<!-- INTRO CARDS -->
+<div class="intro-cards">
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">What Is This?</div>
+    <div class="card-label" data-lang="zh">这一页讲什么？</div>
+    <div data-lang="en"><p>Politics, economics, and society unfold over time. When your data has a time dimension — whether a single country tracked across decades, or hundreds of countries tracked annually — standard regression breaks down. This page covers how to model data that moves through time.</p></div>
+    <div data-lang="zh"><p>政治、经济和社会随时间展开。当你的数据有时间维度——无论是一个国家跨越数十年，还是数百个国家按年追踪——标准回归就会失效。本页介绍如何对随时间变化的数据建模。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Prerequisites</div>
+    <div class="card-label" data-lang="zh">前置知识</div>
+    <div data-lang="en"><p>Regression Analysis. Basic OLS assumptions.</p></div>
+    <div data-lang="zh"><p>回归分析。基础 OLS 假设。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Software &amp; Tools</div>
+    <div class="card-label" data-lang="zh">软件工具</div>
+    <div data-lang="en"><p>R (tseries, plm, lme4) or Stata (tsset, xtset, arima).</p></div>
+    <div data-lang="zh"><p>R（tseries、plm、lme4）或 Stata（tsset、xtset、arima）。</p></div>
+  </div>
+</div>
+
+<!-- PROBLEM INDEX -->
+<div class="problem-index">
+  <div class="problem-index-title" data-lang="en">What problem are you facing?</div>
+  <div class="problem-index-title" data-lang="zh">你遇到了什么问题？</div>
+  <a href="#ts-s1" data-lang="en">My data is a single variable tracked over time — what are the basics? <span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#ts-s1" data-lang="zh">我的数据是单个变量随时间变化——基础是什么？<span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#ts-s2" data-lang="en">How do I model trends, seasonality, and lagged effects? <span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#ts-s2" data-lang="zh">我怎么建模趋势、季节性和滞后效应？<span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#ts-s3" data-lang="en">I have multiple units each observed over time (panel data) <span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#ts-s3" data-lang="zh">我有多个单位各自随时间观测的数据（面板数据）<span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#ts-s4" data-lang="en">Do two variables have a dynamic causal relationship? <span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#ts-s4" data-lang="zh">两个变量之间有动态因果关系吗？<span class="pi-arrow">&rarr; &sect;4</span></a>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 1 -->
+<div class="section" id="ts-s1">
+  <h2 data-lang="en">Time Series Basics: Stationarity, Autocorrelation, and Trends</h2>
+  <h2 data-lang="zh">时间序列基础：平稳性、自相关与趋势</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 2 -->
+<div class="section" id="ts-s2">
+  <h2 data-lang="en">ARIMA and Lagged Variables</h2>
+  <h2 data-lang="zh">ARIMA 与滞后变量</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 3 -->
+<div class="section" id="ts-s3">
+  <h2 data-lang="en">Panel Data: Fixed Effects and Random Effects</h2>
+  <h2 data-lang="zh">面板数据：固定效应与随机效应</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 4 -->
+<div class="section" id="ts-s4">
+  <h2 data-lang="en">Granger Causality and Vector Autoregression</h2>
+  <h2 data-lang="zh">Granger 因果与向量自回归</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+
+<!-- RESOURCES -->
+<hr class="section-divider">
+<div class="section" id="ts-resources">
+  <h2 data-lang="en">Resources</h2>
+  <h2 data-lang="zh">资源</h2>
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Key references and further reading — coming soon.</p>
+    <p class="method-desc" data-lang="zh">关键参考文献与延伸阅读——整理中。</p>
+  </div>
+</div>
+
+<!-- PAGE NAV -->
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/reg-measurement.html">
+    <span class="pn-arrow">&larr;</span>
+    <span><span class="pn-title">Measurement & Scaling</span></span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/reg-robustness.html">
+    <span><span class="pn-title">Evaluating Model Robustness</span></span>
+    <span class="pn-arrow">&rarr;</span>
+  </a>
+</div>

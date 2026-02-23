@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Longitudinal Analysis — Research Methods Notebook</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="sb-brand" href="index.html"><h2>Methods <span>Notebook</span></h2><div class="sb-sub">Jialing Wu</div></a>
+    <div class="sb-cat">Person-Centered Quantitative Methods</div>
+    <a class="sb-link" href="lpa.html"><span class="sb-num">01</span> Latent Profile Analysis</a>
+    <div class="sb-cat">Computational Social Science</div>
+    <div class="sb-subcat">Foundations</div>
+    <a class="sb-link" href="machine-learning.html"><span class="sb-num">01</span> Machine Learning</a>
+    <a class="sb-link" href="llm.html"><span class="sb-num">02</span> LLM &amp; NLP</a>
+    <a class="sb-link" href="text-analysis.html"><span class="sb-num">03</span> Text as Data</a>
+    <a class="sb-link" href="theoretical-modeling.html"><span class="sb-num">04</span> Theoretical Modeling</a>
+    <div class="sb-cat">Statistics</div>
+    <div class="sb-subcat">Foundations</div>
+    <a class="sb-link" href="empirical-modeling.html"><span class="sb-num">01</span> Empirical Modeling</a>
+    <div class="sb-footer"><a href="https://jialing-wu.github.io">&larr; My Website</a></div>
+  </aside>
+  <div class="sidebar-overlay" id="overlay" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"></div>
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"><span></span></button>
+      <div class="breadcrumb"><a href="index.html">Methods</a><span class="sep">/</span> Longitudinal Analysis</div>
+    </div>
+    <div class="content">
+      <div class="method-header">
+        <h1>Longitudinal Analysis</h1>
+        <div class="method-meta">Spatial &amp; Temporal · 12</div>
+      </div>
+
+      <div class="section">
+        <h2>Overview</h2>
+        <p>Longitudinal analysis examines how individuals or units change over time by following the same subjects across multiple measurement occasions. Unlike cross-sectional studies that provide a single snapshot, longitudinal designs can distinguish age effects from cohort effects, track developmental trajectories, and examine within-person change.</p>
+        <p>Growth curve models (a special case of multilevel models) estimate individual trajectories of change and identify predictors of variation in those trajectories. Panel data methods (fixed effects, random effects) address time-invariant confounders. Survival analysis models time-to-event outcomes (e.g., time to dropout, time to degree completion). Each approach answers different questions about how and why change occurs.</p>
+      </div>
+
+      <div class="section">
+        <h2>Key Concepts</h2>
+        <ul>
+          <li><strong>Growth Curve Models</strong> — model individual trajectories over time, estimating average growth and individual variation around that average; intercept = starting point, slope = rate of change.</li>
+          <li><strong>Fixed Effects</strong> — controls for all time-invariant characteristics of individuals (observed and unobserved) by using within-person variation only; eliminates confounding from stable traits.</li>
+          <li><strong>Random Effects</strong> — assumes individual-specific effects are uncorrelated with predictors; more efficient but potentially biased if this assumption is violated (Hausman test).</li>
+          <li><strong>Survival/Event History Analysis</strong> — models the time until an event occurs (dropout, graduation, job transition) while handling censoring (when the event hasn't occurred by study end).</li>
+          <li><strong>Latent Growth Models</strong> — SEM-based growth models that can incorporate latent variables, test measurement invariance over time, and model complex growth patterns.</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>Article Examples</h2>
+
+        <h3>Example 1: Growth Curves of Math Achievement</h3>
+        <div class="article-box">
+          <div class="article-cite">Reardon, S. F. (2011). The widening academic achievement gap between the rich and the poor: New evidence and possible explanations. In G. J. Duncan &amp; R. J. Murnane (Eds.), <em>Whither Opportunity?</em> (pp. 91–116). Russell Sage Foundation.</div>
+          <p>Reardon used <strong>growth curve models</strong> across multiple longitudinal datasets to track how the income-achievement gap has changed over successive cohorts of students. By modeling individual growth trajectories in reading and math, the study showed that the gap between high- and low-income students widened dramatically over the past 50 years. The longitudinal framework was essential — it allowed distinguishing between gaps that existed at school entry versus gaps that grew during schooling, pointing to pre-school factors as the primary driver.</p>
+          <div class="article-method">Method used: Multi-cohort growth curve modeling</div>
+        </div>
+
+        <h3>Example 2: Fixed Effects for College Impact</h3>
+        <div class="article-box">
+          <div class="article-cite">Cellini, S. R. (2009). Crowded colleges and college crowd-out: The impact of public subsidies on the two-year college market. <em>American Economic Journal: Economic Policy, 1</em>(2), 1–30.</div>
+          <p>This study used <strong>panel data with fixed effects</strong> to examine whether expanding public two-year colleges crowds out enrollment at nearby private institutions. By using institution-level fixed effects, the analysis controlled for all time-invariant characteristics of each college (location, reputation, founding mission) that might confound the relationship. The within-institution variation over time isolated the causal effect of policy changes, demonstrating how fixed effects turn panel data into a powerful quasi-experimental tool.</p>
+          <div class="article-method">Method used: Panel data with institution-level fixed effects</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>When to Use</h2>
+        <ul>
+          <li>You have repeated measures on the same individuals or units over time</li>
+          <li>Your research question is about change, development, or trajectories</li>
+          <li>You want to control for unobserved time-invariant confounders (fixed effects)</li>
+          <li>You are studying time-to-event outcomes like dropout, graduation, or career transitions</li>
+        </ul>
+      </div>
+
+      <div class="materials">
+        <h3>Materials &amp; References</h3>
+        <div class="mat-item">
+          <span class="mat-icon">📘</span>
+          <a class="mat-link" href="https://www.cambridge.org/core/books/fixed-effects-regression-models/1E50B13EBC2D12FA06C4D44B713E9B67" target="_blank">Allison — Fixed Effects Regression Models</a>
+          <span class="mat-note">Textbook</span>
+        </div>
+        <div class="mat-item">
+          <span class="mat-icon">📘</span>
+          <a class="mat-link" href="https://www.guilford.com/books/Applied-Longitudinal-Data-Analysis/Singer-Willett/9780195152968" target="_blank">Singer &amp; Willett — Applied Longitudinal Data Analysis</a>
+          <span class="mat-note">Textbook</span>
+        </div>
+        <div class="mat-item">
+          <span class="mat-icon">💻</span>
+          <a class="mat-link" href="https://cran.r-project.org/web/packages/plm/" target="_blank">plm — R package for panel data econometrics</a>
+          <span class="mat-note">Tool</span>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <a href="time-series.html"><div class="nav-label">← Previous</div><div class="nav-title">Time Series Analysis</div></a>
+        <a class="next" href="mixed-methods.html"><div class="nav-label">Next →</div><div class="nav-title">Mixed Methods</div></a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

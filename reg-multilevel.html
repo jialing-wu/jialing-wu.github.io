@@ -1,0 +1,160 @@
+---
+layout: methods-course
+title: "Multilevel Models"
+breadcrumb: "Statistics"
+bilingual: true
+prev:
+  url: reg-robustness.html
+  title: "Evaluating Model Robustness"
+next:
+  url: reg-empirical.html
+  title: "Empirical Modeling"
+---
+
+<style>
+.problem-index{margin:0 0 8px;padding:16px 20px;border:1px solid var(--parchment);border-radius:4px;background:var(--warm)}
+.problem-index-title{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.problem-index a{display:block;font-size:14.5px;line-height:2;color:var(--ink-faded);text-decoration:none;transition:color .2s}
+.problem-index a:hover{color:var(--red)}
+.problem-index a .pi-arrow{font-family:var(--sans);font-size:11px;color:var(--gold);margin-left:6px}
+</style>
+
+<!-- HEADER -->
+<div class="method-header">
+  <h1>Multilevel Models</h1>
+  <div class="method-meta">Statistics &middot; Advanced 09</div>
+</div>
+
+<!-- INTRO CARDS -->
+<div class="intro-cards">
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">What Is This?</div>
+    <div class="card-label" data-lang="zh">这一页讲什么？</div>
+    <div data-lang="en"><p>Individual voters nested within constituencies. Students nested within schools. Survey respondents nested within countries. When your data has a hierarchical structure, ignoring it produces wrong standard errors and missed insights. Multilevel models handle nesting correctly.</p></div>
+    <div data-lang="zh"><p>选民嵌套在选区中。学生嵌套在学校中。调查受访者嵌套在国家中。当你的数据具有层次结构时，忽略它会产生错误的标准误和遗漏的洞见。多层模型能正确处理嵌套结构。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Prerequisites</div>
+    <div class="card-label" data-lang="zh">前置知识</div>
+    <div data-lang="en"><p>Regression Analysis. MLE & GLM helpful.</p></div>
+    <div data-lang="zh"><p>回归分析。了解 MLE 与 GLM 会有帮助。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Software &amp; Tools</div>
+    <div class="card-label" data-lang="zh">软件工具</div>
+    <div data-lang="en"><p>R (lme4, brms) or Stata (mixed, melogit).</p></div>
+    <div data-lang="zh"><p>R（lme4、brms）或 Stata（mixed、melogit）。</p></div>
+  </div>
+</div>
+
+<!-- PROBLEM INDEX -->
+<div class="problem-index">
+  <div class="problem-index-title" data-lang="en">What problem are you facing?</div>
+  <div class="problem-index-title" data-lang="zh">你遇到了什么问题？</div>
+  <a href="#mm-s1" data-lang="en">My individuals are nested within groups — why does that matter? <span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#mm-s1" data-lang="zh">我的个体嵌套在群体中——为什么这很重要？<span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#mm-s2" data-lang="en">How do I build a basic multilevel model? <span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#mm-s2" data-lang="zh">我怎么建立一个基础多层模型？<span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#mm-s3" data-lang="en">Does the effect of X vary across groups? <span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#mm-s3" data-lang="zh">X 的效果在不同组之间有变化吗？<span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#mm-s4" data-lang="en">How do I handle more complex nested structures? <span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#mm-s4" data-lang="zh">我怎么处理更复杂的嵌套结构？<span class="pi-arrow">&rarr; &sect;4</span></a>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 1 -->
+<div class="section" id="mm-s1">
+  <h2 data-lang="en">Why Nesting Matters: Intraclass Correlation and Clustered Errors</h2>
+  <h2 data-lang="zh">为什么嵌套很重要：组内相关与聚类误差</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 2 -->
+<div class="section" id="mm-s2">
+  <h2 data-lang="en">Random Intercept Models</h2>
+  <h2 data-lang="zh">随机截距模型</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 3 -->
+<div class="section" id="mm-s3">
+  <h2 data-lang="en">Random Slope Models: When Effects Vary</h2>
+  <h2 data-lang="zh">随机斜率模型：效果因组而异</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 4 -->
+<div class="section" id="mm-s4">
+  <h2 data-lang="en">Cross-Level Interactions and Three-Level Models</h2>
+  <h2 data-lang="zh">跨层交互与三层模型</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+
+<!-- RESOURCES -->
+<hr class="section-divider">
+<div class="section" id="mm-resources">
+  <h2 data-lang="en">Resources</h2>
+  <h2 data-lang="zh">资源</h2>
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Key references and further reading — coming soon.</p>
+    <p class="method-desc" data-lang="zh">关键参考文献与延伸阅读——整理中。</p>
+  </div>
+</div>
+
+<!-- PAGE NAV -->
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/reg-robustness.html">
+    <span class="pn-arrow">&larr;</span>
+    <span><span class="pn-title">Evaluating Model Robustness</span></span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/reg-empirical.html">
+    <span><span class="pn-title">Empirical Modeling</span></span>
+    <span class="pn-arrow">&rarr;</span>
+  </a>
+</div>

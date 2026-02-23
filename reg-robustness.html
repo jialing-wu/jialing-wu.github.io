@@ -1,0 +1,160 @@
+---
+layout: methods-course
+title: "Evaluating Model Robustness"
+breadcrumb: "Statistics"
+bilingual: true
+prev:
+  url: reg-timeseries.html
+  title: "Time Series & Panel Data"
+next:
+  url: reg-multilevel.html
+  title: "Multilevel Models"
+---
+
+<style>
+.problem-index{margin:0 0 8px;padding:16px 20px;border:1px solid var(--parchment);border-radius:4px;background:var(--warm)}
+.problem-index-title{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.problem-index a{display:block;font-size:14.5px;line-height:2;color:var(--ink-faded);text-decoration:none;transition:color .2s}
+.problem-index a:hover{color:var(--red)}
+.problem-index a .pi-arrow{font-family:var(--sans);font-size:11px;color:var(--gold);margin-left:6px}
+</style>
+
+<!-- HEADER -->
+<div class="method-header">
+  <h1>Evaluating Model Robustness</h1>
+  <div class="method-meta">Statistics &middot; Intermediate 08</div>
+</div>
+
+<!-- INTRO CARDS -->
+<div class="intro-cards">
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">What Is This?</div>
+    <div class="card-label" data-lang="zh">这一页讲什么？</div>
+    <div data-lang="en"><p>You ran your regression and got a statistically significant result. But is it real — or a fragile artifact of the choices you made? Robustness evaluation is the systematic practice of stress-testing your conclusions to see how much they depend on your modeling decisions.</p></div>
+    <div data-lang="zh"><p>你跑了回归，得到了统计显著的结果。但它是真实的——还是你做出的选择造成的脆弱假象？稳健性评估是系统性地对你的结论进行压力测试，看它们在多大程度上依赖于你的建模决策。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Prerequisites</div>
+    <div class="card-label" data-lang="zh">前置知识</div>
+    <div data-lang="en"><p>Regression Analysis. Causal Inference helpful.</p></div>
+    <div data-lang="zh"><p>回归分析。了解因果推断会有帮助。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Software &amp; Tools</div>
+    <div class="card-label" data-lang="zh">软件工具</div>
+    <div data-lang="en"><p>R (sensemakr, rbounds, car) or Stata equivalents.</p></div>
+    <div data-lang="zh"><p>R（sensemakr、rbounds、car）或 Stata 对应命令。</p></div>
+  </div>
+</div>
+
+<!-- PROBLEM INDEX -->
+<div class="problem-index">
+  <div class="problem-index-title" data-lang="en">What problem are you facing?</div>
+  <div class="problem-index-title" data-lang="zh">你遇到了什么问题？</div>
+  <a href="#rb-s1" data-lang="en">Is my model's functional form correctly specified? <span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#rb-s1" data-lang="zh">我的模型函数形式设定正确吗？<span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#rb-s2" data-lang="en">Could an omitted variable be driving my result? <span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#rb-s2" data-lang="zh">遗漏变量可能在驱动我的结果吗？<span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#rb-s3" data-lang="en">Could measurement error be distorting my estimates? <span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#rb-s3" data-lang="zh">测量误差可能在扭曲我的估计吗？<span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#rb-s4" data-lang="en">Do my results hold across different subgroups or specifications? <span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#rb-s4" data-lang="zh">我的结果在不同子群或设定中成立吗？<span class="pi-arrow">&rarr; &sect;4</span></a>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 1 -->
+<div class="section" id="rb-s1">
+  <h2 data-lang="en">Functional Form: Is Your Model Correctly Specified?</h2>
+  <h2 data-lang="zh">函数形式：你的模型设定正确吗？</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 2 -->
+<div class="section" id="rb-s2">
+  <h2 data-lang="en">Omitted Variable Bias and Sensitivity Analysis</h2>
+  <h2 data-lang="zh">遗漏变量偏误与敏感性分析</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 3 -->
+<div class="section" id="rb-s3">
+  <h2 data-lang="en">Measurement Robustness: Alternative Indicators</h2>
+  <h2 data-lang="zh">测量稳健性：替代指标</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 4 -->
+<div class="section" id="rb-s4">
+  <h2 data-lang="en">Heterogeneity: Subgroup Analysis and Specification Curves</h2>
+  <h2 data-lang="zh">异质性：子群分析与设定曲线</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+
+<!-- RESOURCES -->
+<hr class="section-divider">
+<div class="section" id="rb-resources">
+  <h2 data-lang="en">Resources</h2>
+  <h2 data-lang="zh">资源</h2>
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Key references and further reading — coming soon.</p>
+    <p class="method-desc" data-lang="zh">关键参考文献与延伸阅读——整理中。</p>
+  </div>
+</div>
+
+<!-- PAGE NAV -->
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/reg-timeseries.html">
+    <span class="pn-arrow">&larr;</span>
+    <span><span class="pn-title">Time Series & Panel Data</span></span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/reg-multilevel.html">
+    <span><span class="pn-title">Multilevel Models</span></span>
+    <span class="pn-arrow">&rarr;</span>
+  </a>
+</div>

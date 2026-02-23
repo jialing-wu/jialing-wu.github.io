@@ -1,0 +1,160 @@
+---
+layout: methods-course
+title: "MLE & Generalized Linear Models"
+breadcrumb: "Statistics"
+bilingual: true
+prev:
+  url: reg-ols.html
+  title: "Regression Analysis"
+next:
+  url: reg-causal.html
+  title: "Causal Inference"
+---
+
+<style>
+.problem-index{margin:0 0 8px;padding:16px 20px;border:1px solid var(--parchment);border-radius:4px;background:var(--warm)}
+.problem-index-title{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.problem-index a{display:block;font-size:14.5px;line-height:2;color:var(--ink-faded);text-decoration:none;transition:color .2s}
+.problem-index a:hover{color:var(--red)}
+.problem-index a .pi-arrow{font-family:var(--sans);font-size:11px;color:var(--gold);margin-left:6px}
+</style>
+
+<!-- HEADER -->
+<div class="method-header">
+  <h1>Maximum Likelihood Estimation &amp; Generalized Linear Models</h1>
+  <div class="method-meta">Statistics &middot; Intermediate 04</div>
+</div>
+
+<!-- INTRO CARDS -->
+<div class="intro-cards">
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">What Is This?</div>
+    <div class="card-label" data-lang="zh">这一页讲什么？</div>
+    <div data-lang="en"><p>OLS assumes your outcome is continuous and unbounded. But what if you're modeling whether a bill passes (0/1), whether someone is employed (0/1), or how many protests occur in a country? Generalized Linear Models extend regression to handle these outcomes.</p></div>
+    <div data-lang="zh"><p>OLS 假设结果变量是连续且无界的。但如果你在建模某法案是否通过（0/1）、某人是否就业（0/1）或一个国家发生多少次抗议呢？广义线性模型将回归扩展以处理这些结果变量。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Prerequisites</div>
+    <div class="card-label" data-lang="zh">前置知识</div>
+    <div data-lang="en"><p>Regression Analysis (this page). Some exposure to probability distributions helpful.</p></div>
+    <div data-lang="zh"><p>回归分析（上一页）。了解概率分布会有帮助。</p></div>
+  </div>
+  <div class="intro-card">
+    <div class="card-label" data-lang="en">Software &amp; Tools</div>
+    <div class="card-label" data-lang="zh">软件工具</div>
+    <div data-lang="en"><p>R (glm, MASS, pscl) or Stata (logit, probit, poisson).</p></div>
+    <div data-lang="zh"><p>R（glm、MASS、pscl）或 Stata（logit、probit、poisson）。</p></div>
+  </div>
+</div>
+
+<!-- PROBLEM INDEX -->
+<div class="problem-index">
+  <div class="problem-index-title" data-lang="en">What problem are you facing?</div>
+  <div class="problem-index-title" data-lang="zh">你遇到了什么问题？</div>
+  <a href="#mle-s1" data-lang="en">My outcome is binary (0 or 1) — what model do I use? <span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#mle-s1" data-lang="zh">我的结果变量是二元的（0 或 1）——用什么模型？<span class="pi-arrow">&rarr; &sect;1</span></a>
+  <a href="#mle-s2" data-lang="en">My outcome is ordered categories — how do I model that? <span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#mle-s2" data-lang="zh">我的结果变量是有序类别——怎么建模？<span class="pi-arrow">&rarr; &sect;2</span></a>
+  <a href="#mle-s3" data-lang="en">My outcome is a count — what handles that? <span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#mle-s3" data-lang="zh">我的结果变量是计数数据——用什么方法？<span class="pi-arrow">&rarr; &sect;3</span></a>
+  <a href="#mle-s4" data-lang="en">How does maximum likelihood estimation actually work? <span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#mle-s4" data-lang="zh">最大似然估计究竟是怎么工作的？<span class="pi-arrow">&rarr; &sect;4</span></a>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 1 -->
+<div class="section" id="mle-s1">
+  <h2 data-lang="en">Binary Outcomes: Logit and Probit</h2>
+  <h2 data-lang="zh">二元结果：Logit 与 Probit</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 2 -->
+<div class="section" id="mle-s2">
+  <h2 data-lang="en">Ordered Outcomes: Ordered Logit</h2>
+  <h2 data-lang="zh">有序结果：有序 Logit</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 3 -->
+<div class="section" id="mle-s3">
+  <h2 data-lang="en">Count Outcomes: Poisson and Negative Binomial</h2>
+  <h2 data-lang="zh">计数结果：泊松与负二项</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 4 -->
+<div class="section" id="mle-s4">
+  <h2 data-lang="en">Maximum Likelihood: The Logic Behind GLMs</h2>
+  <h2 data-lang="zh">最大似然：GLM 背后的逻辑</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Content coming soon.</p>
+    <p data-lang="zh"><strong>问题：</strong>内容整理中。</p>
+  </div>
+
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Content coming soon.</p>
+    <p class="method-desc" data-lang="zh">内容整理中。</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+
+<!-- RESOURCES -->
+<hr class="section-divider">
+<div class="section" id="mle-resources">
+  <h2 data-lang="en">Resources</h2>
+  <h2 data-lang="zh">资源</h2>
+  <div class="method-section">
+    <p class="method-desc" data-lang="en">Key references and further reading — coming soon.</p>
+    <p class="method-desc" data-lang="zh">关键参考文献与延伸阅读——整理中。</p>
+  </div>
+</div>
+
+<!-- PAGE NAV -->
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/reg-ols.html">
+    <span class="pn-arrow">&larr;</span>
+    <span><span class="pn-title">Regression Analysis</span></span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/reg-causal.html">
+    <span><span class="pn-title">Causal Inference</span></span>
+    <span class="pn-arrow">&rarr;</span>
+  </a>
+</div>

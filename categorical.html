@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Categorical Variables — Research Methods Notebook</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="sb-brand" href="index.html"><h2>Methods <span>Notebook</span></h2><div class="sb-sub">Jialing Wu</div></a>
+    <div class="sb-cat">Person-Centered Quantitative Methods</div>
+    <a class="sb-link" href="lpa.html"><span class="sb-num">01</span> Latent Profile Analysis</a>
+    <div class="sb-cat">Computational Social Science</div>
+    <div class="sb-subcat">Foundations</div>
+    <a class="sb-link" href="machine-learning.html"><span class="sb-num">01</span> Machine Learning</a>
+    <a class="sb-link" href="llm.html"><span class="sb-num">02</span> LLM &amp; NLP</a>
+    <a class="sb-link" href="text-analysis.html"><span class="sb-num">03</span> Text as Data</a>
+    <a class="sb-link" href="theoretical-modeling.html"><span class="sb-num">04</span> Theoretical Modeling</a>
+    <div class="sb-cat">Statistics</div>
+    <div class="sb-subcat">Foundations</div>
+    <a class="sb-link" href="empirical-modeling.html"><span class="sb-num">01</span> Empirical Modeling</a>
+    <div class="sb-footer"><a href="https://jialing-wu.github.io">&larr; My Website</a></div>
+  </aside>
+  <div class="sidebar-overlay" id="overlay" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"></div>
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"><span></span></button>
+      <div class="breadcrumb"><a href="index.html">Methods</a><span class="sep">/</span> Categorical &amp; Limited Dependent Variables</div>
+    </div>
+    <div class="content">
+      <div class="method-header">
+        <h1>Categorical &amp; Limited Dependent Variables</h1>
+        <div class="method-meta">Foundations · 03</div>
+      </div>
+
+      <div class="section">
+        <h2>Overview</h2>
+        <p>Many outcomes in education research are not continuous: students choose among degree programs (nominal), rate their satisfaction on a Likert scale (ordinal), or we count the number of absences (count data). Standard OLS regression is inappropriate for these outcomes because it assumes a continuous, normally distributed dependent variable. Categorical and limited dependent variable models provide the correct statistical framework.</p>
+        <p>These models include binary logit/probit (yes/no outcomes), multinomial logit (unordered choices among multiple options), ordered logit/probit (ordered categories), Poisson and negative binomial regression (count data), and Tobit models (censored or truncated outcomes). Each model uses a specific link function to relate predictors to the probability or expected count of the outcome.</p>
+      </div>
+
+      <div class="section">
+        <h2>Key Concepts</h2>
+        <ul>
+          <li><strong>Multinomial Logit</strong> — models unordered categorical outcomes (e.g., choice of college major) as a set of simultaneous binary comparisons against a reference category.</li>
+          <li><strong>Ordered Logit/Probit</strong> — for ordinal outcomes (e.g., degree of agreement), models the cumulative probability of being at or below each category.</li>
+          <li><strong>Poisson Regression</strong> — models count outcomes (e.g., number of publications, absences) assuming the mean equals the variance.</li>
+          <li><strong>Negative Binomial</strong> — extends Poisson to handle overdispersion, where variance exceeds the mean (common in real-world count data).</li>
+          <li><strong>Tobit Model</strong> — handles censored data where the dependent variable is observed only above or below a threshold (e.g., test scores with floor/ceiling effects).</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>Article Examples</h2>
+
+        <h3>Example 1: Multinomial Logit for Major Choice</h3>
+        <div class="article-box">
+          <div class="article-cite">Arcidiacono, P. (2004). Ability sorting and the returns to college major. <em>Journal of Econometrics, 121</em>(1–2), 343–375.</div>
+          <p>This study used a <strong>multinomial logit model</strong> to analyze how students sort into different college majors based on ability and expected earnings. The outcome — choice among multiple unordered majors — required multinomial logit because there is no natural ordering among fields like engineering, humanities, and business. The model estimated how math ability, verbal ability, and expected future earnings differentially predicted the probability of choosing each major relative to a reference category.</p>
+          <div class="article-method">Method used: Multinomial logit with expected earnings as predictors</div>
+        </div>
+
+        <h3>Example 2: Negative Binomial for Count Data</h3>
+        <div class="article-box">
+          <div class="article-cite">Kremer, M., Miguel, E., &amp; Thornton, R. (2009). Incentives to learn. <em>Review of Economics and Statistics, 91</em>(3), 437–456.</div>
+          <p>This study examined the effect of merit-based scholarships on student outcomes in Kenya. Among the outcomes was <strong>number of school absences</strong>, modeled using <strong>negative binomial regression</strong> because the count data showed significant overdispersion (the variance of absences was much larger than the mean). Poisson regression would have underestimated standard errors, making negative binomial the appropriate choice for producing valid inference.</p>
+          <div class="article-method">Method used: Negative binomial regression for overdispersed count data</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>When to Use</h2>
+        <ul>
+          <li>Your outcome is binary, nominal (unordered categories), or ordinal (ordered categories)</li>
+          <li>Your outcome is a count (number of events, occurrences, or items)</li>
+          <li>Your outcome is censored or truncated (observed only within a certain range)</li>
+          <li>OLS regression assumptions are clearly violated by the nature of the dependent variable</li>
+        </ul>
+      </div>
+
+      <div class="materials">
+        <h3>Materials &amp; References</h3>
+        <div class="mat-item">
+          <span class="mat-icon">📘</span>
+          <a class="mat-link" href="https://us.sagepub.com/en-us/nam/regression-models-for-categorical-and-limited-dependent-variables/book6071" target="_blank">Long (1997) — Regression Models for Categorical and Limited Dependent Variables</a>
+          <span class="mat-note">Textbook</span>
+        </div>
+        <div class="mat-item">
+          <span class="mat-icon">💻</span>
+          <a class="mat-link" href="https://stats.oarc.ucla.edu/other/mult-pkg/introduction-to-generalized-linear-models/" target="_blank">UCLA — Introduction to Generalized Linear Models</a>
+          <span class="mat-note">Tutorial</span>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <a href="causal-inference.html"><div class="nav-label">← Previous</div><div class="nav-title">Causal Inference</div></a>
+        <a class="next" href="bayesian.html"><div class="nav-label">Next →</div><div class="nav-title">Bayesian Analysis</div></a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
