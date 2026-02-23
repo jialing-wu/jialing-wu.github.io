@@ -764,81 +764,81 @@ body.presenting .pres-progress{
   </div>
 </div>
 
-<!-- SLIDE: Study 1 — Halo Effect -->
+<!-- SLIDE: Finding 1 — Halo Effect -->
 <div class="slide" id="slide-study1">
   <div class="slide-num" data-lang="en">Part 2 · Slide 4</div>
   <div class="slide-num" data-lang="zh">第二部分 · 第 4 页</div>
-  <h2 data-lang="en">Study 1: The Halo Effect</h2>
-  <h2 data-lang="zh">研究一：光环效应</h2>
+  <h2 data-lang="en">Finding 1: The Halo Effect</h2>
+  <h2 data-lang="zh">发现一：光环效应</h2>
 
-  <p class="method-desc" data-lang="en"><strong>Finding:</strong> Spearman correlations between in-degree centralities <em>across</em> the three skill bundles (core insurance, software, social) are significantly stronger than correlations between in-degree and actual self-assessed skill levels <em>within</em> each bundle (Fisher's z-test, p &lt; .05). One exception: for core skills (1–18), the within-bundle correlation was not significantly different from the cross-bundle correlation.</p>
-  <p class="method-desc" data-lang="zh"><strong>发现：</strong>三类技能包（核心保险、软件、社交）的入度中心性<em>之间</em>的 Spearman 相关，显著强于入度与该领域自评技能水平<em>之内</em>的相关（Fisher z 检验，p &lt; .05）。唯一例外：核心技能（1–18）的领域内相关与跨领域相关差异不显著。</p>
+  <p class="method-desc" data-lang="en"><strong>Result:</strong> Cross-domain in-degree correlations are significantly stronger than within-domain skill–in-degree correlations (Fisher z, p &lt; .05). Exception: core insurance skills, where actual competence also matters.</p>
+  <p class="method-desc" data-lang="zh"><strong>结果：</strong>跨领域入度相关显著强于领域内技能–入度相关（Fisher z，p &lt; .05）。例外：核心保险技能，实际能力也有作用。</p>
 
-  <p class="method-desc" data-lang="en"><strong>In plain language:</strong> How often you get asked for advice in one area is better predicted by how often you get asked <em>everywhere else</em> than by how good you actually are in that area. This is a "halo effect" — once people see you as a go-to person for insurance, they also come to you for software and social problems, even if you're not especially skilled there. The exception is core insurance skills, where actual competence does matter somewhat.</p>
-  <p class="method-desc" data-lang="zh"><strong>通俗来说：</strong>你在某个领域被请教多少次，与其说取决于你在那个领域的实际水平，不如说取决于你在<em>其他领域</em>被请教了多少次。这就是"光环效应"——一旦别人觉得你是保险方面的"靠谱人"，他们连软件和社交问题也来找你，即使你并不擅长。唯一例外是核心保险技能，在这个领域实际能力确实有一定作用。</p>
+  <p class="method-desc" data-lang="en"><strong>i.e.:</strong> Once colleagues see you as a go-to person for insurance, they also come to you for software and social problems — even if you're not actually good at those. Being asked reflects <em>reputation</em>, not skill-by-skill competence.</p>
+  <p class="method-desc" data-lang="zh"><strong>也就是说：</strong>一旦同事觉得你是保险方面的"靠谱人"，他们连软件和社交问题也来找你——哪怕你并不擅长。被请教反映的是<em>声誉</em>，而不是逐项技能的实力。</p>
 </div>
 
-<!-- SLIDE: Study 2 — ERGM Results -->
+<!-- SLIDE: Finding 2 — ERGM Results -->
 <div class="slide" id="slide-study2">
   <div class="slide-num" data-lang="en">Part 2 · Slide 5</div>
   <div class="slide-num" data-lang="zh">第二部分 · 第 5 页</div>
-  <h2 data-lang="en">Study 2: ERGM Results</h2>
-  <h2 data-lang="zh">研究二：ERGM 结果</h2>
-
-  <p class="method-desc" data-lang="en">ERGM asks: after accounting for the network's own patterns, what actually makes a tie between two people more or less likely? Read the results like logistic regression — a positive coefficient means "this factor increases the probability of a tie forming." The model was built in 3 steps and compared via AIC.</p>
-  <p class="method-desc" data-lang="zh">ERGM 问的是：排除网络自身规律后，什么因素真正让两个人之间更可能或更不可能形成求助关系？读法和逻辑回归一样——正系数意味着"这个因素增加关系形成的概率"。模型分 3 步构建，通过 AIC 比较。</p>
+  <h2 data-lang="en">Finding 2: What Drives Advice Ties (ERGM)</h2>
+  <h2 data-lang="zh">发现二：什么驱动求助关系（ERGM）</h2>
 
   <div class="check-grid">
     <div class="check-card">
       <div class="check-icon">+</div>
-      <div class="check-title" data-lang="en">What Increases Advice Ties</div>
-      <div class="check-title" data-lang="zh">增加求助关系的因素</div>
-      <div class="check-desc" data-lang="en"><strong>Reciprocity</strong> (strongest endogenous effect) — if A asks B, B is very likely to ask A back.<br><strong>Expertise self-identity</strong> — experts get asked more, but the effect is small.<br><strong>Mean core insurance skills &amp; mean software skills</strong> — higher skill averages attract more ties (most pronounced exogenous effect).<br><strong>Tenure</strong> — longer-tenured employees receive more requests.<br><em>Think of it as:</em> the network rewards "I've asked you before and you helped" (reciprocity) and "you're genuinely skilled" (skill level), but being called an "expert" alone adds only a little.</div>
-      <div class="check-desc" data-lang="zh"><strong>互惠性</strong>（最强内生效应）——A 请教了 B，B 很可能反过来也请教 A。<br><strong>专家自我认同</strong>——自认为专家的人确实更常被请教，但效应较小。<br><strong>核心保险技能均值 &amp; 软件技能均值</strong>——技能均值越高，吸引的求助越多（最显著的外生效应）。<br><strong>工龄</strong>——工龄越长，被请教越多。<br><em>通俗理解：</em>网络最看重"我以前找过你、你帮了我"（互惠）和"你确实有本事"（技能水平），但光有"专家"头衔只加一点点分。</div>
+      <div class="check-title" data-lang="en">Significant Positive</div>
+      <div class="check-title" data-lang="zh">显著正效应</div>
+      <div class="check-desc" data-lang="en"><strong>Reciprocity</strong> — strongest effect; you ask me, I ask you back.<br><strong>Core &amp; software skill level</strong> — higher skill averages attract more ties.<br><strong>Expertise identity</strong> — small positive effect.<br><strong>Tenure</strong> — longer-tenured get asked more.</div>
+      <div class="check-desc" data-lang="zh"><strong>互惠性</strong>——最强效应；你找我，我也找你。<br><strong>核心 &amp; 软件技能水平</strong>——技能均值越高，被请教越多。<br><strong>专家自我认同</strong>——小的正效应。<br><strong>工龄</strong>——工龄越长，被请教越多。</div>
     </div>
     <div class="check-card">
       <div class="check-icon">=</div>
-      <div class="check-title" data-lang="en">Birds of a Feather (Homophily)</div>
-      <div class="check-title" data-lang="zh">物以类聚（同质性）</div>
-      <div class="check-desc" data-lang="en"><strong>Software skill similarity</strong> — strongest homophily effect; people ask peers with a similar software skill level.<br><strong>Similar tenure</strong> — colleagues who joined around the same time ask each other more.<br><strong>Same leadership level</strong> (node match) — managers ask managers; non-managers ask non-managers.<br><em>Think of it as:</em> you're most likely to ask someone who "speaks your language" — similar tools, similar seniority, similar position in the hierarchy.</div>
-      <div class="check-desc" data-lang="zh"><strong>软件技能相似性</strong>——同质性效应最强；人们找软件水平和自己差不多的人请教。<br><strong>工龄相近</strong>——入职时间接近的同事更容易互相请教。<br><strong>职级相同</strong>（node match）——管理者找管理者，非管理者找非管理者。<br><em>通俗理解：</em>你最可能找"说同一种话"的人——用一样的工具、差不多的资历、在层级中位置相似。</div>
+      <div class="check-title" data-lang="en">Homophily</div>
+      <div class="check-title" data-lang="zh">同质性</div>
+      <div class="check-desc" data-lang="en"><strong>Software skill similarity</strong> — strongest; you ask peers at your level.<br><strong>Similar tenure</strong> — joined around the same time → ask each other.<br><strong>Same leadership level</strong> — managers ask managers.</div>
+      <div class="check-desc" data-lang="zh"><strong>软件技能相似性</strong>——最强；你找水平差不多的人。<br><strong>工龄相近</strong>——入职时间接近 → 互相请教。<br><strong>职级相同</strong>——管理者找管理者。</div>
     </div>
     <div class="check-card">
       <div class="check-icon">—</div>
-      <div class="check-title" data-lang="en">What Doesn't Matter</div>
-      <div class="check-title" data-lang="zh">不起作用的因素</div>
-      <div class="check-desc" data-lang="en"><strong>Specialization</strong> — being the "only person who does X" doesn't significantly increase being asked.<br><strong>Social skills</strong> — no significant effect on tie formation.<br><strong>Brokerage</strong> — negative in the full model, meaning people skip intermediaries and go directly to the person they believe has the answer.<br><em>Think of it as:</em> people don't detour through a middleman; they go straight to whoever they think can help. And being a specialist alone doesn't make you a magnet.</div>
-      <div class="check-desc" data-lang="zh"><strong>专才身份</strong>——"只有你做这件事"并不能显著增加被请教的概率。<br><strong>社交技能</strong>——对关系形成没有显著效应。<br><strong>中介/经纪</strong>——在最终模型中为负，说明人们不走中间人，直接找他们觉得有答案的人。<br><em>通俗理解：</em>大家不绕弯子找中间人传话，而是直接找他们觉得能帮忙的人。而且光是"专才"头衔本身并不能让你成为被请教的对象。</div>
+      <div class="check-title" data-lang="en">Not Significant</div>
+      <div class="check-title" data-lang="zh">不显著</div>
+      <div class="check-desc" data-lang="en"><strong>Specialization</strong> — "only person who does X" ≠ more sought-after.<br><strong>Social skills</strong> — no effect.<br><strong>Brokerage</strong> — negative; people skip middlemen.</div>
+      <div class="check-desc" data-lang="zh"><strong>专才身份</strong>——"只有你做这件事"≠ 更常被找。<br><strong>社交技能</strong>——无效应。<br><strong>中介</strong>——为负；人们不走中间人。</div>
     </div>
   </div>
+
+  <p class="method-desc" data-lang="en"><strong>i.e.:</strong> The network rewards "you helped me before" (reciprocity) and "you're genuinely skilled" (skill level). People ask those who are similar to themselves. But being a "specialist" or having social skills doesn't attract advice ties.</p>
+  <p class="method-desc" data-lang="zh"><strong>也就是说：</strong>网络看重"你以前帮过我"（互惠）和"你确实有本事"（技能水平）。人们倾向找和自己相似的人。但"专才"头衔和社交技能都不能吸引求助关系。</p>
 </div>
 
-<!-- SLIDE: Study 3 — Skill Profiles -->
+<!-- SLIDE: Finding 3 — Skill Profiles -->
 <div class="slide" id="slide-study3">
   <div class="slide-num" data-lang="en">Part 2 · Slide 6</div>
   <div class="slide-num" data-lang="zh">第二部分 · 第 6 页</div>
-  <h2 data-lang="en">Study 3: Do Real Skill Profiles Match Theory?</h2>
-  <h2 data-lang="zh">研究三：真实技能画像与理论匹配吗？</h2>
-
-  <p class="method-desc" data-lang="en">The authors first defined theoretical "ideal" skill profiles: an <strong>expert</strong> should have very high levels across many skills with at least medium on the rest; a <strong>specialist</strong> should have very high levels on only a few skills and low elsewhere. Each employee's 29 skills were sorted from highest to lowest, then the "distance" to each ideal profile was computed using <strong>optimal matching</strong> (R <code>TraMineR</code>, indelslog costs). Finally, Spearman correlations linked these distances to self-assessment scales and in-degree centralities.</p>
-  <p class="method-desc" data-lang="zh">作者先定义了理论上的"理想"技能画像：<strong>专家</strong>应在很多技能上都很高、其余至少中等；<strong>专才</strong>只在少数技能上很高、其他很低。把每人的 29 项技能从高到低排序后，用<strong>最优匹配</strong>（R <code>TraMineR</code>，indelslog 成本）计算与理想画像的"距离"。最后用 Spearman 相关把距离与自评量表和入度中心性联系起来。</p>
+  <h2 data-lang="en">Finding 3: Skill Profiles vs. Theory</h2>
+  <h2 data-lang="zh">发现三：技能画像 vs. 理论</h2>
 
   <div class="check-grid" style="grid-template-columns:1fr 1fr">
     <div class="check-card">
       <div class="check-icon">E</div>
-      <div class="check-title" data-lang="en">Expert Profile — Confirmed</div>
-      <div class="check-title" data-lang="zh">专家画像 — 验证成功</div>
-      <div class="check-desc" data-lang="en">Higher self-rated expertise → shorter distance to expert profile. Higher in-degree centrality (all 3 bundles) → also shorter distance. Theory and data align.<br><em>Plain language:</em> People who say "I'm an expert" really do have a broad, high skill set like the theory predicts. And people who get asked for advice a lot also look like experts on paper.</div>
-      <div class="check-desc" data-lang="zh">自评专家程度越高 → 与专家画像距离越短。入度中心性越高（三类技能包都是）→ 距离也越短。理论与数据一致。<br><em>通俗：</em>说"我是专家"的人确实在各方面技能都很高，和理论预测一样。而且经常被别人请教的人，技能画像也确实像专家。</div>
+      <div class="check-title" data-lang="en">Expert — Confirmed</div>
+      <div class="check-title" data-lang="zh">专家 — 验证成功</div>
+      <div class="check-desc" data-lang="en"><strong>Result:</strong> Higher self-rated expertise → closer to ideal expert profile. Higher in-degree → also closer. Theory and data align.</div>
+      <div class="check-desc" data-lang="zh"><strong>结果：</strong>自评专家程度越高 → 越接近理想专家画像。入度越高 → 也越接近。理论与数据一致。</div>
     </div>
     <div class="check-card">
       <div class="check-icon">S</div>
-      <div class="check-title" data-lang="en">Specialist Profile — Contradicted</div>
-      <div class="check-title" data-lang="zh">专才画像 — 验证失败</div>
-      <div class="check-desc" data-lang="en">Higher self-rated specialization → <em>greater</em> distance from specialist profile (opposite of expected). Lower in-degree → greater distance (as expected). Likely explanation: the sample contains two types of specialists — (a) task specialists among peers in a shared domain, and (b) "lone fighters" responsible for an entire domain at their site. The theoretical profile only fits type (a).<br><em>Plain language:</em> People who say "I'm a specialist" don't actually match the textbook specialist pattern. Probably because "specialist" means different things — some are the only lawyer in the office (broad within their niche), others handle one narrow task among many peers.</div>
-      <div class="check-desc" data-lang="zh">自评专才程度越高 → 与专才画像距离反而<em>越远</em>（与预期相反）。入度越低 → 距离越大（符合预期）。可能原因：样本中有两种专才——(a) 在共同领域中只负责特定任务的人，(b) 在某个站点独自负责整个领域的"孤军奋战者"。理论画像只适用于 (a) 类。<br><em>通俗：</em>说"我是专才"的人反而不符合理论上的专才模板。大概因为"专才"有两种——一种是办公室里唯一的法务（在自己领域内什么都得会），另一种是团队里只负责客诉的人（只精一项）。理论只画了后一种。</div>
+      <div class="check-title" data-lang="en">Specialist — Contradicted</div>
+      <div class="check-title" data-lang="zh">专才 — 验证失败</div>
+      <div class="check-desc" data-lang="en"><strong>Result:</strong> Higher self-rated specialization → <em>farther</em> from ideal specialist profile (opposite of expected). Two sub-types in the sample but the template only fits one.</div>
+      <div class="check-desc" data-lang="zh"><strong>结果：</strong>自评专才程度越高 → 反而离理想专才画像<em>越远</em>（与预期相反）。样本中有两种专才，但模板只适用其中一种。</div>
     </div>
   </div>
+
+  <p class="method-desc" data-lang="en"><strong>i.e.:</strong> People who call themselves "experts" really do have broad, high skill sets — the label matches reality. But "specialist" means different things: some are the only lawyer in the office (broad within their niche), others handle one narrow task among peers. The theoretical template only captured the second type, so the match failed.</p>
+  <p class="method-desc" data-lang="zh"><strong>也就是说：</strong>自称"专家"的人确实技能广而高——名副其实。但"专才"有两种含义：一种是办公室里唯一的法务（在自己领域什么都得会），另一种是团队里只负责客诉的人（只精一项）。理论模板只画了第二种，所以匹配失败了。</p>
 </div>
 
 <!-- SLIDE: Contributions & Limitations -->
