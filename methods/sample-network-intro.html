@@ -441,11 +441,11 @@ body.presenting .pres-progress{
 <div class="slide" id="slide-part2">
   <div class="slide-num" data-lang="en">Part 2</div>
   <div class="slide-num" data-lang="zh">第二部分</div>
-  <h2 data-lang="en">Paper Walkthrough: Network Analysis in Action</h2>
-  <h2 data-lang="zh">论文拆解：网络分析实战</h2>
+  <h2 data-lang="en">Paper Walkthrough: Expertise &amp; Advice Networks</h2>
+  <h2 data-lang="zh">论文拆解：专业知识与建议网络</h2>
 
-  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">Paper to be selected. This section will walk through a published network analysis paper step by step: research question → data construction → network methods → key findings → extensions.</p>
-  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">论文待选。本节将逐步拆解一篇已发表的网络分析论文：研究问题 → 数据构建 → 网络方法 → 关键发现 → 延伸思考。</p>
+  <p class="method-desc" data-lang="en">Köhler, Rausch, Biemann &amp; Büchsenschuss (2024). "Expertise and specialization in organizations: a social network analysis." <em>European Journal of Work and Organizational Psychology</em>, 34(2), 282–297. <a href="https://doi.org/10.1080/1359432X.2024.2387874" target="_blank">Open Access</a></p>
+  <p class="method-desc" data-lang="zh">Köhler, Rausch, Biemann &amp; Büchsenschuss (2024). "组织中的专业知识与专业化：一项社会网络分析。" <em>European Journal of Work and Organizational Psychology</em>, 34(2), 282–297. <a href="https://doi.org/10.1080/1359432X.2024.2387874" target="_blank">开放获取</a></p>
 </div>
 
 <!-- SLIDE: Research Question -->
@@ -455,8 +455,11 @@ body.presenting .pres-progress{
   <h2 data-lang="en">The Research Question</h2>
   <h2 data-lang="zh">研究问题</h2>
 
-  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">[ Placeholder — will describe the paper's core question and why a network approach is the right fit ]</p>
-  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">[ 占位 — 将介绍论文的核心问题，以及为什么网络分析是合适的方法 ]</p>
+  <p class="method-desc" data-lang="en">In an organization, who do you turn to when you hit a work problem? Is it the person who is truly the most skilled — or simply the person who is already well-known? This paper asks: <strong>What drives the formation of advice-seeking ties in an organizational network?</strong> Specifically, do expertise and specialization predict who gets asked, or do structural effects (reciprocity, homophily) dominate?</p>
+  <p class="method-desc" data-lang="zh">在组织中，遇到工作问题你会找谁？是真正技能最强的人——还是已经很出名的人？这篇论文问的是：<strong>什么驱动了组织建议网络中关系的形成？</strong>具体来说，是专业知识和专业化预测谁被咨询，还是结构效应（互惠性、同质性）占主导？</p>
+
+  <div class="method-when" data-lang="en"><strong>Why network analysis?</strong> Advice-seeking is inherently relational (who asks whom) and non-independent (if A asks B, B is more likely to ask A back). Standard regression ignores this interdependence — ERGM is designed for it.</div>
+  <div class="method-when" data-lang="zh"><strong>为什么用网络分析？</strong>建议寻求本质上是关系性的（谁问谁）且非独立的（A 问了 B，B 更可能反过来问 A）。标准回归忽略了这种相互依赖——ERGM 就是为此设计的。</div>
 </div>
 
 <!-- SLIDE: Data as Network -->
@@ -466,41 +469,141 @@ body.presenting .pres-progress{
   <h2 data-lang="en">From Raw Data to a Network</h2>
   <h2 data-lang="zh">从原始数据到网络</h2>
 
-  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">[ Placeholder — will explain: who are the nodes? what defines an edge? directed or undirected? weighted? how was the adjacency matrix constructed? ]</p>
-  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">[ 占位 — 将说明：节点是谁？边如何定义？有向还是无向？加权吗？邻接矩阵如何构建？ ]</p>
+  <div class="check-grid">
+    <div class="check-card">
+      <div class="check-icon">🏢</div>
+      <div class="check-title" data-lang="en">Setting</div>
+      <div class="check-title" data-lang="zh">场景</div>
+      <div class="check-desc" data-lang="en">A global insurance company, risk analysis domain. N = 344 employees (78% response rate).</div>
+      <div class="check-desc" data-lang="zh">一家全球保险公司，风险分析部门。N = 344 名员工（78% 响应率）。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">🔗</div>
+      <div class="check-title" data-lang="en">Network</div>
+      <div class="check-title" data-lang="zh">网络</div>
+      <div class="check-desc" data-lang="en">Directed, binary. 535 ties. Density = .0045 (very sparse). Ego network → inferred complete network.</div>
+      <div class="check-desc" data-lang="zh">有向、二元。535 条边。密度 = .0045（非常稀疏）。自我网络 → 推断完整网络。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">📋</div>
+      <div class="check-title" data-lang="en">Survey</div>
+      <div class="check-title" data-lang="zh">调查</div>
+      <div class="check-desc" data-lang="en">"Who do you ask for advice about work problems?" (up to 5 names × 3 skill bundles: core, software, social).</div>
+      <div class="check-desc" data-lang="zh">"遇到工作问题你找谁请教？"（最多 5 人 × 3 个技能类别：核心、软件、社交）。</div>
+    </div>
+  </div>
+
+  <p class="method-desc" data-lang="en"><em>Key design choice:</em> Nodes = employees; a directed edge A→B means "A asks B for advice." The network is binary (yes/no), not weighted. Node attributes include self-assessed skills (29 items on 4-point scale), expertise and specialization scales, tenure, age, gender, and leadership responsibility.</p>
+  <p class="method-desc" data-lang="zh"><em>关键设计选择：</em>节点 = 员工；有向边 A→B 表示"A 向 B 请教"。网络是二元的（是/否），不加权。节点属性包括自评技能（29 项，4 级量表）、专业知识和专业化量表、任期、年龄、性别和领导责任。</p>
 </div>
 
-<!-- SLIDE: Methods Used -->
+<!-- SLIDE: ERGM Introduction + Methods -->
 <div class="slide" id="slide-methods">
   <div class="slide-num" data-lang="en">Part 2 · Slide 3</div>
   <div class="slide-num" data-lang="zh">第二部分 · 第 3 页</div>
-  <h2 data-lang="en">Network Methods Applied</h2>
-  <h2 data-lang="zh">使用的网络方法</h2>
+  <h2 data-lang="en">What Is an ERGM?</h2>
+  <h2 data-lang="zh">什么是 ERGM？</h2>
 
-  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">[ Placeholder — will describe which centrality measures, community detection, ERGM, or other methods the paper used, and why ]</p>
-  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">[ 占位 — 将描述论文使用了哪些中心性指标、社区检测、ERGM 或其他方法，以及原因 ]</p>
+  <p class="method-desc" data-lang="en">An <strong>Exponential Random Graph Model</strong> is like logistic regression for networks. It models the probability of observing the entire network as a function of local structural patterns. The core equation: P(Y = y) ∝ exp(θ<sup>T</sup> · g(y)), where g(y) are network statistics (e.g., number of edges, reciprocal pairs, triangles) and θ are coefficients — just like regression coefficients, but for network features.</p>
+  <p class="method-desc" data-lang="zh"><strong>指数随机图模型（ERGM）</strong>相当于网络的逻辑回归。它将观测到整个网络的概率建模为局部结构模式的函数。核心公式：P(Y = y) ∝ exp(θ<sup>T</sup> · g(y))，其中 g(y) 是网络统计量（如边数、互惠对数、三角形数），θ 是系数——就像回归系数，但用于网络特征。</p>
+
+  <p class="method-desc" data-lang="en"><em>Intuition:</em> imagine all possible networks with 344 nodes. ERGM asks: "Which local tendencies — reciprocity? homophily? popularity? — make the <em>observed</em> network more likely than random alternatives?" This paper builds a 3-step model:</p>
+  <p class="method-desc" data-lang="zh"><em>直觉：</em>想象 344 个节点的所有可能网络。ERGM 问的是："哪些局部倾向——互惠？同质性？人气？——使<em>观测到的</em>网络比随机网络更可能出现？"本文构建了 3 步模型：</p>
+
+  <div class="flow-row">
+    <div class="flow-step"><div class="flow-num">MODEL 1</div><div class="flow-title" data-lang="en">Baseline</div><div class="flow-title" data-lang="zh">基线</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-num">MODEL 2</div><div class="flow-title" data-lang="en">+ Structure</div><div class="flow-title" data-lang="zh">+ 结构</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-num">MODEL 3</div><div class="flow-title" data-lang="en">+ Attributes</div><div class="flow-title" data-lang="zh">+ 属性</div></div>
+  </div>
+
+  <p class="method-desc" data-lang="en"><strong>Model 1</strong> (edges + reciprocity) → <strong>Model 2</strong> adds endogenous structure (in-degree distribution, two-path brokerage) → <strong>Model 3</strong> adds node attributes (expertise, specialization, tenure, skills, leadership match). Software: R <code>ergm</code> package (Statnet).</p>
+  <p class="method-desc" data-lang="zh"><strong>模型 1</strong>（边 + 互惠性）→ <strong>模型 2</strong> 加入内生结构（入度分布、二路径中介）→ <strong>模型 3</strong> 加入节点属性（专业知识、专业化、任期、技能、领导匹配）。软件：R <code>ergm</code> 包（Statnet）。</p>
 </div>
 
 <!-- SLIDE: Key Findings -->
 <div class="slide" id="slide-findings">
   <div class="slide-num" data-lang="en">Part 2 · Slide 4</div>
   <div class="slide-num" data-lang="zh">第二部分 · 第 4 页</div>
-  <h2 data-lang="en">Reading the Results</h2>
-  <h2 data-lang="zh">解读结果</h2>
+  <h2 data-lang="en">Reading the ERGM Results</h2>
+  <h2 data-lang="zh">解读 ERGM 结果</h2>
 
-  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">[ Placeholder — will walk through key tables/figures from the paper and explain how to interpret network analysis output ]</p>
-  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">[ 占位 — 将逐步讲解论文中的关键表格/图形，说明如何解读网络分析输出 ]</p>
+  <p class="method-desc" data-lang="en">ERGM coefficients read like logistic regression: a positive coefficient means the corresponding network pattern is <em>more likely</em> than chance. Key findings from the full model (Model 3):</p>
+  <p class="method-desc" data-lang="zh">ERGM 系数的读法与逻辑回归类似：正系数意味着相应的网络模式比随机情况<em>更可能</em>出现。完整模型（模型 3）的关键发现：</p>
+
+  <div class="check-grid">
+    <div class="check-card">
+      <div class="check-icon">🔄</div>
+      <div class="check-title" data-lang="en">Reciprocity ✓</div>
+      <div class="check-title" data-lang="zh">互惠性 ✓</div>
+      <div class="check-desc" data-lang="en">Strong positive effect. If A asks B, B is much more likely to ask A back. Advice is a two-way street.</div>
+      <div class="check-desc" data-lang="zh">强正效应。如果 A 问了 B，B 很可能反过来问 A。建议是双向的。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">💻</div>
+      <div class="check-title" data-lang="en">Skill Homophily ✓</div>
+      <div class="check-title" data-lang="zh">技能同质性 ✓</div>
+      <div class="check-desc" data-lang="en">People ask peers with <em>similar</em> software skill levels — not necessarily the most skilled. Pronounced for software skills; weaker for core and social skills.</div>
+      <div class="check-desc" data-lang="zh">人们倾向于向软件技能水平<em>相似</em>的同事请教——不一定是最强的。软件技能效应最强；核心和社交技能较弱。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">📊</div>
+      <div class="check-title" data-lang="en">Expertise: Small ✓</div>
+      <div class="check-title" data-lang="zh">专业知识：效应小 ✓</div>
+      <div class="check-desc" data-lang="en">Higher expertise slightly increases being asked. But specialization shows <em>no</em> significant effect — specialists are not approached more often.</div>
+      <div class="check-desc" data-lang="zh">更高的专业知识略微增加被咨询的概率。但专业化<em>没有</em>显著效应——专家型员工并没有更常被请教。</div>
+    </div>
+  </div>
+
+  <p class="method-desc" data-lang="en"><strong>Surprise finding — the halo effect:</strong> being asked for advice in one skill bundle strongly predicts being asked across <em>all</em> skill bundles. In-degree centralities across the three domains correlate more strongly with each other than with actual skill levels. People seem to go to "known helpers" regardless of topic.</p>
+  <p class="method-desc" data-lang="zh"><strong>意外发现——光环效应：</strong>在某个技能领域被请教强烈预测在<em>所有</em>技能领域都被请教。三个领域的入度中心性之间的相关比与实际技能水平的相关更强。人们似乎倾向于找"知名帮手"，而不看具体话题。</p>
 </div>
 
 <!-- SLIDE: Extensions -->
 <div class="slide" id="slide-extend">
   <div class="slide-num" data-lang="en">Part 2 · Slide 5</div>
   <div class="slide-num" data-lang="zh">第二部分 · 第 5 页</div>
-  <h2 data-lang="en">What Would You Do Differently?</h2>
-  <h2 data-lang="zh">你会怎么改进？</h2>
+  <h2 data-lang="en">Discussion &amp; What Could Be Done Differently</h2>
+  <h2 data-lang="zh">讨论与改进方向</h2>
 
-  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">[ Placeholder — will discuss possible extensions, alternative methods, limitations, and how students might adapt this approach for their own research ]</p>
-  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">[ 占位 — 将讨论可能的延伸、替代方法、局限性，以及同学如何将此方法应用于自己的研究 ]</p>
+  <p class="method-desc" data-lang="en"><strong>Limitations:</strong> The network was inferred from ego networks (each person named up to 5 contacts), not directly observed — which can underestimate ties. Self-assessed skills may introduce common method bias. The cross-sectional design cannot tell us whether expertise <em>causes</em> more ties or vice versa.</p>
+  <p class="method-desc" data-lang="zh"><strong>局限性：</strong>网络从自我网络推断（每人最多提名 5 人），而非直接观测——可能低估边数。自评技能可能引入共同方法偏差。横截面设计无法告诉我们是专业知识<em>导致</em>更多关系还是反过来。</p>
+
+  <p class="method-desc" data-lang="en"><strong>Extensions to consider:</strong> Use a <em>Temporal ERGM (TERGM)</em> to track how the advice network evolves over time. Add objective performance data instead of self-assessed skills. Use <em>SAOM (Stochastic Actor-Oriented Models)</em> to disentangle selection effects from influence effects. Expand to multiple organizations for comparison.</p>
+  <p class="method-desc" data-lang="zh"><strong>可以考虑的延伸：</strong>使用<em>时序 ERGM (TERGM)</em> 追踪建议网络随时间的演变。用客观绩效数据替代自评技能。使用<em>SAOM（随机行动者导向模型）</em>区分选择效应和影响效应。扩展到多个组织进行比较。</p>
+</div>
+
+<!-- SLIDE: Other Methods -->
+<div class="slide" id="slide-other-methods">
+  <div class="slide-num" data-lang="en">Part 2 · Slide 6</div>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 6 页</div>
+  <h2 data-lang="en">Beyond ERGM: Other Network Methods</h2>
+  <h2 data-lang="zh">ERGM 之外：其他网络方法</h2>
+
+  <div class="check-grid">
+    <div class="check-card">
+      <div class="check-title" data-lang="en">QAP Regression</div>
+      <div class="check-title" data-lang="zh">QAP 回归</div>
+      <div class="check-desc" data-lang="en">Tests if two networks correlate (e.g., do friendship ties predict advice ties?). Uses permutation to handle non-independence. See: Krackhardt (1988).</div>
+      <div class="check-desc" data-lang="zh">检验两个网络是否相关（如友谊关系预测建议关系？）。用置换处理非独立性。参见：Krackhardt (1988)。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-title" data-lang="en">SAOM / Siena</div>
+      <div class="check-title" data-lang="zh">SAOM / Siena</div>
+      <div class="check-desc" data-lang="en">Longitudinal models that separate network <em>selection</em> (who befriends whom) from <em>influence</em> (do friends become similar). See: Snijders et al. (2010).</div>
+      <div class="check-desc" data-lang="zh">纵向模型，区分网络<em>选择</em>（谁和谁交友）与<em>影响</em>（朋友是否变得相似）。参见：Snijders et al. (2010)。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-title" data-lang="en">Latent Space Models</div>
+      <div class="check-title" data-lang="zh">潜在空间模型</div>
+      <div class="check-desc" data-lang="en">Embeds nodes in a latent geometric space; closer nodes are more likely to connect. Good for visualization and clustering. See: Hoff et al. (2002).</div>
+      <div class="check-desc" data-lang="zh">将节点嵌入潜在几何空间；距离近的节点更可能连接。适合可视化和聚类。参见：Hoff et al. (2002)。</div>
+    </div>
+  </div>
+
+  <div class="method-when" data-lang="en"><strong>How to choose?</strong> Cross-sectional + tie formation → ERGM. Longitudinal + co-evolution → SAOM. Network correlation → QAP. Visualization + clustering → Latent space. All can be implemented in R (statnet, RSiena, latentnet).</div>
+  <div class="method-when" data-lang="zh"><strong>如何选择？</strong>横截面 + 关系形成 → ERGM。纵向 + 共同演化 → SAOM。网络相关 → QAP。可视化 + 聚类 → 潜在空间。全部可在 R 中实现（statnet, RSiena, latentnet）。</div>
 </div>
 
 <!-- SLIDE: Takeaway -->
@@ -510,11 +613,11 @@ body.presenting .pres-progress{
   <h2 data-lang="en">Getting Started with Network Analysis</h2>
   <h2 data-lang="zh">开始你的网络分析</h2>
 
-  <p class="method-desc" data-lang="en"><strong>Step 1:</strong> Identify relational data in your research — who connects to whom? <strong>Step 2:</strong> Choose the right representation — directed or undirected, weighted or binary. <strong>Step 3:</strong> Start descriptive — visualize, compute centrality, detect communities. <strong>Step 4:</strong> Move to inference if needed — ERGM for what drives tie formation, QAP for network correlation.</p>
-  <p class="method-desc" data-lang="zh"><strong>第一步：</strong>在你的研究中识别关系数据——谁和谁相连？<strong>第二步：</strong>选择合适的表示——有向或无向，加权或二元。<strong>第三步：</strong>从描述开始——可视化、计算中心性、检测社区。<strong>第四步：</strong>需要时进入推断——ERGM 研究什么驱动关系形成，QAP 检验网络相关。</p>
+  <p class="method-desc" data-lang="en"><strong>Step 1:</strong> Identify relational data — who connects to whom? <strong>Step 2:</strong> Choose the right representation — directed or undirected, weighted or binary. <strong>Step 3:</strong> Start descriptive — visualize, compute centrality, detect communities. <strong>Step 4:</strong> Move to inference — ERGM for tie formation, QAP for network correlation, SAOM for longitudinal dynamics.</p>
+  <p class="method-desc" data-lang="zh"><strong>第一步：</strong>识别关系数据——谁和谁相连？<strong>第二步：</strong>选择合适的表示——有向或无向，加权或二元。<strong>第三步：</strong>从描述开始——可视化、计算中心性、检测社区。<strong>第四步：</strong>进入推断——ERGM 研究关系形成，QAP 检验网络相关，SAOM 分析纵向动态。</p>
 
-  <p class="method-desc" data-lang="en">For the full reference material, see <a href="/methods/reg-network.html">Network Analysis</a> in the Methods Notebook.</p>
-  <p class="method-desc" data-lang="zh">完整参考材料请见方法笔记本中的<a href="/methods/reg-network.html">网络分析</a>。</p>
+  <p class="method-desc" data-lang="en"><strong>Recommended reading:</strong> <a href="https://doi.org/10.1080/1359432X.2024.2387874" target="_blank">Köhler et al. (2024)</a> for applied ERGM · <a href="https://statnet.org/workshop-ergm/ergm_tutorial.html" target="_blank">Statnet ERGM Tutorial</a> for R code · <a href="/methods/reg-network.html">Network Analysis</a> in the Methods Notebook for foundations.</p>
+  <p class="method-desc" data-lang="zh"><strong>推荐阅读：</strong><a href="https://doi.org/10.1080/1359432X.2024.2387874" target="_blank">Köhler et al. (2024)</a> ERGM 应用 · <a href="https://statnet.org/workshop-ergm/ergm_tutorial.html" target="_blank">Statnet ERGM 教程</a> R 代码 · 方法笔记本中的<a href="/methods/reg-network.html">网络分析</a>基础内容。</p>
 </div>
 
 <!-- PAGE NAV -->
