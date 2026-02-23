@@ -727,9 +727,6 @@ body.presenting .pres-progress{
       <div class="check-desc" data-lang="zh">来自 HR 数据库：<br>— 年龄<br>— 性别<br>— 工龄（年）<br>— 职级<br>— 是否有领导责任</div>
     </div>
   </div>
-
-  <div class="method-analogy" data-lang="en"><strong>Sample questionnaire items:</strong><br>"Rate your competence in <em>[risk modeling / Excel / teamwork / ...]</em>" (1–5 scale) → generates skill profiles<br>"I consider myself an expert in my field" (1–5 scale) → expertise self-identity<br>"Who do you turn to for advice on <em>[core insurance skills]</em>? Name up to 5 people." → generates network edges (A→B = "A asks B")<br>All 344 people's nominations are combined into one directed network: 535 ties total, density .0045 (very sparse).</div>
-  <div class="method-analogy" data-lang="zh"><strong>问卷示例题目：</strong><br>"请评价你在<em>[风险建模 / Excel / 团队合作 / ...]</em>方面的能力"（1–5 分）→ 生成技能画像<br>"我认为自己是本领域的专家"（1–5 分）→ 专家自我认同<br>"在<em>[核心保险技能]</em>方面你会找谁请教？请填写最多 5 个人。" → 生成网络边（A→B = "A 找 B 请教"）<br>344 人的提名汇总成一张有向网络：共 535 条关系，密度 .0045（非常稀疏）。</div>
 </div>
 
 <!-- SLIDE: Three-Study Design + Methods -->
@@ -739,32 +736,32 @@ body.presenting .pres-progress{
   <h2 data-lang="en">Method: Three Studies in One Paper</h2>
   <h2 data-lang="zh">方法：一篇论文中的三个研究</h2>
 
+  <p class="method-desc" data-lang="en">The paper uses three studies that build on each other: first <em>discover</em> a pattern, then <em>explain</em> what drives it, then <em>validate</em> whether theoretical categories hold up.</p>
+  <p class="method-desc" data-lang="zh">论文用三个递进的研究：先<em>发现</em>规律，再<em>解释</em>驱动因素，最后<em>验证</em>理论分类是否成立。</p>
+
   <div class="check-grid">
     <div class="check-card">
       <div class="check-icon">01</div>
       <div class="check-title" data-lang="en">Spearman Correlations</div>
       <div class="check-title" data-lang="zh">Spearman 相关</div>
-      <div class="check-desc" data-lang="en"><em>RQ 1:</em> Is being asked for advice related to your actual skill level, or to being asked in general?<br><em>Method:</em> Compute in-degree centrality for each of 3 skill bundles; correlate with self-assessed skill levels using Spearman's Rho; compare correlations with Fisher's z-test.<br><em>Plain language:</em> Count how many people ask you for help in each area, then check — does that number match how skilled you actually are, or does it just match how popular you are in other areas?</div>
-      <div class="check-desc" data-lang="zh"><em>RQ 1：</em>被请教是因为你真的擅长，还是因为你本来就被很多人找？<br><em>方法：</em>计算每人在三类技能包的入度中心性，与自评技能水平做 Spearman 相关，再用 Fisher z 检验比较相关系数差异。<br><em>通俗：</em>数一数多少人在各个领域找你请教，然后看——这个数字和你实际能力更相关，还是和你在其他领域被找的次数更相关？</div>
+      <div class="check-desc" data-lang="en"><em>Question:</em> Is being asked for advice tied to your real skill, or just to being popular?<br><em>How:</em> Compute how many people ask each person for help (in-degree) in 3 skill areas; correlate with self-rated skills (Spearman); compare correlations (Fisher z-test).<br><em>i.e.:</em> Count who asks you in each area, then see if that number matches your actual ability — or just your popularity elsewhere.</div>
+      <div class="check-desc" data-lang="zh"><em>问题：</em>被请教是因为真的擅长，还是只因为你"有名"？<br><em>做法：</em>计算每人在 3 类技能的被请教次数（入度），与自评技能做 Spearman 相关，再用 Fisher z 检验比较相关系数。<br><em>也就是说：</em>数多少人在各领域找你，看这个数字和你的实际能力更相关，还是和你在其他领域的人气更相关。</div>
     </div>
     <div class="check-card">
       <div class="check-icon">02</div>
       <div class="check-title" data-lang="en">ERGM</div>
-      <div class="check-title" data-lang="zh">ERGM</div>
-      <div class="check-desc" data-lang="en"><em>RQ 2:</em> What social processes and individual traits drive advice ties?<br><em>Method:</em> Exponential Random Graph Model in 3 steps — (1) baseline: edges + reciprocity; (2) + endogenous effects: in-degree distribution, brokerage; (3) + exogenous attributes: expertise, specialization, tenure, skills, gender, leadership. Compare models via AIC. R <code>ergm</code>.<br><em>Plain language:</em> Like a logistic regression for networks — test which factors make a tie between two people more or less likely, while controlling for the network's own patterns.</div>
-      <div class="check-desc" data-lang="zh"><em>RQ 2：</em>什么社会过程和个人特征驱动求助关系？<br><em>方法：</em>指数随机图模型分 3 步——(1) 基线：边 + 互惠性；(2) + 内生效应：入度分布、中介；(3) + 外生属性：expertise、specialization、工龄、技能均值、性别、管理职责。用 AIC 比较模型。R <code>ergm</code>。<br><em>通俗：</em>相当于给网络做逻辑回归——在排除网络自身规律后，检验哪些因素让两个人之间更可能形成"请教"关系。</div>
+      <div class="check-title" data-lang="zh">ERGM 指数随机图模型</div>
+      <div class="check-desc" data-lang="en"><em>Question:</em> What actually drives advice ties — after removing the network's own patterns?<br><em>How:</em> Build the model in 3 steps: (1) baseline (edges + reciprocity); (2) add network effects (in-degree, brokerage); (3) add personal traits (expertise, skills, tenure, gender, leadership). Compare via AIC. R <code>ergm</code>.<br><em>i.e.:</em> A logistic regression for networks — test which factors make two people more likely to form a "who asks whom" tie.</div>
+      <div class="check-desc" data-lang="zh"><em>问题：</em>排除网络自身规律后，到底什么驱动求助关系？<br><em>做法：</em>分 3 步建模：(1) 基线（边 + 互惠）；(2) 加网络效应（入度、中介）；(3) 加个人属性（expertise、技能、工龄、性别、管理职责）。用 AIC 比较模型。R <code>ergm</code>。<br><em>也就是说：</em>给网络做逻辑回归——检验哪些因素让两人之间更可能形成"请教"关系。</div>
     </div>
     <div class="check-card">
       <div class="check-icon">03</div>
       <div class="check-title" data-lang="en">Optimal Matching</div>
       <div class="check-title" data-lang="zh">最优匹配</div>
-      <div class="check-desc" data-lang="en"><em>RQ 3:</em> Do employees' actual skill profiles match the theorized expert/specialist profiles?<br><em>Method:</em> Sort each person's 29 skills from highest to lowest; compute "distance" to theoretical ideal profiles using R <code>TraMineR</code> (optimal matching with indelslog costs); correlate distances with self-assessment scales and in-degree centrality via Spearman's Rho.<br><em>Plain language:</em> Imagine a template for what a "perfect expert" and "perfect specialist" look like. Measure how far each person's actual skill pattern is from those templates, then see if the people who call themselves experts really look like experts.</div>
-      <div class="check-desc" data-lang="zh"><em>RQ 3：</em>员工的真实技能画像与理论中的专家/专才画像匹配吗？<br><em>方法：</em>把每人的 29 项技能从高到低排序，用 R <code>TraMineR</code>（最优匹配，indelslog 成本）计算与理论画像的"距离"，再用 Spearman 相关看距离与自评量表、入度中心性的关系。<br><em>通俗：</em>先画一个"理想专家"和"理想专才"的模板。量一量每个人的实际技能和模板差多远，再看那些自称专家的人是不是真的长得像专家。</div>
+      <div class="check-desc" data-lang="en"><em>Question:</em> Do real skill profiles match theoretical expert/specialist templates?<br><em>How:</em> Sort each person's 29 skills high→low; compute "distance" to ideal profiles (R <code>TraMineR</code>); correlate distances with self-ratings and centrality (Spearman).<br><em>i.e.:</em> Draw a template for "perfect expert" and "perfect specialist," then measure how far each person is from those templates.</div>
+      <div class="check-desc" data-lang="zh"><em>问题：</em>真实技能画像和理论上的专家/专才模板匹配吗？<br><em>做法：</em>将每人 29 项技能从高到低排序，用 R <code>TraMineR</code> 计算与理想画像的"距离"，再与自评和中心度做 Spearman 相关。<br><em>也就是说：</em>先画"理想专家"和"理想专才"的模板，再量每个人离模板有多远。</div>
     </div>
   </div>
-
-  <div class="method-when" data-lang="en"><strong>Logic:</strong> Study 1 discovers the pattern (halo effect) → Study 2 tests what drives ties → Study 3 validates whether expert/specialist categories hold up in practice.</div>
-  <div class="method-when" data-lang="zh"><strong>逻辑：</strong>研究一发现模式（光环效应）→ 研究二检验什么驱动关系形成 → 研究三验证专家/专才分类在实践中是否成立。</div>
 </div>
 
 <!-- SLIDE: Study 1 — Halo Effect -->
