@@ -12,16 +12,24 @@ bilingual: true
 
 /* Toggle button */
 .pres-toggle{
-  display:inline-flex;align-items:center;gap:8px;
-  font-family:var(--sans);font-size:12px;font-weight:600;
-  letter-spacing:.06em;text-transform:uppercase;
-  color:var(--gold);background:var(--warm);
-  border:1px solid var(--parchment);border-radius:4px;
-  padding:8px 18px;cursor:pointer;transition:all .2s;
-  margin-bottom:20px;
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--sans);font-size:11.5px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--red);background:var(--paper);
+  border:1px solid var(--red);border-radius:4px;
+  padding:10px 22px;cursor:pointer;
+  transition:all .3s ease;
+  margin-bottom:28px;
+  box-shadow:0 1px 3px rgba(30,24,15,.06);
 }
-.pres-toggle:hover{background:var(--gold);color:var(--paper);border-color:var(--gold)}
-.pres-toggle .pres-icon{font-size:16px}
+.pres-toggle:hover{
+  background:var(--red);color:var(--paper);
+  border-color:var(--red);
+  box-shadow:0 2px 8px rgba(181,55,42,.18);
+  transform:translateY(-1px);
+}
+.pres-toggle .pres-icon{font-size:14px;transition:transform .3s}
+.pres-toggle:hover .pres-icon{transform:scale(1.15)}
 
 /* Hide chrome */
 body.presenting .sidebar,
@@ -39,194 +47,267 @@ body.presenting .content{max-width:100vw!important;padding:0!important;margin:0!
 /* Slide container */
 body.presenting .slide{
   display:none;width:100vw;height:100vh;
-  padding:48px 0;box-sizing:border-box;
+  padding:56px 0;box-sizing:border-box;
   overflow-y:auto;background:var(--paper);
 }
 body.presenting .slide.active{
   display:flex;flex-direction:column;
   justify-content:center;align-items:center;
+  animation:slideIn .35s ease-out;
+}
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
 }
 /* Max-width centering for all children */
 body.presenting .slide > *{
-  width:100%;max-width:880px;
-  padding-left:40px;padding-right:40px;
+  width:100%;max-width:920px;
+  padding-left:48px;padding-right:48px;
   box-sizing:border-box;
 }
 
 /* Presentation typography */
-body.presenting .slide .slide-num{font-size:11px;margin-bottom:8px}
-body.presenting .slide h2{font-size:2.2rem;margin-bottom:20px;line-height:1.25;letter-spacing:-.01em}
-body.presenting .slide h3{font-size:1.5rem;margin-bottom:12px}
+body.presenting .slide .slide-num{font-size:11px;margin-bottom:10px}
+body.presenting .slide h2{font-size:2.4rem;margin-bottom:24px;line-height:1.2;letter-spacing:-.02em}
+body.presenting .slide h3{font-size:1.5rem;margin-bottom:14px}
 body.presenting .slide p,
-body.presenting .slide li{font-size:1.1rem;line-height:1.9}
-body.presenting .slide .method-desc{font-size:1.1rem;line-height:1.9;margin-bottom:16px}
-body.presenting .slide .method-analogy{font-size:1.05rem;line-height:1.8}
-body.presenting .slide .method-when{font-size:1.05rem;line-height:1.8}
+body.presenting .slide li{font-size:1.12rem;line-height:1.9}
+body.presenting .slide .method-desc{font-size:1.12rem;line-height:1.9;margin-bottom:18px}
+body.presenting .slide .method-analogy{font-size:1.08rem;line-height:1.85}
+body.presenting .slide .method-when{font-size:1.08rem;line-height:1.85}
 
 /* Presentation: vis panels */
-body.presenting .vis-panel{padding:24px 28px}
-body.presenting .vis-panel svg{max-width:420px;margin:0 auto;display:block}
-body.presenting .vis-caption{font-size:13px;margin-top:12px}
+body.presenting .vis-panel{padding:28px 32px}
+body.presenting .vis-panel svg{max-width:440px;margin:0 auto;display:block}
+body.presenting .vis-caption{font-size:13px;margin-top:14px}
 body.presenting .vis-label{font-size:12px}
 
 /* Presentation: check cards */
-body.presenting .check-grid{gap:20px;margin:24px 0}
-body.presenting .check-card{padding:22px 20px}
-body.presenting .check-icon{width:32px;height:32px;font-size:12px;margin-bottom:12px}
-body.presenting .check-title{font-size:14px;margin-bottom:8px}
-body.presenting .check-desc{font-size:13.5px;line-height:1.65}
+body.presenting .check-grid{gap:20px;margin:28px 0}
+body.presenting .check-card{padding:24px 22px}
+body.presenting .check-icon{width:34px;height:34px;font-size:12.5px;margin-bottom:14px}
+body.presenting .check-title{font-size:15px;margin-bottom:10px}
+body.presenting .check-desc{font-size:13.5px;line-height:1.7}
 
 /* Presentation: flow diagram */
-body.presenting .flow-step{padding:14px 22px;min-width:130px}
+body.presenting .flow-step{padding:16px 24px;min-width:140px}
 body.presenting .flow-step .flow-title{font-size:15px}
-body.presenting .flow-arrow{font-size:22px;padding:0 8px}
+body.presenting .flow-arrow{font-size:22px;padding:0 10px}
 
 /* Presentation: centrality */
-body.presenting .cent-btns{margin:12px 0 16px}
-body.presenting .cent-btn{font-size:13px;padding:8px 20px}
+body.presenting .cent-btns{margin:14px 0 18px}
+body.presenting .cent-btn{font-size:13px;padding:9px 22px}
 
 /* Presentation: step details */
-body.presenting .step-item{font-size:1rem;line-height:1.8;padding:6px 16px}
+body.presenting .step-item{font-size:1rem;line-height:1.8;padding:8px 18px}
 
 /* Slide counter, ESC hint, progress bar */
 body.presenting .slide-counter{
-  position:fixed;bottom:24px;right:32px;
-  font-family:var(--sans);font-size:13px;
-  color:var(--ink-ghost);letter-spacing:.05em;z-index:999;
+  position:fixed;bottom:28px;right:36px;
+  font-family:var(--sans);font-size:12px;font-weight:500;
+  color:var(--ink-ghost);letter-spacing:.06em;z-index:999;
 }
 body.presenting .pres-esc{
-  position:fixed;top:20px;right:28px;
-  font-family:var(--sans);font-size:11px;
-  color:var(--ink-ghost);letter-spacing:.05em;
-  opacity:.6;z-index:999;
+  position:fixed;top:24px;right:32px;
+  font-family:var(--sans);font-size:10.5px;font-weight:500;
+  color:var(--ink-ghost);letter-spacing:.06em;
+  opacity:.5;z-index:999;
+  background:rgba(248,244,236,.8);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  padding:6px 14px;border-radius:4px;
 }
 body.presenting .pres-progress{
-  position:fixed;top:0;left:0;height:3px;
-  background:var(--gold);z-index:999;
-  transition:width .3s ease;
+  position:fixed;top:0;left:0;height:2.5px;
+  background:linear-gradient(90deg,var(--red),var(--gold));
+  z-index:999;transition:width .4s ease;
 }
 
 /* ══════════════════════════════════════════════════════
    NORMAL MODE — PAGE-SPECIFIC COMPONENTS
-   (all scoped to avoid conflicts with style.css)
    ══════════════════════════════════════════════════════ */
 
 /* Section number badge */
 .slide-num{
-  font-family:var(--sans);font-size:11px;font-weight:700;
-  letter-spacing:.12em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:12px;
+  font-family:var(--sans);font-size:10.5px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:14px;
+  opacity:.85;
 }
 
 /* ── Visualization panels ─────────────────────────── */
 .vis-row{
-  display:flex;gap:20px;margin:24px 0;
+  display:flex;gap:20px;margin:28px 0;
   flex-wrap:wrap;align-items:stretch;
 }
 .vis-panel{
   flex:1;min-width:220px;
-  background:var(--warm);border:1px solid var(--parchment);
-  border-radius:6px;padding:18px 20px;text-align:center;
+  background:var(--paper);
+  border:1px solid var(--parchment);
+  border-radius:6px;padding:22px 24px;text-align:center;
   display:flex;flex-direction:column;
+  transition:border-color .3s, box-shadow .3s;
+  box-shadow:0 1px 4px rgba(30,24,15,.04);
+}
+.vis-panel:hover{
+  border-color:var(--gold-soft);
+  box-shadow:0 3px 12px rgba(194,153,61,.08);
 }
 .vis-panel svg{
-  max-width:100%;height:auto;margin:4px auto 0;
+  max-width:100%;height:auto;margin:8px auto 0;
   display:block;flex:1;min-height:0;
 }
 .vis-label{
-  font-family:var(--sans);font-size:11px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:8px;flex-shrink:0;
+  font-family:var(--sans);font-size:10.5px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:10px;flex-shrink:0;
 }
 .vis-caption{
   font-family:var(--sans);font-size:11.5px;
-  color:var(--ink-faded);margin-top:10px;line-height:1.5;flex-shrink:0;
+  color:var(--ink-ghost);margin-top:12px;line-height:1.55;flex-shrink:0;
 }
 
 /* ── Centrality interactive ───────────────────────── */
-.cent-btns{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 16px}
+.cent-btns{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 20px}
 .cent-btn{
   font-family:var(--sans);font-size:12px;font-weight:600;
-  padding:6px 16px;border:1px solid var(--parchment);border-radius:4px;
-  background:var(--warm);color:var(--ink-faded);cursor:pointer;
-  transition:all .2s;
+  padding:8px 20px;
+  border:1px solid var(--parchment);border-radius:4px;
+  background:var(--paper);color:var(--ink-faded);cursor:pointer;
+  transition:all .25s ease;
+  box-shadow:0 1px 2px rgba(30,24,15,.04);
 }
-.cent-btn:hover,.cent-btn.active{background:var(--gold);color:var(--paper);border-color:var(--gold)}
+.cent-btn:hover{
+  border-color:var(--gold-soft);color:var(--gold);
+  box-shadow:0 2px 6px rgba(194,153,61,.1);
+  transform:translateY(-1px);
+}
+.cent-btn.active{
+  background:var(--gold);color:var(--paper);border-color:var(--gold);
+  box-shadow:0 2px 8px rgba(194,153,61,.2);
+}
 
 /* Centrality detail box — override .method-desc base */
 #cent-detail-en,
 #cent-detail-zh{
   background:var(--warm);
-  border-left:3px solid var(--gold);border:1px solid var(--parchment);
+  border:1px solid var(--parchment);
   border-left:3px solid var(--gold);
-  padding:14px 18px;border-radius:0 4px 4px 0;
-  margin:16px 0 12px;
+  padding:16px 20px;border-radius:0 4px 4px 0;
+  margin:18px 0 14px;
+  transition:border-left-color .3s;
 }
 
 /* ── Flow diagram ─────────────────────────────────── */
 .flow-row{
   display:flex;align-items:center;gap:0;
-  margin:24px 0;flex-wrap:wrap;justify-content:center;
+  margin:28px 0;flex-wrap:wrap;justify-content:center;
 }
 .flow-step{
-  background:var(--warm);border:1px solid var(--parchment);
-  border-radius:6px;padding:12px 18px;text-align:center;min-width:110px;
+  background:var(--paper);border:1px solid var(--parchment);
+  border-radius:6px;padding:14px 20px;text-align:center;min-width:120px;
+  transition:all .25s ease;
+  box-shadow:0 1px 4px rgba(30,24,15,.04);
 }
-.flow-step .flow-num{font-family:var(--sans);font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.1em}
-.flow-step .flow-title{font-family:var(--body);font-size:14px;color:var(--ink);margin-top:4px}
-.flow-arrow{font-size:18px;color:var(--gold);padding:0 6px}
+.flow-step:hover{
+  border-color:var(--gold-soft);
+  box-shadow:0 3px 10px rgba(194,153,61,.1);
+  transform:translateY(-2px);
+}
+.flow-step .flow-num{font-family:var(--sans);font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.12em}
+.flow-step .flow-title{font-family:var(--body);font-size:14px;color:var(--ink);margin-top:5px}
+.flow-arrow{font-size:18px;color:var(--tea);padding:0 8px;opacity:.7}
 
 /* ── Decision checklist ───────────────────────────── */
-.check-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:20px 0}
+.check-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:24px 0}
 .check-card{
-  background:var(--warm);border:1px solid var(--parchment);
-  border-radius:6px;padding:18px 16px;
+  background:var(--paper);
+  border:1px solid var(--parchment);
+  border-radius:6px;padding:22px 20px;
   text-align:left;
+  transition:all .3s ease;
+  box-shadow:0 1px 4px rgba(30,24,15,.03);
+  position:relative;
 }
+.check-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;
+  height:2px;background:var(--gold);border-radius:6px 6px 0 0;
+  opacity:0;transition:opacity .3s;
+}
+.check-card:hover{
+  border-color:var(--gold-soft);
+  box-shadow:0 4px 16px rgba(194,153,61,.08);
+  transform:translateY(-2px);
+}
+.check-card:hover::before{opacity:1}
 .check-icon{
   font-family:var(--sans);font-size:11px;font-weight:700;
   letter-spacing:.1em;text-transform:uppercase;
   color:var(--paper);background:var(--gold);
   display:inline-flex;align-items:center;justify-content:center;
-  width:28px;height:28px;border-radius:4px;margin-bottom:10px;
+  width:30px;height:30px;border-radius:6px;margin-bottom:12px;
+  box-shadow:0 2px 6px rgba(194,153,61,.2);
 }
-.check-title{font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:6px}
-.check-desc{font-family:var(--sans);font-size:12px;color:var(--ink-faded);line-height:1.6}
+.check-title{
+  font-family:var(--sans);font-size:13px;font-weight:600;
+  color:var(--ink-soft);margin-bottom:8px;
+}
+.check-desc{
+  font-family:var(--sans);font-size:12.5px;
+  color:var(--ink-faded);line-height:1.7;
+}
 
 /* ── Step details (workflow breakdown) ─────────────── */
-.step-details{display:grid;grid-template-columns:1fr;gap:6px;margin:16px 0}
+.step-details{display:grid;grid-template-columns:1fr;gap:8px;margin:20px 0}
 .step-item{
-  font-size:14px;line-height:1.7;color:var(--ink-faded);
-  padding:8px 14px;
+  font-size:14px;line-height:1.75;color:var(--ink-faded);
+  padding:10px 16px;
   border-left:2px solid var(--parchment);
-  transition:border-color .2s;
+  transition:all .25s ease;
+  border-radius:0 4px 4px 0;
 }
-.step-item:hover{border-left-color:var(--gold)}
+.step-item:hover{
+  border-left-color:var(--gold);
+  background:rgba(194,153,61,.03);
+}
 .step-item strong{color:var(--ink-soft)}
 
 /* ── method-when (not in style.css — define from scratch) */
 .method-when{
-  margin:12px 0;padding:10px 14px;border-radius:4px;
-  background:rgba(90,122,107,.05);border:1px solid rgba(90,122,107,.2);
-  font-size:14.5px;line-height:1.65;color:var(--ink-faded);
+  margin:16px 0;padding:14px 18px;border-radius:0 4px 4px 0;
+  background:rgba(194,153,61,.04);
+  border:1px solid rgba(194,153,61,.15);
+  border-left:3px solid var(--gold);
+  font-size:14.5px;line-height:1.7;color:var(--ink-faded);
 }
 .method-when strong{color:var(--leather);font-style:normal}
 
 /* ── Override intro-cards to 2-col for this page (has 2 cards, not 3) */
 .intro-cards{grid-template-columns:1fr 1fr!important}
 
+/* ── Section divider enhancement ───────────────────── */
+.section-divider{
+  border:none;border-top:1px solid var(--parchment);
+  margin:40px 0;opacity:.6;
+}
+
+/* ── SVG node animation ───────────────────────────── */
+.vis-panel svg circle{transition:r .5s ease, opacity .5s ease}
+.vis-panel svg line{transition:stroke-width .4s ease, opacity .4s ease}
+
 /* ── Responsive ───────────────────────────────────── */
 @media(max-width:1000px){
   .check-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:700px){
-  .flow-row{flex-direction:column;gap:4px}
-  .flow-arrow{transform:rotate(90deg);padding:2px 0}
+  .flow-row{flex-direction:column;gap:6px}
+  .flow-arrow{transform:rotate(90deg);padding:3px 0}
   .check-grid{grid-template-columns:1fr}
   .vis-row{flex-direction:column}
   .vis-panel{min-width:100%}
   .intro-cards{grid-template-columns:1fr!important}
   body.presenting .slide > *{padding-left:24px;padding-right:24px}
+  .check-card:hover{transform:none}
+  .flow-step:hover{transform:none}
 }
 @media(max-width:900px){
   body.presenting .slide h2{font-size:1.8rem}
@@ -286,17 +367,23 @@ body.presenting .pres-progress{
     <div class="vis-panel">
       <div class="vis-label" data-lang="en">Traditional Data</div>
       <div class="vis-label" data-lang="zh">传统数据</div>
-      <svg viewBox="0 0 260 150" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
-        <rect x="10" y="8" width="240" height="28" rx="3" fill="#c29a3d" opacity=".15"/>
-        <text x="30" y="27" font-size="11" fill="#3a3632" font-weight="600">Name</text>
-        <text x="110" y="27" font-size="11" fill="#3a3632" font-weight="600">Age</text>
-        <text x="175" y="27" font-size="11" fill="#3a3632" font-weight="600">GPA</text>
-        <line x1="10" y1="36" x2="250" y2="36" stroke="#c29a3d" opacity=".3"/>
-        <text x="30" y="55" font-size="11" fill="#6b6560">Alice</text><text x="110" y="55" font-size="11" fill="#6b6560">22</text><text x="175" y="55" font-size="11" fill="#6b6560">3.8</text>
-        <text x="30" y="75" font-size="11" fill="#6b6560">Bob</text><text x="110" y="75" font-size="11" fill="#6b6560">23</text><text x="175" y="75" font-size="11" fill="#6b6560">3.5</text>
-        <text x="30" y="95" font-size="11" fill="#6b6560">Carol</text><text x="110" y="95" font-size="11" fill="#6b6560">21</text><text x="175" y="95" font-size="11" fill="#6b6560">3.9</text>
-        <text x="30" y="115" font-size="11" fill="#6b6560">Dave</text><text x="110" y="115" font-size="11" fill="#6b6560">24</text><text x="175" y="115" font-size="11" fill="#6b6560">3.2</text>
-        <text x="30" y="135" font-size="11" fill="#6b6560">Eve</text><text x="110" y="135" font-size="11" fill="#6b6560">22</text><text x="175" y="135" font-size="11" fill="#6b6560">3.6</text>
+      <svg viewBox="0 0 260 155" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
+        <rect x="8" y="6" width="244" height="144" rx="4" fill="none" stroke="#DED4C0" stroke-width=".8"/>
+        <rect x="8" y="6" width="244" height="28" rx="4" fill="#c29a3d" opacity=".1"/>
+        <rect x="8" y="6" width="244" height="28" rx="4" fill="none" stroke="#DED4C0" stroke-width=".8"/>
+        <text x="32" y="25" font-size="10.5" fill="#3a3632" font-weight="600" letter-spacing=".04em">Name</text>
+        <text x="112" y="25" font-size="10.5" fill="#3a3632" font-weight="600" letter-spacing=".04em">Age</text>
+        <text x="178" y="25" font-size="10.5" fill="#3a3632" font-weight="600" letter-spacing=".04em">GPA</text>
+        <line x1="8" y1="34" x2="252" y2="34" stroke="#DED4C0" stroke-width=".6"/>
+        <line x1="8" y1="58" x2="252" y2="58" stroke="#DED4C0" stroke-width=".4" stroke-dasharray="2,3"/>
+        <line x1="8" y1="82" x2="252" y2="82" stroke="#DED4C0" stroke-width=".4" stroke-dasharray="2,3"/>
+        <line x1="8" y1="106" x2="252" y2="106" stroke="#DED4C0" stroke-width=".4" stroke-dasharray="2,3"/>
+        <line x1="8" y1="126" x2="252" y2="126" stroke="#DED4C0" stroke-width=".4" stroke-dasharray="2,3"/>
+        <text x="32" y="50" font-size="11" fill="#6b5f4f">Alice</text><text x="112" y="50" font-size="11" fill="#6b5f4f">22</text><text x="178" y="50" font-size="11" fill="#6b5f4f">3.8</text>
+        <text x="32" y="74" font-size="11" fill="#6b5f4f">Bob</text><text x="112" y="74" font-size="11" fill="#6b5f4f">23</text><text x="178" y="74" font-size="11" fill="#6b5f4f">3.5</text>
+        <text x="32" y="98" font-size="11" fill="#6b5f4f">Carol</text><text x="112" y="98" font-size="11" fill="#6b5f4f">21</text><text x="178" y="98" font-size="11" fill="#6b5f4f">3.9</text>
+        <text x="32" y="120" font-size="11" fill="#6b5f4f">Dave</text><text x="112" y="120" font-size="11" fill="#6b5f4f">24</text><text x="178" y="120" font-size="11" fill="#6b5f4f">3.2</text>
+        <text x="32" y="142" font-size="11" fill="#6b5f4f">Eve</text><text x="112" y="142" font-size="11" fill="#6b5f4f">22</text><text x="178" y="142" font-size="11" fill="#6b5f4f">3.6</text>
       </svg>
       <div class="vis-caption" data-lang="en">Each row = one person, independent</div>
       <div class="vis-caption" data-lang="zh">每行 = 一个人，互相独立</div>
@@ -304,30 +391,34 @@ body.presenting .pres-progress{
     <div class="vis-panel">
       <div class="vis-label" data-lang="en">Network Data</div>
       <div class="vis-label" data-lang="zh">网络数据</div>
-      <svg viewBox="0 0 260 150" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
-        <line x1="70" y1="45" x2="140" y2="40" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
-        <line x1="70" y1="45" x2="100" y2="100" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
-        <line x1="140" y1="40" x2="100" y2="100" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
-        <line x1="140" y1="40" x2="190" y2="90" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
-        <line x1="190" y1="90" x2="230" y2="130" stroke="#c29a3d" stroke-width="2" opacity=".5"/>
-        <circle cx="70" cy="45" r="16" fill="#c29a3d" opacity=".2" stroke="#c29a3d" stroke-width="1.5"/>
-        <text x="70" y="49" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600">Alice</text>
-        <circle cx="140" cy="40" r="18" fill="#c29a3d" opacity=".35" stroke="#c29a3d" stroke-width="1.5"/>
-        <text x="140" y="44" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600">Bob</text>
-        <circle cx="100" cy="100" r="16" fill="#c29a3d" opacity=".2" stroke="#c29a3d" stroke-width="1.5"/>
-        <text x="100" y="104" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600">Carol</text>
-        <circle cx="190" cy="90" r="16" fill="#c29a3d" opacity=".2" stroke="#c29a3d" stroke-width="1.5"/>
-        <text x="190" y="94" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600">Dave</text>
-        <circle cx="230" cy="130" r="14" fill="#c29a3d" opacity=".12" stroke="#c29a3d" stroke-width="1.5"/>
-        <text x="230" y="134" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600">Eve</text>
+      <svg viewBox="0 0 260 155" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
+        <defs>
+          <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <line x1="70" y1="48" x2="140" y2="42" stroke="#c29a3d" stroke-width="1.8" opacity=".35"/>
+        <line x1="70" y1="48" x2="100" y2="105" stroke="#c29a3d" stroke-width="1.8" opacity=".35"/>
+        <line x1="140" y1="42" x2="100" y2="105" stroke="#c29a3d" stroke-width="1.8" opacity=".35"/>
+        <line x1="140" y1="42" x2="190" y2="92" stroke="#c29a3d" stroke-width="1.8" opacity=".35"/>
+        <line x1="190" y1="92" x2="228" y2="128" stroke="#c29a3d" stroke-width="1.8" opacity=".35"/>
+        <circle cx="140" cy="42" r="20" fill="#c29a3d" opacity=".08" filter="url(#glow)"/>
+        <circle cx="70" cy="48" r="16" fill="#c29a3d" opacity=".18" stroke="#c29a3d" stroke-width="1.2"/>
+        <text x="70" y="52" font-size="10" fill="#3a3225" text-anchor="middle" font-weight="600">Alice</text>
+        <circle cx="140" cy="42" r="19" fill="#c29a3d" opacity=".28" stroke="#c29a3d" stroke-width="1.5"/>
+        <text x="140" y="46" font-size="10" fill="#3a3225" text-anchor="middle" font-weight="600">Bob</text>
+        <circle cx="100" cy="105" r="16" fill="#c29a3d" opacity=".18" stroke="#c29a3d" stroke-width="1.2"/>
+        <text x="100" y="109" font-size="10" fill="#3a3225" text-anchor="middle" font-weight="600">Carol</text>
+        <circle cx="190" cy="92" r="16" fill="#c29a3d" opacity=".18" stroke="#c29a3d" stroke-width="1.2"/>
+        <text x="190" y="96" font-size="10" fill="#3a3225" text-anchor="middle" font-weight="600">Dave</text>
+        <circle cx="228" cy="128" r="13" fill="#c29a3d" opacity=".1" stroke="#c29a3d" stroke-width="1"/>
+        <text x="228" y="132" font-size="10" fill="#3a3225" text-anchor="middle" font-weight="600">Eve</text>
       </svg>
       <div class="vis-caption" data-lang="en">Relationships create structure</div>
       <div class="vis-caption" data-lang="zh">关系创造结构</div>
     </div>
   </div>
 
-  <div class="method-analogy" data-lang="en"><strong>Think of it this way:</strong> A resume tells you about a person. A phone log tells you about their world.</div>
-  <div class="method-analogy" data-lang="zh"><strong>换个方式想：</strong>简历告诉你一个人。通话记录告诉你他的世界。</div>
+  <div class="method-when" data-lang="en"><strong>Think of it this way:</strong> A resume tells you about a person. A phone log tells you about their world.</div>
+  <div class="method-when" data-lang="zh"><strong>换个方式想：</strong>简历告诉你一个人。通话记录告诉你他的世界。</div>
 </div>
 
 <!-- SLIDE: Core Vocabulary -->
@@ -345,57 +436,57 @@ body.presenting .pres-progress{
     <div class="vis-panel">
       <div class="vis-label" data-lang="en">Undirected</div>
       <div class="vis-label" data-lang="zh">无向</div>
-      <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
-        <line x1="40" y1="30" x2="120" y2="30" stroke="#c29a3d" stroke-width="2"/>
-        <line x1="40" y1="30" x2="80" y2="80" stroke="#c29a3d" stroke-width="2"/>
-        <line x1="120" y1="30" x2="80" y2="80" stroke="#c29a3d" stroke-width="2"/>
-        <circle cx="40" cy="30" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
-        <circle cx="120" cy="30" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
-        <circle cx="80" cy="80" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
-        <text x="40" y="34" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">A</text>
-        <text x="120" y="34" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">B</text>
-        <text x="80" y="84" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">C</text>
+      <svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
+        <line x1="40" y1="32" x2="120" y2="32" stroke="#c29a3d" stroke-width="1.6" opacity=".35"/>
+        <line x1="40" y1="32" x2="80" y2="85" stroke="#c29a3d" stroke-width="1.6" opacity=".35"/>
+        <line x1="120" y1="32" x2="80" y2="85" stroke="#c29a3d" stroke-width="1.6" opacity=".35"/>
+        <circle cx="40" cy="32" r="13" fill="#c29a3d" opacity=".16" stroke="#c29a3d" stroke-width="1.2"/>
+        <circle cx="120" cy="32" r="13" fill="#c29a3d" opacity=".16" stroke="#c29a3d" stroke-width="1.2"/>
+        <circle cx="80" cy="85" r="13" fill="#c29a3d" opacity=".16" stroke="#c29a3d" stroke-width="1.2"/>
+        <text x="40" y="36" font-size="10" fill="#3a3225" text-anchor="middle" font-weight="600">A</text>
+        <text x="120" y="36" font-size="10" fill="#3a3225" text-anchor="middle" font-weight="600">B</text>
+        <text x="80" y="89" font-size="10" fill="#3a3225" text-anchor="middle" font-weight="600">C</text>
       </svg>
-      <div class="vis-caption" data-lang="en">Symmetric adjacency matrix (A<sub>ij</sub> = A<sub>ji</sub>). E.g. co-authorship.</div>
-      <div class="vis-caption" data-lang="zh">对称邻接矩阵（A<sub>ij</sub> = A<sub>ji</sub>）。如：合著关系。</div>
+      <div class="vis-caption" data-lang="en">Symmetric: A<sub>ij</sub> = A<sub>ji</sub>. E.g. co-authorship.</div>
+      <div class="vis-caption" data-lang="zh">对称：A<sub>ij</sub> = A<sub>ji</sub>。如：合著关系。</div>
     </div>
     <div class="vis-panel">
       <div class="vis-label" data-lang="en">Directed</div>
       <div class="vis-label" data-lang="zh">有向</div>
-      <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
-        <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#c29a3d"/></marker></defs>
-        <line x1="52" y1="30" x2="108" y2="30" stroke="#c29a3d" stroke-width="2" marker-end="url(#arr)"/>
-        <line x1="46" y1="40" x2="74" y2="72" stroke="#c29a3d" stroke-width="2" marker-end="url(#arr)"/>
-        <line x1="86" y1="72" x2="114" y2="40" stroke="#c29a3d" stroke-width="2" marker-end="url(#arr)"/>
-        <circle cx="40" cy="30" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
-        <circle cx="120" cy="30" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
-        <circle cx="80" cy="80" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
-        <text x="40" y="34" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">A</text>
-        <text x="120" y="34" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">B</text>
-        <text x="80" y="84" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">C</text>
+      <svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
+        <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,1 L8,5 L0,9 Z" fill="#c29a3d" opacity=".7"/></marker></defs>
+        <line x1="52" y1="32" x2="106" y2="32" stroke="#c29a3d" stroke-width="1.6" opacity=".4" marker-end="url(#arr)"/>
+        <line x1="46" y1="42" x2="74" y2="76" stroke="#c29a3d" stroke-width="1.6" opacity=".4" marker-end="url(#arr)"/>
+        <line x1="86" y1="76" x2="114" y2="42" stroke="#c29a3d" stroke-width="1.6" opacity=".4" marker-end="url(#arr)"/>
+        <circle cx="40" cy="32" r="13" fill="#c29a3d" opacity=".16" stroke="#c29a3d" stroke-width="1.2"/>
+        <circle cx="120" cy="32" r="13" fill="#c29a3d" opacity=".16" stroke="#c29a3d" stroke-width="1.2"/>
+        <circle cx="80" cy="85" r="13" fill="#c29a3d" opacity=".16" stroke="#c29a3d" stroke-width="1.2"/>
+        <text x="40" y="36" font-size="10" fill="#3a3225" text-anchor="middle" font-weight="600">A</text>
+        <text x="120" y="36" font-size="10" fill="#3a3225" text-anchor="middle" font-weight="600">B</text>
+        <text x="80" y="89" font-size="10" fill="#3a3225" text-anchor="middle" font-weight="600">C</text>
       </svg>
-      <div class="vis-caption" data-lang="en">Asymmetric (A<sub>ij</sub> ≠ A<sub>ji</sub>). E.g. Twitter follows, citations.</div>
-      <div class="vis-caption" data-lang="zh">非对称（A<sub>ij</sub> ≠ A<sub>ji</sub>）。如：关注、引用。</div>
+      <div class="vis-caption" data-lang="en">Asymmetric: A<sub>ij</sub> ≠ A<sub>ji</sub>. E.g. citations.</div>
+      <div class="vis-caption" data-lang="zh">非对称：A<sub>ij</sub> ≠ A<sub>ji</sub>。如：引用。</div>
     </div>
     <div class="vis-panel">
       <div class="vis-label" data-lang="en">Weighted</div>
       <div class="vis-label" data-lang="zh">加权</div>
-      <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
-        <line x1="40" y1="30" x2="120" y2="30" stroke="#c29a3d" stroke-width="5" opacity=".6"/>
-        <line x1="40" y1="30" x2="80" y2="80" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
-        <line x1="120" y1="30" x2="80" y2="80" stroke="#c29a3d" stroke-width="3" opacity=".5"/>
-        <circle cx="40" cy="30" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
-        <circle cx="120" cy="30" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
-        <circle cx="80" cy="80" r="12" fill="#c29a3d" opacity=".25" stroke="#c29a3d" stroke-width="1.5"/>
-        <text x="40" y="34" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">A</text>
-        <text x="120" y="34" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">B</text>
-        <text x="80" y="84" font-size="10" fill="#3a3632" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',sans-serif">C</text>
-        <text x="80" y="22" font-size="9" fill="#6b6560" text-anchor="middle" font-family="'IBM Plex Sans',sans-serif">w=5</text>
-        <text x="52" y="62" font-size="9" fill="#6b6560" text-anchor="middle" font-family="'IBM Plex Sans',sans-serif">w=1</text>
-        <text x="108" y="62" font-size="9" fill="#6b6560" text-anchor="middle" font-family="'IBM Plex Sans',sans-serif">w=3</text>
+      <svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
+        <line x1="40" y1="32" x2="120" y2="32" stroke="#c29a3d" stroke-width="4.5" opacity=".4" stroke-linecap="round"/>
+        <line x1="40" y1="32" x2="80" y2="85" stroke="#c29a3d" stroke-width="1.2" opacity=".3" stroke-linecap="round"/>
+        <line x1="120" y1="32" x2="80" y2="85" stroke="#c29a3d" stroke-width="2.8" opacity=".35" stroke-linecap="round"/>
+        <circle cx="40" cy="32" r="13" fill="#c29a3d" opacity=".16" stroke="#c29a3d" stroke-width="1.2"/>
+        <circle cx="120" cy="32" r="13" fill="#c29a3d" opacity=".16" stroke="#c29a3d" stroke-width="1.2"/>
+        <circle cx="80" cy="85" r="13" fill="#c29a3d" opacity=".16" stroke="#c29a3d" stroke-width="1.2"/>
+        <text x="40" y="36" font-size="10" fill="#3a3225" text-anchor="middle" font-weight="600">A</text>
+        <text x="120" y="36" font-size="10" fill="#3a3225" text-anchor="middle" font-weight="600">B</text>
+        <text x="80" y="89" font-size="10" fill="#3a3225" text-anchor="middle" font-weight="600">C</text>
+        <text x="80" y="23" font-size="8.5" fill="#9a8e7e" text-anchor="middle" font-style="italic">w = 5</text>
+        <text x="50" y="65" font-size="8.5" fill="#9a8e7e" text-anchor="middle" font-style="italic">w = 1</text>
+        <text x="110" y="65" font-size="8.5" fill="#9a8e7e" text-anchor="middle" font-style="italic">w = 3</text>
       </svg>
-      <div class="vis-caption" data-lang="en">A<sub>ij</sub> ∈ ℝ (continuous). E.g. trade volume between countries.</div>
-      <div class="vis-caption" data-lang="zh">A<sub>ij</sub> ∈ ℝ（连续值）。如：国家间贸易量。</div>
+      <div class="vis-caption" data-lang="en">A<sub>ij</sub> ∈ ℝ (continuous). E.g. trade volume.</div>
+      <div class="vis-caption" data-lang="zh">A<sub>ij</sub> ∈ ℝ（连续值）。如：贸易量。</div>
     </div>
   </div>
 </div>
@@ -463,28 +554,35 @@ body.presenting .pres-progress{
   <div class="vis-row">
     <div class="vis-panel" style="max-width:540px">
       <svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
-        <line x1="60" y1="50" x2="120" y2="40" stroke="#b85450" stroke-width="2" opacity=".4"/>
-        <line x1="60" y1="50" x2="90" y2="110" stroke="#b85450" stroke-width="2" opacity=".4"/>
-        <line x1="120" y1="40" x2="90" y2="110" stroke="#b85450" stroke-width="2" opacity=".4"/>
-        <line x1="120" y1="40" x2="150" y2="100" stroke="#b85450" stroke-width="2" opacity=".4"/>
-        <line x1="60" y1="50" x2="150" y2="100" stroke="#b85450" stroke-width="2" opacity=".4"/>
-        <line x1="270" y1="45" x2="330" y2="50" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
-        <line x1="270" y1="45" x2="280" y2="110" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
-        <line x1="330" y1="50" x2="280" y2="110" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
-        <line x1="330" y1="50" x2="350" y2="120" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
-        <line x1="280" y1="110" x2="350" y2="120" stroke="#5b8c85" stroke-width="2" opacity=".4"/>
-        <line x1="150" y1="100" x2="270" y2="45" stroke="#c29a3d" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>
-        <circle cx="60" cy="50" r="14" fill="#b85450" opacity=".25" stroke="#b85450" stroke-width="1.5"/>
-        <circle cx="120" cy="40" r="14" fill="#b85450" opacity=".25" stroke="#b85450" stroke-width="1.5"/>
-        <circle cx="90" cy="110" r="14" fill="#b85450" opacity=".25" stroke="#b85450" stroke-width="1.5"/>
-        <circle cx="150" cy="100" r="14" fill="#b85450" opacity=".25" stroke="#b85450" stroke-width="1.5"/>
-        <circle cx="270" cy="45" r="14" fill="#5b8c85" opacity=".25" stroke="#5b8c85" stroke-width="1.5"/>
-        <circle cx="330" cy="50" r="14" fill="#5b8c85" opacity=".25" stroke="#5b8c85" stroke-width="1.5"/>
-        <circle cx="280" cy="110" r="14" fill="#5b8c85" opacity=".25" stroke="#5b8c85" stroke-width="1.5"/>
-        <circle cx="350" cy="120" r="14" fill="#5b8c85" opacity=".25" stroke="#5b8c85" stroke-width="1.5"/>
-        <text x="95" y="155" font-size="11" fill="#b85450" text-anchor="middle" font-weight="600">Community A</text>
-        <text x="305" y="155" font-size="11" fill="#5b8c85" text-anchor="middle" font-weight="600">Community B</text>
-        <text x="210" y="68" font-size="9" fill="#c29a3d" text-anchor="middle" font-style="italic">bridge</text>
+        <!-- Community background halos -->
+        <ellipse cx="105" cy="75" rx="75" ry="60" fill="#b85450" opacity=".04"/>
+        <ellipse cx="308" cy="80" rx="72" ry="58" fill="#5b8c85" opacity=".04"/>
+        <!-- Edges -->
+        <line x1="60" y1="50" x2="120" y2="40" stroke="#b85450" stroke-width="1.8" opacity=".3"/>
+        <line x1="60" y1="50" x2="90" y2="110" stroke="#b85450" stroke-width="1.8" opacity=".3"/>
+        <line x1="120" y1="40" x2="90" y2="110" stroke="#b85450" stroke-width="1.8" opacity=".3"/>
+        <line x1="120" y1="40" x2="150" y2="100" stroke="#b85450" stroke-width="1.8" opacity=".3"/>
+        <line x1="60" y1="50" x2="150" y2="100" stroke="#b85450" stroke-width="1.8" opacity=".3"/>
+        <line x1="270" y1="45" x2="330" y2="50" stroke="#5b8c85" stroke-width="1.8" opacity=".3"/>
+        <line x1="270" y1="45" x2="280" y2="110" stroke="#5b8c85" stroke-width="1.8" opacity=".3"/>
+        <line x1="330" y1="50" x2="280" y2="110" stroke="#5b8c85" stroke-width="1.8" opacity=".3"/>
+        <line x1="330" y1="50" x2="350" y2="120" stroke="#5b8c85" stroke-width="1.8" opacity=".3"/>
+        <line x1="280" y1="110" x2="350" y2="120" stroke="#5b8c85" stroke-width="1.8" opacity=".3"/>
+        <!-- Bridge -->
+        <line x1="150" y1="100" x2="270" y2="45" stroke="#c29a3d" stroke-width="1.2" stroke-dasharray="5,4" opacity=".5"/>
+        <!-- Nodes -->
+        <circle cx="60" cy="50" r="14" fill="#b85450" opacity=".18" stroke="#b85450" stroke-width="1.2"/>
+        <circle cx="120" cy="40" r="14" fill="#b85450" opacity=".18" stroke="#b85450" stroke-width="1.2"/>
+        <circle cx="90" cy="110" r="14" fill="#b85450" opacity=".18" stroke="#b85450" stroke-width="1.2"/>
+        <circle cx="150" cy="100" r="14" fill="#b85450" opacity=".18" stroke="#b85450" stroke-width="1.2"/>
+        <circle cx="270" cy="45" r="14" fill="#5b8c85" opacity=".18" stroke="#5b8c85" stroke-width="1.2"/>
+        <circle cx="330" cy="50" r="14" fill="#5b8c85" opacity=".18" stroke="#5b8c85" stroke-width="1.2"/>
+        <circle cx="280" cy="110" r="14" fill="#5b8c85" opacity=".18" stroke="#5b8c85" stroke-width="1.2"/>
+        <circle cx="350" cy="120" r="14" fill="#5b8c85" opacity=".18" stroke="#5b8c85" stroke-width="1.2"/>
+        <!-- Labels -->
+        <text x="100" y="155" font-size="10" fill="#b85450" text-anchor="middle" font-weight="600" letter-spacing=".03em">Community A</text>
+        <text x="308" y="155" font-size="10" fill="#5b8c85" text-anchor="middle" font-weight="600" letter-spacing=".03em">Community B</text>
+        <text x="210" y="65" font-size="9" fill="#c29a3d" text-anchor="middle" font-style="italic" opacity=".8">bridge</text>
       </svg>
       <div class="vis-caption" data-lang="en">Dense within groups, sparse between — the dashed line is the only bridge</div>
       <div class="vis-caption" data-lang="zh">组内密集、组间稀疏——虚线是唯一的桥梁</div>
@@ -952,11 +1050,21 @@ body.presenting .pres-progress{
     var capZh = document.getElementById('cent-caption-zh');
     if(cap) cap.textContent = d.en;
     if(capZh) capZh.textContent = d.zh;
-    // Update detail text
+    // Update detail text with fade
     var detEn = document.getElementById('cent-detail-en');
     var detZh = document.getElementById('cent-detail-zh');
-    if(detEn) detEn.innerHTML = d.detailEn;
-    if(detZh) detZh.innerHTML = d.detailZh;
+    [detEn, detZh].forEach(function(el){
+      if(!el) return;
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(4px)';
+      setTimeout(function(){
+        if(el === detEn) el.innerHTML = d.detailEn;
+        else el.innerHTML = d.detailZh;
+        el.style.transition = 'opacity .3s ease, transform .3s ease';
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }, 120);
+    });
     // Update button states
     document.querySelectorAll('.cent-btn').forEach(function(b){ b.classList.remove('active'); });
     document.querySelectorAll('.cent-btn').forEach(function(b){
@@ -998,11 +1106,14 @@ body.presenting .pres-progress{
     counter.className = 'slide-counter';
     document.body.appendChild(counter);
 
-    // Create ESC hint
+    // Create ESC hint (auto-fade after 3s)
     hint = document.createElement('div');
     hint.className = 'pres-esc';
-    hint.textContent = 'ESC to exit';
+    hint.textContent = 'ESC to exit · ←→ navigate';
+    hint.style.transition = 'opacity .8s ease';
     document.body.appendChild(hint);
+    setTimeout(function(){ if(hint) hint.style.opacity = '0'; }, 3000);
+    setTimeout(function(){ if(hint) hint.style.opacity = '.5'; }, 3800);
 
     // Create progress bar
     progress = document.createElement('div');
