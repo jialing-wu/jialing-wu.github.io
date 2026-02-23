@@ -68,8 +68,8 @@ mathjax: true
   font-size:13.5px;line-height:1.7;color:var(--ink-faded);margin:0;
 }
 
-/* ── Math display box ─────────────────────────────── */
-.math-box{
+/* ── Formula display box (scoped — avoids global .math-box) ── */
+.ergm-formula{
   background:rgba(30,24,15,.03);
   border:1px solid var(--parchment);
   border-radius:6px;padding:20px 24px;
@@ -189,6 +189,10 @@ mathjax: true
   color:var(--gold);margin-bottom:10px;
 }
 .summary-box p{font-size:14px;line-height:1.75;color:var(--ink-faded);margin:0}
+
+/* ── Override global bilingual li display for custom components ── */
+body.zh .step-flow li,
+body.zh .unpack-list .unpack-item{display:flex}
 
 /* ── Responsive ───────────────────────────────────── */
 @media(max-width:700px){
@@ -332,7 +336,7 @@ ERGM says: the probability of observing a particular network depends on how many
 ERGM 说：观察到某个特定网络的概率，取决于它包含多少"有趣的模式"：
 </p>
 
-<div class="math-box">
+<div class="ergm-formula">
 P(Y = y) = exp(θ₁ × g₁(y) + θ₂ × g₂(y) + ... ) / κ
 </div>
 
@@ -381,7 +385,7 @@ The really useful version is the <strong>tie-level formula</strong>. For any spe
 真正实用的是<strong>关系层面</strong>的公式。对于任意一对 (i, j)：
 </p>
 
-<div class="math-box">
+<div class="ergm-formula">
 log(odds of tie i→j) = θ₁ × Δg₁ + θ₂ × Δg₂ + ...
 </div>
 
@@ -436,15 +440,17 @@ The computational challenge: that normalizing constant κ requires summing over 
 <strong>解决办法：MCMC（马尔可夫链蒙特卡罗）。</strong>不逐一检查，计算机这样做：
 </p>
 
-<ol class="step-flow">
-  <li data-lang="en">Start with the observed network and an initial guess for θ.</li>
-  <li data-lang="zh">从观察到的网络和初始猜测的 θ 开始。</li>
-  <li data-lang="en">Randomly add or remove one tie at a time, creating simulated networks.</li>
-  <li data-lang="zh">每次随机加上或去掉一条关系，生成模拟网络。</li>
-  <li data-lang="en">Compare: do the simulated networks' statistics match the real one? Too few triangles → increase θ<sub>triangle</sub>. Too many → decrease it.</li>
-  <li data-lang="zh">比较：模拟网络的统计量和真实网络一致吗？三角形太少 → 增大 θ<sub>三角形</sub>。太多 → 减小。</li>
-  <li data-lang="en">Repeat until simulated networks look like the real one. Then θ is your answer.</li>
-  <li data-lang="zh">重复，直到模拟网络看起来像真实网络。这时候的 θ 就是答案。</li>
+<ol class="step-flow" data-lang="en">
+  <li>Start with the observed network and an initial guess for θ.</li>
+  <li>Randomly add or remove one tie at a time, creating simulated networks.</li>
+  <li>Compare: do the simulated networks' statistics match the real one? Too few triangles → increase θ<sub>triangle</sub>. Too many → decrease it.</li>
+  <li>Repeat until simulated networks look like the real one. Then θ is your answer.</li>
+</ol>
+<ol class="step-flow" data-lang="zh">
+  <li>从观察到的网络和初始猜测的 θ 开始。</li>
+  <li>每次随机加上或去掉一条关系，生成模拟网络。</li>
+  <li>比较：模拟网络的统计量和真实网络一致吗？三角形太少 → 增大 θ<sub>三角形</sub>。太多 → 减小。</li>
+  <li>重复，直到模拟网络看起来像真实网络。这时候的 θ 就是答案。</li>
 </ol>
 
 <div class="callout">
@@ -607,7 +613,7 @@ plot(gof_result)
   <span data-lang="zh">形式概率模型</span>
 </h3>
 
-<div class="math-box">
+<div class="ergm-formula">
 P(Y = y | θ) = exp(θ<sup>T</sup> g(y)) / κ(θ)
 </div>
 
@@ -632,7 +638,7 @@ Conditioning on all other ties (Y<sub>−ij</sub>), the probability of tie (i, j
 在给定所有其他关系（Y<sub>−ij</sub>）的条件下，关系 (i, j) 存在的概率为：
 </p>
 
-<div class="math-box">
+<div class="ergm-formula">
 logit P(Y<sub>ij</sub> = 1 | Y<sub>−ij</sub>) = θ<sup>T</sup> δg<sub>ij</sub>
 </div>
 
@@ -649,17 +655,19 @@ where δg<sub>ij</sub> = g(y<sub>+ij</sub>) − g(y<sub>−ij</sub>) is the chan
   <span data-lang="zh">MCMC-MLE 算法</span>
 </h3>
 
-<ol class="step-flow">
-  <li data-lang="en"><strong>Initialize</strong> with observed y<sub>obs</sub> and initial θ<sup>(0)</sup>.</li>
-  <li data-lang="zh"><strong>初始化：</strong>观察网络 y<sub>obs</sub> 和初始 θ<sup>(0)</sup>。</li>
-  <li data-lang="en"><strong>Simulate</strong> via Metropolis-Hastings: propose y' by toggling one edge; accept with probability α = min(1, exp(θ<sup>T</sup>[g(y') − g(y<sup>(t)</sup>)])).</li>
-  <li data-lang="zh"><strong>模拟：</strong>Metropolis-Hastings——翻转一条边提议 y'，以概率 α = min(1, exp(θ<sup>T</sup>[g(y') − g(y<sup>(t)</sup>)])) 接受。</li>
-  <li data-lang="en"><strong>After burn-in</strong>, collect S thinned samples. Compute ḡ<sub>sim</sub> = (1/S) Σ g(y<sup>(t)</sup>).</li>
-  <li data-lang="zh"><strong>灼烧期后</strong>，收集 S 个稀疏样本。计算 ḡ<sub>sim</sub> = (1/S) Σ g(y<sup>(t)</sup>)。</li>
-  <li data-lang="en"><strong>Update:</strong> θ<sup>(t+1)</sup> = θ<sup>(t)</sup> + step × [g(y<sub>obs</sub>) − ḡ<sub>sim</sub>]. Stochastic gradient ascent on log-likelihood.</li>
-  <li data-lang="zh"><strong>更新：</strong>θ<sup>(t+1)</sup> = θ<sup>(t)</sup> + step × [g(y<sub>obs</sub>) − ḡ<sub>sim</sub>]。对数似然的随机梯度上升。</li>
-  <li data-lang="en"><strong>Converge</strong> when g(y<sub>obs</sub>) ≈ ḡ<sub>sim</sub>.</li>
-  <li data-lang="zh"><strong>收敛：</strong>当 g(y<sub>obs</sub>) ≈ ḡ<sub>sim</sub> 时停止。</li>
+<ol class="step-flow" data-lang="en">
+  <li><strong>Initialize</strong> with observed y<sub>obs</sub> and initial θ<sup>(0)</sup>.</li>
+  <li><strong>Simulate</strong> via Metropolis-Hastings: propose y' by toggling one edge; accept with probability α = min(1, exp(θ<sup>T</sup>[g(y') − g(y<sup>(t)</sup>)])).</li>
+  <li><strong>After burn-in</strong>, collect S thinned samples. Compute ḡ<sub>sim</sub> = (1/S) Σ g(y<sup>(t)</sup>).</li>
+  <li><strong>Update:</strong> θ<sup>(t+1)</sup> = θ<sup>(t)</sup> + step × [g(y<sub>obs</sub>) − ḡ<sub>sim</sub>]. Stochastic gradient ascent on log-likelihood.</li>
+  <li><strong>Converge</strong> when g(y<sub>obs</sub>) ≈ ḡ<sub>sim</sub>.</li>
+</ol>
+<ol class="step-flow" data-lang="zh">
+  <li><strong>初始化：</strong>观察网络 y<sub>obs</sub> 和初始 θ<sup>(0)</sup>。</li>
+  <li><strong>模拟：</strong>Metropolis-Hastings——翻转一条边提议 y'，以概率 α = min(1, exp(θ<sup>T</sup>[g(y') − g(y<sup>(t)</sup>)])) 接受。</li>
+  <li><strong>灼烧期后</strong>，收集 S 个稀疏样本。计算 ḡ<sub>sim</sub> = (1/S) Σ g(y<sup>(t)</sup>)。</li>
+  <li><strong>更新：</strong>θ<sup>(t+1)</sup> = θ<sup>(t)</sup> + step × [g(y<sub>obs</sub>) − ḡ<sub>sim</sub>]。对数似然的随机梯度上升。</li>
+  <li><strong>收敛：</strong>当 g(y<sub>obs</sub>) ≈ ḡ<sub>sim</sub> 时停止。</li>
 </ol>
 
 <h3 id="degeneracy-math">
