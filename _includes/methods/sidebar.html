@@ -11,17 +11,17 @@
 
     {% else %}
 
-      <div class="sb-cat"><span data-lang="en">{{ group.category }}</span>{% if group.category_zh %}<span data-lang="zh">{{ group.category_zh }}</span>{% endif %}</div>
+      <div class="sb-cat">{{ group.category }}</div>
       {% if group.items %}
         {% for item in group.items %}
-          <a class="sb-link{% if current_file == item.url %} active{% endif %}" href="/methods/{{ item.url }}"{% if item.hidden %} style="display:none"{% endif %}><span class="sb-num">{{ item.num }}</span> <span data-lang="en">{{ item.title }}</span>{% if item.title_zh %}<span data-lang="zh">{{ item.title_zh }}</span>{% endif %}</a>
+          <a class="sb-link{% if current_file == item.url %} active{% endif %}" href="/methods/{{ item.url }}"{% if item.hidden %} style="display:none"{% endif %}><span class="sb-num">{{ item.num }}</span> {{ item.title }}</a>
         {% endfor %}
       {% endif %}
       {% if group.subcategories %}
         {% for sub in group.subcategories %}
-          <div class="sb-subcat"><span data-lang="en">{{ sub.name }}</span>{% if sub.name_zh %}<span data-lang="zh">{{ sub.name_zh }}</span>{% endif %}</div>
+          <div class="sb-subcat">{{ sub.name }}</div>
           {% for item in sub.items %}
-            <a class="sb-link{% if current_file == item.url %} active{% endif %}" href="/methods/{{ item.url }}"{% if item.hidden %} style="display:none"{% endif %}><span class="sb-num">{{ item.num }}</span> <span data-lang="en">{{ item.title }}</span>{% if item.title_zh %}<span data-lang="zh">{{ item.title_zh }}</span>{% endif %}</a>
+            <a class="sb-link{% if current_file == item.url %} active{% endif %}" href="/methods/{{ item.url }}"{% if item.hidden %} style="display:none"{% endif %}><span class="sb-num">{{ item.num }}</span> {{ item.title }}</a>
           {% endfor %}
         {% endfor %}
       {% endif %}
