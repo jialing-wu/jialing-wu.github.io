@@ -1,0 +1,667 @@
+---
+layout: methods-guide
+title: "Schelling Segregation Model"
+title_zh: "谢林隔离模型"
+parent_title: "Theoretical Modeling"
+parent_title_zh: "理论建模"
+parent_url: "theoretical-modeling.html"
+bilingual: true
+---
+
+<style>
+    /* Description Section */
+    .description {
+        background-color: #FFFFFF;
+        border: 1px solid var(--border);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-radius: 3px;
+    }
+
+    .description h2 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+        color: var(--text-dark);
+    }
+
+    .description p {
+        color: var(--text-light);
+        margin-bottom: 0.8rem;
+        line-height: 1.7;
+    }
+
+    .description p:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Simulation Container */
+    .simulation-wrapper {
+        background-color: #FFFFFF;
+        border: 1px solid var(--border);
+        padding: 2rem;
+        border-radius: 3px;
+    }
+
+    /* Grid Canvas */
+    .canvas-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+        background-color: var(--parchment);
+        padding: 1rem;
+        border-radius: 3px;
+    }
+
+    #simulationCanvas {
+        border: 2px solid var(--border);
+        display: block;
+        cursor: pointer;
+    }
+
+    /* Controls Section */
+    .controls-section {
+        margin-top: 2rem;
+    }
+
+    .control-group {
+        margin-bottom: 1.8rem;
+        padding-bottom: 1.8rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .control-group:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .control-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.8rem;
+        font-weight: 500;
+    }
+
+    .control-label .label-name {
+        color: var(--text-dark);
+    }
+
+    .control-value {
+        color: var(--gold);
+        font-family: 'IBM Plex Mono', monospace;
+        font-weight: 500;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: linear-gradient(to right, var(--red), var(--gold));
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--text-dark);
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--text-dark);
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    /* Buttons Container */
+    .buttons-container {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.8rem;
+        padding-bottom: 1.8rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .btn {
+        padding: 0.8rem 1.5rem;
+        border: 1px solid var(--border);
+        background-color: #FFFFFF;
+        color: var(--text-dark);
+        cursor: pointer;
+        font-family: 'IBM Plex Sans', sans-serif;
+        font-size: 0.95rem;
+        border-radius: 3px;
+        transition: all 0.3s;
+        font-weight: 500;
+    }
+
+    .btn:hover {
+        background-color: var(--parchment);
+        border-color: var(--gold);
+    }
+
+    .btn.primary {
+        background-color: var(--gold);
+        color: #FFFFFF;
+        border-color: var(--gold);
+    }
+
+    .btn.primary:hover {
+        background-color: #B8884F;
+        border-color: #B8884F;
+    }
+
+    .btn.danger {
+        background-color: var(--red);
+        color: #FFFFFF;
+        border-color: var(--red);
+    }
+
+    .btn.danger:hover {
+        background-color: #A02D21;
+        border-color: #A02D21;
+    }
+
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Statistics */
+    .statistics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .stat-box {
+        background-color: var(--parchment);
+        padding: 1.5rem;
+        border-radius: 3px;
+        border-left: 3px solid var(--gold);
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: var(--text-light);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        font-family: 'IBM Plex Mono', monospace;
+    }
+
+    /* Key Insight */
+    .key-insight {
+        background: linear-gradient(135deg, rgba(181, 55, 42, 0.08), rgba(194, 153, 61, 0.08));
+        border-left: 3px solid var(--red);
+        padding: 1.5rem;
+        margin-top: 2rem;
+        border-radius: 3px;
+        font-style: italic;
+        color: var(--text-dark);
+        line-height: 1.8;
+    }
+
+    /* Legend */
+    .legend {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .legend-color {
+        width: 24px;
+        height: 24px;
+        border-radius: 3px;
+        border: 1px solid var(--border);
+    }
+
+    .legend-label {
+        font-size: 0.9rem;
+        color: var(--text-light);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .description, .simulation-wrapper {
+            padding: 1.5rem;
+        }
+
+        .buttons-container {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+
+        .statistics {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="method-header">
+    <h1 data-en="Schelling Segregation Model" data-zh="谢林隔离模型">Schelling Segregation Model</h1>
+    <div class="header-tag" data-en="INTERACTIVE · SIMULATION" data-zh="交互式 · 模拟">INTERACTIVE · SIMULATION</div>
+</div>
+
+<section class="description">
+    <h2 data-en="About This Model" data-zh="关于该模型">About This Model</h2>
+    <p data-en="Thomas Schelling's segregation model demonstrates how individual preferences for neighbors of the same type can lead to large-scale segregation patterns without any explicit discriminatory intent. Each agent is happy if at least a certain percentage of their neighbors are of the same type (the 'tolerance threshold'). Unhappy agents move to random empty cells." data-zh="托马斯·谢林的隔离模型演示了对相同类型邻居的个人偏好如何能导致大规模隔离模式，而无需任何明确的歧视意图。如果至少一定比例的邻居属于相同类型（'容忍阈值'），每个代理就会感到满意。不满意的代理会移动到随机的空单元格。">Thomas Schelling's segregation model demonstrates how individual preferences for neighbors of the same type can lead to large-scale segregation patterns without any explicit discriminatory intent. Each agent is happy if at least a certain percentage of their neighbors are of the same type (the 'tolerance threshold'). Unhappy agents move to random empty cells.</p>
+    <p data-en="Adjust the parameters below to explore how different tolerance levels and population distributions affect segregation outcomes." data-zh="调整下面的参数，探索不同的容忍级别和人口分布如何影响隔离结果。">Adjust the parameters below to explore how different tolerance levels and population distributions affect segregation outcomes.</p>
+</section>
+
+<hr class="section-divider">
+
+<section class="simulation-wrapper">
+    <!-- Legend -->
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: var(--red);"></div>
+            <span class="legend-label" data-en="Type A Agents" data-zh="A类代理">Type A Agents</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: var(--gold);"></div>
+            <span class="legend-label" data-en="Type B Agents" data-zh="B类代理">Type B Agents</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: var(--parchment);"></div>
+            <span class="legend-label" data-en="Empty Cells" data-zh="空单元格">Empty Cells</span>
+        </div>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas-container">
+        <canvas id="simulationCanvas" width="500" height="500"></canvas>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-section">
+        <!-- Buttons -->
+        <div class="buttons-container">
+            <button class="btn primary" id="stepBtn" data-en="Step" data-zh="单步">Step</button>
+            <button class="btn primary" id="runBtn" data-en="Run" data-zh="运行">Run</button>
+            <button class="btn" id="pauseBtn" data-en="Pause" data-zh="暂停" disabled>Pause</button>
+            <button class="btn danger" id="resetBtn" data-en="Reset" data-zh="重置">Reset</button>
+        </div>
+
+        <!-- Tolerance Threshold -->
+        <div class="control-group">
+            <div class="control-label">
+                <span class="label-name" data-en="Tolerance Threshold" data-zh="容忍阈值">Tolerance Threshold</span>
+                <span class="control-value"><span id="toleranceValue">30</span>%</span>
+            </div>
+            <input type="range" id="toleranceSlider" min="0" max="100" value="30" step="5">
+            <small style="color: var(--text-light); display: block; margin-top: 0.5rem;" data-en="Minimum % of same-type neighbors required for satisfaction" data-zh="满足所需的相同类型邻居的最小百分比">Minimum % of same-type neighbors required for satisfaction</small>
+        </div>
+
+        <!-- Population Density -->
+        <div class="control-group">
+            <div class="control-label">
+                <span class="label-name" data-en="Population Density" data-zh="人口密度">Population Density</span>
+                <span class="control-value"><span id="densityValue">75</span>%</span>
+            </div>
+            <input type="range" id="densitySlider" min="50" max="95" value="75" step="5">
+            <small style="color: var(--text-light); display: block; margin-top: 0.5rem;" data-en="% of grid cells occupied by agents" data-zh="网格单元格中被代理占据的百分比">% of grid cells occupied by agents</small>
+        </div>
+
+        <!-- Type Ratio -->
+        <div class="control-group">
+            <div class="control-label">
+                <span class="label-name" data-en="Type A Ratio" data-zh="A类比例">Type A Ratio</span>
+                <span class="control-value"><span id="ratioValue">50</span>%</span>
+            </div>
+            <input type="range" id="ratioSlider" min="20" max="80" value="50" step="5">
+            <small style="color: var(--text-light); display: block; margin-top: 0.5rem;" data-en="% of agents that are Type A (rest are Type B)" data-zh="A类代理的百分比（其余为B类）">% of agents that are Type A (rest are Type B)</small>
+        </div>
+
+        <!-- Speed -->
+        <div class="control-group">
+            <div class="control-label">
+                <span class="label-name" data-en="Simulation Speed" data-zh="模拟速度">Simulation Speed</span>
+                <span class="control-value"><span id="speedValue">50</span>% </span>
+            </div>
+            <input type="range" id="speedSlider" min="10" max="200" value="50" step="10">
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="statistics">
+        <div class="stat-box">
+            <div class="stat-label" data-en="STEP COUNT" data-zh="步数计数">STEP COUNT</div>
+            <div class="stat-value" id="stepCount">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label" data-en="UNHAPPY AGENTS" data-zh="不满意的代理">UNHAPPY AGENTS</div>
+            <div class="stat-value" id="unhappyCount">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label" data-en="SEGREGATION INDEX" data-zh="隔离指数">SEGREGATION INDEX</div>
+            <div class="stat-value" id="segregationIndex">0.00</div>
+        </div>
+    </div>
+
+    <!-- Key Insight -->
+    <div class="key-insight">
+        <strong data-en="Key Insight: " data-zh="关键洞察：">Key Insight: </strong>
+        <span data-en="Even mild preferences (30% threshold) produce dramatic segregation. Agents don't need to actively seek segregation—they naturally cluster together when there are few empty spaces and even modest same-type preferences." data-zh="即使是温和的偏好（30%阈值）也会产生戏剧性的隔离。当空位稀少且存在即使温和的相同类型偏好时，代理无需主动寻求隔离，他们自然会聚集在一起。">Even mild preferences (30% threshold) produce dramatic segregation. Agents don't need to actively seek segregation—they naturally cluster together when there are few empty spaces and even modest same-type preferences.</span>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<div class="page-nav">
+  <a class="pn-link pn-prev" href="/methods/guides/tm-schelling.html">
+    <span class="pn-arrow">←</span>
+    <span>
+      <span class="pn-dir" data-lang="en">Previous</span><span class="pn-dir" data-lang="zh">上一篇</span>
+      <span class="pn-title" data-lang="en">Schelling Model</span><span class="pn-title" data-lang="zh">Schelling 隔离模型</span>
+    </span>
+  </a>
+  <a class="pn-link pn-next" href="/methods/theoretical-modeling.html">
+    <span>
+      <span class="pn-dir" data-lang="en">Back</span><span class="pn-dir" data-lang="zh">返回</span>
+      <span class="pn-title" data-lang="en">Theoretical Modeling</span><span class="pn-title" data-lang="zh">理论建模</span>
+    </span>
+    <span class="pn-arrow">→</span>
+  </a>
+</div>
+
+<script>
+    // ============================================
+    // SCHELLING SEGREGATION MODEL SIMULATION
+    // ============================================
+
+    // Configuration
+    const GRID_SIZE = 40;
+    const CELL_COLORS = {
+        empty: '#DED4C0',
+        typeA: '#B5372A',
+        typeB: '#C2993D'
+    };
+
+    // State
+    let grid = [];
+    let isRunning = false;
+    let stepCounter = 0;
+    let animationFrameId = null;
+    let lastSimulationTime = 0;
+
+    // DOM Elements
+    const canvas = document.getElementById('simulationCanvas');
+    const ctx = canvas.getContext('2d');
+    const toleranceSlider = document.getElementById('toleranceSlider');
+    const densitySlider = document.getElementById('densitySlider');
+    const ratioSlider = document.getElementById('ratioSlider');
+    const speedSlider = document.getElementById('speedSlider');
+    const toleranceValue = document.getElementById('toleranceValue');
+    const densityValue = document.getElementById('densityValue');
+    const ratioValue = document.getElementById('ratioValue');
+    const speedValue = document.getElementById('speedValue');
+    const stepBtn = document.getElementById('stepBtn');
+    const runBtn = document.getElementById('runBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const stepCountDisplay = document.getElementById('stepCount');
+    const unhappyCountDisplay = document.getElementById('unhappyCount');
+    const segregationIndexDisplay = document.getElementById('segregationIndex');
+
+    // Initialize
+    function init() {
+        const density = parseInt(densitySlider.value) / 100;
+        const typeAPercent = parseInt(ratioSlider.value) / 100;
+
+        grid = [];
+        stepCounter = 0;
+        isRunning = false;
+
+        // Create grid with random agents
+        for (let i = 0; i < GRID_SIZE; i++) {
+            grid[i] = [];
+            for (let j = 0; j < GRID_SIZE; j++) {
+                if (Math.random() < density) {
+                    grid[i][j] = Math.random() < typeAPercent ? 'A' : 'B';
+                } else {
+                    grid[i][j] = null; // empty
+                }
+            }
+        }
+
+        updateUI();
+        draw();
+    }
+
+    // Get empty cells
+    function getEmptyCells() {
+        const empty = [];
+        for (let i = 0; i < GRID_SIZE; i++) {
+            for (let j = 0; j < GRID_SIZE; j++) {
+                if (grid[i][j] === null) {
+                    empty.push([i, j]);
+                }
+            }
+        }
+        return empty;
+    }
+
+    // Get neighbors of a cell
+    function getNeighbors(row, col) {
+        const neighbors = [];
+        for (let i = row - 1; i <= row + 1; i++) {
+            for (let j = col - 1; j <= col + 1; j++) {
+                if ((i !== row || j !== col) && i >= 0 && i < GRID_SIZE && j >= 0 && j < GRID_SIZE) {
+                    if (grid[i][j] !== null) {
+                        neighbors.push(grid[i][j]);
+                    }
+                }
+            }
+        }
+        return neighbors;
+    }
+
+    // Check if agent is happy
+    function isHappy(row, col) {
+        const agentType = grid[row][col];
+        if (agentType === null) return true;
+
+        const neighbors = getNeighbors(row, col);
+        if (neighbors.length === 0) return true;
+
+        const sameType = neighbors.filter(n => n === agentType).length;
+        const threshold = parseInt(toleranceSlider.value) / 100;
+        return sameType / neighbors.length >= threshold;
+    }
+
+    // Execute one simulation step
+    function step() {
+        const emptyCells = getEmptyCells();
+        if (emptyCells.length === 0) return; // No empty cells to move to
+
+        const unhappy = [];
+
+        // Find unhappy agents
+        for (let i = 0; i < GRID_SIZE; i++) {
+            for (let j = 0; j < GRID_SIZE; j++) {
+                if (grid[i][j] !== null && !isHappy(i, j)) {
+                    unhappy.push([i, j]);
+                }
+            }
+        }
+
+        // Move unhappy agents
+        unhappy.forEach(([row, col]) => {
+            if (emptyCells.length > 0) {
+                const randomIdx = Math.floor(Math.random() * emptyCells.length);
+                const [emptyRow, emptyCol] = emptyCells[randomIdx];
+
+                // Swap
+                const temp = grid[row][col];
+                grid[row][col] = grid[emptyRow][emptyCol];
+                grid[emptyRow][emptyCol] = temp;
+
+                // Remove used empty cell
+                emptyCells.splice(randomIdx, 1);
+            }
+        });
+
+        stepCounter++;
+        updateUI();
+        draw();
+    }
+
+    // Calculate segregation index (proportion of same-type neighbors)
+    function calculateSegregationIndex() {
+        let totalSame = 0;
+        let totalNeighbors = 0;
+
+        for (let i = 0; i < GRID_SIZE; i++) {
+            for (let j = 0; j < GRID_SIZE; j++) {
+                if (grid[i][j] !== null) {
+                    const neighbors = getNeighbors(i, j);
+                    if (neighbors.length > 0) {
+                        const sameType = neighbors.filter(n => n === grid[i][j]).length;
+                        totalSame += sameType;
+                        totalNeighbors += neighbors.length;
+                    }
+                }
+            }
+        }
+
+        return totalNeighbors > 0 ? (totalSame / totalNeighbors).toFixed(2) : 0;
+    }
+
+    // Count unhappy agents
+    function countUnhappy() {
+        let count = 0;
+        for (let i = 0; i < GRID_SIZE; i++) {
+            for (let j = 0; j < GRID_SIZE; j++) {
+                if (grid[i][j] !== null && !isHappy(i, j)) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    // Update UI displays
+    function updateUI() {
+        stepCountDisplay.textContent = stepCounter;
+        unhappyCountDisplay.textContent = countUnhappy();
+        segregationIndexDisplay.textContent = calculateSegregationIndex();
+    }
+
+    // Draw grid on canvas
+    function draw() {
+        const cellSize = canvas.width / GRID_SIZE;
+
+        for (let i = 0; i < GRID_SIZE; i++) {
+            for (let j = 0; j < GRID_SIZE; j++) {
+                const x = j * cellSize;
+                const y = i * cellSize;
+
+                let color;
+                if (grid[i][j] === null) {
+                    color = CELL_COLORS.empty;
+                } else if (grid[i][j] === 'A') {
+                    color = CELL_COLORS.typeA;
+                } else {
+                    color = CELL_COLORS.typeB;
+                }
+
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, cellSize, cellSize);
+
+                // Border
+                ctx.strokeStyle = '#D4CCC4';
+                ctx.lineWidth = 0.5;
+                ctx.strokeRect(x, y, cellSize, cellSize);
+            }
+        }
+    }
+
+    // Animation loop
+    function animate(currentTime) {
+        animationFrameId = requestAnimationFrame(animate);
+
+        if (isRunning) {
+            const speed = parseInt(speedSlider.value);
+            const delayMs = 100 * (200 - speed) / 200; // Inverse: higher speed = shorter delay
+
+            if (currentTime - lastSimulationTime > delayMs) {
+                step();
+                lastSimulationTime = currentTime;
+            }
+        }
+    }
+
+    // Event Listeners
+    toleranceSlider.addEventListener('input', (e) => {
+        toleranceValue.textContent = e.target.value;
+        updateUI();
+    });
+
+    densitySlider.addEventListener('input', (e) => {
+        densityValue.textContent = e.target.value;
+    });
+
+    ratioSlider.addEventListener('input', (e) => {
+        ratioValue.textContent = e.target.value;
+    });
+
+    speedSlider.addEventListener('input', (e) => {
+        speedValue.textContent = e.target.value;
+    });
+
+    stepBtn.addEventListener('click', () => {
+        if (!isRunning) step();
+    });
+
+    runBtn.addEventListener('click', () => {
+        isRunning = true;
+        runBtn.disabled = true;
+        pauseBtn.disabled = false;
+    });
+
+    pauseBtn.addEventListener('click', () => {
+        isRunning = false;
+        runBtn.disabled = false;
+        pauseBtn.disabled = true;
+    });
+
+    resetBtn.addEventListener('click', () => {
+        isRunning = false;
+        runBtn.disabled = false;
+        pauseBtn.disabled = true;
+        init();
+    });
+
+    // Initialize simulation
+    init();
+    animate(0);
+</script>

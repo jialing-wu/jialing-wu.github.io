@@ -83,6 +83,15 @@ next:
   </div>
 
   <div class="method-section">
+    <h3 data-lang="en">Why Not Just Use a Spreadsheet?</h3>
+    <h3 data-lang="zh">为什么不直接用电子表格？</h3>
+    <p class="method-desc" data-lang="en">Imagine you're studying five students: Alice, Bob, Carol, Dave, and Eve. In a normal survey, you'd have one row per person — their age, GPA, major. Each row is independent. But now you want to study who studies with whom. Alice studies with Bob and Carol; Bob also studies with Dave; Eve studies alone. Suddenly the unit of analysis isn't the person — it's the <em>relationship</em>. You can't capture "Alice and Bob study together" with a single row. You need a new data structure: a list of pairs (edges), or a matrix where rows and columns are both people and cells indicate connections. This is what network analysis provides.</p>
+    <p class="method-desc" data-lang="zh">想象你在研究五个学生：Alice、Bob、Carol、Dave 和 Eve。普通问卷中，每人一行——年龄、GPA、专业，每行独立。但现在你想研究谁和谁一起学习。Alice 和 Bob、Carol 一起学习；Bob 也和 Dave 学习；Eve 独自学习。突然分析单位不是人——而是<em>关系</em>。你无法用一行来表示"Alice 和 Bob 一起学习"。你需要新的数据结构：一组配对（边），或一个行列都是人、格子表示连接的矩阵。这就是网络分析提供的。</p>
+    <p class="method-desc" data-lang="en">This shift matters because relationships are not independent: if Alice studies with Bob, and Bob studies with Dave, then Alice and Dave are likely to end up studying together too — that's <strong>transitivity</strong>, one of the most basic network properties. Standard statistics assumes independent observations; network analysis embraces dependence as the object of study.</p>
+    <p class="method-desc" data-lang="zh">这个转变很重要，因为关系不是独立的：如果 Alice 和 Bob 一起学习，Bob 和 Dave 一起学习，那么 Alice 和 Dave 很可能也会一起学习——这就是<strong>传递性</strong>，最基本的网络属性之一。标准统计假设独立观测；网络分析则将依赖性本身作为研究对象。</p>
+  </div>
+
+  <div class="method-section">
     <h3 data-lang="en">Graphs, Nodes, and Edges</h3>
     <h3 data-lang="zh">图、节点与边</h3>
     <p class="method-desc" data-lang="en">A network is a graph: nodes (actors) and edges (relationships). Key distinctions: (1) <strong>Directed vs. undirected</strong> — does the edge have a direction? "A follows B" is directed (asymmetric). "A and B are friends" is undirected (symmetric). (2) <strong>Weighted vs. binary</strong> — is there a number attached? Trade volume between countries is weighted; co-sponsorship is often binary (yes or no). (3) <strong>Bipartite</strong> — are there two types of nodes? A board network (people on committees) is bipartite: people on one side, committees on the other.</p>
@@ -108,6 +117,17 @@ next:
   <div class="challenge-overview">
     <p data-lang="en"><strong>The problem:</strong> You have 1000 senators, 50000 countries, or millions of social media users. You can't read the network. You need a single number per node that captures its importance. But "importance" is context-dependent: an isolated expert is locally powerful but globally peripheral; a well-connected facilitator is a bridge; a highly respected node has indirect power through status.</p>
     <p data-lang="zh"><strong>问题：</strong>你有 1000 个参议员、50000 个国家或数百万社交媒体用户。无法读整个网络。需要每个节点一个数字来捕捉其重要性。但"重要性"依赖上下文：孤立专家局部有力全局边缘；联系良好的协调者是桥梁；受尊敬节点通过地位有间接权力。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">A Small Example: Five People, Three Kinds of "Important"</h3>
+    <h3 data-lang="zh">一个小例子：五个人，三种"重要"</h3>
+    <p class="method-desc" data-lang="en">Consider five people: Alice, Bob, Carol, Dave, and Eve. Alice knows Bob and Carol. Bob knows Alice, Carol, and Dave. Carol knows Alice and Bob. Dave knows Bob and Eve. Eve knows only Dave. Who is most "important"? It depends on what you mean:</p>
+    <p class="method-desc" data-lang="zh">考虑五个人：Alice、Bob、Carol、Dave 和 Eve。Alice 认识 Bob 和 Carol。Bob 认识 Alice、Carol 和 Dave。Carol 认识 Alice 和 Bob。Dave 认识 Bob 和 Eve。Eve 只认识 Dave。谁最"重要"？取决于你的定义：</p>
+    <p class="method-desc" data-lang="en"><strong>By degree</strong> (who has the most connections): Bob wins — he has 3 ties, more than anyone else. <strong>By betweenness</strong> (who is a bridge): Bob and Dave are crucial — every message from the Alice-Carol cluster to Eve must pass through them. Remove Dave, and Eve is completely cut off. <strong>By eigenvector</strong> (who is connected to well-connected people): Alice and Carol score higher than Eve — even though they each have only 2 ties, those ties are to Bob, the most connected node. Eve's only tie is to Dave, who is less well-connected overall.</p>
+    <p class="method-desc" data-lang="zh"><strong>按度</strong>（谁连接最多）：Bob 赢——他有 3 条关系，比任何人都多。<strong>按中介性</strong>（谁是桥梁）：Bob 和 Dave 至关重要——从 Alice-Carol 群体到 Eve 的每条消息都必须经过他们。移除 Dave，Eve 就完全孤立。<strong>按特征向量</strong>（谁和重要的人相连）：Alice 和 Carol 得分高于 Eve——虽然她们各只有 2 条关系，但都连着最多连接的 Bob。Eve 唯一的关系是 Dave，而 Dave 整体连接较少。</p>
+    <p class="method-desc" data-lang="en">This simple example illustrates the core insight of centrality analysis: there is no single definition of "important." Each centrality measure captures a different dimension of structural position. The sections below formalize each one.</p>
+    <p class="method-desc" data-lang="zh">这个简单例子说明了中心性分析的核心洞见：没有单一的"重要"定义。每个中心性指标捕捉结构位置的不同维度。下面各节将逐一形式化。</p>
   </div>
 
   <div class="method-section">
@@ -158,6 +178,15 @@ next:
   </div>
 
   <div class="method-section">
+    <h3 data-lang="en">What Does "Community" Mean in a Network?</h3>
+    <h3 data-lang="zh">网络中的"社区"是什么意思？</h3>
+    <p class="method-desc" data-lang="en">Think of a high school cafeteria. Students don't sit randomly — they form tables. The drama kids sit together, the athletes cluster at another table, and the debate team has their corner. Within each table, everyone talks to everyone. Between tables, there are only a few cross-group friendships. A "community" in network terms is exactly this: a group of nodes with many internal connections and few external ones. The goal of community detection is to discover these tables when you can't see the cafeteria — when all you have is a list of who talks to whom.</p>
+    <p class="method-desc" data-lang="zh">想象一个高中食堂。学生不会随机坐——他们形成"桌子"。戏剧社的孩子坐一起，运动员聚在另一桌，辩论队有自己的角落。每桌内部大家互相交流。桌与桌之间只有少数跨组友谊。网络术语中的"社区"正是如此：一组内部连接多、外部连接少的节点。社区检测的目标是在你看不到食堂时——当你只有一份谁和谁说话的名单时——发现这些桌子。</p>
+    <p class="method-desc" data-lang="en">The key question is: how do you define "many internal, few external" precisely enough for an algorithm? That's where <strong>modularity</strong> comes in — a single number that quantifies how well a given partition separates the network into communities, compared to what you'd expect by random chance.</p>
+    <p class="method-desc" data-lang="zh">关键问题是：怎样把"内部多、外部少"定义得足够精确以供算法使用？这就是<strong>模块性</strong>的用处——一个数字来量化给定划分将网络分成社区的程度，与随机情况下的预期相比。</p>
+  </div>
+
+  <div class="method-section">
     <h3 data-lang="en">Clustering Coefficient</h3>
     <h3 data-lang="zh">聚类系数</h3>
     <p class="method-desc" data-lang="en"><strong>Clustering coefficient</strong> measures cliquishness: if your two friends are also friends with each other, triangles form. High clustering = your neighborhood is tightly knit. Low clustering = your friends don't know each other.</p>
@@ -202,6 +231,15 @@ next:
   <div class="challenge-overview">
     <p data-lang="en"><strong>The problem:</strong> A virus spreads differently than a fashion trend. One contact is enough to transmit disease (simple contagion). But adopting a new technology often requires seeing multiple friends use it (complex contagion). You need models of how information, behavior, or innovation cascade through networks — and why some spread while others fizzle.</p>
     <p data-lang="zh"><strong>问题：</strong>病毒和时尚趋势传播不同。一次接触足以传播疾病（简单传播）。但采用新技术常需看多个朋友用它（复杂传播）。需要信息、行为或创新如何通过网络级联的模型——以及为什么有些传播而其他消失。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">The Rumor and the Flu: Two Ways Things Spread</h3>
+    <h3 data-lang="zh">谣言与流感：事物传播的两种方式</h3>
+    <p class="method-desc" data-lang="en">Imagine you hear a rumor. You only need to hear it once from one person to start repeating it — that's <strong>simple contagion</strong>, and it works just like the flu: one contact, one transmission. Now imagine someone asks you to quit your job and join a risky startup. You won't do it just because one friend said so. You'd need to see three or four trusted friends all doing the same thing before you'd take the leap — that's <strong>complex contagion</strong>, where you need reinforcement from multiple sources.</p>
+    <p class="method-desc" data-lang="zh">想象你听到一个谣言。你只需要从一个人那里听到一次就会开始传播——这就是<strong>简单传播</strong>，和流感一样：一次接触，一次传播。现在想象有人让你辞职加入一个高风险创业公司。你不会因为一个朋友这么说就行动。你需要看到三四个信赖的朋友都在做同样的事才会跨出这一步——这就是<strong>复杂传播</strong>，需要多个来源的强化。</p>
+    <p class="method-desc" data-lang="en">This distinction has profound implications for network structure. Simple contagion spreads fastest through networks with many weak ties (bridges to new groups). Complex contagion spreads fastest through networks with strong, overlapping ties (where your friends know each other). This is why the same network structure can accelerate one process while inhibiting another.</p>
+    <p class="method-desc" data-lang="zh">这一区别对网络结构有深远影响。简单传播通过拥有许多弱关系（通往新群体的桥梁）的网络传播最快。复杂传播通过拥有强大重叠关系（你的朋友互相认识）的网络传播最快。这就是为什么同一网络结构可以加速一个过程同时抑制另一个。</p>
   </div>
 
   <div class="method-section">
@@ -254,6 +292,15 @@ next:
   </div>
 
   <div class="method-section">
+    <h3 data-lang="en">Why Can't You Just Run a Regression?</h3>
+    <h3 data-lang="zh">为什么不能直接跑回归？</h3>
+    <p class="method-desc" data-lang="en">In standard regression, each observation is independent: person 1's outcome doesn't affect person 2's outcome. But in a network, this assumption completely breaks down. If Alice is friends with both Bob and Carol, then the Alice-Bob tie and the Alice-Carol tie are not independent — they share a node. Worse, whether Bob and Carol are friends depends on whether they both know Alice (transitivity). Every tie is entangled with every other tie through shared nodes. Running OLS on network data produces standard errors that are wildly wrong, because the effective sample size is much smaller than the number of edges.</p>
+    <p class="method-desc" data-lang="zh">在标准回归中，每个观测独立：第 1 个人的结果不影响第 2 个人。但在网络中，这个假设完全崩溃。如果 Alice 同时和 Bob 与 Carol 是朋友，那么 Alice-Bob 关系和 Alice-Carol 关系不独立——它们共享一个节点。更糟的是，Bob 和 Carol 是否是朋友取决于他们是否都认识 Alice（传递性）。每条关系通过共享节点与其他关系纠缠在一起。对网络数据跑 OLS 会产生严重错误的标准误，因为有效样本量远小于边的数量。</p>
+    <p class="method-desc" data-lang="en">Network inference methods solve this in different ways: QAP uses permutation to build the correct null distribution; ERGM explicitly models the dependence structure; latent space models account for it by embedding nodes in a shared space. The sections below introduce each approach.</p>
+    <p class="method-desc" data-lang="zh">网络推断方法用不同方式解决：QAP 用置换来构建正确的零分布；ERGM 显式建模依赖结构；潜在空间模型通过将节点嵌入共享空间来处理。以下各节介绍每种方法。</p>
+  </div>
+
+  <div class="method-section">
     <h3 data-lang="en">QAP: Permutation Tests for Networks</h3>
     <h3 data-lang="zh">QAP：网络置换检验</h3>
     <p class="method-desc" data-lang="en"><strong>Quadratic Assignment Procedure (QAP)</strong> is the simplest approach to network inference. You want to test: "Is the trade network correlated with the alliance network?" — i.e., do countries that ally also trade more? QAP regresses one network matrix on another, then generates a null distribution by randomly permuting the rows and columns of one matrix thousands of times. The p-value is the fraction of permutations producing a correlation as strong as the observed one.</p>
@@ -288,9 +335,12 @@ next:
 <div class="section" id="na-guides">
   <h2 data-lang="en">Guides</h2>
   <h2 data-lang="zh">配套指南</h2>
+
+  <h3 data-lang="en" style="margin-top:24px;">Foundations</h3>
+  <h3 data-lang="zh" style="margin-top:24px;">基础推导</h3>
   <div class="m-list">
     <a class="m-card" href="/methods/guides/reg-net-centrality.html">
-      <div class="m-num">▶</div>
+      <div class="m-num">01</div>
       <div class="m-info">
         <div class="m-title" data-lang="en">Network Centrality in R</div>
         <div class="m-title" data-lang="zh">R 中的网络中心性分析</div>
@@ -299,7 +349,42 @@ next:
       </div>
       <div class="m-arrow">→</div>
     </a>
+    <a class="m-card" href="/methods/guides/reg-net-modularity.html">
+      <div class="m-num">02</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Community Detection: Modularity & Algorithms</div>
+        <div class="m-title" data-lang="zh">社区检测：模块性与算法</div>
+        <div class="m-desc" data-lang="en">Modularity Q derivation, Louvain algorithm step-by-step, spectral methods, and resolution limits.</div>
+        <div class="m-desc" data-lang="zh">模块性 Q 完整推导、Louvain 算法逐步解析、谱方法与分辨率极限。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
+    <a class="m-card" href="/methods/guides/reg-net-diffusion.html">
+      <div class="m-num">03</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Network Diffusion: Mathematical Models</div>
+        <div class="m-title" data-lang="zh">网络扩散：数学模型</div>
+        <div class="m-desc" data-lang="en">SIR on networks, threshold models, information cascades, and R simulations.</div>
+        <div class="m-desc" data-lang="zh">网络上的 SIR 模型、阈值模型、信息级联与 R 模拟代码。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
+    <a class="m-card" href="/methods/guides/reg-net-ergm.html">
+      <div class="m-num">04</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">ERGM: Mathematical Foundations</div>
+        <div class="m-title" data-lang="zh">ERGM：数学基础</div>
+        <div class="m-desc" data-lang="en">Full ERGM derivation, MCMC estimation, degeneracy solutions, and statnet implementation.</div>
+        <div class="m-desc" data-lang="zh">ERGM 完整推导、MCMC 估计、退化问题解决方案与 statnet 实现。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
   </div>
+
+  <h3 data-lang="en" style="margin-top:32px;">Sample</h3>
+  <h3 data-lang="zh" style="margin-top:32px;">实例演练</h3>
+  <p class="method-desc" data-lang="en" style="color:var(--ink-faded);font-style:italic;">Coming soon.</p>
+  <p class="method-desc" data-lang="zh" style="color:var(--ink-faded);font-style:italic;">即将推出。</p>
 </div>
 
 <hr class="section-divider">

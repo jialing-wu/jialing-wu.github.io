@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Descent Convergence Proof & Analysis - Research Methods</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'EB Garamond', 'Noto Serif SC', serif;
+            line-height: 1.8;
+            color: #2c2c2c;
+            background: linear-gradient(135deg, #faf9f7 0%, #f5f1ed 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        body.zh {
+            font-family: 'Noto Serif SC', 'EB Garamond', serif;
+        }
+
+        .container {
+            max-width: 780px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            padding: 60px 50px;
+        }
+
+        .header-meta {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 30px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-weight: 500;
+        }
+
+        .title-group {
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8em;
+            font-weight: 500;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .lang-toggle {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 13px;
+        }
+
+        .lang-toggle button {
+            background: #f0ebe5;
+            border: 1px solid #d4cfc8;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .lang-toggle button.active {
+            background: #2c2c2c;
+            color: white;
+            border-color: #2c2c2c;
+        }
+
+        .lang-toggle button:hover {
+            border-color: #2c2c2c;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e8e3dc;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 13px;
+        }
+
+        .nav-links a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #2c2c2c;
+        }
+
+        .nav-links a::before {
+            content: '← ';
+        }
+
+        section {
+            margin-bottom: 50px;
+        }
+
+        h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2em;
+            font-weight: 500;
+            margin-bottom: 25px;
+            margin-top: 40px;
+            color: #1a1a1a;
+            border-left: 4px solid #d4a574;
+            padding-left: 20px;
+        }
+
+        h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6em;
+            font-weight: 400;
+            margin-bottom: 18px;
+            margin-top: 30px;
+            color: #333;
+            padding-left: 0;
+        }
+
+        p {
+            margin-bottom: 18px;
+            text-align: justify;
+        }
+
+        .definition {
+            background: #f9f6f2;
+            border-left: 4px solid #d4a574;
+            padding: 20px 25px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
+
+        .definition-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: #666;
+        }
+
+        .math-block {
+            background: #faf8f5;
+            border: 1px solid #e8e3dc;
+            padding: 20px 25px;
+            margin: 25px 0;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .math-block mjx-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .proof {
+            background: #f5f8fa;
+            border-left: 4px solid #5b8fb8;
+            padding: 20px 25px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
+
+        .proof-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: #444;
+        }
+
+        .proof-step {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        .proof-step mjx-container {
+            display: inline;
+        }
+
+        ul, ol {
+            margin: 20px 0 20px 30px;
+            line-height: 1.9;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background: #fff8e6;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-style: italic;
+        }
+
+        .note {
+            background: #fef5e7;
+            border-left: 4px solid #f39c12;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+
+        .note-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #c87f0a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.95em;
+        }
+
+        table th {
+            background: #f0ebe5;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #d4cfc8;
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+
+        table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e8e3dc;
+        }
+
+        table tr:hover {
+            background: #faf8f5;
+        }
+
+        .algorithm {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 20px 25px;
+            margin: 25px 0;
+            border-radius: 4px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .algorithm-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: #444;
+        }
+
+        .line {
+            margin-bottom: 8px;
+        }
+
+        .line-num {
+            color: #999;
+            margin-right: 15px;
+            display: inline-block;
+            width: 20px;
+            text-align: right;
+        }
+
+        .convergence-table {
+            margin: 25px 0;
+        }
+
+        .footer {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #e8e3dc;
+            font-size: 0.9em;
+            color: #888;
+            font-family: 'IBM Plex Sans', sans-serif;
+            text-align: center;
+        }
+
+        [data-lang-content] {
+            display: none;
+        }
+
+        [data-lang-content="en"] {
+            display: block;
+        }
+
+        body.zh [data-lang-content="en"] {
+            display: none;
+        }
+
+        body.zh [data-lang-content="zh"] {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 30px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .lang-toggle {
+                position: static;
+                margin-bottom: 20px;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body class="en">
+    <div class="lang-toggle">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">中文</button>
+    </div>
+
+    <div class="container">
+        <div class="header-meta">
+            <span data-lang-content="en">Advanced · Proof & Derivation</span>
+            <span data-lang-content="zh">进阶 · 证明与推导</span>
+        </div>
+
+        <div class="title-group">
+            <h1 data-lang-content="en">Gradient Descent Convergence: Proof & Analysis</h1>
+            <h1 data-lang-content="zh">梯度下降收敛性：证明与分析</h1>
+
+            <p class="subtitle" data-lang-content="en">A rigorous treatment of convergence rates, theoretical foundations, and optimization landscape dynamics in machine learning</p>
+            <p class="subtitle" data-lang-content="zh">机器学习中收敛速率、理论基础和优化景观动态的严格探讨</p>
+        </div>
+
+        <div class="nav-links">
+            <a href="../machine-learning.html" data-lang-content="en">Back to Machine Learning</a>
+            <a href="../machine-learning.html" data-lang-content="zh">返回机器学习</a>
+        </div>
+
+        <!-- SECTION 1: Gradient Descent Algorithm -->
+        <section id="gd-algorithm">
+            <h2 data-lang-content="en">1. Gradient Descent Algorithm</h2>
+            <h2 data-lang-content="zh">1. 梯度下降算法</h2>
+
+            <p data-lang-content="en">
+                Gradient descent is an iterative first-order optimization algorithm that updates parameters in the direction of steepest descent of a cost function. At each iteration, we move parameters closer to the optimum by taking a step proportional to the negative gradient.
+            </p>
+            <p data-lang-content="zh">
+                梯度下降是一种迭代的一阶优化算法，沿着成本函数最陡下降的方向更新参数。在每次迭代中，我们通过按负梯度的比例迈步，将参数移动到更接近最优值的位置。
+            </p>
+
+            <div class="definition">
+                <div class="definition-title" data-lang-content="en">Definition: Standard Gradient Descent Update</div>
+                <div class="definition-title" data-lang-content="zh">定义：标准梯度下降更新</div>
+                <div class="math-block">
+                    $$\theta_{t+1} = \theta_t - \eta \nabla f(\theta_t)$$
+                </div>
+            </div>
+
+            <p data-lang-content="en">
+                where:
+            </p>
+            <p data-lang-content="zh">
+                其中：
+            </p>
+            <ul>
+                <li><span data-lang-content="en">$$\theta_t \in \mathbb{R}^d$$ is the parameter vector at iteration $$t$$</span><span data-lang-content="zh">$$\theta_t \in \mathbb{R}^d$$ 是第 $$t$$ 次迭代的参数向量</span></li>
+                <li><span data-lang-content="en">$$\eta > 0$$ is the learning rate (step size)</span><span data-lang-content="zh">$$\eta > 0$$ 是学习率（步长）</span></li>
+                <li><span data-lang-content="en">$$\nabla f(\theta_t)$$ is the gradient of the loss function at $$\theta_t$$</span><span data-lang-content="zh">$$\nabla f(\theta_t)$$ 是在 $$\theta_t$$ 处的损失函数梯度</span></li>
+                <li><span data-lang-content="en">$$f: \mathbb{R}^d \to \mathbb{R}$$ is the objective (loss) function to minimize</span><span data-lang-content="zh">$$f: \mathbb{R}^d \to \mathbb{R}$$ 是要最小化的目标（损失）函数</span></li>
+            </ul>
+        </section>
+
+        <!-- SECTION 2: Convex Functions -->
+        <section id="convex-functions">
+            <h2 data-lang-content="en">2. Convex Functions & Properties</h2>
+            <h2 data-lang-content="zh">2. 凸函数与性质</h2>
+
+            <p data-lang-content="en">
+                Convexity is a fundamental property that enables convergence guarantees for gradient descent. A function is convex if its epigraph is a convex set, or equivalently, if all line segments between points on the graph lie above or on the graph itself.
+            </p>
+            <p data-lang-content="zh">
+                凸性是梯度下降收敛性保证的基础性质。如果函数的上境图是凸集，或等价地，如果图上任意两点之间的线段都在图上方或图上，则该函数是凸的。
+            </p>
+
+            <div class="definition">
+                <div class="definition-title" data-lang-content="en">Definition: Convex Function</div>
+                <div class="definition-title" data-lang-content="zh">定义：凸函数</div>
+                <p data-lang-content="en">
+                    A function $$f: \mathbb{R}^d \to \mathbb{R}$$ is convex if for all $$x, y \in \mathbb{R}^d$$ and $$\lambda \in [0,1]$$:
+                </p>
+                <p data-lang-content="zh">
+                    函数 $$f: \mathbb{R}^d \to \mathbb{R}$$ 是凸的，如果对所有 $$x, y \in \mathbb{R}^d$$ 和 $$\lambda \in [0,1]$$：
+                </p>
+                <div class="math-block">
+                    $$f(\lambda x + (1-\lambda) y) \leq \lambda f(x) + (1-\lambda) f(y)$$
+                </div>
+            </div>
+
+            <h3 data-lang-content="en">Fundamental Properties of Convex Functions</h3>
+            <h3 data-lang-content="zh">凸函数的基本性质</h3>
+
+            <table class="convergence-table">
+                <thead>
+                    <tr>
+                        <th data-lang-content="en">Property</th>
+                        <th data-lang-content="zh">性质</th>
+                        <th data-lang-content="en">Mathematical Form</th>
+                        <th data-lang-content="zh">数学形式</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-lang-content="en">Gradient Inequality</td>
+                        <td data-lang-content="zh">梯度不等式</td>
+                        <td class="math-block">$$f(y) \geq f(x) + \nabla f(x)^T(y-x)$$</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td data-lang-content="en">Monotone Gradient</td>
+                        <td data-lang-content="zh">单调梯度</td>
+                        <td class="math-block">$$(\nabla f(x) - \nabla f(y))^T(x-y) \geq 0$$</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td data-lang-content="en">Secant Line</td>
+                        <td data-lang-content="zh">割线</td>
+                        <td class="math-block">$$\nabla f(x)^T(y-x) \leq f(y) - f(x) \leq \nabla f(y)^T(y-x)$$</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note">
+                <div class="note-title" data-lang-content="en">Important Consequence</div>
+                <div class="note-title" data-lang-content="zh">重要推论</div>
+                <p data-lang-content="en">
+                    For convex functions, any local minimum is a global minimum. This guarantees that gradient descent will not get stuck in poor local optima.
+                </p>
+                <p data-lang-content="zh">
+                    对于凸函数，任何局部最小值都是全局最小值。这保证了梯度下降不会陷入不良的局部最优值。
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Lipschitz Continuity -->
+        <section id="lipschitz">
+            <h2 data-lang-content="en">3. Lipschitz Gradient Continuity</h2>
+            <h2 data-lang-content="zh">3. Lipschitz梯度连续性</h2>
+
+            <p data-lang-content="en">
+                For convergence analysis of gradient descent, we require that the gradient does not change too rapidly. This is formalized through the concept of L-Lipschitz gradient continuity, which bounds how much the gradient can change between two points.
+            </p>
+            <p data-lang-content="zh">
+                为了分析梯度下降的收敛性，我们需要梯度不会变化太快。这通过L-Lipschitz梯度连续性的概念形式化，它限制了两点之间梯度的变化程度。
+            </p>
+
+            <div class="definition">
+                <div class="definition-title" data-lang-content="en">Definition: L-Lipschitz Gradient Continuity</div>
+                <div class="definition-title" data-lang-content="zh">定义：L-Lipschitz梯度连续性</div>
+                <p data-lang-content="en">
+                    A function $$f$$ has $$L$$-Lipschitz continuous gradients if there exists $$L > 0$$ such that for all $$x, y \in \mathbb{R}^d$$:
+                </p>
+                <p data-lang-content="zh">
+                    如果存在 $$L > 0$$ 使得对所有 $$x, y \in \mathbb{R}^d$$，函数 $$f$$ 有$$L$$-Lipschitz连续梯度：
+                </p>
+                <div class="math-block">
+                    $$\|\nabla f(x) - \nabla f(y)\| \leq L\|x - y\|$$
+                </div>
+            </div>
+
+            <p data-lang-content="en">
+                Equivalently, the Hessian (matrix of second derivatives) is bounded:
+            </p>
+            <p data-lang-content="zh">
+                等价地，Hessian矩阵（二阶导数矩阵）是有界的：
+            </p>
+
+            <div class="math-block">
+                $$\nabla^2 f(x) \preceq L I$$
+            </div>
+
+            <p data-lang-content="en">
+                This means the largest eigenvalue of the Hessian is at most $$L$$. Geometrically, this ensures the function curves at a bounded rate, preventing adversarial behavior where small steps could lead to large increases in loss.
+            </p>
+            <p data-lang-content="zh">
+                这意味着Hessian矩阵的最大特征值最多为$$L$$。几何上，这确保了函数以有界速率弯曲，防止了小步骤可能导致损失大幅增加的对抗性行为。
+            </p>
+        </section>
+
+        <!-- SECTION 4: Convergence Proof -->
+        <section id="convergence-proof">
+            <h2 data-lang-content="en">4. Convergence Proof for Convex Functions</h2>
+            <h2 data-lang-content="zh">4. 凸函数的收敛性证明</h2>
+
+            <p data-lang-content="en">
+                We now prove that gradient descent with appropriate learning rate converges to the optimal solution for convex functions with L-Lipschitz gradients.
+            </p>
+            <p data-lang-content="zh">
+                我们现在证明了具有适当学习率的梯度下降对于具有L-Lipschitz梯度的凸函数收敛到最优解。
+            </p>
+
+            <div class="proof">
+                <div class="proof-title" data-lang-content="en">Theorem: Convergence of Gradient Descent</div>
+                <div class="proof-title" data-lang-content="zh">定理：梯度下降的收敛性</div>
+
+                <p data-lang-content="en">
+                    Let $$f$$ be a convex function with $$L$$-Lipschitz continuous gradients. If gradient descent is run with learning rate $$\eta \leq 1/L$$, then:
+                </p>
+                <p data-lang-content="zh">
+                    设 $$f$$ 是具有$$L$$-Lipschitz连续梯度的凸函数。如果梯度下降以学习率 $$\eta \leq 1/L$$ 运行，则：
+                </p>
+
+                <div class="math-block">
+                    $$f(\theta_t) - f(\theta^*) \leq \frac{\|\theta_0 - \theta^*\|^2}{2\eta t}$$
+                </div>
+
+                <p data-lang-content="en">
+                    where $$\theta^*$$ is the optimal solution. This establishes $$O(1/t)$$ convergence rate.
+                </p>
+                <p data-lang-content="zh">
+                    其中 $$\theta^*$$ 是最优解。这建立了 $$O(1/t)$$ 的收敛速率。
+                </p>
+            </div>
+
+            <h3 data-lang-content="en">Proof Outline</h3>
+            <h3 data-lang-content="zh">证明概要</h3>
+
+            <div class="proof">
+                <div class="proof-step">
+                    <strong data-lang-content="en">Step 1: Descent Lemma</strong>
+                    <strong data-lang-content="zh">步骤1：下降引理</strong>
+                </div>
+
+                <p data-lang-content="en">
+                    By L-Lipschitz continuity, the loss after one update satisfies:
+                </p>
+                <p data-lang-content="zh">
+                    通过L-Lipschitz连续性，一次更新后的损失满足：
+                </p>
+
+                <div class="math-block">
+                    $$f(\theta_{t+1}) \leq f(\theta_t) - \eta \|\nabla f(\theta_t)\|^2 + \frac{L\eta^2}{2}\|\nabla f(\theta_t)\|^2$$
+                </div>
+
+                <p data-lang-content="en">
+                    $$= f(\theta_t) - \eta\left(1 - \frac{L\eta}{2}\right)\|\nabla f(\theta_t)\|^2$$
+                </p>
+
+                <p data-lang-content="en">
+                    With $$\eta \leq 1/L$$, we have $$1 - L\eta/2 \geq 1/2$$, ensuring descent at each step.
+                </p>
+                <p data-lang-content="zh">
+                    对于 $$\eta \leq 1/L$$，我们有 $$1 - L\eta/2 \geq 1/2$$，确保每步下降。
+                </p>
+            </div>
+
+            <div class="proof">
+                <div class="proof-step">
+                    <strong data-lang-content="en">Step 2: Gradient Norm Bound</strong>
+                    <strong data-lang-content="zh">步骤2：梯度范数界</strong>
+                </div>
+
+                <p data-lang-content="en">
+                    By convexity:
+                </p>
+                <p data-lang-content="zh">
+                    通过凸性：
+                </p>
+
+                <div class="math-block">
+                    $$\|\nabla f(\theta_t)\|^2 \geq 2(f(\theta_t) - f(\theta^*))$$
+                </div>
+
+                <p data-lang-content="en">
+                    This uses the gradient inequality: $$f(\theta^*) \geq f(\theta_t) + \nabla f(\theta_t)^T(\theta^* - \theta_t)$$
+                </p>
+                <p data-lang-content="zh">
+                    这使用了梯度不等式：$$f(\theta^*) \geq f(\theta_t) + \nabla f(\theta_t)^T(\theta^* - \theta_t)$$
+                </p>
+            </div>
+
+            <div class="proof">
+                <div class="proof-step">
+                    <strong data-lang-content="en">Step 3: Telescoping Sum</strong>
+                    <strong data-lang-content="zh">步骤3：伸缩求和</strong>
+                </div>
+
+                <p data-lang-content="en">
+                    Summing the descent inequality from $$t = 0$$ to $$t = T-1$$:
+                </p>
+                <p data-lang-content="zh">
+                    从 $$t = 0$$ 到 $$t = T-1$$ 对下降不等式求和：
+                </p>
+
+                <div class="math-block">
+                    $$f(\theta_T) - f(\theta^*) \leq \frac{1}{2\eta T}\|\theta_0 - \theta^*\|^2$$
+                </div>
+
+                <p data-lang-content="en">
+                    by aggregating the gradient norms over all iterations.
+                </p>
+                <p data-lang-content="zh">
+                    通过聚合所有迭代的梯度范数。
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Learning Rate Selection -->
+        <section id="learning-rate">
+            <h2 data-lang-content="en">5. Learning Rate Selection Theory</h2>
+            <h2 data-lang-content="zh">5. 学习率选择理论</h2>
+
+            <p data-lang-content="en">
+                The learning rate $$\eta$$ is the most critical hyperparameter in gradient descent. Different ranges of $$\eta$$ lead to different behaviors: divergence, convergence to suboptimal solutions, or optimal convergence.
+            </p>
+            <p data-lang-content="zh">
+                学习率 $$\eta$$ 是梯度下降中最关键的超参数。不同范围的 $$\eta$$ 导致不同的行为：发散、收敛到次优解，或最优收敛。
+            </p>
+
+            <h3 data-lang-content="en">Convergence Condition: $$\eta < 2/L$$</h3>
+            <h3 data-lang-content="zh">收敛条件：$$\eta < 2/L$$</h3>
+
+            <div class="definition">
+                <div class="definition-title" data-lang-content="en">Theorem: Convergence Condition</div>
+                <div class="definition-title" data-lang-content="zh">定理：收敛条件</div>
+
+                <p data-lang-content="en">
+                    For convex functions with $$L$$-Lipschitz gradients, gradient descent converges if and only if:
+                </p>
+                <p data-lang-content="zh">
+                    对于具有$$L$$-Lipschitz梯度的凸函数，梯度下降收敛当且仅当：
+                </p>
+
+                <div class="math-block">
+                    $$0 < \eta < \frac{2}{L}$$
+                </div>
+            </div>
+
+            <h3 data-lang-content="en">Practical Guidance</h3>
+            <h3 data-lang-content="zh">实际指导</h3>
+
+            <table class="convergence-table">
+                <thead>
+                    <tr>
+                        <th data-lang-content="en">Learning Rate Range</th>
+                        <th data-lang-content="zh">学习率范围</th>
+                        <th data-lang-content="en">Behavior</th>
+                        <th data-lang-content="zh">行为</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>$$\eta \geq 2/L$$</td>
+                        <td></td>
+                        <td data-lang-content="en">Divergence - updates oscillate wildly</td>
+                        <td data-lang-content="zh">发散 - 更新震荡剧烈</td>
+                    </tr>
+                    <tr>
+                        <td>$$1/L < \eta < 2/L$$</td>
+                        <td></td>
+                        <td data-lang-content="en">Convergence with oscillation - slower than optimal</td>
+                        <td data-lang-content="zh">收敛但有震荡 - 比最优慢</td>
+                    </tr>
+                    <tr>
+                        <td>$$\eta = 1/L$$</td>
+                        <td></td>
+                        <td data-lang-content="en">Optimal convergence - smooth descent</td>
+                        <td data-lang-content="zh">最优收敛 - 平稳下降</td>
+                    </tr>
+                    <tr>
+                        <td>$$0 < \eta < 1/L$$</td>
+                        <td></td>
+                        <td data-lang-content="en">Convergence but very slow - conservative</td>
+                        <td data-lang-content="zh">收敛但很慢 - 保守型</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note">
+                <div class="note-title" data-lang-content="en">In Practice</div>
+                <div class="note-title" data-lang-content="zh">在实践中</div>
+                <p data-lang-content="en">
+                    The Lipschitz constant $$L$$ is rarely known. Common approaches include: line search (testing different values), adaptive learning rates (Adam, RMSprop), or using learning rate schedules that decrease over time.
+                </p>
+                <p data-lang-content="zh">
+                    Lipschitz常数 $$L$$ 很少已知。常见方法包括：线搜索（测试不同值）、自适应学习率（Adam、RMSprop）、或使用随时间递减的学习率调度。
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 6: Convergence Rates -->
+        <section id="convergence-rates">
+            <h2 data-lang-content="en">6. Convergence Rate Analysis</h2>
+            <h2 data-lang-content="zh">6. 收敛速率分析</h2>
+
+            <p data-lang-content="en">
+                Different problem classes exhibit different convergence rates. Understanding these rates is crucial for algorithm selection and computational budgeting.
+            </p>
+            <p data-lang-content="zh">
+                不同问题类别表现出不同的收敛速率。理解这些速率对于算法选择和计算预算至关重要。
+            </p>
+
+            <h3 data-lang-content="en">Convex Functions: $$O(1/T)$$ Rate</h3>
+            <h3 data-lang-content="zh">凸函数：$$O(1/T)$$ 速率</h3>
+
+            <div class="math-block">
+                $$f(\theta_T) - f(\theta^*) \leq \frac{\|\theta_0 - \theta^*\|^2}{2\eta T}$$
+            </div>
+
+            <p data-lang-content="en">
+                This means to reduce error by a factor of 10, we need approximately 10× more iterations. This is provably tight for first-order methods on general convex functions.
+            </p>
+            <p data-lang-content="zh">
+                这意味着要将错误减少10倍，我们需要大约10倍的迭代次数。对于一般凸函数上的一阶方法，这在理论上是紧的。
+            </p>
+
+            <h3 data-lang-content="en">Strongly Convex Functions: $$O(\rho^T)$$ Rate</h3>
+            <h3 data-lang-content="zh">强凸函数：$$O(\rho^T)$$ 速率</h3>
+
+            <div class="definition">
+                <div class="definition-title" data-lang-content="en">Definition: Strongly Convex</div>
+                <div class="definition-title" data-lang-content="zh">定义：强凸</div>
+
+                <p data-lang-content="en">
+                    A function $$f$$ is $$\mu$$-strongly convex if for all $$x, y$$:
+                </p>
+                <p data-lang-content="zh">
+                    函数 $$f$$ 是$$\mu$$-强凸的，如果对所有 $$x, y$$：
+                </p>
+
+                <div class="math-block">
+                    $$f(y) \geq f(x) + \nabla f(x)^T(y-x) + \frac{\mu}{2}\|y-x\|^2$$
+                </div>
+            </div>
+
+            <p data-lang-content="en">
+                For strongly convex functions with L-Lipschitz gradients:
+            </p>
+            <p data-lang-content="zh">
+                对于具有L-Lipschitz梯度的强凸函数：
+            </p>
+
+            <div class="math-block">
+                $$f(\theta_T) - f(\theta^*) \leq \frac{L}{2}\left(1 - \frac{\mu}{L}\right)^T \|\theta_0 - \theta^*\|^2$$
+            </div>
+
+            <p data-lang-content="en">
+                where $$\rho = 1 - \mu/L < 1$$ is the contraction factor. This exponential convergence rate is linear in the log-error, so we need only $$\log(1/\epsilon)$$ iterations for $$\epsilon$$-accuracy.
+            </p>
+            <p data-lang-content="zh">
+                其中 $$\rho = 1 - \mu/L < 1$$ 是收缩因子。这个指数收敛速率在对数误差中是线性的，所以我们只需要 $$\log(1/\epsilon)$$ 次迭代来达到 $$\epsilon$$-精度。
+            </p>
+
+            <h3 data-lang-content="en">Condition Number and Convergence Speed</h3>
+            <h3 data-lang-content="zh">条件数与收敛速度</h3>
+
+            <p data-lang-content="en">
+                The condition number $$\kappa = L/\mu$$ quantifies the difficulty of the optimization problem:
+            </p>
+            <p data-lang-content="zh">
+                条件数 $$\kappa = L/\mu$$ 量化了优化问题的难度：
+            </p>
+
+            <table class="convergence-table">
+                <thead>
+                    <tr>
+                        <th data-lang-content="en">Condition Number $$\kappa$$</th>
+                        <th data-lang-content="zh">条件数 $$\kappa$$</th>
+                        <th data-lang-content="en">Problem Type</th>
+                        <th data-lang-content="zh">问题类型</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>$$\kappa \approx 1$$</td>
+                        <td></td>
+                        <td data-lang-content="en">Well-conditioned - fast convergence</td>
+                        <td data-lang-content="zh">适定的 - 快速收敛</td>
+                    </tr>
+                    <tr>
+                        <td>$$\kappa \approx 10-100$$</td>
+                        <td></td>
+                        <td data-lang-content="en">Moderately conditioned - moderate convergence</td>
+                        <td data-lang-content="zh">中等适定的 - 中等收敛</td>
+                    </tr>
+                    <tr>
+                        <td>$$\kappa >> 100$$</td>
+                        <td></td>
+                        <td data-lang-content="en">Ill-conditioned - slow convergence</td>
+                        <td data-lang-content="zh">病态的 - 缓慢收敛</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECTION 7: Stochastic Gradient Descent -->
+        <section id="sgd">
+            <h2 data-lang-content="en">7. Stochastic Gradient Descent (SGD)</h2>
+            <h2 data-lang-content="zh">7. 随机梯度下降（SGD）</h2>
+
+            <p data-lang-content="en">
+                In practice, we rarely compute gradients on the entire dataset. Instead, we use noisy gradient estimates from mini-batches, trading convergence speed for computational efficiency.
+            </p>
+            <p data-lang-content="zh">
+                在实践中，我们很少在整个数据集上计算梯度。相反，我们使用来自小批量的有噪声梯度估计，以计算效率换取收敛速度。
+            </p>
+
+            <div class="algorithm">
+                <div class="algorithm-title" data-lang-content="en">Algorithm: Stochastic Gradient Descent</div>
+                <div class="algorithm-title" data-lang-content="zh">算法：随机梯度下降</div>
+
+                <div class="line">
+                    <span class="line-num">1</span>
+                    <strong>input:</strong> initial parameters $$\theta_0$$, learning rate $$\eta$$, iterations $$T$$
+                </div>
+                <div class="line">
+                    <span class="line-num">2</span>
+                    <strong>for</strong> $$t = 0$$ <strong>to</strong> $$T-1$$ <strong>do</strong>
+                </div>
+                <div class="line">
+                    <span class="line-num">3</span>
+                    <span style="margin-left: 30px;">Sample mini-batch $$B_t$$ of size $$m$$ from training data</span>
+                </div>
+                <div class="line">
+                    <span class="line-num">4</span>
+                    <span style="margin-left: 30px;">Compute stochastic gradient: $$\hat{g}_t = \frac{1}{|B_t|}\sum_{i \in B_t} \nabla f_i(\theta_t)$$</span>
+                </div>
+                <div class="line">
+                    <span class="line-num">5</span>
+                    <span style="margin-left: 30px;">Update: $$\theta_{t+1} = \theta_t - \eta_t \hat{g}_t$$</span>
+                </div>
+                <div class="line">
+                    <span class="line-num">6</span>
+                    <strong>end for</strong>
+                </div>
+                <div class="line">
+                    <span class="line-num">7</span>
+                    <strong>return</strong> $$\theta_T$$
+                </div>
+            </div>
+
+            <h3 data-lang-content="en">Stochastic Gradient Properties</h3>
+            <h3 data-lang-content="zh">随机梯度性质</h3>
+
+            <p data-lang-content="en">
+                The key insight is that the stochastic gradient $$\hat{g}_t$$ is an unbiased estimator of the true gradient:
+            </p>
+            <p data-lang-content="zh">
+                关键的见解是随机梯度 $$\hat{g}_t$$ 是真实梯度的无偏估计：
+            </p>
+
+            <div class="math-block">
+                $$\mathbb{E}[\hat{g}_t] = \nabla f(\theta_t)$$
+            </div>
+
+            <p data-lang-content="en">
+                However, there is variance in the estimate:
+            </p>
+            <p data-lang-content="zh">
+                然而，估计中存在方差：
+            </p>
+
+            <div class="math-block">
+                $$\text{Var}[\hat{g}_t] = \mathbb{E}[\|\hat{g}_t - \nabla f(\theta_t)\|^2] \leq \frac{\sigma^2}{m}$$
+            </div>
+
+            <p data-lang-content="en">
+                where $$m$$ is the batch size and $$\sigma^2$$ is the variance bound on individual gradient samples. Larger batches reduce variance but increase computation cost.
+            </p>
+            <p data-lang-content="zh">
+                其中 $$m$$ 是批大小，$$\sigma^2$$ 是单个梯度样本的方差界。较大的批次减少方差但增加计算成本。
+            </p>
+
+            <h3 data-lang-content="en">SGD Convergence with Diminishing Learning Rate</h3>
+            <h3 data-lang-content="zh">具有递减学习率的SGD收敛</h3>
+
+            <div class="theorem-box">
+                <p data-lang-content="en">
+                    For SGD to converge in the presence of noise, the learning rate must decrease over time. A sufficient condition is:
+                </p>
+                <p data-lang-content="zh">
+                    为了使SGD在噪声存在下收敛，学习率必须随着时间递减。充分条件是：
+                </p>
+
+                <div class="math-block">
+                    $$\sum_{t=0}^\infty \eta_t = \infty \quad \text{and} \quad \sum_{t=0}^\infty \eta_t^2 < \infty$$
+                </div>
+            </div>
+
+            <p data-lang-content="en">
+                Common choices include:
+            </p>
+            <p data-lang-content="zh">
+                常见的选择包括：
+            </p>
+
+            <ul>
+                <li><span data-lang-content="en">Polynomial decay: $$\eta_t = \eta_0 / (1 + t)^{\alpha}$$ with $$\alpha \in (0, 1]$$</span><span data-lang-content="zh">多项式衰减：$$\eta_t = \eta_0 / (1 + t)^{\alpha}$$，其中 $$\alpha \in (0, 1]$$</span></li>
+                <li><span data-lang-content="en">Exponential decay: $$\eta_t = \eta_0 \gamma^t$$ with $$\gamma \in (0, 1)$$</span><span data-lang-content="zh">指数衰减：$$\eta_t = \eta_0 \gamma^t$$，其中 $$\gamma \in (0, 1)$$</span></li>
+                <li><span data-lang-content="en">Step decay: $$\eta_t = \eta_0 \gamma^{\lfloor t/T \rfloor}$$ (halve every $$T$$ iterations)</span><span data-lang-content="zh">步进衰减：$$\eta_t = \eta_0 \gamma^{\lfloor t/T \rfloor}$$（每 $$T$$ 次迭代减半）</span></li>
+            </ul>
+        </section>
+
+        <!-- SECTION 8: Momentum and Acceleration -->
+        <section id="momentum">
+            <h2 data-lang-content="en">8. Momentum and Nesterov Acceleration</h2>
+            <h2 data-lang-content="zh">8. 动量与Nesterov加速</h2>
+
+            <p data-lang-content="en">
+                Plain gradient descent can move slowly in certain directions and oscillate in others. Momentum methods accumulate a velocity vector that accelerates convergence, particularly in ill-conditioned problems.
+            </p>
+            <p data-lang-content="zh">
+                普通梯度下降在某些方向上可能移动缓慢，在其他方向上可能会震荡。动量方法积累速度向量以加速收敛，特别是在病态问题中。
+            </p>
+
+            <h3 data-lang-content="en">Standard Momentum</h3>
+            <h3 data-lang-content="zh">标准动量</h3>
+
+            <div class="algorithm">
+                <div class="algorithm-title" data-lang-content="en">Algorithm: SGD with Momentum</div>
+                <div class="algorithm-title" data-lang-content="zh">算法：带动量的SGD</div>
+
+                <div class="line">
+                    <span class="line-num">1</span>
+                    <strong>input:</strong> initial parameters $$\theta_0$$, learning rate $$\eta$$, momentum $$\beta \in [0,1)$$
+                </div>
+                <div class="line">
+                    <span class="line-num">2</span>
+                    Initialize velocity: $$v_0 = 0$$
+                </div>
+                <div class="line">
+                    <span class="line-num">3</span>
+                    <strong>for</strong> $$t = 0$$ <strong>to</strong> $$T-1$$ <strong>do</strong>
+                </div>
+                <div class="line">
+                    <span class="line-num">4</span>
+                    <span style="margin-left: 30px;">Compute gradient $$g_t = \nabla f(\theta_t)$$</span>
+                </div>
+                <div class="line">
+                    <span class="line-num">5</span>
+                    <span style="margin-left: 30px;">Update velocity: $$v_{t+1} = \beta v_t + g_t$$</span>
+                </div>
+                <div class="line">
+                    <span class="line-num">6</span>
+                    <span style="margin-left: 30px;">Update parameters: $$\theta_{t+1} = \theta_t - \eta v_{t+1}$$</span>
+                </div>
+                <div class="line">
+                    <span class="line-num">7</span>
+                    <strong>end for</strong>
+                </div>
+            </div>
+
+            <p data-lang-content="en">
+                The velocity $$v_t$$ accumulates gradients geometrically weighted by $$\beta$$. This creates an exponential moving average of past gradients.
+            </p>
+            <p data-lang-content="zh">
+                速度 $$v_t$$ 按 $$\beta$$ 的几何权重累积梯度。这创建了过去梯度的指数移动平均。
+            </p>
+
+            <h3 data-lang-content="en">Nesterov Accelerated Gradient (NAG)</h3>
+            <h3 data-lang-content="zh">Nesterov加速梯度（NAG）</h3>
+
+            <div class="algorithm">
+                <div class="algorithm-title" data-lang-content="en">Algorithm: Nesterov Accelerated Gradient</div>
+                <div class="algorithm-title" data-lang-content="zh">算法：Nesterov加速梯度</div>
+
+                <div class="line">
+                    <span class="line-num">1</span>
+                    <strong>input:</strong> initial parameters $$\theta_0$$, learning rate $$\eta$$, momentum $$\beta$$
+                </div>
+                <div class="line">
+                    <span class="line-num">2</span>
+                    Initialize velocity: $$v_0 = 0$$
+                </div>
+                <div class="line">
+                    <span class="line-num">3</span>
+                    <strong>for</strong> $$t = 0$$ <strong>to</strong> $$T-1$$ <strong>do</strong>
+                </div>
+                <div class="line">
+                    <span class="line-num">4</span>
+                    <span style="margin-left: 30px;">Compute gradient at look-ahead point: $$g_t = \nabla f(\theta_t + \beta v_t)$$</span>
+                </div>
+                <div class="line">
+                    <span class="line-num">5</span>
+                    <span style="margin-left: 30px;">Update velocity: $$v_{t+1} = \beta v_t + g_t$$</span>
+                </div>
+                <div class="line">
+                    <span class="line-num">6</span>
+                    <span style="margin-left: 30px;">Update parameters: $$\theta_{t+1} = \theta_t - \eta v_{t+1}$$</span>
+                </div>
+                <div class="line">
+                    <span class="line-num">7</span>
+                    <strong>end for</strong>
+                </div>
+            </div>
+
+            <p data-lang-content="en">
+                The key innovation: evaluate the gradient at a "look-ahead" position $$\theta_t + \beta v_t$$ rather than at the current position. This provides a more informative gradient and improves convergence.
+            </p>
+            <p data-lang-content="zh">
+                关键创新：在"前瞻"位置 $$\theta_t + \beta v_t$$ 而不是当前位置计算梯度。这提供了更多信息的梯度并改进了收敛。
+            </p>
+
+            <h3 data-lang-content="en">Convergence Rate Improvement</h3>
+            <h3 data-lang-content="zh">收敛速率的改进</h3>
+
+            <div class="note">
+                <div class="note-title" data-lang-content="en">Theoretical Improvement</div>
+                <div class="note-title" data-lang-content="zh">理论改进</div>
+
+                <p data-lang-content="en">
+                    For strongly convex functions, momentum methods achieve better convergence rates:
+                </p>
+                <p data-lang-content="zh">
+                    对于强凸函数，动量方法实现更好的收敛速率：
+                </p>
+
+                <div class="math-block">
+                    $$f(\theta_t) - f(\theta^*) \leq O\left(\left(\sqrt{\kappa} - 1\right)^t\right) \text{ (NAG)}$$
+                </div>
+
+                <p data-lang-content="en">
+                    compared to vanilla gradient descent's $$O(\rho^t)$$ with $$\rho = 1 - 1/\kappa$$. This improves dependence on condition number from $$\kappa$$ to $$\sqrt{\kappa}$$.
+                </p>
+                <p data-lang-content="zh">
+                    相比之下，香草梯度下降的 $$O(\rho^t)$$ 其中 $$\rho = 1 - 1/\kappa$$。这将对条件数的依赖从 $$\kappa$$ 改进到 $$\sqrt{\kappa}$$。
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 9: Adaptive Learning Rates - Adam -->
+        <section id="adam">
+            <h2 data-lang-content="en">9. Adaptive Learning Rates: Adam Optimizer</h2>
+            <h2 data-lang-content="zh">9. 自适应学习率：Adam优化器</h2>
+
+            <p data-lang-content="en">
+                Adam (Adaptive Moment Estimation) is widely used in modern deep learning because it adapts the learning rate for each parameter based on first and second moment estimates of gradients.
+            </p>
+            <p data-lang-content="zh">
+                Adam（自适应矩估计）在现代深度学习中广泛使用，因为它根据梯度的一阶和二阶矩估计为每个参数调整学习率。
+            </p>
+
+            <h3 data-lang-content="en">Moment Estimation</h3>
+            <h3 data-lang-content="zh">矩估计</h3>
+
+            <p data-lang-content="en">
+                Adam maintains exponential moving averages of:
+            </p>
+            <p data-lang-content="zh">
+                Adam维护以下项的指数移动平均：
+            </p>
+
+            <ul>
+                <li><strong data-lang-content="en">First moment (mean):</strong> $$m_t = \beta_1 m_{t-1} + (1-\beta_1) g_t$$<span data-lang-content="zh"><strong>一阶矩（均值）：</strong> $$m_t = \beta_1 m_{t-1} + (1-\beta_1) g_t$$</span></li>
+                <li><strong data-lang-content="en">Second moment (uncentered variance):</strong> $$v_t = \beta_2 v_{t-1} + (1-\beta_2) g_t^2$$<span data-lang-content="zh"><strong>二阶矩（未中心化方差）：</strong> $$v_t = \beta_2 v_{t-1} + (1-\beta_2) g_t^2$$</span></li>
+            </ul>
+
+            <p data-lang-content="en">
+                where $$g_t = \nabla f(\theta_t)$$ and operations are element-wise.
+            </p>
+            <p data-lang-content="zh">
+                其中 $$g_t = \nabla f(\theta_t)$$，操作是逐元素进行的。
+            </p>
+
+            <h3 data-lang-content="en">Bias Correction</h3>
+            <h3 data-lang-content="zh">偏差修正</h3>
+
+            <p data-lang-content="en">
+                The exponential moving averages are biased toward zero initially because $$m_0 = v_0 = 0$$. Bias correction mitigates this:
+            </p>
+            <p data-lang-content="zh">
+                指数移动平均最初会偏向于零，因为 $$m_0 = v_0 = 0$$。偏差修正可以缓解这个问题：
+            </p>
+
+            <div class="math-block">
+                $$\hat{m}_t = \frac{m_t}{1 - \beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1 - \beta_2^t}$$
+            </div>
+
+            <p data-lang-content="en">
+                The bias correction factors $$1 - \beta_i^t$$ approach 1 as $$t$$ increases, which is particularly important for initial iterations.
+            </p>
+            <p data-lang-content="zh">
+                偏差修正因子 $$1 - \beta_i^t$$ 随着 $$t$$ 增加而接近1，这对于初始迭代特别重要。
+            </p>
+
+            <h3 data-lang-content="en">Parameter Update</h3>
+            <h3 data-lang-content="zh">参数更新</h3>
+
+            <div class="algorithm">
+                <div class="algorithm-title" data-lang-content="en">Algorithm: Adam Optimizer</div>
+                <div class="algorithm-title" data-lang-content="zh">算法：Adam优化器</div>
+
+                <div class="line">
+                    <span class="line-num">1</span>
+                    <strong>input:</strong> initial $$\theta_0$$, learning rate $$\alpha$$, decay rates $$\beta_1, \beta_2 \in [0,1)$$, small constant $$\epsilon$$
+                </div>
+                <div class="line">
+                    <span class="line-num">2</span>
+                    Initialize: $$m_0 = 0, v_0 = 0$$
+                </div>
+                <div class="line">
+                    <span class="line-num">3</span>
+                    <strong>for</strong> $$t = 1$$ <strong>to</strong> $$T$$ <strong>do</strong>
+                </div>
+                <div class="line">
+                    <span class="line-num">4</span>
+                    <span style="margin-left: 30px;">Compute gradient: $$g_t = \nabla_\theta f(\theta_{t-1})$$</span>
+                </div>
+                <div class="line">
+                    <span class="line-num">5</span>
+                    <span style="margin-left: 30px;">Update moments: $$m_t = \beta_1 m_{t-1} + (1-\beta_1) g_t$$</span>
+                </div>
+                <div class="line">
+                    <span class="line-num">6</span>
+                    <span style="margin-left: 30px;">$$v_t = \beta_2 v_{t-1} + (1-\beta_2) g_t^2$$</span>
+                </div>
+                <div class="line">
+                    <span class="line-num">7</span>
+                    <span style="margin-left: 30px;">Bias correction: $$\hat{m}_t = \frac{m_t}{1-\beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1-\beta_2^t}$$</span>
+                </div>
+                <div class="line">
+                    <span class="line-num">8</span>
+                    <span style="margin-left: 30px;">Update: $$\theta_t = \theta_{t-1} - \alpha \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}$$</span>
+                </div>
+                <div class="line">
+                    <span class="line-num">9</span>
+                    <strong>end for</strong>
+                </div>
+            </div>
+
+            <h3 data-lang-content="en">Intuition and Properties</h3>
+            <h3 data-lang-content="zh">直观理解与性质</h3>
+
+            <p data-lang-content="en">
+                The adaptive step size $$\frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}$$ has several benefits:
+            </p>
+            <p data-lang-content="zh">
+                自适应步长 $$\frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}$$ 有几个优点：
+            </p>
+
+            <ul>
+                <li><span data-lang-content="en"><strong>Momentum:</strong> The first moment $$\hat{m}_t$$ acts like velocity, accelerating across consistent gradient directions</span><span data-lang-content="zh"><strong>动量：</strong>一阶矩 $$\hat{m}_t$$ 作为速度，加速跨越一致的梯度方向</span></li>
+                <li><span data-lang-content="en"><strong>Scale adaptation:</strong> The denominator $$\sqrt{\hat{v}_t} + \epsilon$$ normalizes by gradient magnitude, so parameters with large gradient variance take smaller steps</span><span data-lang-content="zh"><strong>尺度适应：</strong>分母 $$\sqrt{\hat{v}_t} + \epsilon$$ 按梯度大小标准化，所以梯度方差大的参数采取较小的步骤</span></li>
+                <li><span data-lang-content="en"><strong>Robustness:</strong> Works with non-stationary objectives and sparse gradients</span><span data-lang-content="zh"><strong>鲁棒性：</strong>适用于非平稳目标和稀疏梯度</span></li>
+            </ul>
+
+            <h3 data-lang-content="en">Default Hyperparameters</h3>
+            <h3 data-lang-content="zh">默认超参数</h3>
+
+            <table class="convergence-table">
+                <thead>
+                    <tr>
+                        <th data-lang-content="en">Hyperparameter</th>
+                        <th data-lang-content="zh">超参数</th>
+                        <th data-lang-content="en">Default Value</th>
+                        <th data-lang-content="zh">默认值</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>$$\alpha$$ (learning rate)</td>
+                        <td></td>
+                        <td>$$0.001$$</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>$$\beta_1$$ (mean decay)</td>
+                        <td></td>
+                        <td>$$0.9$$</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>$$\beta_2$$ (variance decay)</td>
+                        <td></td>
+                        <td>$$0.999$$</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>$$\epsilon$$ (small constant)</td>
+                        <td></td>
+                        <td>$$10^{-8}$$</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note">
+                <div class="note-title" data-lang-content="en">Why These Values?</div>
+                <div class="note-title" data-lang-content="zh">为什么选择这些值？</div>
+
+                <p data-lang-content="en">
+                    $$\beta_1 = 0.9$$ creates a short-term momentum window (effective history $$\approx 10$$ steps). $$\beta_2 = 0.999$$ creates a long-term second moment window (effective history $$\approx 1000$$ steps), providing stability in the adaptive scaling factor.
+                </p>
+                <p data-lang-content="zh">
+                    $$\beta_1 = 0.9$$ 创建短期动量窗口（有效历史 $$\approx 10$$ 步）。$$\beta_2 = 0.999$$ 创建长期二阶矩窗口（有效历史 $$\approx 1000$$ 步），在自适应缩放因子中提供稳定性。
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 10: Summary Table -->
+        <section id="summary">
+            <h2 data-lang-content="en">10. Summary Comparison</h2>
+            <h2 data-lang-content="zh">10. 总结比较</h2>
+
+            <table class="convergence-table">
+                <thead>
+                    <tr>
+                        <th data-lang-content="en">Method</th>
+                        <th data-lang-content="zh">方法</th>
+                        <th data-lang-content="en">Key Feature</th>
+                        <th data-lang-content="zh">关键特性</th>
+                        <th data-lang-content="en">Convergence</th>
+                        <th data-lang-content="zh">收敛性</th>
+                        <th data-lang-content="en">Best For</th>
+                        <th data-lang-content="zh">最适合</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>GD</td>
+                        <td></td>
+                        <td data-lang-content="en">Full-batch gradients</td>
+                        <td data-lang-content="zh">全批次梯度</td>
+                        <td>$$O(1/T)$$</td>
+                        <td></td>
+                        <td data-lang-content="en">Small convex problems</td>
+                        <td data-lang-content="zh">小型凸问题</td>
+                    </tr>
+                    <tr>
+                        <td>SGD</td>
+                        <td></td>
+                        <td data-lang-content="en">Mini-batch, unbiased</td>
+                        <td data-lang-content="zh">小批次、无偏</td>
+                        <td>$$O(1/\sqrt{T})$$</td>
+                        <td></td>
+                        <td data-lang-content="en">Large-scale learning</td>
+                        <td data-lang-content="zh">大规模学习</td>
+                    </tr>
+                    <tr>
+                        <td>Momentum</td>
+                        <td></td>
+                        <td data-lang-content="en">Velocity accumulation</td>
+                        <td data-lang-content="zh">速度累积</td>
+                        <td>$$O(\rho^T)$$ improved</td>
+                        <td></td>
+                        <td data-lang-content="en">Ill-conditioned problems</td>
+                        <td data-lang-content="zh">病态问题</td>
+                    </tr>
+                    <tr>
+                        <td>NAG</td>
+                        <td></td>
+                        <td data-lang-content="en">Look-ahead gradient</td>
+                        <td data-lang-content="zh">前瞻梯度</td>
+                        <td>$$O((\sqrt{\kappa})^{-T})$$</td>
+                        <td></td>
+                        <td data-lang-content="en">Smooth, strongly convex</td>
+                        <td data-lang-content="zh">平滑、强凸</td>
+                    </tr>
+                    <tr>
+                        <td>Adam</td>
+                        <td></td>
+                        <td data-lang-content="en">Adaptive per-param rates</td>
+                        <td data-lang-content="zh">自适应参数率</td>
+                        <td>$$O(1/\sqrt{T})$$ empirical</td>
+                        <td></td>
+                        <td data-lang-content="en">Deep learning (default)</td>
+                        <td data-lang-content="zh">深度学习（默认）</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p data-lang-content="en">
+                Advanced Methods Notebook • Gradient Descent Convergence • 2026
+            </p>
+            <p data-lang-content="zh">
+                高级方法笔记本 • 梯度下降收敛 • 2026
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Language toggle functionality
+        const langButtons = document.querySelectorAll('.lang-btn');
+        const body = document.body;
+
+        // Check for saved language preference
+        const savedLang = localStorage.getItem('preferred-lang') || 'en';
+        body.classList.remove('en', 'zh');
+        body.classList.add(savedLang);
+        body.setAttribute('data-lang', savedLang);
+
+        langButtons.forEach(button => {
+            button.classList.toggle('active', button.dataset.lang === savedLang);
+
+            button.addEventListener('click', () => {
+                const lang = button.dataset.lang;
+                body.classList.remove('en', 'zh');
+                body.classList.add(lang);
+                body.setAttribute('data-lang', lang);
+
+                langButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                localStorage.setItem('preferred-lang', lang);
+            });
+        });
+
+        // Ensure MathJax processes the page
+        if (window.MathJax) {
+            window.MathJax.typesetPromise().catch(err => console.log(err));
+        }
+    </script>
+</body>
+</html>

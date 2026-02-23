@@ -46,6 +46,18 @@
 .evo-step.now .evo-name{color:var(--paper)}
 .evo-desc{font-size:10px;color:var(--ink-ghost);margin-top:3px;line-height:1.3}
 .evo-step.now .evo-desc{color:rgba(248,244,236,.6)}
+/* intro cards */
+.intro-card{border:1px solid var(--parchment);border-radius:4px;padding:20px;background:var(--paper);margin:10px 0}
+.intro-card .card-label{font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--leather);margin-bottom:10px;display:block}
+.intro-card p{font-size:13.5px;line-height:1.65;color:var(--ink-faded);margin-bottom:0}
+.card-divider{border:none;height:0;margin:0;padding:0}
+.resources-section h2{font-family:var(--serif);font-size:24px;font-weight:400;color:var(--ink);margin-bottom:16px;margin-top:0}
+.resources-section h3{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--leather);margin-top:20px;margin-bottom:12px;padding-top:8px}
+.resource-list{list-style:none;padding:0;margin:0}
+.resource-list li{font-size:13.5px;line-height:1.7;color:var(--ink-faded);margin-bottom:12px;padding-left:16px;position:relative}
+.resource-list li:before{content:'→';position:absolute;left:0;color:var(--gold)}
+.resource-list a{color:var(--red);text-decoration:none;border-bottom:1px solid var(--red-soft,rgba(181,55,42,.3))}
+.resource-list a:hover{border-bottom-color:var(--red)}
 @media(max-width:860px){
   .sw-row{grid-template-columns:1fr}
   .evo{flex-wrap:wrap}
@@ -61,7 +73,7 @@
     <a class="sb-link" href="lpa.html"><span class="sb-num">01</span> Latent Profile Analysis</a>
     <div class="sb-cat">Computational Social Science</div>
     <div class="sb-subcat">Foundations</div>
-    <a class="sb-link" href="machine-learning.html"><span class="sb-num">01</span> Machine Learning</a>
+    <a class="sb-link" href="machine-learning.html" style="display:none"><span class="sb-num">01</span> Machine Learning</a>
     <a class="sb-link active" href="llm.html"><span class="sb-num">02</span> LLM &amp; NLP</a>
     <a class="sb-link" href="text-analysis.html"><span class="sb-num">03</span> Text as Data</a>
     <a class="sb-link" href="theoretical-modeling.html"><span class="sb-num">04</span> Theoretical Modeling</a>
@@ -90,6 +102,34 @@
         <div data-lang="zh"><p class="subtitle">笔记整理自 CSE 5525, The Ohio State University &middot; <a href="https://shocheen.github.io/cse-5525-fall-2025/lectures/" target="_blank" style="color:var(--red);border-bottom:1px solid var(--red)">课程讲义</a> &middot; <a href="https://sites.google.com/view/sachinkumar" target="_blank" style="color:var(--red);border-bottom:1px solid var(--red)">Prof. Sachin Kumar</a></p></div>
       </div>
 
+      <!-- INTRO CARDS -->
+      <div class="section">
+        <div class="intro-card">
+          <div class="card-label" data-lang="en">What Is This Course?</div>
+          <div class="card-label" data-lang="zh">这门课讲什么？</div>
+          <div data-lang="en"><p>This course explores how machines understand, generate, and work with human language. We cover the journey from simple word counts to transformer-based large language models (LLMs), including embeddings, attention mechanisms, fine-tuning, and responsible deployment. The focus is on building intuition for how these systems work and when to use them in social science research.</p></div>
+          <div data-lang="zh"><p>这门课探索机器如何理解、生成和处理人类语言。我们涵盖从简单词频统计到基于 Transformer 的大语言模型（LLMs）的全过程，包括词嵌入、注意力机制、微调和负责任的部署。重点是为这些系统的工作原理和在社会科学研究中的使用时机建立直觉。</p></div>
+        </div>
+      </div>
+      <div class="card-divider"></div>
+      <div class="section">
+        <div class="intro-card">
+          <div class="card-label" data-lang="en">Prerequisites</div>
+          <div class="card-label" data-lang="zh">前置知识</div>
+          <div data-lang="en"><p>No prior NLP experience needed. Familiarity with basic statistics and some programming (Python preferred) is helpful. Understanding of linear algebra basics (vectors, matrices) will help with embedding concepts but is not required — we explain everything from scratch.</p></div>
+          <div data-lang="zh"><p>不需要 NLP 经验。了解基础统计学和一些编程（最好是 Python）会有帮助。理解线性代数基础（向量、矩阵）有助于理解嵌入概念，但不是必需的——我们从零开始讲解一切。</p></div>
+        </div>
+      </div>
+      <div class="card-divider"></div>
+      <div class="section">
+        <div class="intro-card">
+          <div class="card-label" data-lang="en">Software</div>
+          <div class="card-label" data-lang="zh">软件工具</div>
+          <div data-lang="en"><p>Python is the primary language: Hugging Face Transformers for pre-trained models, spaCy and NLTK for text processing, PyTorch for deep learning. R users can use the text and quanteda packages. Google Colab provides free GPU access for training.</p></div>
+          <div data-lang="zh"><p>Python 是主要语言：Hugging Face Transformers 用于预训练模型，spaCy 和 NLTK 用于文本处理，PyTorch 用于深度学习。R 用户可以使用 text 和 quanteda 包。Google Colab 提供免费 GPU 访问用于训练。</p></div>
+        </div>
+      </div>
+      <hr class="section-divider">
 
       <!-- INTRO -->
       <div class="section">
@@ -183,6 +223,7 @@
             <p>The simplest way to represent a word is <strong>one-hot encoding</strong>: if your vocabulary has 50,000 words, each word becomes a vector with 49,999 zeros and one 1. Problem: "cat" and "dog" look equally different from each other as "cat" and "refrigerator" — there's no sense of meaning.</p>
             <div class="analogy">Imagine giving every student a locker number. Locker #234 and #235 are next to each other, but that tells you nothing about whether those students are similar. One-hot encoding is like locker numbers — arbitrary labels with no meaning.</div>
             <p><strong>Word2Vec</strong> (Google, 2013) solved this with a brilliant insight: train a simple neural network to predict surrounding words from a center word (or vice versa). The byproduct? Each word gets a dense vector (typically 300 numbers) where <em>similar words are close together</em>.</p>
+            <div class="analogy">A 300-dimensional vector = describing a word using 300 numerical features. Like describing fruit with (sweetness, sourness, hardness, color, ...) — more dimensions = more precise description.</div>
             <div class="formula">vec("king") &minus; vec("man") + vec("woman") &asymp; vec("queen")</div>
             <p>This "word arithmetic" works because the model has learned that gender is a consistent direction in the vector space. <strong>GloVe</strong> achieves similar results by analyzing how often words co-occur across an entire corpus.</p>
             <div class="eg">"Paris" is to "France" as "Tokyo" is to "Japan" — Word2Vec encodes the capital-country relationship as a geometric pattern in vector space.</div>
@@ -191,6 +232,7 @@
             <p>表示一个词最简单的方式是 <strong>One-Hot 编码</strong>：如果词汇表有 50,000 个词，每个词变成一个有 49,999 个零和 1 个一的向量。问题是："猫"和"狗"看起来跟"猫"和"冰箱"一样不同——完全没有语义信息。</p>
             <div class="analogy">想象给每个学生分配一个储物柜号。234 号和 235 号挨着，但这完全不能说明这两个学生相似。One-Hot 编码就像储物柜号——没有含义的随机标签。</div>
             <p><strong>Word2Vec</strong>（Google, 2013）用一个巧妙的想法解决了这个问题：训练一个简单的神经网络，从中心词预测周围的词（或反过来）。副产品是什么？每个词得到一个稠密的向量（通常 300 个数字），<em>意思相近的词在向量空间中靠得很近</em>。</p>
+            <div class="analogy">300维向量 = 用300个数值特征描述一个词。就像用（甜度、酸度、硬度、颜色……）描述水果——维度越多，描述越精确。</div>
             <div class="formula">vec("国王") &minus; vec("男人") + vec("女人") &asymp; vec("女王")</div>
             <p>这种"词汇算术"之所以成立，是因为模型学到了性别是向量空间中一个一致的方向。<strong>GloVe</strong> 通过分析整个语料库中词的共现频率，达到类似效果。</p>
             <div class="eg">"巴黎"之于"法国"就像"东京"之于"日本"——Word2Vec 把首都-国家关系编码成了向量空间中的几何模式。</div>
@@ -205,12 +247,14 @@
           <div data-lang="en">
             <p>Before a model can process text, it needs to break it into pieces called <strong>tokens</strong>. Split by words? Problem: new words like "ChatGPT" aren't in the dictionary. Split by characters? Every word becomes a very long sequence, making learning hard.</p>
             <p>The modern solution is <strong>subword tokenization</strong> (e.g., BPE — Byte Pair Encoding): start with individual characters, then repeatedly merge the most frequent pairs. Common words stay whole ("the", "and"), while rare words get split into meaningful pieces ("unbelievable" → "un" + "believ" + "able"). This means "un-" and "-able" can be shared across many words.</p>
+            <div class="analogy">Visual example: 'unbelievable' → 'un' + 'believ' + 'able'. BPE starts from individual characters and repeatedly merges the most frequent pair until reaching vocabulary size.</div>
             <div class="analogy">It's like how Chinese characters work: you don't memorize a unique symbol for every concept. Instead, you combine radicals — "木" (wood) appears in "林" (forest) and "桌" (table). Subword tokenization does the same for English.</div>
             <p>GPT uses BPE, BERT uses WordPiece (similar idea), and <strong>SentencePiece</strong> works for any language — including Chinese, Japanese, and Korean, which don't use spaces between words.</p>
           </div>
           <div data-lang="zh">
             <p>模型处理文本之前，需要先把它拆成叫做 <strong>token</strong> 的小块。按词拆？问题是："ChatGPT"这样的新词不在词典里。按字符拆？每个词变成很长的序列，学习非常困难。</p>
             <p>现代的解决方案是<strong>子词分词</strong>（如 BPE——字节对编码）：从单个字符开始，反复合并最频繁出现的相邻对。常见词保持完整（"the"、"and"），罕见词被拆成有意义的片段（"unbelievable" → "un" + "believ" + "able"）。这意味着"un-"和"-able"可以在多个词之间共享。</p>
+            <div class="analogy">可视化例子：'unbelievable' → 'un' + 'believ' + 'able'。BPE 从单个字符开始，反复合并最常见的字符对，直到达到词表大小。</div>
             <div class="analogy">就像中文汉字的工作方式：你不需要为每个概念记一个独特的符号，而是组合偏旁部首——"木"（木头）出现在"林"（森林）和"桌"（桌子）中。子词分词对英语做了同样的事。</div>
             <p>GPT 使用 BPE，BERT 使用 WordPiece（类似思路），而 <strong>SentencePiece</strong> 适用于任何语言——包括中文、日语和韩语这些词之间不用空格的语言。</p>
           </div>
@@ -258,6 +302,7 @@
           <div data-lang="en">
             <p>The 2017 paper that changed everything. The key idea is <strong>self-attention</strong>: instead of reading text one word at a time (like older models), every word can directly look at every other word in the sentence at once.</p>
             <p>How? Each word creates three things: a <strong>Query</strong> ("what am I looking for?"), a <strong>Key</strong> ("what do I contain?"), and a <strong>Value</strong> ("what information do I carry?"). Attention scores are computed by matching Queries with Keys, then using those scores to weight the Values:</p>
+            <div class="analogy">Q = your question ('what am I looking for?'), K = each word's label ('what do I offer?'), V = each word's information ('here's my content'). QK<sup>T</sup> scores how relevant each word is to the question. Softmax turns scores into weights summing to 1. √d prevents dot products from getting too large and making softmax output nearly one-hot.</div>
             <div class="formula">Attention(Q, K, V) = softmax(QK&#x1D40; / &radic;d) &times; V</div>
             <div class="analogy">Imagine a classroom where every student can whisper to every other student at the same time. Each student asks a question (Query), everyone else holds up a sign saying how relevant they are (Key), and the asker collects answers (Value) weighted by relevance. That's self-attention.</div>
             <p><strong>Multi-Head Attention</strong> runs this process multiple times in parallel (usually 8-16 "heads"), so the model can pay attention to different types of relationships simultaneously — one head might focus on grammar, another on meaning.</p>
@@ -265,9 +310,14 @@
           <div data-lang="zh">
             <p>2017 年改变一切的论文。核心思想是<strong>自注意力（Self-Attention）</strong>：不再像老模型那样逐词阅读文本，而是让每个词同时直接看到句子中的所有其他词。</p>
             <p>怎么做到的？每个词生成三样东西：<strong>Query</strong>（"我在找什么？"）、<strong>Key</strong>（"我包含什么？"）、<strong>Value</strong>（"我携带什么信息？"）。通过 Query 和 Key 的匹配计算注意力分数，然后用分数对 Value 加权求和：</p>
+            <div class="analogy">Q = 你的提问（'我在找什么？'），K = 每个词的标签（'我能提供什么？'），V = 每个词的信息（'这是我的内容'）。QK<sup>T</sup> 计算每个词与提问的相关度。Softmax 把分数变成加起来等于 1 的权重。√d 防止点积过大导致 softmax 输出接近 one-hot。</div>
             <div class="formula">Attention(Q, K, V) = softmax(QK&#x1D40; / &radic;d) &times; V</div>
             <div class="analogy">想象一个教室里，每个学生可以同时跟所有其他学生低声交流。每个学生提出一个问题（Query），其他人举牌表示自己的相关性（Key），提问者根据相关性收集答案（Value）。这就是自注意力。</div>
             <p><strong>Multi-Head Attention</strong> 把这个过程并行跑多次（通常 8-16 个"头"），这样模型可以同时关注不同类型的关系——一个头可能关注语法，另一个关注语义。</p>
+            <p style="margin:8px 0 4px"><a href="guides/llm-attention-math.html" style="font-family:var(--sans);font-size:12px;color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-soft)" data-lang="zh">了解更多：多头注意力完整推导、位置编码数学与复杂度分析 ↗</a></p>
+          </div>
+          <div data-lang="en" style="display:none">
+            <p style="margin:8px 0 4px"><a href="guides/llm-attention-math.html" style="font-family:var(--sans);font-size:12px;color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-soft)">Learn more: multi-head attention derivation, positional encoding math & complexity ↗</a></p>
           </div>
         </div>
 
@@ -341,12 +391,14 @@
           <div data-lang="en">
             <p>One of the most surprising discoveries in AI: model performance improves <em>predictably</em> as you increase three things — model size, training data, and compute. Double the parameters? Performance improves by a predictable amount. This is called a <strong>scaling law</strong>.</p>
             <p>Even more surprising: at certain scale thresholds, models suddenly gain abilities they completely lacked before — multi-step reasoning, complex math, understanding jokes. These <strong>emergent abilities</strong> can't be predicted from smaller models. It's as if the model "clicks" at a certain size.</p>
+            <div class="analogy">Concrete example: GPT-2 (1.5B parameters) can't do arithmetic. GPT-3 (175B) suddenly can. This is emergence — abilities that appear abruptly at scale thresholds, like water suddenly freezing at 0°C.</div>
             <div class="analogy">Think of learning a language: for months you understand nothing, then suddenly things start clicking and you can hold a conversation. LLMs seem to experience similar "phase transitions" as they scale up.</div>
             <p>The <strong>Chinchilla law</strong> (DeepMind, 2022) added an important insight: many early models were too big for their training data. The optimal strategy is to scale model size and data <em>equally</em>.</p>
           </div>
           <div data-lang="zh">
             <p>AI 领域最令人惊讶的发现之一：模型性能随着三个因素<em>可预测地</em>提升——模型大小、训练数据量、计算量。参数翻倍？性能提升可预测的幅度。这就是<strong>缩放定律</strong>。</p>
             <p>更惊人的是：在某些规模临界点上，模型突然获得之前完全没有的能力——多步推理、复杂数学、理解笑话。这些<strong>涌现能力</strong>无法从小模型的表现中预测。就好像模型在某个大小上"开窍"了。</p>
+            <div class="analogy">具体例子：GPT-2（15亿参数）不会做算术。GPT-3（1750亿）突然可以了。这就是涌现——能力在规模阈值处突然出现，就像水在 0°C 突然结冰。</div>
             <div class="analogy">想想学外语的过程：几个月什么都听不懂，然后突然有一天开始"顿悟"，能进行对话了。LLM 在规模扩大时似乎经历类似的"相变"。</div>
             <p><strong>Chinchilla 定律</strong>（DeepMind, 2022）补充了一个重要发现：很多早期模型对于它们的训练数据来说太大了。最优策略是让模型大小和数据量<em>等比例</em>增长。</p>
           </div>
@@ -384,6 +436,7 @@
             <p>A raw GPT model is like a very well-read person who only knows how to continue a conversation, but doesn't know how to <em>help</em> you. Two more training stages fix this:</p>
             <p><strong>Step 1 — Supervised Fine-Tuning (SFT):</strong> Show the model thousands of examples of "good assistant behavior" — questions paired with high-quality answers. This teaches it to respond helpfully instead of just completing text. InstructGPT used only ~13,000 such examples yet dramatically improved response quality.</p>
             <p><strong>Step 2 — RLHF (Reinforcement Learning from Human Feedback):</strong> Human preferences are subtle — it's hard to write down exactly what makes a "good" answer. So instead, humans rank multiple model responses ("Response A is better than Response B"), and the model learns from these preferences.</p>
+            <div class="analogy">Three steps: (1) Humans rank multiple model outputs (A is better than B). (2) Train a reward model to learn these preferences. (3) Use the reward model to guide the language model's optimization — like having a manager review drafts.</div>
             <div class="analogy">SFT is like showing a new employee examples of good customer service emails. RLHF is like having a manager review their drafts and say "this version is better" — the employee gradually learns the company's communication style without anyone writing explicit rules.</div>
             <p><strong>DPO (Direct Preference Optimization)</strong> is a simpler alternative to RLHF: skip the reward model, directly optimize from preference pairs. Mathematically equivalent, but much easier to implement.</p>
           </div>
@@ -391,8 +444,13 @@
             <p>原始 GPT 模型就像一个博览群书的人，只会接着别人说的话往下讲，但不知道怎么<em>帮助</em>你。两个额外的训练阶段解决了这个问题：</p>
             <p><strong>第一步——有监督微调（SFT）：</strong>给模型看成千上万个"好助手行为"的示例——问题配上高质量回答。这教会它有用地回答，而不是只续写文本。InstructGPT 只用了约 13,000 条这样的示例，就大幅提升了回答质量。</p>
             <p><strong>第二步——RLHF（基于人类反馈的强化学习）：</strong>人类偏好是微妙的——很难明确写下什么是"好"回答。所以让人类对模型的多个回答排名（"回答 A 比回答 B 好"），模型从这些偏好中学习。</p>
+            <div class="analogy">三个步骤：(1) 人类给多个模型输出排序（A 比 B 好）。(2) 训练一个打分模型学会这些偏好。(3) 用打分模型指导语言模型优化——像经理审阅草稿一样。</div>
             <div class="analogy">SFT 就像给新员工看优秀客服邮件的范例。RLHF 就像让经理审阅他们的草稿说"这个版本更好"——员工逐渐学会公司的沟通风格，而不需要任何人写明确的规则。</div>
             <p><strong>DPO（直接偏好优化）</strong>是 RLHF 的更简洁替代方案：跳过奖励模型，直接从偏好对中优化。数学上等价，但实现简单得多。</p>
+            <p style="margin:8px 0 4px"><a href="guides/llm-training-pipeline.html" style="font-family:var(--sans);font-size:12px;color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-soft)" data-lang="zh">了解更多：交叉熵推导、PPO 目标函数与 DPO Bradley-Terry 模型 ↗</a></p>
+          </div>
+          <div data-lang="en" style="display:none">
+            <p style="margin:8px 0 4px"><a href="guides/llm-training-pipeline.html" style="font-family:var(--sans);font-size:12px;color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-soft)">Learn more: cross-entropy derivation, PPO objective & DPO Bradley-Terry model ↗</a></p>
           </div>
         </div>
 
@@ -640,6 +698,27 @@
         </div>
       </div>
 
+      <hr class="section-divider">
+      <div class="section resources-section">
+        <h2 data-lang="en">Resources</h2>
+        <h2 data-lang="zh">资源</h2>
+        <h3 data-lang="en">Key References</h3>
+        <h3 data-lang="zh">关键参考</h3>
+        <ul class="resource-list">
+          <li>Jurafsky, D., &amp; Martin, J. H. (2024). <em>Speech and Language Processing</em> (3rd ed. draft). Stanford University.</li>
+          <li>Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., &amp; Polosukhin, I. (2017). Attention is all you need. <em>Advances in Neural Information Processing Systems, 30</em>.</li>
+          <li>Mikolov, T., Chen, K., Corrado, G., &amp; Dean, J. (2013). Efficient estimation of word representations in vector space. <em>arXiv preprint arXiv:1301.3781</em>.</li>
+          <li>Devlin, J., Chang, M.-W., Lee, K., &amp; Toutanova, K. (2019). BERT: Pre-training of deep bidirectional transformers for language understanding. <em>Proceedings of NAACL-HLT</em>, 4171–4186.</li>
+          <li>Grimmer, J., Roberts, M. E., &amp; Stewart, B. M. (2022). <em>Text as Data: A New Framework for Machine Learning and the Social Sciences</em>. Princeton University Press.</li>
+        </ul>
+        <h3 data-lang="en">Learn More</h3>
+        <h3 data-lang="zh">了解更多</h3>
+        <ul class="resource-list">
+          <li><a href="guides/llm-attention-math.html">Attention Mechanism Mathematics</a> — Query, Key, Value matrices and scaled dot-product attention</li>
+          <li><a href="guides/llm-training-pipeline.html">LLM Training Pipeline</a> — Pre-training, fine-tuning, and RLHF from first principles</li>
+        </ul>
+      </div>
+
       <!-- PAGE NAV -->
       <div class="page-nav">
         <a href="machine-learning.html">
@@ -657,15 +736,17 @@
 </div>
 
 <script>
-function setLang(lang){
-  document.body.className=lang==='zh'?'zh':'';
-  document.getElementById('btn-en').className='lang-btn'+(lang==='en'?' active':'');
-  document.getElementById('btn-zh').className='lang-btn'+(lang==='zh'?' active':'');
-  localStorage.setItem('selectedLang',lang);
+function setLang(lang) {
+  document.body.className = lang;
+  document.getElementById('btn-en').style.fontWeight = (lang === 'en') ? '600' : '400';
+  document.getElementById('btn-zh').style.fontWeight = (lang === 'zh') ? '600' : '400';
+  document.getElementById('btn-en').style.color = (lang === 'en') ? 'var(--red)' : 'var(--ink-faded)';
+  document.getElementById('btn-zh').style.color = (lang === 'zh') ? 'var(--red)' : 'var(--ink-faded)';
+  localStorage.setItem('preferred-lang', lang);
 }
-window.addEventListener('DOMContentLoaded',function(){
-  var lang=localStorage.getItem('selectedLang')||'zh';
-  setLang(lang);
+window.addEventListener('load', function() {
+  const saved = localStorage.getItem('preferred-lang') || 'zh';
+  setLang(saved);
 });
 </script>
 </body>

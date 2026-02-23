@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang="en">IV Mechanics: Relevance, Exogeneity &amp; Overidentification | Empirical Modeling</title>
+    <title data-lang="zh">IV 机制：相关性、外生性与过度识别 | 经验建模</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="guide-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="zh">
+    <div class="guide-layout">
+        <div class="guide-topbar">
+            <div class="guide-breadcrumb">
+                <a href="../empirical-modeling.html" data-lang="en">Empirical Modeling</a>
+                <a href="../empirical-modeling.html" data-lang="zh">经验建模</a>
+                <span class="sep">/</span>
+                <span data-lang="en">IV Mechanics: Relevance, Exogeneity & Overidentification</span>
+                <span data-lang="zh">IV 机制：相关性、外生性与过度识别</span>
+            </div>
+            <div class="guide-lang-toggle">
+                <button class="guide-lang-btn active" data-lang="zh">中文</button>
+                <button class="guide-lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+
+        <div class="guide-content-wrapper">
+            <div class="guide-content">
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="en">Back to Empirical Modeling</a>
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="zh">返回经验建模</a>
+
+                <div class="guide-header">
+                    <div class="guide-tag">
+                        <span data-lang="en">ZERO-BASE FRIENDLY · FROM FIRST PRINCIPLES</span>
+                        <span data-lang="zh">零基础友好 · 从首原理</span>
+                    </div>
+                    <h1>
+                        <span data-lang="en">IV Mechanics: Relevance, Exogeneity & Overidentification</span>
+                        <span data-lang="zh">IV 机制：相关性、外生性与过度识别</span>
+                    </h1>
+                    <p>
+                        <span data-lang="en">When and why instrumental variables work (and fail) — from two-stage least squares to diagnostic tests.</span>
+                        <span data-lang="zh">工具变量何时以及为什么有效（以及何时失败）——从两阶段最小二乘法到诊断检验。</span>
+                    </p>
+                </div>
+
+                <div class="guide-section">
+        <h2 data-lang="en">1. The Problem: When X and Y Cause Each Other</h2>
+        <h2 data-lang="zh">1. 问题：当X和Y相互影响时</h2>
+
+        <p data-lang="en">
+          Imagine you want to study the effect of education on wages. Simple linear regression says: run OLS of wages on years of schooling, and you get the causal effect. But here's the catch:
+        </p>
+        <p data-lang="zh">
+          想象你想要研究教育对工资的影响。简单的线性回归说：对年份进行工资的OLS回归，你就得到因果效应。但这里有个问题：
+        </p>
+
+        <div class="card-row">
+          <div class="card">
+            <div class="card-tag" data-lang="en">DIRECTION 1</div>
+            <div class="card-tag" data-lang="zh">方向 1</div>
+            <h4 data-lang="en">Education → Wages (what we want)</h4>
+            <h4 data-lang="zh">教育 → 工资（我们想要的）</h4>
+            <p data-lang="en">
+              More education may lead to higher earnings because you learn valuable skills.
+            </p>
+            <p data-lang="zh">
+              更多教育可能导致更高的收入，因为你学到了有价值的技能。
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-tag" data-lang="en">DIRECTION 2</div>
+            <div class="card-tag" data-lang="zh">方向 2</div>
+            <h4 data-lang="en">Ability → Both Education and Wages</h4>
+            <h4 data-lang="zh">能力 → 教育和工资</h4>
+            <p data-lang="en">
+              High-ability people are more likely to stay in school (earning more education) AND earn higher wages anyway, due to talent.
+            </p>
+            <p data-lang="zh">
+              高能力的人更有可能留在学校（获得更多教育）AND由于天赋而获得更高的工资。
+            </p>
+          </div>
+        </div>
+
+        <p data-lang="en">
+          The second direction is the problem. Ability is <strong>unobserved</strong> (we don't have it in our dataset), but it influences both education and wages. When we run OLS, we measure a mix of:
+        </p>
+        <p data-lang="zh">
+          第二个方向是问题所在。能力是<strong>未观察到的</strong>（我们的数据集中没有它），但它影响教育和工资。当我们运行OLS时，我们测量的是：
+        </p>
+
+        <div class="math-box">
+          <strong data-lang="en">OLS coefficient = True education effect + Bias from ability</strong>
+          <br>
+          <strong data-lang="zh">OLS系数 = 真实教育效应 + 能力偏差</strong>
+        </div>
+
+        <p data-lang="en">
+          The diagram in words:
+        </p>
+        <p data-lang="zh">
+          用词语表示的图：
+        </p>
+
+        <div class="proof-box">
+          <p data-lang="en">
+            <strong>Unobserved Ability</strong> (A) → <strong>Years of Education</strong> (X) → <strong>Annual Wages</strong> (Y)
+          </p>
+          <p data-lang="zh">
+            <strong>未观察到的能力</strong> (A) → <strong>教育年限</strong> (X) → <strong>年薪</strong> (Y)
+          </p>
+          <p data-lang="en">
+            But also: <strong>Unobserved Ability</strong> (A) → <strong>Annual Wages</strong> (Y) directly
+          </p>
+          <p data-lang="zh">
+            但也是：<strong>未观察到的能力</strong> (A) → <strong>年薪</strong> (Y) 直接
+          </p>
+          <p data-lang="en">
+            This creates a "backdoor" path from X to Y that doesn't represent the causal effect of education.
+          </p>
+          <p data-lang="zh">
+            这创建了从X到Y的"后门"路径，不代表教育的因果效应。
+          </p>
+        </div>
+
+        <p data-lang="en">
+          This is the <strong>endogeneity problem</strong>: the regressor (education) is correlated with the error term (which includes ability). Standard OLS will give you a biased, misleading answer.
+        </p>
+        <p data-lang="zh">
+          这是<strong>内生性问题</strong>：回归变量（教育）与误差项（包括能力）相关。标准OLS会给你一个有偏差的、误导的答案。
+        </p>
+      </div>
+
+      <!-- 2. What is an Instrument? The Lever Analogy -->
+      <div class="guide-section">
+        <h2 data-lang="en">2. What is an Instrument? The Lever Metaphor</h2>
+        <h2 data-lang="zh">2. 什么是工具变量？杠杆比喻</h2>
+
+        <p data-lang="en">
+          An <strong>instrument</strong> is like a lever that pushes on X, but doesn't directly push on Y. Think of it this way:
+        </p>
+        <p data-lang="zh">
+          <strong>工具变量</strong>就像一个推动X的杠杆，但不直接推动Y。这样想象：
+        </p>
+
+        <div class="step-box">
+          <div class="step-label" data-lang="en">Imagine a Policy Shock</div>
+          <div class="step-label" data-lang="zh">想象一个政策冲击</div>
+          <p data-lang="en">
+            In 1980, a country passed a compulsory schooling law: children <strong>must</strong> stay in school until age 16 (or 17, depending on the state). Before this, some kids left school at 14 or 15.
+          </p>
+          <p data-lang="zh">
+            在1980年，一个国家通过了强制义务教育法：儿童<strong>必须</strong>留在学校直到16岁（或17岁，取决于州）。在此之前，一些孩子在14或15岁时离开学校。
+          </p>
+          <p data-lang="en">
+            This law <strong>changed the amount of education people received</strong>, but it did so <strong>not because they were more able</strong>—the law treated all kids the same way.
+          </p>
+          <p data-lang="zh">
+            这项法律<strong>改变了人们接受的教育数量</strong>，但这样做<strong>不是因为他们更有能力</strong>——该法律以相同的方式对待所有儿童。
+          </p>
+        </div>
+
+        <p data-lang="en">
+          This compulsory schooling law is a perfect <strong>instrument (Z)</strong> because:
+        </p>
+        <p data-lang="zh">
+          这项强制义务教育法是一个完美的<strong>工具变量 (Z)</strong>，因为：
+        </p>
+
+        <div class="checklist">
+          <li data-lang="en">
+            <strong>Relevance:</strong> The law strongly predicts how much education you get. Kids born after the law must stay in school longer, so they have more education.
+          </li>
+          <li data-lang="zh">
+            <strong>相关性：</strong>该法律强烈预测你获得多少教育。在法律之后出生的孩子必须留在学校更长时间，所以他们有更多教育。
+          </li>
+          <li data-lang="en">
+            <strong>Exclusion Restriction:</strong> The law affects wages <em>only through</em> its effect on education, not through any other channel. Someone born in 1970 doesn't earn more wages just because of the law—they earn more because they have more schooling (which they got because of the law).
+          </li>
+          <li data-lang="zh">
+            <strong>排斥限制：</strong>该法律仅<em>通过</em>其对教育的影响来影响工资，而不是通过任何其他渠道。1970年出生的人不会因为该法律而赚取更多工资——他们赚取更多是因为他们有更多的学校教育（他们因为该法律而获得的）。
+          </li>
+        </div>
+
+        <p data-lang="en">
+          Notice that the compulsory schooling law <strong>doesn't use ability at all</strong>. It's "as good as random"—it creates variation in education that's independent of ability. This is the magic of instruments.
+        </p>
+        <p data-lang="zh">
+          注意强制义务教育法<strong>根本不使用能力</strong>。它是"和随机一样好的"——它创建了与能力无关的教育变化。这就是工具变量的魔力。
+        </p>
+      </div>
+
+      <!-- 3. Why Instruments Solve the Problem -->
+      <div class="guide-section">
+        <h2 data-lang="en">3. Why Instruments Solve the Endogeneity Problem</h2>
+        <h2 data-lang="zh">3. 为什么工具变量解决内生性问题</h2>
+
+        <p data-lang="en">
+          Going back to our original problem: education is correlated with ability, which biases OLS. But now we have a compulsory schooling law (instrument Z) that:
+        </p>
+        <p data-lang="zh">
+          回到我们原来的问题：教育与能力相关，这对OLS产生偏差。但现在我们有一个强制义务教育法（工具变量Z），它：
+        </p>
+
+        <ul style="padding-left: 26px; margin: 14px 0;">
+          <li data-lang="en">
+            Pushes some people to get more education (those born after the cutoff)
+          </li>
+          <li data-lang="zh">
+            推动一些人获得更多教育（在截止日期后出生的人）
+          </li>
+          <li data-lang="en">
+            Creates this variation in education <strong>independently of ability</strong>
+          </li>
+          <li data-lang="zh">
+            创建这种教育变化<strong>独立于能力</strong>
+          </li>
+          <li data-lang="en">
+            So if people who are forced to go to school earn more, it can't be because they're more able—it must be because they have more education
+          </li>
+          <li data-lang="zh">
+            所以如果被迫上学的人赚取更多，不可能是因为他们更有能力——必定是因为他们有更多教育
+          </li>
+        </ul>
+
+        <div class="finding">
+          <h4 data-lang="en">The Core Logic</h4>
+          <h4 data-lang="zh">核心逻辑</h4>
+          <p data-lang="en">
+            By using the "clean" variation in education (caused only by the law, not by ability), we isolate the true causal effect of education on wages.
+          </p>
+          <p data-lang="zh">
+            通过使用教育中的"干净"变化（仅由法律引起，不是由能力引起），我们隔离了教育对工资的真实因果效应。
+          </p>
+        </div>
+      </div>
+
+      <!-- 4. Stage 1: Finding the Clean Variation -->
+      <div class="guide-section">
+        <h2 data-lang="en">4. Stage 1: Extracting the Clean Variation from the Instrument</h2>
+        <h2 data-lang="zh">4. 第一阶段：从工具变量中提取干净的变化</h2>
+
+        <p data-lang="en">
+          Here's the idea: In stage 1, we run a simple regression of education (X) on the compulsory schooling law (Z). This tells us: "How much extra education does the law give you?"
+        </p>
+        <p data-lang="zh">
+          这里是思路：在第一阶段，我们运行教育(X)对强制义务教育法(Z)的简单回归。这告诉我们："法律给你多少额外教育？"
+        </p>
+
+        <div class="math-box">
+          $$\text{Education}_i = \gamma_0 + \gamma_1 \cdot \text{Law}_i + u_i$$
+        </div>
+
+        <p data-lang="en">
+          <strong>What does this do?</strong> This regression finds the part of education that's explained by the law. Call this the <strong>predicted education,</strong> or $\hat{X}$:
+        </p>
+        <p data-lang="zh">
+          <strong>这做什么？</strong>这个回归找到了由法律解释的教育部分。称这为<strong>预测教育，</strong>或 $\hat{X}$：
+        </p>
+
+        <div class="proof-box">
+          <p data-lang="en">
+            $\hat{X} = \gamma_0 + \gamma_1 \cdot Z$
+          </p>
+          <p data-lang="zh">
+            $\hat{X} = \gamma_0 + \gamma_1 \cdot Z$
+          </p>
+          <p data-lang="en">
+            $\hat{X}$ is the "clean" education—the part caused purely by the law, with no ability mixed in. It's stripped of the ability bias.
+          </p>
+          <p data-lang="zh">
+            $\hat{X}$ 是"干净的"教育——纯粹由法律引起的部分，没有混入能力。它被剥离了能力偏差。
+          </p>
+        </div>
+
+        <p data-lang="en">
+          <strong>Key insight:</strong> When we use $\hat{X}$ instead of the raw X (which includes ability), we're using only the variation in education that the law creates. Since the law doesn't care about ability, this variation is unrelated to ability.
+        </p>
+        <p data-lang="zh">
+          <strong>关键洞察：</strong>当我们使用 $\hat{X}$ 而不是原始X（包括能力）时，我们使用的是法律创建的教育变化。由于法律不关心能力，这种变化与能力无关。
+        </p>
+      </div>
+
+      <!-- 5. Stage 2: Using Clean Variation to Estimate the Causal Effect -->
+      <div class="guide-section">
+        <h2 data-lang="en">5. Stage 2: Estimating Wages from Clean Education</h2>
+        <h2 data-lang="zh">5. 第二阶段：从干净教育估计工资</h2>
+
+        <p data-lang="en">
+          Now that we have clean education ($\hat{X}$), we can run the wage regression:
+        </p>
+        <p data-lang="zh">
+          现在我们有了干净教育($\hat{X}$)，我们可以运行工资回归：
+        </p>
+
+        <div class="math-box">
+          $$\text{Wages}_i = \beta_0 + \beta_1 \cdot \hat{X}_i + e_i$$
+        </div>
+
+        <p data-lang="en">
+          <strong>Why does this work?</strong>
+        </p>
+        <p data-lang="zh">
+          <strong>为什么这有效？</strong>
+        </p>
+
+        <ul style="padding-left: 26px; margin: 14px 0;">
+          <li data-lang="en">
+            We're regressing wages on the <em>law-induced</em> variation in education, not on all of education.
+          </li>
+          <li data-lang="zh">
+            我们在<em>法律引起的</em>教育变化上回归工资，而不是所有教育。
+          </li>
+          <li data-lang="en">
+            This law-induced variation has nothing to do with ability—it's pure exogenous shock.
+          </li>
+          <li data-lang="zh">
+            这种法律引起的变化与能力无关——它是纯粹的外生冲击。
+          </li>
+          <li data-lang="en">
+            So the slope $\beta_1$ measures: for an extra year of education (caused by the law), how much do wages increase?
+          </li>
+          <li data-lang="zh">
+            所以斜率 $\beta_1$ 测量：对于法律引起的额外一年教育，工资增加多少？
+          </li>
+          <li data-lang="en">
+            This is the true causal effect, uncontaminated by ability.
+          </li>
+          <li data-lang="zh">
+            这是真实的因果效应，不受能力污染。
+          </li>
+        </ul>
+
+        <div class="info-box">
+          <div class="label" data-lang="en">Two-Stage Least Squares (2SLS)</div>
+          <div class="label" data-lang="zh">两阶段最小二乘法 (2SLS)</div>
+          <p data-lang="en">
+            <strong>Stage 1:</strong> Predict $\hat{X}$ from the instrument Z
+          </p>
+          <p data-lang="zh">
+            <strong>第一阶段：</strong>从工具变量Z预测 $\hat{X}$
+          </p>
+          <p data-lang="en">
+            <strong>Stage 2:</strong> Regress Y on $\hat{X}$
+          </p>
+          <p data-lang="zh">
+            <strong>第二阶段：</strong>在 $\hat{X}$ 上回归Y
+          </p>
+        </div>
+      </div>
+
+      <!-- 6. The Two Conditions for a Valid Instrument -->
+      <div class="guide-section">
+        <h2 data-lang="en">6. The Two Conditions: What Makes an Instrument Valid?</h2>
+        <h2 data-lang="zh">6. 两个条件：什么使工具变量有效？</h2>
+
+        <p data-lang="en">
+          For 2SLS to work, your instrument must satisfy exactly two conditions. Let's examine them:
+        </p>
+        <p data-lang="zh">
+          为了2SLS有效，你的工具变量必须满足恰好两个条件。让我们检查它们：
+        </p>
+
+        <div class="card-row">
+          <div class="card highlight">
+            <div class="card-tag" data-lang="en">CONDITION 1</div>
+            <div class="card-tag" data-lang="zh">条件 1</div>
+            <h4 data-lang="en">Relevance: Does Z Predict X?</h4>
+            <h4 data-lang="zh">相关性：Z是否预测X？</h4>
+            <p data-lang="en">
+              The instrument must actually affect the endogenous variable. In our example: does the compulsory schooling law actually change education levels?
+            </p>
+            <p data-lang="zh">
+              工具变量必须实际影响内生变量。在我们的例子中：强制义务教育法是否真的改变了教育水平？
+            </p>
+            <p data-lang="en">
+              <strong>How to test:</strong> Run the first-stage regression and check if the coefficient is statistically significant. A rule of thumb: the F-statistic should be > 10.
+            </p>
+            <p data-lang="zh">
+              <strong>如何测试：</strong>运行第一阶段回归并检查系数是否在统计上显著。经验法则：F统计量应该 > 10。
+            </p>
+          </div>
+          <div class="card highlight">
+            <div class="card-tag" data-lang="en">CONDITION 2</div>
+            <div class="card-tag" data-lang="zh">条件 2</div>
+            <h4 data-lang="en">Exclusion Restriction: Does Z Only Affect Y Through X?</h4>
+            <h4 data-lang="zh">排斥限制：Z是否仅通过X影响Y？</h4>
+            <p data-lang="en">
+              The instrument must not directly affect the outcome. It should work only by changing X. In our example: the law doesn't make you smarter or healthier—it just changes how much school you attend.
+            </p>
+            <p data-lang="zh">
+              工具变量不能直接影响结果。它应该只通过改变X来工作。在我们的例子中：法律不会让你更聪明或更健康——它只是改变你上学的时间。
+            </p>
+            <p data-lang="en">
+              <strong>How to test:</strong> You <em>cannot</em> directly test this. You must argue it on theoretical grounds. This is a judgment call based on your knowledge of the problem.
+            </p>
+            <p data-lang="zh">
+              <strong>如何测试：</strong>你<em>无法</em>直接测试这一点。你必须在理论基础上论证它。这是基于你对问题的了解的判断。
+            </p>
+          </div>
+        </div>
+
+        <div class="finding">
+          <h4 data-lang="en">Why Both Conditions Matter</h4>
+          <h4 data-lang="zh">为什么两个条件都很重要</h4>
+          <p data-lang="en">
+            If relevance fails (Z doesn't predict X), you have weak instruments, and your estimate is unreliable.
+          </p>
+          <p data-lang="zh">
+            如果相关性失败（Z不预测X），你有弱工具变量，你的估计不可靠。
+          </p>
+          <p data-lang="en">
+            If the exclusion restriction fails (Z directly affects Y), your estimate is biased—the instrument itself introduces the very bias you were trying to fix.
+          </p>
+          <p data-lang="zh">
+            如果排斥限制失败（Z直接影响Y），你的估计有偏差——工具变量本身引入了你试图修复的偏差。
+          </p>
+        </div>
+      </div>
+
+      <!-- 7. Weak Instruments: What Happens When Z Barely Predicts X -->
+      <div class="guide-section">
+        <h2 data-lang="en">7. Weak Instruments: The Problem of Irrelevant Instruments</h2>
+        <h2 data-lang="zh">7. 弱工具变量：无关工具变量的问题</h2>
+
+        <p data-lang="en">
+          Imagine you have an instrument that technically satisfies both conditions, but it barely predicts X. For example: suppose you try to use someone's zodiac sign (Aries, Taurus, etc.) as an instrument for education.
+        </p>
+        <p data-lang="zh">
+          想象你有一个技术上满足两个条件但几乎不预测X的工具变量。例如：假设你试图使用某人的星座（白羊座、金牛座等）作为教育的工具变量。
+        </p>
+
+        <ul style="padding-left: 26px; margin: 14px 0;">
+          <li data-lang="en">
+            <strong>Relevance?</strong> Zodiac sign probably doesn't strongly predict education (maybe very weakly).
+          </li>
+          <li data-lang="zh">
+            <strong>相关性？</strong>星座可能不会强烈预测教育（也许非常弱）。
+          </li>
+          <li data-lang="en">
+            <strong>Exclusion?</strong> Okay, maybe—zodiac doesn't directly affect wages (we hope).
+          </li>
+          <li data-lang="zh">
+            <strong>排斥？</strong>好的，也许——星座不直接影响工资（我们希望）。
+          </li>
+        </ul>
+
+        <p data-lang="en">
+          Even if both conditions hold, you have a <strong>weak instrument</strong> problem. Here's what goes wrong:
+        </p>
+        <p data-lang="zh">
+          即使两个条件都成立，你也会有<strong>弱工具变量</strong>问题。以下是出错的地方：
+        </p>
+
+        <div class="card-row">
+          <div class="card">
+            <div class="card-tag" data-lang="en">PROBLEM 1</div>
+            <div class="card-tag" data-lang="zh">问题 1</div>
+            <h4 data-lang="en">Bias Toward OLS</h4>
+            <h4 data-lang="zh">朝向OLS的偏差</h4>
+            <p data-lang="en">
+              When the instrument is weak, the 2SLS estimate "collapses" back toward the biased OLS estimate. You're back where you started.
+            </p>
+            <p data-lang="zh">
+              当工具变量较弱时，2SLS估计"崩溃"回有偏差的OLS估计。你回到了起点。
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-tag" data-lang="en">PROBLEM 2</div>
+            <div class="card-tag" data-lang="zh">问题 2</div>
+            <h4 data-lang="en">Huge Standard Errors</h4>
+            <h4 data-lang="zh">巨大的标准误</h4>
+            <p data-lang="en">
+              The confidence intervals around your estimate become very wide. You lose precision.
+            </p>
+            <p data-lang="zh">
+              你的估计周围的置信区间变得非常宽。你失去了精度。
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-tag" data-lang="en">PROBLEM 3</div>
+            <div class="card-tag" data-lang="zh">问题 3</div>
+            <h4 data-lang="en">Non-Normal Distribution</h4>
+            <h4 data-lang="zh">非正态分布</h4>
+            <p data-lang="en">
+              Your t-stats and p-values may not be valid. Standard statistical inference breaks down.
+            </p>
+            <p data-lang="zh">
+              你的t统计和p值可能无效。标准统计推断会崩溃。
+            </p>
+          </div>
+        </div>
+
+        <h3 data-lang="en">Detecting Weak Instruments: The F-Statistic Rule</h3>
+        <h3 data-lang="zh">检测弱工具变量：F统计量规则</h3>
+
+        <p data-lang="en">
+          To check if your instrument is weak, run the first-stage regression and report the F-statistic. This statistic tests whether Z is significantly related to X.
+        </p>
+        <p data-lang="zh">
+          要检查你的工具变量是否较弱，运行第一阶段回归并报告F统计量。这个统计量测试Z是否与X显著相关。
+        </p>
+
+        <div class="math-box">
+          $$F = \frac{\text{Explained variation in X from Z}}{\text{Unexplained variation}}$$
+        </div>
+
+        <p data-lang="en">
+          <strong>Interpretation:</strong>
+        </p>
+        <p data-lang="zh">
+          <strong>解释：</strong>
+        </p>
+
+        <ul style="padding-left: 26px; margin: 14px 0;">
+          <li data-lang="en">
+            F > 10: Your instrument is probably strong enough (rule of thumb).
+          </li>
+          <li data-lang="zh">
+            F > 10：你的工具变量可能足够强（经验法则）。
+          </li>
+          <li data-lang="en">
+            F between 5 and 10: Be cautious; weak instruments may be an issue.
+          </li>
+          <li data-lang="zh">
+            F在5到10之间：小心；弱工具变量可能是个问题。
+          </li>
+          <li data-lang="en">
+            F < 5: Your instruments are definitely weak; don't trust the results.
+          </li>
+          <li data-lang="zh">
+            F < 5：你的工具变量肯定很弱；不要相信结果。
+          </li>
+        </ul>
+
+        <div class="info-box">
+          <div class="label" data-lang="en">Why F > 10?</div>
+          <div class="label" data-lang="zh">为什么F > 10？</div>
+          <p data-lang="en">
+            Stock and Yogo (2005) showed that with an F-statistic < 10, weak instrument bias becomes severe. The 2SLS estimator might be almost as biased as OLS.
+          </p>
+          <p data-lang="zh">
+            Stock和Yogo（2005）表明，F统计量 < 10时，弱工具变量偏差变得严重。2SLS估计可能与OLS几乎一样有偏差。
+          </p>
+        </div>
+      </div>
+
+      <!-- 8. Overidentification: Multiple Instruments -->
+      <div class="guide-section">
+        <h2 data-lang="en">8. Overidentification: When You Have Extra Instruments</h2>
+        <h2 data-lang="zh">8. 过度识别：当你有额外的工具变量时</h2>
+
+        <p data-lang="en">
+          So far, we've assumed one instrument per endogenous variable. But what if you have more? For example, suppose you have <strong>two</strong> instruments for education:
+        </p>
+        <p data-lang="zh">
+          到目前为止，我们假设每个内生变量一个工具变量。但如果你有更多呢？例如，假设你有教育的<strong>两个</strong>工具变量：
+        </p>
+
+        <div class="checklist">
+          <li data-lang="en">
+            <strong>Instrument 1 (Z₁):</strong> Compulsory schooling law (born after 1970)
+          </li>
+          <li data-lang="zh">
+            <strong>工具变量 1 (Z₁)：</strong>强制义务教育法（1970年后出生）
+          </li>
+          <li data-lang="en">
+            <strong>Instrument 2 (Z₂):</strong> Distance to the nearest college campus
+          </li>
+          <li data-lang="zh">
+            <strong>工具变量 2 (Z₂)：</strong>到最近的大学校园的距离
+          </li>
+        </ul>
+
+        <p data-lang="en">
+          Both might predict education. The distance to college affects how easy it is to attend college (so it predicts education), and it probably doesn't directly affect wages (except through education). So both might be valid instruments.
+        </p>
+        <p data-lang="zh">
+          两者都可能预测教育。到大学的距离影响上大学的难度（所以它预测教育），它可能不直接影响工资（除了通过教育）。所以两者都可能是有效的工具变量。
+        </p>
+
+        <p data-lang="en">
+          When you have more instruments than endogenous variables, this is called <strong>overidentification</strong>. The good news: you can test whether your extra instruments are valid.
+        </p>
+        <p data-lang="zh">
+          当你有超过内生变量的工具变量时，这被称为<strong>过度识别</strong>。好消息：你可以测试你的额外工具变量是否有效。
+        </p>
+
+        <h3 data-lang="en">The Hansen J-Test: Testing Extra Instruments</h3>
+        <h3 data-lang="zh">Hansen J检验：测试额外的工具变量</h3>
+
+        <p data-lang="en">
+          The idea is simple: If all instruments are valid (they all satisfy the exclusion restriction), then in a correctly specified model, the "extra" information from multiple instruments should agree with each other.
+        </p>
+        <p data-lang="zh">
+          想法很简单：如果所有工具变量都有效（它们都满足排斥限制），那么在正确指定的模型中，来自多个工具变量的"额外"信息应该彼此一致。
+        </p>
+
+        <p data-lang="en">
+          <strong>How it works:</strong> We compute a test statistic (J) that measures how different the coefficient estimates are when using different subsets of instruments. If they're very different, at least one instrument is probably invalid.
+        </p>
+        <p data-lang="zh">
+          <strong>它如何工作：</strong>我们计算一个检验统计量(J)，用来测量在使用不同工具变量子集时系数估计的差异。如果它们差异很大，至少一个工具变量可能无效。
+        </p>
+
+        <div class="info-box">
+          <div class="label" data-lang="en">Hansen J-Test Interpretation</div>
+          <div class="label" data-lang="zh">Hansen J检验解释</div>
+          <p data-lang="en">
+            <strong>p-value ≥ 0.05:</strong> Fail to reject → No evidence that the extra instruments are invalid. Good news!
+          </p>
+          <p data-lang="zh">
+            <strong>p值 ≥ 0.05：</strong>未能拒绝 → 没有证据表明额外的工具变量无效。好消息！
+          </p>
+          <p data-lang="en">
+            <strong>p-value < 0.05:</strong> Reject → At least one of your extra instruments probably violates the exclusion restriction. Investigate which one.
+          </p>
+          <p data-lang="zh">
+            <strong>p值 < 0.05：</strong>拒绝 → 至少你的一个额外工具变量可能违反排斥限制。调查是哪一个。
+          </p>
+        </div>
+      </div>
+
+      <!-- 9. Real-World Examples -->
+      <div class="guide-section">
+        <h2 data-lang="en">9. Real-World Examples: IV in Action</h2>
+        <h2 data-lang="zh">9. 真实世界的例子：IV在实际行动中</h2>
+
+        <p data-lang="en">
+          Let's see how researchers have applied IV estimation to solve real endogeneity problems:
+        </p>
+        <p data-lang="zh">
+          让我们看看研究人员如何应用IV估计来解决真实的内生性问题：
+        </p>
+
+        <div class="card-row">
+          <div class="card">
+            <div class="card-tag" data-lang="en">CLASSIC STUDY</div>
+            <div class="card-tag" data-lang="zh">经典研究</div>
+            <h4 data-lang="en">Angrist & Krueger: Quarter of Birth</h4>
+            <h4 data-lang="zh">Angrist & Krueger：出生季度</h4>
+            <p data-lang="en">
+              <strong>Question:</strong> What's the causal effect of education on earnings?
+            </p>
+            <p data-lang="zh">
+              <strong>问题：</strong>教育对收入的因果效应是什么？
+            </p>
+            <p data-lang="en">
+              <strong>Instrument:</strong> Quarter of birth (Q1, Q2, Q3, Q4) combined with compulsory schooling laws that have age cutoffs.
+            </p>
+            <p data-lang="zh">
+              <strong>工具变量：</strong>出生季度（Q1、Q2、Q3、Q4）结合有年龄截止的强制义务教育法。
+            </p>
+            <p data-lang="en">
+              <strong>Why it works:</strong> Kids born in Q1 must start school earlier and can drop out earlier than kids born in Q4 (same age cutoff, but earlier birthday). This creates exogenous variation in schooling, unrelated to ability.
+            </p>
+            <p data-lang="zh">
+              <strong>为什么有效：</strong>Q1出生的孩子必须更早开始上学，可以比Q4出生的孩子更早辍学（相同的年龄截止，但更早的出生日期）。这创建了与能力无关的学校教育中的外生变化。
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-tag" data-lang="en">CLASSIC STUDY</div>
+            <div class="card-tag" data-lang="zh">经典研究</div>
+            <h4 data-lang="en">Acemoglu, Johnson & Robinson: Settler Mortality</h4>
+            <h4 data-lang="zh">Acemoglu、Johnson & Robinson：定居者死亡率</h4>
+            <p data-lang="en">
+              <strong>Question:</strong> Do good institutions cause economic development?
+            </p>
+            <p data-lang="zh">
+              <strong>问题：</strong>好的制度是否导致经济发展？
+            </p>
+            <p data-lang="en">
+              <strong>Instrument:</strong> Historical settler mortality rates in colonized territories (1600-1800).
+            </p>
+            <p data-lang="zh">
+              <strong>工具变量：</strong>被殖民地领土（1600-1800）的历史定居者死亡率。
+            </p>
+            <p data-lang="en">
+              <strong>Why it works:</strong> Where Europeans died easily (high disease), they set up extractive institutions and left. Where they survived, they settled and built inclusive institutions. This created exogenous variation in institutions, unrelated to other development factors.
+            </p>
+            <p data-lang="zh">
+              <strong>为什么有效：</strong>欧洲人容易死亡的地方（高疾病），他们建立了掠取性制度并离开。他们生存的地方，他们定居并建立了包容性制度。这在制度中创建了外生变化，与其他发展因素无关。
+            </p>
+          </div>
+        </div>
+
+        <p data-lang="en">
+          These examples show the creativity needed to find good instruments: you need a source of exogenous variation that's plausibly unrelated to the outcome except through your regressor of interest.
+        </p>
+        <p data-lang="zh">
+          这些例子展示了寻找好工具变量所需的创意：你需要一个外生变化的来源，它与结果无关，除非通过你感兴趣的回归变量。
+        </p>
+      </div>
+
+      <!-- 10. Practical Checklist -->
+      <div class="guide-section">
+        <h2 data-lang="en">10. Practical Checklist: Using IV in Your Research</h2>
+        <h2 data-lang="zh">10. 实践清单：在你的研究中使用IV</h2>
+
+        <h3 data-lang="en">Before You Propose an Instrument</h3>
+        <h3 data-lang="zh">在你提出工具变量之前</h3>
+
+        <div class="checklist">
+          <li data-lang="en">
+            <strong>Do you have an endogeneity problem?</strong> Is there a theoretical reason to believe X is correlated with the error term? (Omitted variables, reverse causality, simultaneity?)
+          </li>
+          <li data-lang="zh">
+            <strong>你有内生性问题吗？</strong>是否有理论原因相信X与误差项相关？（遗漏变量、反向因果性、同时性？）
+          </li>
+          <li data-lang="en">
+            <strong>Can you identify the source of bias?</strong> Be specific about what unobserved variable is causing the problem.
+          </li>
+          <li data-lang="zh">
+            <strong>你能识别偏差的来源吗？</strong>具体说明是什么未观察到的变量造成的问题。
+          </li>
+        </div>
+
+        <h3 data-lang="en">When You Have a Candidate Instrument</h3>
+        <h3 data-lang="zh">当你有一个候选工具变量时</h3>
+
+        <div class="checklist">
+          <li data-lang="en">
+            <strong>Relevance test:</strong> Does the instrument predict X? Compute the first-stage F-statistic; it should exceed 10.
+          </li>
+          <li data-lang="zh">
+            <strong>相关性测试：</strong>工具变量是否预测X？计算第一阶段F统计量；它应该超过10。
+          </li>
+          <li data-lang="en">
+            <strong>Exclusion restriction argument:</strong> Write down why the instrument doesn't directly affect Y, only through X. Be convincing.
+          </li>
+          <li data-lang="zh">
+            <strong>排斥限制论证：</strong>写下为什么工具变量不直接影响Y，只通过X。要令人信服。
+          </li>
+          <li data-lang="en">
+            <strong>Run 2SLS:</strong> Stage 1 predicts X from Z. Stage 2 regresses Y on predicted X.
+          </li>
+          <li data-lang="zh">
+            <strong>运行2SLS：</strong>第一阶段从Z预测X。第二阶段在预测的X上回归Y。
+          </li>
+        </div>
+
+        <h3 data-lang="en">After You Have Your 2SLS Results</h3>
+        <h3 data-lang="zh">在你获得2SLS结果后</h3>
+
+        <div class="checklist">
+          <li data-lang="en">
+            <strong>Report the first-stage F-statistic.</strong> Readers need to know your instruments are strong.
+          </li>
+          <li data-lang="zh">
+            <strong>报告第一阶段F统计量。</strong>读者需要知道你的工具变量很强。
+          </li>
+          <li data-lang="en">
+            <strong>If overidentified (k > m instruments):</strong> Report the Hansen J-test and its p-value.
+          </li>
+          <li data-lang="zh">
+            <strong>如果过度识别(k > m个工具变量)：</strong>报告Hansen J检验及其p值。
+          </li>
+          <li data-lang="en">
+            <strong>Compare to OLS.</strong> Show both OLS and IV results side-by-side. Are they very different? That suggests endogeneity. Similar? Maybe endogeneity isn't the problem.
+          </li>
+          <li data-lang="zh">
+            <strong>与OLS比较。</strong>并排显示OLS和IV结果。它们差异很大吗？这表明内生性。类似？也许内生性不是问题。
+          </li>
+          <li data-lang="en">
+            <strong>Check robustness.</strong> Do your results hold with different instruments or specifications?
+          </li>
+          <li data-lang="zh">
+            <strong>检查稳健性。</strong>你的结果在不同的工具变量或规格下是否成立？
+          </li>
+        </div>
+
+        <h3 data-lang="en">Common Pitfalls to Avoid</h3>
+        <h3 data-lang="zh">要避免的常见陷阱</h3>
+
+        <div class="card-row">
+          <div class="card">
+            <div class="card-tag" data-lang="en">PITFALL</div>
+            <div class="card-tag" data-lang="zh">陷阱</div>
+            <h4 data-lang="en">Choosing Instruments by Data Mining</h4>
+            <h4 data-lang="zh">通过数据挖掘选择工具变量</h4>
+            <p data-lang="en">
+              Don't search your data for variables that happen to predict X and are uncorrelated with Y. You'll find "instruments" that are pure noise. Choose instruments based on theory.
+            </p>
+            <p data-lang="zh">
+              不要搜索你的数据来寻找恰好预测X且与Y无关的变量。你会找到纯粹噪声的"工具变量"。根据理论选择工具变量。
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-tag" data-lang="en">PITFALL</div>
+            <div class="card-tag" data-lang="zh">陷阱</div>
+            <h4 data-lang="en">Weak Instruments with Large N</h4>
+            <h4 data-lang="zh">大N的弱工具变量</h4>
+            <p data-lang="en">
+              Having a large sample doesn't fix weak instruments. Even with 1 million observations, weak instruments bias your estimates badly.
+            </p>
+            <p data-lang="zh">
+              拥有大样本不会修复弱工具变量。即使有100万次观测，弱工具变量也会严重偏向你的估计。
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-tag" data-lang="en">PITFALL</div>
+            <div class="card-tag" data-lang="zh">陷阱</div>
+            <h4 data-lang="en">Forgetting the Exclusion Restriction</h4>
+            <h4 data-lang="zh">忘记排斥限制</h4>
+            <p data-lang="en">
+              An instrument that directly affects Y (violating exclusion) will bias your estimates as much as the original problem. You need this assumption—you can't test it.
+            </p>
+            <p data-lang="zh">
+              直接影响Y的工具变量（违反排斥）会像原始问题一样偏向你的估计。你需要这个假设——你无法测试它。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11. Summary: Why IV Matters -->
+      <div class="guide-section">
+        <h2 data-lang="en">11. Summary: Why IV Is Worth the Effort</h2>
+        <h2 data-lang="zh">11. 摘要：为什么IV值得付出努力</h2>
+
+        <div class="proof-box">
+          <h4 data-lang="en">The Core Problem</h4>
+          <h4 data-lang="zh">核心问题</h4>
+          <p data-lang="en">
+            When X and Y affect each other (or when unobserved confounders affect both), OLS gives you a biased estimate of the causal effect of X on Y.
+          </p>
+          <p data-lang="zh">
+            当X和Y相互影响（或当未观察到的混淆变量影响两者）时，OLS给你X对Y因果效应的有偏估计。
+          </p>
+
+          <h4 data-lang="en">The IV Solution</h4>
+          <h4 data-lang="zh">IV解决方案</h4>
+          <p data-lang="en">
+            Find an exogenous instrument Z that pushes on X but not on Y. Use it to extract the "clean" variation in X. Then regress Y on this clean variation to uncover the true causal effect.
+          </p>
+          <p data-lang="zh">
+            找一个外生工具变量Z，它推动X但不推动Y。使用它来提取X中的"干净"变化。然后在这种干净的变化上回归Y，以揭示真实的因果效应。
+          </p>
+
+          <h4 data-lang="en">Two Conditions</h4>
+          <h4 data-lang="zh">两个条件</h4>
+          <p data-lang="en">
+            (1) Z must predict X (relevance). (2) Z must not directly affect Y (exclusion restriction).
+          </p>
+          <p data-lang="zh">
+            （1）Z必须预测X（相关性）。（2）Z不能直接影响Y（排斥限制）。
+          </p>
+
+          <h4 data-lang="en">The Result</h4>
+          <h4 data-lang="zh">结果</h4>
+          <p data-lang="en">
+            An unbiased, consistent estimate of the true causal effect, free from the confounding bias that plagued OLS.
+          </p>
+          <p data-lang="zh">
+            真实因果效应的无偏、一致估计，不受困扰OLS的混淆偏差。
+          </p>
+        </div>
+
+        <p data-lang="en">
+          IV estimation is harder than OLS (you need to find and justify an instrument), but when done correctly, it gives you something much more valuable: a credible causal estimate.
+        </p>
+        <p data-lang="zh">
+          IV估计比OLS更难（你需要找到并证明工具变量），但如果做得正确，它会给你更有价值的东西：可信的因果估计。
+        </p>
+
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langBtns = document.querySelectorAll('.guide-lang-btn');
+        // Exclude buttons from content elements
+        const enElements = document.querySelectorAll('.guide-content [data-lang="en"], .guide-breadcrumb [data-lang="en"], a.guide-back[data-lang="en"], .guide-header [data-lang="en"], .guide-tag [data-lang="en"]');
+        const zhElements = document.querySelectorAll('.guide-content [data-lang="zh"], .guide-breadcrumb [data-lang="zh"], a.guide-back[data-lang="zh"], .guide-header [data-lang="zh"], .guide-tag [data-lang="zh"]');
+        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        setLanguage(savedLang);
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                localStorage.setItem('preferred-lang', lang);
+                setLanguage(lang);
+            });
+        });
+        function setLanguage(lang) {
+            langBtns.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('.guide-lang-btn[data-lang="' + lang + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            if (lang === 'en') {
+                enElements.forEach(el => { el.style.display = ''; });
+                zhElements.forEach(el => { el.style.display = 'none'; });
+                document.body.className = 'en';
+            } else {
+                enElements.forEach(el => { el.style.display = 'none'; });
+                zhElements.forEach(el => { el.style.display = ''; });
+                document.body.className = 'zh';
+            }
+        }
+    });
+    </script>
+
+</body>
+</html>

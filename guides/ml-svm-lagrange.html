@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVM Dual Problem & Kernel Trick | Machine Learning</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Base Styles -->
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Guide Styles -->
+    <link rel="stylesheet" href="guide-style.css">
+
+    <!-- MathJax for Mathematics -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="zh">
+    <div class="guide-layout">
+        <!-- Topbar -->
+        <div class="guide-topbar">
+            <div class="guide-breadcrumb">
+                <a href="../machine-learning.html" data-lang="en">Machine Learning</a>
+                <a href="../machine-learning.html" data-lang="zh">机器学习</a>
+                <span class="sep">/</span>
+                <span data-lang="en">SVM Dual Problem & Kernel Trick</span>
+                <span data-lang="zh">SVM 对偶问题与核技巧</span>
+            </div>
+            <div class="guide-lang-toggle">
+                <button class="guide-lang-btn active" data-lang="zh">中文</button>
+                <button class="guide-lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="guide-content-wrapper">
+            <div class="guide-content">
+                <!-- Back link -->
+                <a href="../machine-learning.html" class="guide-back" data-lang="en">Back to Machine Learning</a>
+                <a href="../machine-learning.html" class="guide-back" data-lang="zh">返回机器学习</a>
+
+                <!-- Page header -->
+                <div class="guide-header">
+                    <div class="guide-tag">
+                        <span data-lang="en">ADVANCED · PROOF & DERIVATION</span>
+                        <span data-lang="zh">进阶 · 证明与推导</span>
+                    </div>
+                    <h1>
+                        <span data-lang="en">SVM Dual Problem & Kernel Trick</span>
+                        <span data-lang="zh">SVM 对偶问题与核技巧</span>
+                    </h1>
+                    <p>
+                        <span data-lang="en">Mathematical proof and derivation of the SVM dual problem and the kernel trick from first principles</span>
+                        <span data-lang="zh">从第一原理推导 SVM 对偶问题与核技巧的数学证明</span>
+                    </p>
+                </div>
+
+                <!-- Section 1: Primal Problem -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">1. The Primal Optimization Problem</span>
+                        <span data-lang="zh">1. 原始优化问题</span>
+                    </h2>
+
+                    <p>
+                        <span data-lang="en">Support Vector Machines solve a constrained quadratic optimization problem. The fundamental goal is to find a separating hyperplane that maximizes the margin between two classes while allowing for minimal classification errors.</span>
+                        <span data-lang="zh">支持向量机解决一个受约束的二次优化问题。基本目标是找到一个分离超平面，该超平面最大化两个类之间的距离，同时允许最小的分类错误。</span>
+                    </p>
+
+                    <div class="definition-box">
+                        <div class="definition-title">
+                            <span data-lang="en">Primal Problem (Hard Margin)</span>
+                            <span data-lang="zh">原始问题（硬间隔）</span>
+                        </div>
+                        <div class="math-box">
+$$\begin{align}
+\min_{w,b} \quad &\frac{1}{2}\|w\|^2 \\
+\text{s.t.} \quad &y_i(w \cdot x_i + b) \geq 1, \quad i = 1,\ldots,n
+\end{align}$$
+                        </div>
+                        <p data-lang="en">
+                            where <span class="highlight-key">w</span> is the weight vector, <span class="highlight-key">b</span> is the bias term, <span class="highlight-key">x_i</span> are the training samples, and <span class="highlight-key">y_i ∈ {−1, +1}</span> are the class labels.
+                        </p>
+                        <p data-lang="zh">
+                            其中 <span class="highlight-key">w</span> 是权重向量，<span class="highlight-key">b</span> 是偏置项，<span class="highlight-key">x_i</span> 是训练样本，<span class="highlight-key">y_i ∈ {−1, +1}</span> 是类标签。
+                        </p>
+                    </div>
+
+                    <h3>
+                        <span data-lang="en">Geometric Interpretation</span>
+                        <span data-lang="zh">几何解释</span>
+                    </h3>
+                    <p>
+                        <span data-lang="en">The constraint <span class="highlight-key">y_i(w·x_i + b) ≥ 1</span> ensures that:</span>
+                        <span data-lang="zh">约束 <span class="highlight-key">y_i(w·x_i + b) ≥ 1</span> 确保：</span>
+                    </p>
+                    <ul>
+                        <li data-lang="en">All positive samples satisfy <span class="highlight-key">w·x_i + b ≥ 1</span></li>
+                        <li data-lang="en">All negative samples satisfy <span class="highlight-key">w·x_i + b ≤ −1</span></li>
+                        <li data-lang="en">The margin (distance between hyperplanes) equals <span class="highlight-key">2/‖w‖</span></li>
+                    </ul>
+                    <ul>
+                        <li data-lang="zh">所有正样本满足 <span class="highlight-key">w·x_i + b ≥ 1</span></li>
+                        <li data-lang="zh">所有负样本满足 <span class="highlight-key">w·x_i + b ≤ −1</span></li>
+                        <li data-lang="zh">间隔（超平面之间的距离）等于 <span class="highlight-key">2/‖w‖</span></li>
+                    </ul>
+                </div>
+
+                <!-- Section 2: Lagrangian & KKT -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">2. Lagrangian and KKT Conditions</span>
+                        <span data-lang="zh">2. 拉格朗日函数与 KKT 条件</span>
+                    </h2>
+
+                    <p>
+                        <span data-lang="en">To solve this constrained optimization problem, we introduce Lagrange multipliers <span class="highlight-key">α_i ≥ 0</span> for each constraint.</span>
+                        <span data-lang="zh">为了解决这个受约束的优化问题，我们为每个约束引入拉格朗日乘数 <span class="highlight-key">α_i ≥ 0</span>。</span>
+                    </p>
+
+                    <div class="math-box">
+                        <div class="math-box-title">
+                            <span data-lang="en">Lagrangian Function</span>
+                            <span data-lang="zh">拉格朗日函数</span>
+                        </div>
+$$L(w, b, \alpha) = \frac{1}{2}\|w\|^2 - \sum_{i=1}^{n} \alpha_i [y_i(w \cdot x_i + b) - 1]$$
+                    </div>
+
+                    <div class="derivation-step">
+                        <div class="derivation-step-label">
+                            <span data-lang="en">Step 1: Expand the Lagrangian</span>
+                            <span data-lang="zh">步骤 1：展开拉格朗日函数</span>
+                        </div>
+                        <div class="math-box">
+$$L = \frac{1}{2}\|w\|^2 - \sum_{i=1}^{n} \alpha_i y_i w \cdot x_i - \sum_{i=1}^{n} \alpha_i y_i b + \sum_{i=1}^{n} \alpha_i$$
+                        </div>
+                    </div>
+
+                    <h3>
+                        <span data-lang="en">KKT Conditions</span>
+                        <span data-lang="zh">KKT 条件</span>
+                    </h3>
+                    <p>
+                        <span data-lang="en">For optimality, the Lagrangian must satisfy the KKT (Karush-Kuhn-Tucker) conditions:</span>
+                        <span data-lang="zh">为了最优性，拉格朗日函数必须满足 KKT（Karush-Kuhn-Tucker）条件：</span>
+                    </p>
+
+                    <div class="math-box">
+                        <div class="math-box-title">KKT Conditions</div>
+$$\begin{align}
+\frac{\partial L}{\partial w} &= 0 \quad \Rightarrow \quad w = \sum_{i=1}^{n} \alpha_i y_i x_i \\
+\frac{\partial L}{\partial b} &= 0 \quad \Rightarrow \quad \sum_{i=1}^{n} \alpha_i y_i = 0 \\
+\alpha_i &\geq 0 \\
+y_i(w \cdot x_i + b) &\geq 1 \\
+\alpha_i[y_i(w \cdot x_i + b) - 1] &= 0 \quad \text{(Complementary Slackness)}
+\end{align}$$
+                    </div>
+
+                    <p data-lang="en">
+                        The <span class="highlight-key">complementary slackness condition</span> is crucial: <span class="highlight-key">α_i > 0</span> only when <span class="highlight-key">y_i(w·x_i + b) = 1</span>, meaning the constraint is tight. These points are called <span class="highlight-key">support vectors</span>.
+                    </p>
+                    <p data-lang="zh">
+                        <span class="highlight-key">互补松弛条件</span> 至关重要：<span class="highlight-key">α_i > 0</span> 仅当 <span class="highlight-key">y_i(w·x_i + b) = 1</span> 时成立，意味着约束是紧的。这些点称为 <span class="highlight-key">支持向量</span>。
+                    </p>
+                </div>
+
+                <!-- Section 3: Dual Problem -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">3. Dual Problem Derivation</span>
+                        <span data-lang="zh">3. 对偶问题推导</span>
+                    </h2>
+
+                    <p>
+                        <span data-lang="en">The dual problem is obtained by substituting the KKT conditions back into the Lagrangian.</span>
+                        <span data-lang="zh">对偶问题是通过将 KKT 条件代回拉格朗日函数获得的。</span>
+                    </p>
+
+                    <div class="derivation-step">
+                        <div class="derivation-step-label">
+                            <span data-lang="en">Step 1: Substitute KKT Conditions</span>
+                            <span data-lang="zh">步骤 1：代入 KKT 条件</span>
+                        </div>
+                        <p data-lang="en">
+                            Substitute <span class="highlight-key">w = Σα_i y_i x_i</span> into the Lagrangian:
+                        </p>
+                        <p data-lang="zh">
+                            将 <span class="highlight-key">w = Σα_i y_i x_i</span> 代入拉格朗日函数：
+                        </p>
+                        <div class="math-box">
+$$L = \frac{1}{2}\left\|\sum_{i=1}^{n} \alpha_i y_i x_i\right\|^2 - \sum_{i=1}^{n} \alpha_i y_i \left(\sum_{j=1}^{n} \alpha_j y_j x_j\right) \cdot x_i + \sum_{i=1}^{n} \alpha_i$$
+                        </div>
+                    </div>
+
+                    <div class="derivation-step">
+                        <div class="derivation-step-label">
+                            <span data-lang="en">Step 2: Simplify Using Dot Products</span>
+                            <span data-lang="zh">步骤 2：使用点积简化</span>
+                        </div>
+                        <div class="math-box">
+$$\left\|\sum_{i=1}^{n} \alpha_i y_i x_i\right\|^2 = \sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i \alpha_j y_i y_j (x_i \cdot x_j)$$
+                        </div>
+                        <p data-lang="en">
+                            The Lagrangian becomes:
+                        </p>
+                        <p data-lang="zh">
+                            拉格朗日函数变成：
+                        </p>
+                        <div class="math-box">
+$$L = \frac{1}{2}\sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i \alpha_j y_i y_j (x_i \cdot x_j) - \sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i \alpha_j y_i y_j (x_i \cdot x_j) + \sum_{i=1}^{n} \alpha_i$$
+                        </div>
+                    </div>
+
+                    <div class="derivation-step">
+                        <div class="derivation-step-label">
+                            <span data-lang="en">Step 3: Final Dual Form</span>
+                            <span data-lang="zh">步骤 3：最终对偶形式</span>
+                        </div>
+                        <div class="math-box">
+$$L = -\frac{1}{2}\sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i \alpha_j y_i y_j (x_i \cdot x_j) + \sum_{i=1}^{n} \alpha_i$$
+                        </div>
+                    </div>
+
+                    <div class="definition-box">
+                        <div class="definition-title">
+                            <span data-lang="en">Dual Problem (Hard Margin)</span>
+                            <span data-lang="zh">对偶问题（硬间隔）</span>
+                        </div>
+                        <div class="math-box">
+$$\begin{align}
+\max_{\alpha} \quad &\sum_{i=1}^{n} \alpha_i - \frac{1}{2}\sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i \alpha_j y_i y_j (x_i \cdot x_j) \\
+\text{s.t.} \quad &\sum_{i=1}^{n} \alpha_i y_i = 0 \\
+&\alpha_i \geq 0, \quad i = 1,\ldots,n
+\end{align}$$
+                        </div>
+                        <p data-lang="en">
+                            This is a convex quadratic programming problem that depends <span class="highlight-key">only on dot products</span> <span class="highlight-key">x_i · x_j</span>—not on the original dimension of the data!
+                        </p>
+                        <p data-lang="zh">
+                            这是一个凸二次规划问题，<span class="highlight-key">仅依赖于点积</span> <span class="highlight-key">x_i · x_j</span>——而不是数据的原始维度！
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Section 4: Support Vectors -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">4. Support Vectors & Complementary Slackness</span>
+                        <span data-lang="zh">4. 支持向量与互补松弛</span>
+                    </h2>
+
+                    <p>
+                        <span data-lang="en">From complementary slackness, we have: <span class="highlight-key">α_i > 0 ⟺ y_i(w·x_i + b) = 1</span></span>
+                        <span data-lang="zh">从互补松弛条件，我们有：<span class="highlight-key">α_i > 0 ⟺ y_i(w·x_i + b) = 1</span></span>
+                    </p>
+
+                    <div class="definition-box">
+                        <div class="definition-title">
+                            <span data-lang="en">Definition: Support Vectors</span>
+                            <span data-lang="zh">定义：支持向量</span>
+                        </div>
+                        <p data-lang="en">
+                            A training sample <span class="highlight-key">x_i</span> is a <span class="highlight-key">support vector</span> if and only if <span class="highlight-key">α_i > 0</span>. These are the only samples needed to define the optimal hyperplane because:
+                        </p>
+                        <p data-lang="zh">
+                            训练样本 <span class="highlight-key">x_i</span> 是 <span class="highlight-key">支持向量</span> 当且仅当 <span class="highlight-key">α_i > 0</span>。这些是定义最优超平面所需的唯一样本，因为：
+                        </p>
+                        <div class="math-box">
+$$w = \sum_{i \in \text{SV}} \alpha_i y_i x_i$$
+                        </div>
+                        <p data-lang="en">
+                            The bias term <span class="highlight-key">b</span> can be recovered from any support vector using:
+                        </p>
+                        <p data-lang="zh">
+                            偏置项 <span class="highlight-key">b</span> 可以从任何支持向量恢复为：
+                        </p>
+                        <div class="math-box">
+$$b = y_k - \sum_{i \in \text{SV}} \alpha_i y_i (x_i \cdot x_k), \quad \text{for any support vector } x_k$$
+                        </div>
+                    </div>
+
+                    <p data-lang="en">
+                        This is a key insight: the solution depends <span class="highlight-key">only on a subset of the data</span> (the support vectors). This makes SVM computationally efficient and provides good generalization properties.
+                    </p>
+                    <p data-lang="zh">
+                        这是一个关键的洞察：解决方案<span class="highlight-key">仅取决于数据的子集</span>（支持向量）。这使 SVM 在计算上高效，并提供良好的泛化特性。
+                    </p>
+                </div>
+
+                <!-- Section 5: Kernel Trick -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">5. The Kernel Trick - Mathematical Proof</span>
+                        <span data-lang="zh">5. 核技巧 - 数学证明</span>
+                    </h2>
+
+                    <p>
+                        <span data-lang="en">The true power of SVM lies in the kernel trick. Since the dual problem depends only on dot products, we can replace them with a kernel function without explicitly transforming the data.</span>
+                        <span data-lang="zh">SVM 的真正力量在于核技巧。由于对偶问题仅取决于点积，我们可以用核函数替换它们，而无需显式转换数据。</span>
+                    </p>
+
+                    <div class="definition-box">
+                        <div class="definition-title">
+                            <span data-lang="en">Definition: Kernel Function</span>
+                            <span data-lang="zh">定义：核函数</span>
+                        </div>
+                        <div class="math-box">
+$$K(x_i, x_j) = \langle \phi(x_i), \phi(x_j) \rangle$$
+                        </div>
+                        <p data-lang="en">
+                            A kernel function <span class="highlight-key">K(x_i, x_j)</span> computes the dot product in an implicit high-dimensional (possibly infinite) feature space without explicitly computing the transformation <span class="highlight-key">φ(x)</span>.
+                        </p>
+                        <p data-lang="zh">
+                            核函数 <span class="highlight-key">K(x_i, x_j)</span> 在隐式高维（可能无限）特征空间中计算点积，而无需显式计算变换 <span class="highlight-key">φ(x)</span>。
+                        </p>
+                    </div>
+
+                    <h3>
+                        <span data-lang="en">Why the Kernel Trick Works: Mercer's Theorem</span>
+                        <span data-lang="zh">核技巧为什么有效：Mercer 定理</span>
+                    </h3>
+
+                    <p data-lang="en">
+                        <span class="highlight-key">Mercer's Theorem</span> states that any symmetric positive semi-definite function can be expressed as a dot product in some Hilbert space. This theoretical foundation guarantees that the kernel trick is valid.
+                    </p>
+                    <p data-lang="zh">
+                        <span class="highlight-key">Mercer 定理</span>指出任何对称正半定函数都可以表示为某个 Hilbert 空间中的点积。这个理论基础保证了核技巧的有效性。
+                    </p>
+
+                    <div class="derivation-step">
+                        <div class="derivation-step-label">
+                            <span data-lang="en">The Kernel Trick Transformation</span>
+                            <span data-lang="zh">核技巧变换</span>
+                        </div>
+                        <p data-lang="en">
+                            Original dual problem (uses dot products in input space):
+                        </p>
+                        <p data-lang="zh">
+                            原始对偶问题（在输入空间中使用点积）：
+                        </p>
+                        <div class="math-box">
+$$\max_{\alpha} \sum_{i=1}^{n} \alpha_i - \frac{1}{2}\sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i \alpha_j y_i y_j (x_i \cdot x_j)$$
+                        </div>
+                        <p data-lang="en">
+                            Replace each <span class="highlight-key">x_i · x_j</span> with <span class="highlight-key">K(x_i, x_j)</span>:
+                        </p>
+                        <p data-lang="zh">
+                            用 <span class="highlight-key">K(x_i, x_j)</span> 替换每个 <span class="highlight-key">x_i · x_j</span>：
+                        </p>
+                        <div class="math-box">
+$$\max_{\alpha} \sum_{i=1}^{n} \alpha_i - \frac{1}{2}\sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i \alpha_j y_i y_j K(x_i, x_j)$$
+                        </div>
+                        <p data-lang="en">
+                            This is <span class="highlight-key">equivalent</span> to:
+                        </p>
+                        <p data-lang="zh">
+                            这<span class="highlight-key">等价于</span>：
+                        </p>
+                        <div class="math-box">
+$$\max_{\alpha} \sum_{i=1}^{n} \alpha_i - \frac{1}{2}\sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i \alpha_j y_i y_j \langle \phi(x_i), \phi(x_j) \rangle$$
+                        </div>
+                        <p data-lang="en">
+                            which solves the SVM in the <span class="highlight-key">feature space</span> <span class="highlight-key">φ</span>, without ever computing <span class="highlight-key">φ(x)</span> explicitly!
+                        </p>
+                        <p data-lang="zh">
+                            它在<span class="highlight-key">特征空间</span> <span class="highlight-key">φ</span> 中解决 SVM，而无需显式计算 <span class="highlight-key">φ(x)</span>！
+                        </p>
+                    </div>
+
+                    <div class="definition-box">
+                        <div class="definition-title">
+                            <span data-lang="en">Kernel Trick: Prediction Rule</span>
+                            <span data-lang="zh">核技巧：预测规则</span>
+                        </div>
+                        <p data-lang="en">
+                            Once we solve the dual problem and obtain <span class="highlight-key">α</span> and <span class="highlight-key">b</span>, the prediction for a new sample <span class="highlight-key">x</span> is:
+                        </p>
+                        <p data-lang="zh">
+                            一旦我们解决对偶问题并获得 <span class="highlight-key">α</span> 和 <span class="highlight-key">b</span>，新样本 <span class="highlight-key">x</span> 的预测是：
+                        </p>
+                        <div class="math-box">
+$$f(x) = \text{sign}\left(\sum_{i \in \text{SV}} \alpha_i y_i K(x_i, x) + b\right)$$
+                        </div>
+                        <p data-lang="en">
+                            The decision boundary is computed using only <span class="highlight-key">kernel evaluations</span>—we never need to compute the high-dimensional features!
+                        </p>
+                        <p data-lang="zh">
+                            决策边界仅使用<span class="highlight-key">核评估</span>计算——我们永远不需要计算高维特征！
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Section 6: Soft Margin -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">6. Soft Margin: Slack Variables & Regularization</span>
+                        <span data-lang="zh">6. 软间隔：松弛变量与正则化</span>
+                    </h2>
+
+                    <p>
+                        <span data-lang="en">In practice, perfect separation may not exist (or may lead to overfitting). The soft margin SVM allows for constraint violations using slack variables <span class="highlight-key">ξ_i ≥ 0</span>.</span>
+                        <span data-lang="zh">在实践中，完美分离可能不存在（或可能导致过度拟合）。软间隔 SVM 允许使用松弛变量 <span class="highlight-key">ξ_i ≥ 0</span> 来违反约束。</span>
+                    </p>
+
+                    <div class="definition-box">
+                        <div class="definition-title">
+                            <span data-lang="en">Soft Margin Primal Problem</span>
+                            <span data-lang="zh">软间隔原始问题</span>
+                        </div>
+                        <div class="math-box">
+$$\begin{align}
+\min_{w,b,\xi} \quad &\frac{1}{2}\|w\|^2 + C\sum_{i=1}^{n}\xi_i \\
+\text{s.t.} \quad &y_i(w \cdot x_i + b) \geq 1 - \xi_i \\
+&\xi_i \geq 0
+\end{align}$$
+                        </div>
+                        <p data-lang="en">
+                            The parameter <span class="highlight-key">C > 0</span> controls the trade-off:
+                        </p>
+                        <p data-lang="zh">
+                            参数 <span class="highlight-key">C > 0</span> 控制权衡：
+                        </p>
+                        <ul>
+                            <li data-lang="en"><span class="highlight-key">Large C</span>: Penalizes errors heavily (harder margin)</li>
+                            <li data-lang="en"><span class="highlight-key">Small C</span>: Allows more errors (softer margin)</li>
+                        </ul>
+                        <ul>
+                            <li data-lang="zh"><span class="highlight-key">大 C</span>：严重惩罚错误（更硬的间隔）</li>
+                            <li data-lang="zh"><span class="highlight-key">小 C</span>：允许更多错误（更软的间隔）</li>
+                        </ul>
+                    </div>
+
+                    <h3>
+                        <span data-lang="en">Soft Margin Dual Problem</span>
+                        <span data-lang="zh">软间隔对偶问题</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">The dual problem for soft margin SVM is almost identical to the hard margin case, with one key difference:</span>
+                        <span data-lang="zh">软间隔 SVM 的对偶问题与硬间隔情况几乎相同，但有一个关键区别：</span>
+                    </p>
+
+                    <div class="math-box">
+                        <div class="math-box-title">
+                            <span data-lang="en">Soft Margin Dual Problem</span>
+                            <span data-lang="zh">软间隔对偶问题</span>
+                        </div>
+$$\begin{align}
+\max_{\alpha} \quad &\sum_{i=1}^{n} \alpha_i - \frac{1}{2}\sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i \alpha_j y_i y_j K(x_i, x_j) \\
+\text{s.t.} \quad &\sum_{i=1}^{n} \alpha_i y_i = 0 \\
+&0 \leq \alpha_i \leq C, \quad i = 1,\ldots,n
+\end{align}$$
+                    </div>
+
+                    <p data-lang="en">
+                        The <span class="highlight-key">only difference</span> from the hard margin dual is the upper bound constraint <span class="highlight-key">α_i ≤ C</span>. This is derived from the KKT conditions of the soft margin primal problem.
+                    </p>
+                    <p data-lang="zh">
+                        与硬间隔对偶的<span class="highlight-key">唯一区别</span>是上界约束 <span class="highlight-key">α_i ≤ C</span>。这是从软间隔原始问题的 KKT 条件推导的。
+                    </p>
+
+                    <div class="derivation-step">
+                        <div class="derivation-step-label">
+                            <span data-lang="en">Support Vector Classification</span>
+                            <span data-lang="zh">支持向量分类</span>
+                        </div>
+                        <p data-lang="en">
+                            In the soft margin case, we have three categories of support vectors:
+                        </p>
+                        <p data-lang="zh">
+                            在软间隔情况下，我们有三类支持向量：
+                        </p>
+                        <ul>
+                            <li data-lang="en"><span class="highlight-key">0 < α_i < C</span>: On the margin (<span class="highlight-key">y_i f(x_i) = 1</span>)</li>
+                            <li data-lang="en"><span class="highlight-key">α_i = C</span>: Misclassified or between the margins (<span class="highlight-key">y_i f(x_i) < 1</span>)</li>
+                            <li data-lang="en"><span class="highlight-key">α_i = 0</span>: Not support vectors</li>
+                        </ul>
+                        <ul>
+                            <li data-lang="zh"><span class="highlight-key">0 < α_i < C</span>：在间隔上（<span class="highlight-key">y_i f(x_i) = 1</span>）</li>
+                            <li data-lang="zh"><span class="highlight-key">α_i = C</span>：被错误分类或在间隔之间（<span class="highlight-key">y_i f(x_i) < 1</span>）</li>
+                            <li data-lang="zh"><span class="highlight-key">α_i = 0</span>：非支持向量</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Section 7: Common Kernels -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">7. Common Kernel Functions</span>
+                        <span data-lang="zh">7. 常见核函数</span>
+                    </h2>
+
+                    <p>
+                        <span data-lang="en">Different kernels induce different feature spaces. The choice of kernel determines the complexity of the decision boundary.</span>
+                        <span data-lang="zh">不同的核函数诱导不同的特征空间。核函数的选择确定了决策边界的复杂性。</span>
+                    </p>
+
+                    <div class="kernel-comparison">
+                        <div class="kernel-item">
+                            <div class="kernel-name">Linear Kernel</div>
+                            <div class="kernel-formula">
+$$K(x_i, x_j) = x_i \cdot x_j$$
+                            </div>
+                            <p data-lang="en" style="font-size: 13px; margin-top: 0.8rem;">
+                                Linear decision boundary. Fastest computation. Good for high-dimensional data.
+                            </p>
+                            <p data-lang="zh" style="font-size: 13px; margin-top: 0.8rem;">
+                                线性决策边界。最快的计算。适合高维数据。
+                            </p>
+                        </div>
+
+                        <div class="kernel-item">
+                            <div class="kernel-name">Polynomial Kernel</div>
+                            <div class="kernel-formula">
+$$K(x_i, x_j) = (x_i \cdot x_j + r)^d$$
+                            </div>
+                            <p data-lang="en" style="font-size: 13px; margin-top: 0.8rem;">
+                                Polynomial boundary of degree <span class="highlight-key">d</span>. Parameters: <span class="highlight-key">r</span> (offset), <span class="highlight-key">d</span> (degree).
+                            </p>
+                            <p data-lang="zh" style="font-size: 13px; margin-top: 0.8rem;">
+                                度数为 <span class="highlight-key">d</span> 的多项式边界。参数：<span class="highlight-key">r</span>（偏移），<span class="highlight-key">d</span>（度数）。
+                            </p>
+                        </div>
+
+                        <div class="kernel-item">
+                            <div class="kernel-name">RBF (Radial Basis Function)</div>
+                            <div class="kernel-formula">
+$$K(x_i, x_j) = \exp\left(-\gamma \|x_i - x_j\|^2\right)$$
+                            </div>
+                            <p data-lang="en" style="font-size: 13px; margin-top: 0.8rem;">
+                                Gaussian kernel. Maps to infinite-dimensional space. Parameter: <span class="highlight-key">γ > 0</span>.
+                            </p>
+                            <p data-lang="zh" style="font-size: 13px; margin-top: 0.8rem;">
+                                高斯核。映射到无限维空间。参数：<span class="highlight-key">γ > 0</span>。
+                            </p>
+                        </div>
+
+                        <div class="kernel-item">
+                            <div class="kernel-name">Sigmoid Kernel</div>
+                            <div class="kernel-formula">
+$$K(x_i, x_j) = \tanh(k \cdot x_i \cdot x_j + r)$$
+                            </div>
+                            <p data-lang="en" style="font-size: 13px; margin-top: 0.8rem;">
+                                Similar to neural network activation. Parameters: <span class="highlight-key">k</span>, <span class="highlight-key">r</span>.
+                            </p>
+                            <p data-lang="zh" style="font-size: 13px; margin-top: 0.8rem;">
+                                类似于神经网络激活函数。参数：<span class="highlight-key">k</span>、<span class="highlight-key">r</span>。
+                            </p>
+                        </div>
+                    </div>
+
+                    <h3>
+                        <span data-lang="en">RBF Kernel Analysis</span>
+                        <span data-lang="zh">RBF 核分析</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">The RBF kernel is the most commonly used. It has an elegant interpretation through its feature space representation:</span>
+                        <span data-lang="zh">RBF 核是最常用的。它通过特征空间表示有一个优雅的解释：</span>
+                    </p>
+
+                    <div class="math-box">
+                        <div class="math-box-title">
+                            <span data-lang="en">RBF Feature Space</span>
+                            <span data-lang="zh">RBF 特征空间</span>
+                        </div>
+$$\exp(-\gamma \|x_i - x_j\|^2) = \exp(-\gamma \|x_i\|^2) \exp(-\gamma \|x_j\|^2) \exp(2\gamma x_i \cdot x_j)$$
+                    </div>
+
+                    <p>
+                        <span data-lang="en">The RBF kernel with <span class="highlight-key">γ</span> parameter:</span>
+                        <span data-lang="zh">具有 <span class="highlight-key">γ</span> 参数的 RBF 核：</span>
+                    </p>
+                    <ul>
+                        <li data-lang="en"><span class="highlight-key">Large γ</span>: Each sample has a small influence (local decision boundary)</li>
+                        <li data-lang="en"><span class="highlight-key">Small γ</span>: Samples have global influence (smooth decision boundary)</li>
+                    </ul>
+                    <ul>
+                        <li data-lang="zh"><span class="highlight-key">大 γ</span>：每个样本的影响范围小（局部决策边界）</li>
+                        <li data-lang="zh"><span class="highlight-key">小 γ</span>：样本有全局影响（平滑决策边界）</li>
+                    </ul>
+                </div>
+
+                <!-- Summary -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">Summary: Key Insights</span>
+                        <span data-lang="zh">总结：关键要点</span>
+                    </h2>
+
+                    <div class="definition-box">
+                        <ol style="margin-left: 2rem; line-height: 2;">
+                            <li data-lang="en">
+                                <span class="highlight-key">Primal-Dual Equivalence:</span> The dual problem is equivalent to the primal, but depends only on dot products.
+                            </li>
+                            <li data-lang="en">
+                                <span class="highlight-key">Support Vectors:</span> Only samples with <span class="highlight-key">α_i > 0</span> affect the final decision boundary.
+                            </li>
+                            <li data-lang="en">
+                                <span class="highlight-key">Kernel Trick:</span> Replace <span class="highlight-key">x_i·x_j</span> with <span class="highlight-key">K(x_i,x_j)</span> to implicitly work in high-dimensional spaces without computing features.
+                            </li>
+                            <li data-lang="en">
+                                <span class="highlight-key">Soft Margin:</span> The parameter <span class="highlight-key">C</span> controls the trade-off between margin size and training errors.
+                            </li>
+                            <li data-lang="en">
+                                <span class="highlight-key">Computational Efficiency:</span> SVM solves a convex QP problem with strong theoretical guarantees on generalization.
+                            </li>
+                        </ol>
+                        <ol style="margin-left: 2rem; line-height: 2;">
+                            <li data-lang="zh">
+                                <span class="highlight-key">原始-对偶等价性：</span>对偶问题等价于原始问题，但仅取决于点积。
+                            </li>
+                            <li data-lang="zh">
+                                <span class="highlight-key">支持向量：</span>仅具有 <span class="highlight-key">α_i > 0</span> 的样本影响最终决策边界。
+                            </li>
+                            <li data-lang="zh">
+                                <span class="highlight-key">核技巧：</span>用 <span class="highlight-key">K(x_i,x_j)</span> 替换 <span class="highlight-key">x_i·x_j</span> 以隐式在高维空间中工作，无需计算特征。
+                            </li>
+                            <li data-lang="zh">
+                                <span class="highlight-key">软间隔：</span>参数 <span class="highlight-key">C</span> 控制间隔大小和训练错误之间的权衡。
+                            </li>
+                            <li data-lang="zh">
+                                <span class="highlight-key">计算效率：</span>SVM 解决一个凸 QP 问题，对泛化有强有力的理论保证。
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- References -->
+                <p>
+                    <strong>References:</strong> Boser, B. E., Guyon, I. M., & Vapnik, V. N. (1992). A training algorithm for optimal margin classifiers. COLT. | Vapnik, V. (1995). The Nature of Statistical Learning Theory. Springer. | Schölkopf, B., & Smola, A. J. (2002). Learning with Kernels. MIT Press.
+                </p>
+
+                <!-- Back link at bottom -->
+                <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--parchment); text-align: center;">
+                    <a href="../machine-learning.html" class="guide-back" data-lang="en">Back to Machine Learning</a>
+                    <a href="../machine-learning.html" class="guide-back" data-lang="zh">返回机器学习</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langBtns = document.querySelectorAll('.guide-lang-btn');
+        const enElements = document.querySelectorAll('[data-lang="en"]');
+        const zhElements = document.querySelectorAll('[data-lang="zh"]');
+        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        setLanguage(savedLang);
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                localStorage.setItem('preferred-lang', lang);
+                setLanguage(lang);
+            });
+        });
+        function setLanguage(lang) {
+            langBtns.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('.guide-lang-btn[data-lang="' + lang + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            enElements.forEach(el => { el.style.display = lang === 'en' ? '' : 'none'; });
+            zhElements.forEach(el => { el.style.display = lang === 'zh' ? '' : 'none'; });
+            document.body.className = lang;
+        }
+    });
+    </script>
+
+</body>
+</html>

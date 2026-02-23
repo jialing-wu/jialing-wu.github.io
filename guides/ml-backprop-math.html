@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backpropagation Mathematics - Advanced Guide | Research Methods</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Base Styles -->
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- MathJax for Mathematics -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --paper: #F8F4EC;
+            --warm: #F2EBDE;
+            --parchment: #DED4C0;
+            --tea: #C4B599;
+            --leather: #8B7355;
+            --ink: #1E180F;
+            --ink-soft: #3A3225;
+            --ink-faded: #6B5F4F;
+            --ink-ghost: #9A8E7E;
+            --red: #B5372A;
+            --gold: #C2993D;
+            --gold-soft: #D4B36A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'EB Garamond', 'Noto Serif SC', serif;
+            background-color: var(--paper);
+            color: var(--ink);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        body.zh {
+            font-family: 'Noto Serif SC', 'EB Garamond', serif;
+        }
+
+        /* Topbar */
+        .topbar {
+            background-color: var(--leather);
+            color: var(--paper);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .topbar-back {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .topbar-back:hover {
+            opacity: 1;
+        }
+
+        .topbar-back a {
+            color: var(--paper);
+            text-decoration: none;
+        }
+
+        .topbar-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .lang-toggle {
+            display: flex;
+            gap: 0.5rem;
+            background-color: rgba(0,0,0,0.2);
+            padding: 0.4rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .lang-toggle button {
+            background: none;
+            border: none;
+            color: var(--paper);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            opacity: 0.6;
+        }
+
+        .lang-toggle button.active {
+            opacity: 1;
+            color: var(--gold-soft);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background-color: var(--warm);
+            padding: 1rem 2rem;
+            font-size: 0.9rem;
+            color: var(--ink-faded);
+            border-bottom: 1px solid var(--parchment);
+        }
+
+        .breadcrumb a {
+            color: var(--gold);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--red);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Header Section */
+        .page-header {
+            margin-bottom: 3rem;
+            border-bottom: 2px solid var(--parchment);
+            padding-bottom: 2rem;
+        }
+
+        .header-tag {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            color: var(--red);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .page-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            color: var(--ink);
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: var(--ink-soft);
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            color: var(--ink);
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--ink-soft);
+            margin: 1.5rem 0 1rem 0;
+            font-style: italic;
+        }
+
+        /* Bilingual Text */
+        [data-lang="en"] {
+            display: block;
+        }
+
+        [data-lang="zh"] {
+            display: none;
+        }
+
+        body.zh [data-lang="en"] {
+            display: none;
+        }
+
+        body.zh [data-lang="zh"] {
+            display: block;
+        }
+
+        /* Text Styling */
+        p {
+            margin-bottom: 1.2rem;
+            text-align: justify;
+        }
+
+        strong {
+            color: var(--ink-soft);
+            font-weight: 600;
+        }
+
+        em {
+            color: var(--ink-faded);
+            font-style: italic;
+        }
+
+        /* Math Display */
+        .math-display {
+            background-color: var(--warm);
+            border-left: 4px solid var(--gold);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            border-radius: 2px;
+        }
+
+        .math-inline {
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--red);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 1.5rem 0 1.5rem 2rem;
+            line-height: 1.9;
+        }
+
+        li {
+            margin-bottom: 0.8rem;
+        }
+
+        /* Definition/Note Boxes */
+        .definition-box, .note-box, .proof-box, .example-box {
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--tea);
+            background-color: rgba(196, 181, 153, 0.08);
+            border-radius: 2px;
+        }
+
+        .definition-box {
+            border-left-color: var(--gold);
+        }
+
+        .note-box {
+            border-left-color: var(--red);
+        }
+
+        .proof-box {
+            border-left-color: var(--leather);
+        }
+
+        .example-box {
+            border-left-color: var(--ink-ghost);
+        }
+
+        .box-title {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-weight: 600;
+            color: var(--ink-soft);
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .box-title::before {
+            content: "■ ";
+            color: var(--gold);
+            margin-right: 0.5rem;
+        }
+
+        .note-box .box-title::before {
+            color: var(--red);
+        }
+
+        .proof-box .box-title::before {
+            color: var(--leather);
+        }
+
+        .example-box .box-title::before {
+            color: var(--ink-ghost);
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background-color: var(--warm);
+        }
+
+        .comparison-table th {
+            background-color: var(--leather);
+            color: var(--paper);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--parchment);
+        }
+
+        .comparison-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--parchment);
+            vertical-align: top;
+        }
+
+        .comparison-table tr:hover {
+            background-color: rgba(196, 181, 153, 0.3);
+        }
+
+        /* Footer */
+        .page-footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--parchment);
+            text-align: center;
+            color: var(--ink-faded);
+            font-size: 0.95rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--leather);
+            color: var(--paper);
+            text-decoration: none;
+            border-radius: 2px;
+            transition: background-color 0.3s;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            background-color: var(--gold);
+            color: var(--ink);
+        }
+
+        /* Step-by-step derivation */
+        .derivation {
+            background-color: var(--warm);
+            padding: 2rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--gold);
+            border-radius: 2px;
+        }
+
+        .derivation-step {
+            margin-bottom: 1.5rem;
+        }
+
+        .derivation-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .derivation-step-label {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* MathJax adjustments */
+        .MathJax {
+            color: var(--ink) !important;
+        }
+
+        /* Highlight key equations */
+        .key-equation {
+            background-color: rgba(194, 153, 61, 0.1);
+            border-left: 4px solid var(--gold);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 2px;
+        }
+
+        /* Computation graph visualization */
+        .computation-diagram {
+            background-color: var(--parchment);
+            border: 1px solid var(--ink-ghost);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+            font-family: 'IBM Plex Mono', monospace;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Citation/Reference */
+        .reference {
+            font-size: 0.9rem;
+            color: var(--ink-faded);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .container {
+                padding: 2rem 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .math-display {
+                font-size: 0.85rem;
+                padding: 1rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body class="zh">
+    <!-- Topbar with Navigation -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <span class="topbar-back">
+                <a href="../machine-learning.html">←</a>
+            </span>
+            <div class="topbar-title">
+                <span data-lang="en">BACKPROPAGATION MATHEMATICS</span>
+                <span data-lang="zh">反向传播数学</span>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <div class="lang-toggle">
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="zh">中文</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="../machine-learning.html" data-lang="en">Research Methods</a>
+        <a href="../machine-learning.html" data-lang="zh">研究方法</a>
+        <span data-lang="en"> / Guides / Backpropagation Mathematics</span>
+        <span data-lang="zh"> / 指南 / 反向传播数学</span>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="header-tag">
+                <span data-lang="en">ADVANCED · PROOF & DERIVATION</span>
+                <span data-lang="zh">进阶 · 证明与推导</span>
+            </div>
+            <h1 class="page-title">
+                <span data-lang="en">Backpropagation Complete Mathematical Derivation</span>
+                <span data-lang="zh">反向传播完整数学推导</span>
+            </h1>
+            <p class="page-subtitle">
+                <span data-lang="en">Chain Rule, Jacobians, Computation Graphs, and Gradient Flow Analysis</span>
+                <span data-lang="zh">链式法则、Jacobian矩阵、计算图与梯度流分析</span>
+            </p>
+        </div>
+
+        <!-- Section 1: The Fundamentals -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en">1. Fundamentals: The Chain Rule in Multivariate Calculus</span>
+                <span data-lang="zh">1. 基础：多元微积分中的链式法则</span>
+            </h2>
+
+            <p data-lang="en">
+                Backpropagation is fundamentally an application of the <strong>chain rule</strong> from multivariate calculus. The chain rule allows us to decompose the gradient of a composite function into products of gradients of simpler component functions. This decomposition is what makes efficient gradient computation possible in deep neural networks.
+            </p>
+            <p data-lang="zh">
+                反向传播本质上是多元微积分中<strong>链式法则</strong>的应用。链式法则允许我们将复合函数的梯度分解为更简单的分量函数梯度的乘积。这种分解使得在深度神经网络中进行有效的梯度计算成为可能。
+            </p>
+
+            <h3 class="section-subtitle">
+                <span data-lang="en">The Chain Rule for Scalar Functions</span>
+                <span data-lang="zh">标量函数的链式法则</span>
+            </h3>
+
+            <p data-lang="en">
+                Consider a composition of functions. If \(z = f(y)\) and \(y = g(x)\), then:
+            </p>
+            <p data-lang="zh">
+                考虑函数的复合。如果 \(z = f(y)\) 且 \(y = g(x)\)，则：
+            </p>
+
+            <div class="key-equation">
+                $$\frac{dz}{dx} = \frac{dz}{dy} \cdot \frac{dy}{dx}$$
+            </div>
+
+            <p data-lang="en">
+                This simple but powerful relationship extends to higher dimensions and deeper compositions. For a chain of \(L\) functions:
+            </p>
+            <p data-lang="zh">
+                这个简单但强大的关系扩展到更高维度和更深层次的复合。对于 \(L\) 个函数的链：
+            </p>
+
+            <div class="math-display">
+                $$\frac{\partial z}{\partial x} = \frac{\partial z}{\partial a^{(L-1)}} \cdot \frac{\partial a^{(L-1)}}{\partial a^{(L-2)}} \cdots \frac{\partial a^{(1)}}{\partial x}$$
+            </div>
+
+            <div class="note-box">
+                <div class="box-title">
+                    <span data-lang="en">Why Chain Rule Matters for Neural Networks</span>
+                    <span data-lang="zh">为什么链式法则对神经网络很重要</span>
+                </div>
+                <p data-lang="en">
+                    Each multiplication (composition) in the chain rule corresponds to a layer in a neural network. Rather than computing one giant Jacobian for the entire network (exponentially expensive), we compute local Jacobians for each layer and multiply them—this is \(O(n)\) instead of exponential.
+                </p>
+                <p data-lang="zh">
+                    链式法则中的每次乘法（复合）对应神经网络中的一层。我们不是计算整个网络的一个巨大Jacobian（指数级昂贵），而是计算每层的局部Jacobian并相乘——这是 \(O(n)\) 而不是指数级。
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 2: Jacobian Matrices -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en">2. Jacobian Matrices for Each Layer</span>
+                <span data-lang="zh">2. 每层的Jacobian矩阵</span>
+            </h2>
+
+            <p data-lang="en">
+                A Jacobian matrix contains all first-order partial derivatives of a vector-valued function. For a layer with input \(\mathbf{a}^{(l-1)} \in \mathbb{R}^{n_{l-1}}\) producing output \(\mathbf{a}^{(l)} \in \mathbb{R}^{n_l}\), the Jacobian is:
+            </p>
+            <p data-lang="zh">
+                Jacobian矩阵包含向量值函数的所有一阶偏导数。对于输入为 \(\mathbf{a}^{(l-1)} \in \mathbb{R}^{n_{l-1}}\) 产生输出 \(\mathbf{a}^{(l)} \in \mathbb{R}^{n_l}\) 的层，Jacobian是：
+            </p>
+
+            <div class="math-display">
+                $$J^{(l)} = \frac{\partial \mathbf{a}^{(l)}}{\partial \mathbf{a}^{(l-1)}} = \begin{bmatrix}
+                \frac{\partial a_1^{(l)}}{\partial a_1^{(l-1)}} & \cdots & \frac{\partial a_1^{(l)}}{\partial a_{n_{l-1}}^{(l-1)}} \\
+                \vdots & \ddots & \vdots \\
+                \frac{\partial a_{n_l}^{(l)}}{\partial a_1^{(l-1)}} & \cdots & \frac{\partial a_{n_l}^{(l)}}{\partial a_{n_{l-1}}^{(l-1)}}
+                \end{bmatrix}$$
+            </div>
+
+            <h3 class="section-subtitle">
+                <span data-lang="en">Example: Linear Transformation Layer</span>
+                <span data-lang="zh">例：线性变换层</span>
+            </h3>
+
+            <p data-lang="en">
+                For a linear layer: \(\mathbf{a}^{(l)} = \mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}\), the Jacobian with respect to the input is simply:
+            </p>
+            <p data-lang="zh">
+                对于线性层：\(\mathbf{a}^{(l)} = \mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}\)，相对于输入的Jacobian很简单：
+            </p>
+
+            <div class="key-equation">
+                $$J^{(l)} = \mathbf{W}^{(l)} \quad \in \mathbb{R}^{n_l \times n_{l-1}}$$
+            </div>
+
+            <h3 class="section-subtitle">
+                <span data-lang="en">Example: ReLU Activation Layer</span>
+                <span data-lang="zh">例：ReLU激活层</span>
+            </h3>
+
+            <p data-lang="en">
+                For ReLU: \(a_i^{(l)} = \max(0, z_i^{(l)})\), the Jacobian is diagonal:
+            </p>
+            <p data-lang="zh">
+                对于ReLU：\(a_i^{(l)} = \max(0, z_i^{(l)})\)，Jacobian是对角的：
+            </p>
+
+            <div class="math-display">
+                $$J^{(l)} = \text{diag}(\mathbf{1}[z_i^{(l)} > 0]) = \begin{bmatrix}
+                \mathbb{1}[z_1^{(l)} > 0] & 0 & \cdots & 0 \\
+                0 & \mathbb{1}[z_2^{(l)} > 0] & \cdots & 0 \\
+                \vdots & \vdots & \ddots & \vdots \\
+                0 & 0 & \cdots & \mathbb{1}[z_{n_l}^{(l)} > 0]
+                \end{bmatrix}$$
+            </div>
+
+            <p data-lang="en">
+                where \(\mathbb{1}[\cdot]\) is the indicator function. The gradient passes through where the input was positive, and is zeroed elsewhere.
+            </p>
+            <p data-lang="zh">
+                其中 \(\mathbb{1}[\cdot]\) 是指示函数。梯度在输入为正的地方通过，在其他地方为零。
+            </p>
+        </div>
+
+        <!-- Section 3: Computation Graphs -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en">3. Computation Graphs and Automatic Differentiation</span>
+                <span data-lang="zh">3. 计算图与自动微分</span>
+            </h2>
+
+            <p data-lang="en">
+                A <strong>computation graph</strong> is a directed acyclic graph (DAG) where:
+            </p>
+            <p data-lang="zh">
+                <strong>计算图</strong>是一个有向无环图（DAG），其中：
+            </p>
+
+            <ul>
+                <li data-lang="en">Nodes represent variables (inputs, parameters, activations, loss)</li>
+                <li data-lang="zh">节点代表变量（输入、参数、激活、损失）</li>
+                <li data-lang="en">Edges represent operations (transformations, compositions)</li>
+                <li data-lang="zh">边代表操作（变换、复合）</li>
+            </ul>
+
+            <p data-lang="en">
+                Forward pass: compute values from inputs to loss (topological order). Backward pass: compute gradients from loss to parameters (reverse topological order).
+            </p>
+            <p data-lang="zh">
+                前向传播：按拓扑顺序从输入计算到损失的值。反向传播：按反向拓扑顺序从损失计算到参数的梯度。
+            </p>
+
+            <div class="computation-diagram">
+                <span data-lang="en"><strong>Example: 2-Layer Network Computation Graph</strong></span>
+                <span data-lang="zh"><strong>例：2层网络计算图</strong></span>
+                <br/><br/>
+                x(input) → [W¹,b¹] → z¹ → ReLU → a¹ → [W²,b²] → z² → σ → loss<br/>
+                <br/>
+                <span data-lang="en"><strong>Forward Pass:</strong></span>
+                <span data-lang="zh"><strong>前向传播：</strong></span>
+                <br/>
+                z¹ = W¹x + b¹<br/>
+                a¹ = ReLU(z¹)<br/>
+                z² = W²a¹ + b²<br/>
+                ŷ = σ(z²)<br/>
+                L = ℓ(ŷ, y)<br/>
+                <br/>
+                <span data-lang="en"><strong>Backward Pass (Reverse Topological):</strong></span>
+                <span data-lang="zh"><strong>反向传播（反向拓扑）：</strong></span>
+                <br/>
+                δL/dŷ = ∂ℓ/∂ŷ<br/>
+                δL/dz² = (δL/dŷ) · σ'(z²)<br/>
+                δL/dW² = (δL/dz²) · a¹ᵀ<br/>
+                δL/da¹ = W²ᵀ · (δL/dz²)<br/>
+                δL/dz¹ = (δL/da¹) ⊙ ReLU'(z¹)<br/>
+                δL/dW¹ = (δL/dz¹) · xᵀ
+            </div>
+
+            <div class="proof-box">
+                <div class="box-title">
+                    <span data-lang="en">Node Value and Gradient Computation</span>
+                    <span data-lang="zh">节点值与梯度计算</span>
+                </div>
+                <p data-lang="en">
+                    For each node \(v\) in the graph with incoming edges from predecessors \(u_1, \ldots, u_k\):
+                </p>
+                <p data-lang="zh">
+                    对于图中每个节点 \(v\) 及其来自前驱节点 \(u_1, \ldots, u_k\) 的传入边：
+                </p>
+                <p data-lang="en">
+                    <strong>Forward:</strong> \(v = f(u_1, \ldots, u_k)\)
+                </p>
+                <p data-lang="zh">
+                    <strong>前向：</strong>\(v = f(u_1, \ldots, u_k)\)
+                </p>
+                <p data-lang="en">
+                    <strong>Backward:</strong> \(\frac{\partial L}{\partial u_j} = \sum_{i} \frac{\partial L}{\partial v} \cdot \frac{\partial v}{\partial u_j}\)
+                </p>
+                <p data-lang="zh">
+                    <strong>反向：</strong>\(\frac{\partial L}{\partial u_j} = \sum_{i} \frac{\partial L}{\partial v} \cdot \frac{\partial v}{\partial u_j}\)
+                </p>
+                <p data-lang="en">
+                    This is the fundamental operation: accumulate incoming gradients, weighted by local derivatives.
+                </p>
+                <p data-lang="zh">
+                    这是基本操作：累积传入的梯度，按局部导数加权。
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 4: Gradient Flow Analysis -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en">4. Gradient Flow: Vanishing and Exploding Gradients</span>
+                <span data-lang="zh">4. 梯度流：梯度消失与爆炸</span>
+            </h2>
+
+            <h3 class="section-subtitle">
+                <span data-lang="en">The Gradient Signal Through the Network</span>
+                <span data-lang="zh">网络通过梯度信号</span>
+            </h3>
+
+            <p data-lang="en">
+                Consider a deep network with \(L\) layers. The gradient of the loss with respect to weights in layer \(l\) is:
+            </p>
+            <p data-lang="zh">
+                考虑一个有 \(L\) 层的深度网络。损失相对于第 \(l\) 层权重的梯度是：
+            </p>
+
+            <div class="math-display">
+                $$\frac{\partial L}{\partial \mathbf{W}^{(l)}} = \frac{\partial L}{\partial \mathbf{a}^{(L)}} \cdot \prod_{i=l+1}^{L} J^{(i)} \cdot \mathbf{a}^{(l-1)^T}$$
+            </div>
+
+            <p data-lang="en">
+                The gradient must propagate backward through \(L - l\) layers. The magnitude of this gradient depends on the product of Jacobians:
+            </p>
+            <p data-lang="zh">
+                梯度必须向后传播通过 \(L - l\) 层。这个梯度的大小取决于Jacobians的乘积：
+            </p>
+
+            <div class="key-equation">
+                $$\left\| \frac{\partial L}{\partial \mathbf{W}^{(l)}} \right\| \propto \left\| \prod_{i=l+1}^{L} J^{(i)} \right\|$$
+            </div>
+
+            <h3 class="section-subtitle">
+                <span data-lang="en">Vanishing Gradients</span>
+                <span data-lang="zh">梯度消失</span>
+            </h3>
+
+            <p data-lang="en">
+                If each Jacobian has spectral norm \(\sigma(J^{(i)}) < 1\), then:
+            </p>
+            <p data-lang="zh">
+                如果每个Jacobian的谱范数 \(\sigma(J^{(i)}) < 1\)，则：
+            </p>
+
+            <div class="math-display">
+                $$\left\| \prod_{i=l+1}^{L} J^{(i)} \right\| \approx \prod_{i=l+1}^{L} \sigma(J^{(i)}) < 1$$
+            </div>
+
+            <p data-lang="en">
+                As \(L - l\) increases, this product becomes exponentially small. For example, if \(\sigma(J^{(i)}) = 0.9\), then after 50 layers the gradient is multiplied by \((0.9)^{50} \approx 0.005\). The signal becomes too weak to train early layers effectively.
+            </p>
+            <p data-lang="zh">
+                随着 \(L - l\) 增加，这个乘积变得指数级变小。例如，如果 \(\sigma(J^{(i)}) = 0.9\)，50层后梯度乘以 \((0.9)^{50} \approx 0.005\)。信号太弱，无法有效训练早期层。
+            </p>
+
+            <h3 class="section-subtitle">
+                <span data-lang="en">Exploding Gradients</span>
+                <span data-lang="zh">梯度爆炸</span>
+            </h3>
+
+            <p data-lang="en">
+                Conversely, if \(\sigma(J^{(i)}) > 1\):
+            </p>
+            <p data-lang="zh">
+                反之，如果 \(\sigma(J^{(i)}) > 1\)：
+            </p>
+
+            <div class="math-display">
+                $$\left\| \prod_{i=l+1}^{L} J^{(i)} \right\| \approx \prod_{i=l+1}^{L} \sigma(J^{(i)}) \gg 1$$
+            </div>
+
+            <p data-lang="en">
+                Gradients can become very large, causing weight updates to be unstable and unpredictable. Numerical overflow and NaN values are common symptoms.
+            </p>
+            <p data-lang="zh">
+                梯度可能变得非常大，导致权重更新不稳定且不可预测。数值溢出和NaN值是常见症状。
+            </p>
+
+            <div class="definition-box">
+                <div class="box-title">
+                    <span data-lang="en">The Spectral Norm and Layer Stability</span>
+                    <span data-lang="zh">谱范数与层稳定性</span>
+                </div>
+                <p data-lang="en">
+                    The spectral norm \(\sigma(J)\) of a Jacobian is its largest singular value. For a weight matrix \(\mathbf{W}\) of a linear layer:
+                </p>
+                <p data-lang="zh">
+                    Jacobian的谱范数 \(\sigma(J)\) 是其最大奇异值。对于线性层的权重矩阵 \(\mathbf{W}\)：
+                </p>
+                <p data-lang="en">
+                    \(\sigma(\mathbf{W}) = \sqrt{\lambda_{\max}(\mathbf{W}^T \mathbf{W})}\)
+                </p>
+                <p data-lang="zh">
+                    \(\sigma(\mathbf{W}) = \sqrt{\lambda_{\max}(\mathbf{W}^T \mathbf{W})}\)
+                </p>
+                <p data-lang="en">
+                    Stable gradient flow requires \(\sigma(J^{(i)}) \approx 1\) for all layers. This is the principle behind techniques like Spectral Normalization and Layer Normalization.
+                </p>
+                <p data-lang="zh">
+                    稳定的梯度流需要所有层的 \(\sigma(J^{(i)}) \approx 1\)。这是谱归一化和层归一化等技术的原理。
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 5: Practical Example -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en">5. Practical Example: 2-Layer Neural Network with Numerical Values</span>
+                <span data-lang="zh">5. 实际例子：带有数值的2层神经网络</span>
+            </h2>
+
+            <p data-lang="en">
+                We'll walk through a complete forward and backward pass with concrete numbers.
+            </p>
+            <p data-lang="zh">
+                我们将通过具体数字进行完整的前向和反向传播。
+            </p>
+
+            <h3 class="section-subtitle">
+                <span data-lang="en">Setup</span>
+                <span data-lang="zh">设置</span>
+            </h3>
+
+            <p data-lang="en">
+                <strong>Architecture:</strong> Input (2 dims) → Hidden Layer (3 dims, ReLU) → Output (1 dim, Sigmoid)
+            </p>
+            <p data-lang="zh">
+                <strong>架构：</strong>输入（2维）→ 隐藏层（3维，ReLU）→ 输出（1维，Sigmoid）
+            </p>
+
+            <p data-lang="en">
+                <strong>Parameters:</strong>
+            </p>
+            <p data-lang="zh">
+                <strong>参数：</strong>
+            </p>
+
+            <div class="math-display">
+                $$\mathbf{W}^{(1)} = \begin{bmatrix} 0.5 & -0.3 \\ 0.2 & 0.4 \\ -0.1 & 0.6 \end{bmatrix}, \quad \mathbf{b}^{(1)} = \begin{bmatrix} 0.1 \\ -0.2 \\ 0.3 \end{bmatrix}$$
+                $$\mathbf{W}^{(2)} = \begin{bmatrix} 0.4 & 0.3 & -0.5 \end{bmatrix}, \quad b^{(2)} = 0.2$$
+            </div>
+
+            <p data-lang="en">
+                <strong>Input and Target:</strong> \(\mathbf{x} = [1, 2]^T\), \(y = 1\) (binary classification)
+            </p>
+            <p data-lang="zh">
+                <strong>输入和目标：</strong>\(\mathbf{x} = [1, 2]^T\), \(y = 1\)（二分类）
+            </p>
+
+            <h3 class="section-subtitle">
+                <span data-lang="en">Forward Pass</span>
+                <span data-lang="zh">前向传播</span>
+            </h3>
+
+            <div class="derivation">
+                <div class="derivation-step">
+                    <div class="derivation-step-label">
+                        <span data-lang="en">Step 1: First layer pre-activation</span>
+                        <span data-lang="zh">步骤1：第一层前激活</span>
+                    </div>
+                    <div class="math-display">
+                        $$\mathbf{z}^{(1)} = \mathbf{W}^{(1)} \mathbf{x} + \mathbf{b}^{(1)} = \begin{bmatrix} 0.5(1) + (-0.3)(2) + 0.1 \\ 0.2(1) + 0.4(2) - 0.2 \\ -0.1(1) + 0.6(2) + 0.3 \end{bmatrix} = \begin{bmatrix} 0.0 \\ 0.8 \\ 1.1 \end{bmatrix}$$
+                    </div>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="derivation-step-label">
+                        <span data-lang="en">Step 2: First layer activation (ReLU)</span>
+                        <span data-lang="zh">步骤2：第一层激活（ReLU）</span>
+                    </div>
+                    <div class="math-display">
+                        $$\mathbf{a}^{(1)} = \text{ReLU}(\mathbf{z}^{(1)}) = [\max(0, 0.0), \max(0, 0.8), \max(0, 1.1)]^T = \begin{bmatrix} 0 \\ 0.8 \\ 1.1 \end{bmatrix}$$
+                    </div>
+                    <p data-lang="en">Note: First neuron is inactive (dead ReLU)</p>
+                    <p data-lang="zh">注意：第一个神经元不活跃（死ReLU）</p>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="derivation-step-label">
+                        <span data-lang="en">Step 3: Second layer pre-activation</span>
+                        <span data-lang="zh">步骤3：第二层前激活</span>
+                    </div>
+                    <div class="math-display">
+                        $$z^{(2)} = \mathbf{W}^{(2)} \mathbf{a}^{(1)} + b^{(2)} = [0.4, 0.3, -0.5] \begin{bmatrix} 0 \\ 0.8 \\ 1.1 \end{bmatrix} + 0.2$$
+                        $$= 0.4(0) + 0.3(0.8) + (-0.5)(1.1) + 0.2 = 0.24 - 0.55 + 0.2 = -0.11$$
+                    </div>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="derivation-step-label">
+                        <span data-lang="en">Step 4: Output (Sigmoid)</span>
+                        <span data-lang="zh">步骤4：输出（Sigmoid）</span>
+                    </div>
+                    <div class="math-display">
+                        $$\hat{y} = \sigma(z^{(2)}) = \frac{1}{1 + e^{-(-0.11)}} = \frac{1}{1 + e^{0.11}} \approx \frac{1}{1 + 1.116} \approx 0.473$$
+                    </div>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="derivation-step-label">
+                        <span data-lang="en">Step 5: Loss (Binary Cross-Entropy)</span>
+                        <span data-lang="zh">步骤5：损失（二分类交叉熵）</span>
+                    </div>
+                    <div class="math-display">
+                        $$L = -[y \log(\hat{y}) + (1-y) \log(1-\hat{y})] = -[\log(0.473)] \approx 0.747$$
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">
+                <span data-lang="en">Backward Pass</span>
+                <span data-lang="zh">反向传播</span>
+            </h3>
+
+            <div class="derivation">
+                <div class="derivation-step">
+                    <div class="derivation-step-label">
+                        <span data-lang="en">Step 1: Loss gradient w.r.t. output</span>
+                        <span data-lang="zh">步骤1：损失对输出的梯度</span>
+                    </div>
+                    <div class="math-display">
+                        $$\frac{\partial L}{\partial \hat{y}} = -\frac{y}{\hat{y}} + \frac{1-y}{1-\hat{y}} = -\frac{1}{0.473} + \frac{0}{0.527} \approx -2.114$$
+                    </div>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="derivation-step-label">
+                        <span data-lang="en">Step 2: Sigmoid gradient and chain through output layer</span>
+                        <span data-lang="zh">步骤2：Sigmoid梯度和输出层的链式</span>
+                    </div>
+                    <div class="math-display">
+                        $$\frac{\partial \hat{y}}{\partial z^{(2)}} = \sigma'(z^{(2)}) = \hat{y}(1-\hat{y}) = 0.473 \times 0.527 \approx 0.249$$
+                    </div>
+                    <div class="math-display">
+                        $$\delta^{(2)} = \frac{\partial L}{\partial z^{(2)}} = \frac{\partial L}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z^{(2)}} = -2.114 \times 0.249 \approx -0.527$$
+                    </div>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="derivation-step-label">
+                        <span data-lang="en">Step 3: Gradient w.r.t. weights and bias in output layer</span>
+                        <span data-lang="zh">步骤3：输出层权重和偏差的梯度</span>
+                    </div>
+                    <div class="math-display">
+                        $$\frac{\partial L}{\partial \mathbf{W}^{(2)}} = \delta^{(2)} \cdot \mathbf{a}^{(1)T} = -0.527 \times [0, 0.8, 1.1] = [0, -0.422, -0.580]$$
+                    </div>
+                    <div class="math-display">
+                        $$\frac{\partial L}{\partial b^{(2)}} = \delta^{(2)} = -0.527$$
+                    </div>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="derivation-step-label">
+                        <span data-lang="en">Step 4: Backprop to hidden layer</span>
+                        <span data-lang="zh">步骤4：反向传播到隐藏层</span>
+                    </div>
+                    <div class="math-display">
+                        $$\frac{\partial L}{\partial \mathbf{a}^{(1)}} = \mathbf{W}^{(2)T} \cdot \delta^{(2)} = \begin{bmatrix} 0.4 \\ 0.3 \\ -0.5 \end{bmatrix} \times (-0.527) = \begin{bmatrix} -0.211 \\ -0.158 \\ 0.264 \end{bmatrix}$$
+                    </div>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="derivation-step-label">
+                        <span data-lang="en">Step 5: ReLU gradient (gate for backprop)</span>
+                        <span data-lang="zh">步骤5：ReLU梯度（反向传播门）</span>
+                    </div>
+                    <div class="math-display">
+                        $$\text{ReLU}'(\mathbf{z}^{(1)}) = [0, 1, 1]^T \quad \text{(since } z_1^{(1)} = 0, z_2^{(1)}, z_3^{(1)} > 0 \text{)}$$
+                    </div>
+                    <div class="math-display">
+                        $$\delta^{(1)} = \frac{\partial L}{\partial \mathbf{z}^{(1)}} = \frac{\partial L}{\partial \mathbf{a}^{(1)}} \odot \text{ReLU}'(\mathbf{z}^{(1)}) = [-0.211, -0.158, 0.264] \odot [0, 1, 1]$$
+                        $$= \begin{bmatrix} 0 \\ -0.158 \\ 0.264 \end{bmatrix}$$
+                    </div>
+                    <p data-lang="en">Note: The first neuron's gradient is zeroed (dead ReLU)</p>
+                    <p data-lang="zh">注意：第一个神经元的梯度被清零（死ReLU）</p>
+                </div>
+
+                <div class="derivation-step">
+                    <div class="derivation-step-label">
+                        <span data-lang="en">Step 6: Gradient w.r.t. weights and bias in hidden layer</span>
+                        <span data-lang="zh">步骤6：隐藏层权重和偏差的梯度</span>
+                    </div>
+                    <div class="math-display">
+                        $$\frac{\partial L}{\partial \mathbf{W}^{(1)}} = \delta^{(1)} \cdot \mathbf{x}^T = \begin{bmatrix} 0 \\ -0.158 \\ 0.264 \end{bmatrix} \times [1, 2] = \begin{bmatrix} 0 & 0 \\ -0.158 & -0.316 \\ 0.264 & 0.528 \end{bmatrix}$$
+                    </div>
+                    <div class="math-display">
+                        $$\frac{\partial L}{\partial \mathbf{b}^{(1)}} = \delta^{(1)} = \begin{bmatrix} 0 \\ -0.158 \\ 0.264 \end{bmatrix}$$
+                    </div>
+                </div>
+            </div>
+
+            <div class="note-box">
+                <div class="box-title">
+                    <span data-lang="en">Key Observations from This Example</span>
+                    <span data-lang="zh">这个例子的关键观察</span>
+                </div>
+                <ul>
+                    <li data-lang="en">
+                        <strong>Dead ReLU:</strong> The first hidden neuron never activates (z₁⁽¹⁾ = 0). Its gradient in backprop is always zero, so its weights never update. This can be problematic in deeper networks.
+                    </li>
+                    <li data-lang="zh">
+                        <strong>死ReLU：</strong>第一个隐藏神经元从不激活（z₁⁽¹⁾ = 0）。其反向传播梯度总是零，所以其权重永远不更新。这在更深的网络中可能是个问题。
+                    </li>
+                    <li data-lang="en">
+                        <strong>Gradient Magnitudes:</strong> Gradients in the hidden layer (10⁻¹ scale) are smaller than in the output layer due to multiplication by sigmoid derivative and ReLU gate. Over many layers, this becomes the vanishing gradient problem.
+                    </li>
+                    <li data-lang="zh">
+                        <strong>梯度大小：</strong>隐藏层中的梯度（10⁻¹规模）由于乘以sigmoid导数和ReLU门而比输出层小。在许多层中，这就变成了梯度消失问题。
+                    </li>
+                    <li data-lang="en">
+                        <strong>Update Direction:</strong> Weights in the first layer move in opposite directions (positive gradients for W₃₁ and negative for W₂₁), reflecting the network's attempt to correctly classify the input.
+                    </li>
+                    <li data-lang="zh">
+                        <strong>更新方向：</strong>第一层中的权重向相反方向移动（W₃₁的正梯度和W₂₁的负梯度），反映网络试图正确分类输入的努力。
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 6: Extensions and Modern Techniques -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en">6. Extensions and Stabilization Techniques</span>
+                <span data-lang="zh">6. 扩展与稳定化技术</span>
+            </h2>
+
+            <h3 class="section-subtitle">
+                <span data-lang="en">Batch Normalization</span>
+                <span data-lang="zh">批量归一化</span>
+            </h3>
+
+            <p data-lang="en">
+                Batch normalization stabilizes gradients by normalizing activations across a batch:
+            </p>
+            <p data-lang="zh">
+                批量归一化通过在批次中标准化激活来稳定梯度：
+            </p>
+
+            <div class="math-display">
+                $$\mathbf{a}^{(l)}_{\text{norm}} = \gamma \cdot \frac{\mathbf{a}^{(l)} - \mathbb{E}[\mathbf{a}^{(l)}]}{\sqrt{\text{Var}[\mathbf{a}^{(l)}] + \epsilon}} + \beta$$
+            </div>
+
+            <p data-lang="en">
+                This keeps activations in a reasonable range and reduces internal covariate shift, allowing higher learning rates and faster convergence.
+            </p>
+            <p data-lang="zh">
+                这使激活保持在合理范围内并减少内部协变量移位，允许更高的学习率和更快的收敛。
+            </p>
+
+            <h3 class="section-subtitle">
+                <span data-lang="en">Residual Connections (Skip Connections)</span>
+                <span data-lang="zh">残差连接（跳过连接）</span>
+            </h3>
+
+            <p data-lang="en">
+                Instead of: \(\mathbf{a}^{(l)} = f(\mathbf{a}^{(l-1)})\), use: \(\mathbf{a}^{(l)} = \mathbf{a}^{(l-1)} + f(\mathbf{a}^{(l-1)})\)
+            </p>
+            <p data-lang="zh">
+                不是 \(\mathbf{a}^{(l)} = f(\mathbf{a}^{(l-1)})\)，而是用：\(\mathbf{a}^{(l)} = \mathbf{a}^{(l-1)} + f(\mathbf{a}^{(l-1)})\)
+            </p>
+
+            <div class="math-display">
+                $$\frac{\partial L}{\partial \mathbf{a}^{(l-1)}} = \frac{\partial L}{\partial \mathbf{a}^{(l)}} \cdot \frac{\partial \mathbf{a}^{(l)}}{\partial \mathbf{a}^{(l-1)}} = \frac{\partial L}{\partial \mathbf{a}^{(l)}} \cdot (\mathbb{I} + J_f)$$
+            </div>
+
+            <p data-lang="en">
+                The identity term \(\mathbb{I}\) ensures a direct gradient path, preventing vanishing gradients even if \(J_f\) has small singular values.
+            </p>
+            <p data-lang="zh">
+                恒等项 \(\mathbb{I}\) 确保了直接梯度路径，即使 \(J_f\) 有小奇异值也能防止梯度消失。
+            </p>
+
+            <h3 class="section-subtitle">
+                <span data-lang="en">Layer Normalization</span>
+                <span data-lang="zh">层归一化</span>
+            </h3>
+
+            <p data-lang="en">
+                Unlike batch normalization, layer normalization operates on individual samples:
+            </p>
+            <p data-lang="zh">
+                与批量归一化不同，层归一化作用于单个样本：
+            </p>
+
+            <div class="math-display">
+                $$\text{LayerNorm}(\mathbf{a}) = \gamma \cdot \frac{\mathbf{a} - \text{mean}(\mathbf{a})}{\sqrt{\text{var}(\mathbf{a}) + \epsilon}} + \beta$$
+            </div>
+
+            <p data-lang="en">
+                This is particularly effective in Transformer architectures and helps decouple learning from batch statistics.
+            </p>
+            <p data-lang="zh">
+                这在Transformer架构中特别有效，并有助于解耦学习和批量统计。
+            </p>
+        </div>
+
+        <!-- Section 7: Summary -->
+        <div class="section">
+            <h2 class="section-title">
+                <span data-lang="en">7. Summary: The Complete Picture</span>
+                <span data-lang="zh">7. 总结：完整的图景</span>
+            </h2>
+
+            <div class="proof-box">
+                <div class="box-title">
+                    <span data-lang="en">Backpropagation in Five Points</span>
+                    <span data-lang="zh">反向传播的五个要点</span>
+                </div>
+                <ol>
+                    <li data-lang="en">
+                        <strong>Chain Rule Foundation:</strong> Backpropagation is the chain rule applied recursively from loss to parameters through all layers.
+                    </li>
+                    <li data-lang="zh">
+                        <strong>链式法则基础：</strong>反向传播是链式法则递归地从损失通过所有层应用到参数。
+                    </li>
+                    <li data-lang="en">
+                        <strong>Local Jacobians:</strong> Each layer computes its local derivative (Jacobian). These multiply together in reverse order—dynamic programming for gradients.
+                    </li>
+                    <li data-lang="zh">
+                        <strong>局部Jacobians：</strong>每层计算其局部导数（Jacobian）。这些按反向顺序相乘——梯度的动态规划。
+                    </li>
+                    <li data-lang="en">
+                        <strong>Computation Graphs:</strong> Modern autodiff systems represent programs as DAGs, enabling automatic gradient computation for arbitrary architectures.
+                    </li>
+                    <li data-lang="zh">
+                        <strong>计算图：</strong>现代自动微分系统将程序表示为DAG，能够为任意架构进行自动梯度计算。
+                    </li>
+                    <li data-lang="en">
+                        <strong>Gradient Flow Challenges:</strong> Products of Jacobians can vanish or explode exponentially with depth. Normalization and skip connections mitigate these issues.
+                    </li>
+                    <li data-lang="zh">
+                        <strong>梯度流挑战：</strong>Jacobians的乘积可以随深度指数级消失或爆炸。归一化和跳过连接缓解这些问题。
+                    </li>
+                    <li data-lang="en">
+                        <strong>Practical Computation:</strong> A complete forward pass computes all activations; backprop retraces this path, accumulating gradients at each node.
+                    </li>
+                    <li data-lang="zh">
+                        <strong>实际计算：</strong>完整的前向传播计算所有激活；反向传播重新追踪这个路径，在每个节点累积梯度。
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="page-footer">
+            <p data-lang="en">
+                This advanced guide provides the complete mathematical foundation of backpropagation. Modern deep learning frameworks (PyTorch, TensorFlow) implement these principles automatically through computational graphs and automatic differentiation.
+            </p>
+            <p data-lang="zh">
+                本指南提供了反向传播的完整数学基础。现代深度学习框架（PyTorch、TensorFlow）通过计算图和自动微分自动实现这些原理。
+            </p>
+
+            <a href="../machine-learning.html" class="back-link">
+                <span data-lang="en">← Back to Machine Learning</span>
+                <span data-lang="zh">← 回到机器学习</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Language Toggle Script -->
+    <script>
+        const langBtns = document.querySelectorAll('.lang-btn');
+        const body = document.body;
+
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.dataset.lang;
+
+                // Update active button
+                langBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // Update body class and trigger MathJax re-render
+                if (lang === 'zh') {
+                    body.classList.add('zh');
+                } else {
+                    body.classList.remove('zh');
+                }
+
+                // Re-render MathJax equations
+                if (window.MathJax) {
+                    MathJax.typesetPromise().catch(err => console.log(err));
+                }
+
+                // Save preference
+                localStorage.setItem('preferred-lang', lang);
+            });
+        });
+
+        // Restore language preference
+        const savedLang = localStorage.getItem('preferred-lang');
+        if (savedLang) {
+            const btn = document.querySelector(`[data-lang="${savedLang}"]`);
+            if (btn) btn.click();
+        } else {
+            // Default to Chinese if no preference
+            document.querySelector('[data-lang="zh"]').click();
+        }
+    </script>
+</body>
+</html>

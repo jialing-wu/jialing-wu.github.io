@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang="en">OVB Proof & Derivation | Empirical Modeling</title>
+    <title data-lang="zh">OVB 证明与推导 | 经验建模</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Base Styles -->
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Guide Styles -->
+    <link rel="stylesheet" href="guide-style.css">
+</head>
+
+<body class="zh">
+    <div class="guide-layout">
+        <!-- Topbar -->
+        <div class="guide-topbar">
+            <div class="guide-breadcrumb">
+                <a href="../empirical-modeling.html" data-lang="en">Empirical Modeling</a>
+                <a href="../empirical-modeling.html" data-lang="zh">经验建模</a>
+                <span class="sep">/</span>
+                <span data-lang="en">OVB Proof & Derivation</span>
+                <span data-lang="zh">OVB 证明与推导</span>
+            </div>
+            <div class="guide-lang-toggle">
+                <button class="guide-lang-btn active" data-lang="zh">中文</button>
+                <button class="guide-lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="guide-content-wrapper">
+            <div class="guide-content">
+                <!-- Back link -->
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="en">Back to Empirical Modeling</a>
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="zh">返回经验建模</a>
+
+                <!-- Page header -->
+                <div class="guide-header">
+                    <div class="guide-tag">
+                        <span data-lang="en">ZERO-BASE FRIENDLY · FROM FIRST PRINCIPLES</span>
+                        <span data-lang="zh">零基础友好 · 从首原理</span>
+                    </div>
+                    <h1>
+                        <span data-lang="en">Omitted Variable Bias</span>
+                        <span data-lang="zh">遗漏变量偏差</span>
+                    </h1>
+                    <p>
+                        <span data-lang="en">A complete guide to understanding OVB starting from scratch: what a model is, what happens when we forget a variable, and the algebra that explains the bias</span>
+                        <span data-lang="zh">从零开始理解 OVB 的完整指南：模型是什么、当我们忘记一个变量时会发生什么，以及解释偏差的代数</span>
+                    </p>
+                </div>
+
+                <!-- Section 1: What is a Model? -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">1. What is a "Model"? (The Foundation)</span>
+                        <span data-lang="zh">1. 什么是"模型"？（基础）</span>
+                    </h2>
+
+                    <p>
+                        <span data-lang="en">In real life, we want to understand relationships. For example: <strong>Does education make people earn more money?</strong> To answer this, we try to build a simple rule or "model" that describes the relationship.</span>
+                        <span data-lang="zh">在现实生活中，我们想理解关系。 例如：<strong>教育能让人赚更多钱吗？</strong> 为了回答这个问题，我们尝试建立一个简单的规则或"模型"来描述这种关系。</span>
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">The Simplest Model: Y = β₀ + β₁X</span>
+                        <span data-lang="zh">最简单的模型：Y = β₀ + β₁X</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">A model is just an equation. Let's use this one:</span>
+                        <span data-lang="zh">一个模型就是一个方程。 让我们使用这个：</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$Y = \beta_0 + \beta_1 X$$
+                    </div>
+
+                    <p>
+                        <span data-lang="en">What does each symbol mean?</span>
+                        <span data-lang="zh">每个符号是什么意思？</span>
+                    </p>
+
+                    <ul>
+                        <li>
+                            <span data-lang="en"><strong>Y</strong> (the outcome we want to predict): Someone's annual earnings in dollars. This is the thing we're trying to understand or predict.</span>
+                            <span data-lang="zh"><strong>Y</strong>（我们想要预测的结果）：某人的年收入（美元）。 这是我们试图理解或预测的东西。</span>
+                        </li>
+                        <li>
+                            <span data-lang="en"><strong>X</strong> (the input or "explanatory variable"): Years of education. This is the thing we think causes changes in Y.</span>
+                            <span data-lang="zh"><strong>X</strong>（输入或"解释变量"）：教育年数。 这是我们认为引起 Y 变化的东西。</span>
+                        </li>
+                        <li>
+                            <span data-lang="en"><strong>β₁</strong> (beta-one, the "slope" or "effect"): The number we're trying to find. It tells us: "For each extra year of education, earnings increase by β₁ dollars." If β₁ = 5000, it means each year of education adds $5,000 to earnings.</span>
+                            <span data-lang="zh"><strong>β₁</strong>（贝塔一，"斜率"或"效应"）：我们试图找到的数字。 它告诉我们："每增加一年的教育，收入增加 β₁ 美元。" 如果 β₁ = 5000，这意味着每年教育为收入增加 5,000 美元。</span>
+                        </li>
+                        <li>
+                            <span data-lang="en"><strong>β₀</strong> (beta-zero, the "intercept"): The baseline earnings when X = 0 (no education). For example, β₀ = 20,000 means people with zero years of education earn $20,000 on average.</span>
+                            <span data-lang="zh"><strong>β₀</strong>（贝塔零，"截距"）：当 X = 0（无教育）时的基线收入。 例如，β₀ = 20,000 意味着受教育年数为零的人平均收入 20,000 美元。</span>
+                        </li>
+                    </ul>
+
+                    <div class="guide-info">
+                        <div class="label" data-lang="en">SIMPLE EXAMPLE</div>
+                        <div class="label" data-lang="zh">简单示例</div>
+                        <p>
+                            <span data-lang="en">If the true model is Y = 20,000 + 5,000X, then someone with 12 years of education earns: Y = 20,000 + 5,000(12) = 80,000 dollars. The equation predicts their salary based on their education.</span>
+                            <span data-lang="zh">如果真实模型是 Y = 20,000 + 5,000X，那么受过 12 年教育的人赚取：Y = 20,000 + 5,000(12) = 80,000 美元。 该方程根据他们的教育程度预测他们的薪水。</span>
+                        </p>
+                    </div>
+
+                    <h3>
+                        <span data-lang="en">Adding the Error Term: Y = β₀ + β₁X + u</span>
+                        <span data-lang="zh">添加误差项：Y = β₀ + β₁X + u</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">In reality, the model isn't perfect. Two people with the same education may earn different amounts. So we add an error term:</span>
+                        <span data-lang="zh">实际上，该模型并不完美。 两个受教育程度相同的人可能赚取不同的金额。 所以我们添加一个误差项：</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$Y = \beta_0 + \beta_1 X + u$$
+                    </div>
+
+                    <p>
+                        <span data-lang="en"><strong>u</strong> (the error or "disturbance"): All the other things that affect Y besides X. For example, two people with 12 years of education differ because of: luck, personality, health, family connections, work ethic, etc. We lump all these unexplained differences into the single variable u.</span>
+                        <span data-lang="zh"><strong>u</strong>（误差或"扰动"）：除了 X 之外影响 Y 的所有其他因素。 例如，两个受过 12 年教育的人因以下原因而不同：运气、性格、健康、家庭联系、职业道德等。 我们将所有这些无法解释的差异归结为单个变量 u。</span>
+                    </p>
+
+                    <div class="guide-finding">
+                        <h4 data-lang="en">KEY INSIGHT: The model says...</h4>
+                        <h4 data-lang="zh">关键洞察：模型说...</h4>
+                        <p>
+                            <span data-lang="en">Y = β₀ + β₁X + u is saying: "Earnings depend on education (the β₁X part), some baseline amount (β₀), plus random other stuff (u)." That's it. It's a recipe for predicting earnings.</span>
+                            <span data-lang="zh">Y = β₀ + β₁X + u 是在说："收入取决于教育（β₁X 部分）、某个基线金额（β₀）以及随机的其他东西（u）。" 就这样。 这是预测收入的方法。</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Section 2: What Does "Omitting a Variable" Mean? -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">2. What Does "Omitting a Variable" Mean?</span>
+                        <span data-lang="zh">2. "遗漏变量"是什么意思？</span>
+                    </h2>
+
+                    <p>
+                        <span data-lang="en">Now let's introduce a twist. Suppose the <strong>true</strong> relationship in the real world involves TWO important variables, not just one.</span>
+                        <span data-lang="zh">现在让我们介绍一个转折。 假设现实世界中的<strong>真实</strong>关系涉及两个重要变量，而不仅仅是一个。</span>
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">The True Model (What Reality Actually Is)</span>
+                        <span data-lang="zh">真实模型（现实实际上是什么）</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">Suppose in reality, earnings depend on BOTH education AND ability:</span>
+                        <span data-lang="zh">假设在现实中，收入既取决于教育也取决于能力：</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + u$$
+                    </div>
+
+                    <p>
+                        <span data-lang="en">Where:</span>
+                        <span data-lang="zh">其中：</span>
+                    </p>
+
+                    <ul>
+                        <li>
+                            <span data-lang="en"><strong>Y</strong> = Annual earnings (in dollars)</span>
+                            <span data-lang="zh"><strong>Y</strong> = 年收入（美元）</span>
+                        </li>
+                        <li>
+                            <span data-lang="en"><strong>X₁</strong> = Years of education</span>
+                            <span data-lang="zh"><strong>X₁</strong> = 教育年数</span>
+                        </li>
+                        <li>
+                            <span data-lang="en"><strong>X₂</strong> = Natural ability (intelligence, problem-solving skill, etc.)</span>
+                            <span data-lang="zh"><strong>X₂</strong> = 自然能力（智力、解决问题的能力等）</span>
+                        </li>
+                        <li>
+                            <span data-lang="en"><strong>β₁</strong> = The true causal effect of one more year of education on earnings</span>
+                            <span data-lang="zh"><strong>β₁</strong> = 额外一年教育对收入的真实因果影响</span>
+                        </li>
+                        <li>
+                            <span data-lang="en"><strong>β₂</strong> = The true causal effect of ability on earnings</span>
+                            <span data-lang="zh"><strong>β₂</strong> = 能力对收入的真实因果影响</span>
+                        </li>
+                    </ul>
+
+                    <p>
+                        <span data-lang="en">This is reality. Both education and ability matter.</span>
+                        <span data-lang="zh">这就是现实。 教育和能力都很重要。</span>
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">The Problem: We Can't Observe Ability</span>
+                        <span data-lang="zh">问题：我们无法观察能力</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">Here's the catch: In our data, we can easily measure education (years of schooling). But we <strong>cannot directly measure ability</strong>. There's no "ability score" in our dataset.</span>
+                        <span data-lang="zh">问题来了：在我们的数据中，我们可以轻松测量教育（受教育年数）。 但我们<strong>无法直接测量能力</strong>。 我们的数据集中没有"能力评分"。</span>
+                    </p>
+
+                    <p>
+                        <span data-lang="en">So when we run our regression analysis, we do the simplest thing: <strong>we pretend that second variable doesn't exist.</strong> We estimate:</span>
+                        <span data-lang="zh">所以当我们进行回归分析时，我们做最简单的事情：<strong>我们假装第二个变量不存在。</strong> 我们估计：</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$Y = \hat{\beta}_0 + \hat{\beta}_1 X_1 + \text{residual}$$
+                    </div>
+
+                    <p>
+                        <span data-lang="en">This is the <strong>biased model</strong> — we omit X₂ (ability). We're fitting the data to a model that's missing a key variable.</span>
+                        <span data-lang="zh">这是<strong>有偏差的模型</strong> — 我们遗漏 X₂（能力）。 我们正在将数据拟合到缺少关键变量的模型。</span>
+                    </p>
+
+                    <div class="guide-info">
+                        <div class="label" data-lang="en">VISUALIZING THE PROBLEM</div>
+                        <div class="label" data-lang="zh">将问题可视化</div>
+                        <p>
+                            <span data-lang="en">Imagine two people: Alice and Bob, both with 12 years of education. Alice is naturally very intelligent; Bob is average. Alice earns $90,000; Bob earns $60,000. When we regress earnings on education alone, we're confused! Both have the same X₁, but different Y. We try to fit a line through data that's really shaped by TWO variables, but we're only using one.</span>
+                            <span data-lang="zh">想象两个人：爱丽丝和鲍勃，都受过 12 年教育。 爱丽丝自然非常聪明；鲍勃是平均水平。 爱丽丝赚取 90,000 美元；鲍勃赚取 60,000 美元。 当我们仅对教育进行收入回归时，我们很困惑！ 两人的 X₁ 相同，但 Y 不同。 我们试图通过实际上由两个变量确定的数据拟合一条线，但我们只使用一个。</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Section 3: The Algebra Step-by-Step -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">3. The Algebra, Step by Step</span>
+                        <span data-lang="zh">3. 代数，逐步进行</span>
+                    </h2>
+
+                    <p>
+                        <span data-lang="en">Now we derive the OVB formula. Don't panic at the algebra—we'll go slowly, line by line, explaining what each step means.</span>
+                        <span data-lang="zh">现在我们推导 OVB 公式。 不要对代数感到恐慌 — 我们会慢慢进行，逐行解释每一步的含义。</span>
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Step 1: Write Down the True Model</span>
+                        <span data-lang="zh">第 1 步：写下真实模型</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">The truth is:</span>
+                        <span data-lang="zh">事实是：</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + u$$
+                    </div>
+
+                    <p>
+                        <span data-lang="en">This equation describes reality. Education (X₁) and ability (X₂) both affect earnings (Y), with effects β₁ and β₂. The error u captures everything else.</span>
+                        <span data-lang="zh">这个方程描述现实。 教育 (X₁) 和能力 (X₂) 都影响收入 (Y)，影响为 β₁ 和 β₂。 误差 u 捕捉其他一切。</span>
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Step 2: The Biased Regression (Omit X₂)</span>
+                        <span data-lang="zh">第 2 步：有偏差的回归（省略 X₂）</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">We run a regression of Y on only X₁. The OLS (Ordinary Least Squares) estimator is given by a formula:</span>
+                        <span data-lang="zh">我们对仅 X₁ 的 Y 进行回归。 OLS（普通最小二乘法）估计量由以下公式给出：</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$\hat{\beta}_1 = \frac{\sum (X_1 - \bar{X}_1)(Y - \bar{Y})}{\sum (X_1 - \bar{X}_1)^2}$$
+                    </div>
+
+                    <p>
+                        <span data-lang="en">This looks complicated, but what it's saying is: "Find the line through the data that best predicts Y from X₁." The hat (^) over β means it's an estimate, not the true value.</span>
+                        <span data-lang="zh">这看起来很复杂，但它的意思是："找到通过数据的最佳从 X₁ 预测 Y 的直线。" β 上的帽子 (^) 意味着它是一个估计，而不是真实值。</span>
+                    </p>
+
+                    <p>
+                        <span data-lang="en">Let's use a simpler notation. Let y = Y - Ȳ and x₁ = X₁ - X̄₁ (the "deviations" from the mean). Then:</span>
+                        <span data-lang="zh">让我们使用更简单的符号。 设 y = Y - Ȳ 和 x₁ = X₁ - X̄₁ （与平均值的"偏差"）。 然后：</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$\hat{\beta}_1 = \frac{\sum x_1 y}{\sum x_1^2}$$
+                    </div>
+
+                    <p>
+                        <span data-lang="en">Much cleaner. Now, substitute the true model Y = β₀ + β₁X₁ + β₂X₂ + u into this formula:</span>
+                        <span data-lang="zh">干净多了。 现在，将真实模型 Y = β₀ + β₁X₁ + β₂X₂ + u 代入这个公式：</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$\hat{\beta}_1 = \frac{\sum x_1 (Y)}{\sum x_1^2}$$
+                    </div>
+
+                    <div class="math-display">
+                        $$= \frac{\sum x_1 (\beta_0 + \beta_1 X_1 + \beta_2 X_2 + u)}{\sum x_1^2}$$
+                    </div>
+
+                    <h3>
+                        <span data-lang="en">Step 3: Expand the Numerator</span>
+                        <span data-lang="zh">第 3 步：展开分子</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">Distribute the x₁ across each term inside the parentheses:</span>
+                        <span data-lang="zh">在括号内的每一项上分配 x₁：</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$= \frac{\sum (x_1 \cdot \beta_0 + x_1 \cdot \beta_1 X_1 + x_1 \cdot \beta_2 X_2 + x_1 \cdot u)}{\sum x_1^2}$$
+                    </div>
+
+                    <p>
+                        <span data-lang="en">Split the sum into four separate sums:</span>
+                        <span data-lang="zh">将总和分成四个单独的总和：</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$= \frac{\sum x_1 \beta_0 + \sum x_1 \beta_1 X_1 + \sum x_1 \beta_2 X_2 + \sum x_1 u}{\sum x_1^2}$$
+                    </div>
+
+                    <h3>
+                        <span data-lang="en">Step 4: Simplify Using Properties of Deviations</span>
+                        <span data-lang="zh">第 4 步：使用偏差属性简化</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">Now use a key property: <strong>the sum of deviations from the mean is always zero.</strong> So Σx₁β₀ = 0 (since β₀ is a constant).</span>
+                        <span data-lang="zh">现在使用一个关键属性：<strong>与平均值偏差的总和始终为零。</strong> 所以 Σx₁β₀ = 0（因为 β₀ 是常数）。</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$= \frac{0 + \beta_1 \sum x_1 X_1 + \beta_2 \sum x_1 X_2 + \sum x_1 u}{\sum x_1^2}$$
+                    </div>
+
+                    <p>
+                        <span data-lang="en">But wait: x₁ = X₁ - X̄₁, so Σx₁X₁ = Σ(X₁ - X̄₁)X₁ = Σx₁². Let's verify: this is the variance-like term in the denominator.</span>
+                        <span data-lang="zh">但等等：x₁ = X₁ - X̄₁，所以 Σx₁X₁ = Σ(X₁ - X̄₁)X₁ = Σx₁²。 让我们验证：这是分母中的方差类似项。</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$= \frac{\beta_1 \sum x_1^2 + \beta_2 \sum x_1 X_2 + \sum x_1 u}{\sum x_1^2}$$
+                    </div>
+
+                    <p>
+                        <span data-lang="en">Divide each term by Σx₁²:</span>
+                        <span data-lang="zh">将每一项除以 Σx₁²：</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$\hat{\beta}_1 = \beta_1 + \beta_2 \frac{\sum x_1 X_2}{\sum x_1^2} + \frac{\sum x_1 u}{\sum x_1^2}$$
+                    </div>
+
+                    <h3>
+                        <span data-lang="en">Step 5: Take Expectations (Large Sample Behavior)</span>
+                        <span data-lang="zh">第 5 步：取期望（大样本行为）</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">In large samples, the last term (the error term) goes to zero on average, by a law of large numbers. Also, the term Σx₁X₂/Σx₁² is the regression coefficient from regressing X₂ on X₁. Call this π (pi):</span>
+                        <span data-lang="zh">在大样本中，根据大数法则，最后一项（误差项）平均趋向于零。 另外，项 Σx₁X₂/Σx₁² 是从 X₂ 在 X₁ 上的回归得到的回归系数。 称之为 π（派）：</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$\pi = \frac{\sum x_1 X_2}{\sum x_1^2} = \text{the coefficient from regressing } X_2 \text{ on } X_1$$
+                    </div>
+
+                    <p>
+                        <span data-lang="en">This π tells us: "How does X₂ change when X₁ changes?" If π is large and positive, it means X₂ and X₁ are strongly positively correlated.</span>
+                        <span data-lang="zh">这个 π 告诉我们："当 X₁ 变化时，X₂ 如何变化？" 如果 π 很大且为正，这意味着 X₂ 和 X₁ 强正相关。</span>
+                    </p>
+
+                    <p>
+                        <span data-lang="en">So, in large samples:</span>
+                        <span data-lang="zh">所以，在大样本中：</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$E[\hat{\beta}_1] \approx \beta_1 + \beta_2 \cdot \pi$$
+                    </div>
+
+                    <h3>
+                        <span data-lang="en">Step 6: The Bias Formula</span>
+                        <span data-lang="zh">第 6 步：偏差公式</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">The expected value of the biased estimator is β₁ + β₂π. But the true value is β₁. So the bias is:</span>
+                        <span data-lang="zh">有偏差估计量的期望值是 β₁ + β₂π。 但真实值是 β₁。 所以偏差是：</span>
+                    </p>
+
+                    <div class="math-display">
+                        $$\text{OVB} = E[\hat{\beta}_1] - \beta_1 = \beta_2 \cdot \pi$$
+                    </div>
+
+                    <div class="guide-finding">
+                        <h4 data-lang="en">THE OVB FORMULA (SIMPLIFIED)</h4>
+                        <h4 data-lang="zh">OVB 公式（简化）</h4>
+                        <p>
+                            <span data-lang="en">OVB = β₂ × π, where: β₂ = the true causal effect of the omitted variable X₂ on Y, and π = the correlation between the omitted variable X₂ and the included variable X₁.</span>
+                            <span data-lang="zh">OVB = β₂ × π，其中：β₂ = 遗漏变量 X₂ 对 Y 的真实因果影响，π = 遗漏变量 X₂ 与包含变量 X₁ 之间的相关性。</span>
+                        </p>
+                    </div>
+
+                    <p style="margin-top: 20px;">
+                        <span data-lang="en">This is the essence of omitted variable bias. The bias depends on two things:</span>
+                        <span data-lang="zh">这就是遗漏变量偏差的本质。 偏差取决于两件事：</span>
+                    </p>
+
+                    <ol>
+                        <li>
+                            <span data-lang="en"><strong>How important is the omitted variable?</strong> (β₂) If X₂ has no effect on Y (β₂ = 0), there is no bias.</span>
+                            <span data-lang="zh"><strong>遗漏的变量有多重要？</strong> (β₂) 如果 X₂ 对 Y 没有影响 (β₂ = 0)，则没有偏差。</span>
+                        </li>
+                        <li>
+                            <span data-lang="en"><strong>Is it correlated with what we included?</strong> (π) If X₂ is uncorrelated with X₁ (π = 0), there is no bias.</span>
+                            <span data-lang="zh"><strong>它是否与我们包含的内容相关？</strong> (π) 如果 X₂ 与 X₁ 不相关 (π = 0)，则没有偏差。</span>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- Section 4: What Does This Mean in Reality? -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">4. Monte Carlo Simulation: Seeing OVB in Action</span>
+                        <span data-lang="zh">4. 蒙特卡洛模拟：看到 OVB 的实际行动</span>
+                    </h2>
+
+                    <p>
+                        <span data-lang="en">Theory is fine, but let's see OVB actually happen. We'll run a simulation: create 1,000 fake datasets where we know the truth, then see what happens when we omit a variable.</span>
+                        <span data-lang="zh">理论很好，但让我们看到 OVB 的实际发生。 我们将运行一个模拟：创建 1,000 个假数据集，其中我们知道真相，然后看看当我们遗漏一个变量时会发生什么。</span>
+                    </p>
+
+                    <div class="code-block">
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+
+<span class="comment"># Set seed for reproducibility</span>
+np.random.seed(<span class="number">42</span>)
+
+<span class="comment"># True parameters (these are what REALITY is)</span>
+beta1_true = <span class="number">2.0</span>       <span class="comment"># True effect of X1 on Y</span>
+beta2_true = <span class="number">3.0</span>       <span class="comment"># True effect of X2 on Y (omitted variable)</span>
+n = <span class="number">500</span>           <span class="comment"># Sample size</span>
+num_sims = <span class="number">1000</span>       <span class="comment"># Number of simulations</span>
+
+biased_estimates = []    <span class="comment"># When we omit X2</span>
+correct_estimates = []   <span class="comment"># When we include X2</span>
+
+<span class="keyword">for</span> sim <span class="keyword">in</span> range(num_sims):
+    <span class="comment"># Generate X2 (ability) randomly</span>
+    X2 = np.random.normal(<span class="number">0</span>, <span class="number">1</span>, n)
+
+    <span class="comment"># Generate X1 (education) correlated with X2</span>
+    <span class="comment"># This means ability and education are correlated (realistic!)</span>
+    X1 = <span class="number">0.7</span> * X2 + np.random.normal(<span class="number">0</span>, <span class="number">1</span>, n)
+
+    <span class="comment"># Generate Y according to the TRUE model</span>
+    epsilon = np.random.normal(<span class="number">0</span>, <span class="number">1</span>, n)
+    Y = beta1_true * X1 + beta2_true * X2 + epsilon
+
+    <span class="comment"># BIASED REGRESSION: Regress Y on X1 only (omit X2)</span>
+    X1_with_const = np.column_stack([np.ones(n), X1])
+    b_biased = np.linalg.lstsq(X1_with_const, Y, rcond=<span class="keyword">None</span>)[<span class="number">0</span>][<span class="number">1</span>]
+    biased_estimates.append(b_biased)
+
+    <span class="comment"># CORRECT REGRESSION: Regress Y on both X1 and X2</span>
+    X1X2_with_const = np.column_stack([np.ones(n), X1, X2])
+    b_correct = np.linalg.lstsq(X1X2_with_const, Y, rcond=<span class="keyword">None</span>)[<span class="number">0</span>][<span class="number">1</span>]
+    correct_estimates.append(b_correct)
+
+<span class="comment"># Calculate the means</span>
+mean_biased = np.mean(biased_estimates)
+mean_correct = np.mean(correct_estimates)
+
+<span class="comment"># Calculate theoretical OVB</span>
+<span class="comment"># OVB = beta2 * pi, where pi is regr. coeff from X2 on X1</span>
+X1_centered = X1 - np.mean(X1)
+X2_centered = X2 - np.mean(X2)
+pi_empirical = np.sum(X1_centered * X2_centered) / np.sum(X1_centered**<span class="number">2</span>)
+ovb_theoretical = beta2_true * pi_empirical
+
+<span class="comment"># Print results</span>
+print(<span class="string">f"True β₁:              {beta1_true:.4f}"</span>)
+print(<span class="string">f"\nOmitting X2 (ability):"</span>)
+print(<span class="string">f"  Mean estimate:      {mean_biased:.4f}"</span>)
+print(<span class="string">f"  Bias:               {mean_biased - beta1_true:.4f}"</span>)
+print(<span class="string">f"\nIncluding X2 (ability):"</span>)
+print(<span class="string">f"  Mean estimate:      {mean_correct:.4f}"</span>)
+print(<span class="string">f"\nTheoretical OVB (β₂ × π):"</span>)
+print(<span class="string">f"  OVB = {beta2_true:.4f} × {pi_empirical:.4f} = {ovb_theoretical:.4f}"</span>)
+                    </div>
+
+                    <div class="guide-info">
+                        <div class="label" data-lang="en">WHAT THIS SIMULATION SHOWS</div>
+                        <div class="label" data-lang="zh">该模拟显示了什么</div>
+                        <p>
+                            <span data-lang="en">When we run this code, we see: The biased estimate (omitting X₂) is around 4.1, but the true effect is 2.0. The bias is about 2.1 = 3.0 × 0.7 (β₂ × π). The formula works!</span>
+                            <span data-lang="zh">当我们运行此代码时，我们看到：有偏差的估计（省略 X₂）约为 4.1，但真实效应是 2.0。 偏差约为 2.1 = 3.0 × 0.7 (β₂ × π)。 公式起作用了！</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Section 5: When Does Bias = 0? -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">5. When Does OVB = 0? (You're Safe to Omit)</span>
+                        <span data-lang="zh">5. 什么时候 OVB = 0？ （你可以安全地省略）</span>
+                    </h2>
+
+                    <p>
+                        <span data-lang="en">The formula OVB = β₂ × π tells us: bias is zero if EITHER term is zero.</span>
+                        <span data-lang="zh">公式 OVB = β₂ × π 告诉我们：如果任何一项为零，偏差就是零。</span>
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Case 1: π = 0 (The Omitted Variable is Uncorrelated with X₁)</span>
+                        <span data-lang="zh">情况 1：π = 0（遗漏的变量与 X₁ 不相关）</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">Suppose X₂ and X₁ are completely uncorrelated (π = 0). Even if X₂ is relevant to Y (β₂ ≠ 0), there is NO bias!</span>
+                        <span data-lang="zh">假设 X₂ 和 X₁ 完全不相关 (π = 0)。 即使 X₂ 与 Y 相关 (β₂ ≠ 0)，也没有偏差！</span>
+                    </p>
+
+                    <p>
+                        <span data-lang="en">Why? Because if X₂ is uncorrelated with X₁, then X₂ looks like random noise to the regression. The regression coefficient on X₁ is unaffected.</span>
+                        <span data-lang="zh">为什么？ 因为如果 X₂ 与 X₁ 不相关，那么 X₂ 对回归来说看起来像随机噪声。 X₁ 的回归系数不受影响。</span>
+                    </p>
+
+                    <p>
+                        <span data-lang="en"><strong>Real example:</strong> Suppose you're predicting house prices from size. The TRUE model is: Price = β₀ + β₁(Size) + β₂(Owner's lucky number) + error. But lucky number is random, uncorrelated with house size. You can safely omit lucky number—it causes no bias in your estimate of β₁.</span>
+                        <span data-lang="zh"><strong>真实示例：</strong>假设你根据大小预测房价。 真实模型是：Price = β₀ + β₁(Size) + β₂(Owner's lucky number) + error。 但幸运数字是随机的，与房屋大小不相关。 你可以安全地忽略幸运数字 — 它不会对你对 β₁ 的估计造成偏差。</span>
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Case 2: β₂ = 0 (The Omitted Variable Has No Effect)</span>
+                        <span data-lang="zh">情况 2：β₂ = 0（遗漏的变量没有影响）</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">If β₂ = 0, the omitted variable literally doesn't matter for Y. Then OVB = β₂ × π = 0 × π = 0, no bias.</span>
+                        <span data-lang="zh">如果 β₂ = 0，遗漏的变量对 Y 字面上无关紧要。 然后 OVB = β₂ × π = 0 × π = 0，没有偏差。</span>
+                    </p>
+
+                    <p>
+                        <span data-lang="en"><strong>Real example:</strong> You're predicting earnings from education. The TRUE model includes: Earnings = β₀ + β₁(Education) + β₂(Shoe size) + error. But shoe size has β₂ = 0 (doesn't actually affect earnings). You can safely omit shoe size.</span>
+                        <span data-lang="zh"><strong>真实示例：</strong>你根据教育预测收入。 真实模型包括：Earnings = β₀ + β₁(Education) + β₂(Shoe size) + error。 但鞋码的 β₂ = 0（实际上不影响收入）。 你可以安全地忽略鞋码。</span>
+                    </p>
+
+                    <div class="guide-finding">
+                        <h4 data-lang="en">THE BOTTOM LINE</h4>
+                        <h4 data-lang="zh">底线</h4>
+                        <p>
+                            <span data-lang="en">You can safely omit a variable if EITHER (1) it's uncorrelated with your included variables, OR (2) it has no causal effect on the outcome. But if a variable is both correlated with your X and causally affects Y, you MUST include it or face OVB.</span>
+                            <span data-lang="zh">如果（1）它与你的包含变量不相关，或（2）它对结果没有因果影响，你可以安全地省略一个变量。 但如果一个变量既与你的 X 相关，又因果地影响 Y，你必须包含它，否则就会面临 OVB。</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Section 6: Direction of Bias -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">6. Direction of Bias: Will We Over- or Under-estimate?</span>
+                        <span data-lang="zh">6. 偏差方向：我们会高估还是低估？</span>
+                    </h2>
+
+                    <p>
+                        <span data-lang="en">The formula OVB = β₂ × π shows that the sign (positive or negative) of the bias depends on the signs of both terms.</span>
+                        <span data-lang="zh">公式 OVB = β₂ × π 显示偏差的符号（正或负）取决于两项的符号。</span>
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">The Sign Rules</span>
+                        <span data-lang="zh">符号规则</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en">Just like with regular multiplication:</span>
+                        <span data-lang="zh">就像普通乘法一样：</span>
+                    </p>
+
+                    <ul>
+                        <li>
+                            <span data-lang="en">If β₂ > 0 AND π > 0, then OVB > 0 (positive bias: we OVERESTIMATE β₁)</span>
+                            <span data-lang="zh">如果 β₂ > 0 且 π > 0，则 OVB > 0（正偏差：我们高估 β₁）</span>
+                        </li>
+                        <li>
+                            <span data-lang="en">If β₂ > 0 AND π < 0, then OVB < 0 (negative bias: we UNDERESTIMATE β₁)</span>
+                            <span data-lang="zh">如果 β₂ > 0 且 π < 0，则 OVB < 0（负偏差：我们低估 β₁）</span>
+                        </li>
+                        <li>
+                            <span data-lang="en">If β₂ < 0 AND π > 0, then OVB < 0 (negative bias: we UNDERESTIMATE β₁)</span>
+                            <span data-lang="zh">如果 β₂ < 0 且 π > 0，则 OVB < 0（负偏差：我们低估 β₁）</span>
+                        </li>
+                        <li>
+                            <span data-lang="en">If β₂ < 0 AND π < 0, then OVB > 0 (positive bias: we OVERESTIMATE β₁)</span>
+                            <span data-lang="zh">如果 β₂ < 0 且 π < 0，则 OVB > 0（正偏差：我们高估 β₁）</span>
+                        </li>
+                    </ul>
+
+                    <h3>
+                        <span data-lang="en">Practical Example: Returns to Education</span>
+                        <span data-lang="zh">实际例子：教育回报</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en"><strong>True model:</strong> Earnings = β₀ + β₁(Education) + β₂(Ability) + error</span>
+                        <span data-lang="zh"><strong>真实模型：</strong> Earnings = β₀ + β₁(Education) + β₂(Ability) + error</span>
+                    </p>
+
+                    <p>
+                        <span data-lang="en"><strong>What we know about reality:</strong></span>
+                        <span data-lang="zh"><strong>我们对现实的了解：</strong></span>
+                    </p>
+
+                    <ul>
+                        <li>
+                            <span data-lang="en">Ability increases earnings (β₂ > 0). More able people earn more.</span>
+                            <span data-lang="zh">能力增加收入 (β₂ > 0)。 更有能力的人赚更多钱。</span>
+                        </li>
+                        <li>
+                            <span data-lang="en">More able people get more education (π > 0). Ability and education are correlated.</span>
+                            <span data-lang="zh">更有能力的人获得更多教育 (π > 0)。 能力和教育相关。</span>
+                        </li>
+                    </ul>
+
+                    <p>
+                        <span data-lang="en"><strong>Prediction:</strong> OVB = β₂ × π = (+) × (+) = POSITIVE. When we omit ability, our estimate of the education effect will be BIASED UPWARD. We'll think education has a bigger effect than it really does.</span>
+                        <span data-lang="zh"><strong>预测：</strong> OVB = β₂ × π = (+) × (+) = 正。 当我们遗漏能力时，我们对教育效应的估计将向上偏差。 我们会认为教育的效果比实际的要大。</span>
+                    </p>
+
+                    <p>
+                        <span data-lang="en"><strong>Why?</strong> Part of the earnings difference we attribute to education is actually due to ability. Abler people went to college, so we see them earning more. But it's not just the college that made them earn more—it's also their natural ability.</span>
+                        <span data-lang="zh"><strong>为什么？</strong>我们归因于教育的收入差异的一部分实际上是由于能力。 更有能力的人上了大学，所以我们看到他们赚了更多。 但让他们赚更多的不仅是大学 — 还有他们的自然能力。</span>
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Practical Example: Pollution and Health</span>
+                        <span data-lang="zh">实际例子：污染和健康</span>
+                    </h3>
+
+                    <p>
+                        <span data-lang="en"><strong>True model:</strong> Life expectancy = β₀ + β₁(Pollution) + β₂(Healthcare quality) + error</span>
+                        <span data-lang="zh"><strong>真实模型：</strong> Life expectancy = β₀ + β₁(Pollution) + β₂(Healthcare quality) + error</span>
+                    </p>
+
+                    <p>
+                        <span data-lang="en"><strong>What we know:</strong></span>
+                        <span data-lang="zh"><strong>我们知道什么：</strong></span>
+                    </p>
+
+                    <ul>
+                        <li>
+                            <span data-lang="en">Healthcare quality increases life expectancy (β₂ > 0).</span>
+                            <span data-lang="zh">医疗质量增加预期寿命 (β₂ > 0)。</span>
+                        </li>
+                        <li>
+                            <span data-lang="en">Richer areas have LESS pollution and BETTER healthcare (π < 0). Healthcare and pollution are negatively correlated.</span>
+                            <span data-lang="zh">较富裕的地区污染较少，医疗保健较好 (π < 0)。 医疗保健和污染呈负相关。</span>
+                        </li>
+                    </ul>
+
+                    <p>
+                        <span data-lang="en"><strong>Prediction:</strong> OVB = β₂ × π = (+) × (−) = NEGATIVE. When we omit healthcare quality, we UNDERESTIMATE the harmful effect of pollution. We think pollution is less bad than it really is.</span>
+                        <span data-lang="zh"><strong>预测：</strong> OVB = β₂ × π = (+) × (−) = 负。 当我们遗漏医疗质量时，我们低估了污染的有害影响。 我们认为污染的危害小于实际情况。</span>
+                    </p>
+
+                    <p>
+                        <span data-lang="en"><strong>Why?</strong> In polluted areas, life expectancy is low. But it's not ONLY because of pollution—it's also because those areas have worse healthcare. When we don't control for healthcare, we're mixing up two effects.</span>
+                        <span data-lang="zh"><strong>为什么？</strong>在污染地区，预期寿命很短。 但这不仅仅是因为污染 — 也是因为这些地区的医疗保健更差。 当我们不控制医疗保健时，我们混淆了两个效应。</span>
+                    </p>
+
+                    <div class="guide-info">
+                        <div class="label" data-lang="en">REMEMBERING THE DIRECTION</div>
+                        <div class="label" data-lang="zh">记住方向</div>
+                        <p>
+                            <span data-lang="en">Think: "If the omitted variable pushes both β₂ and π in the same direction (both positive or both negative), the bias is positive. If they push in opposite directions, the bias is negative."</span>
+                            <span data-lang="zh">想一想："如果遗漏的变量将 β₂ 和 π 向同一方向推动（都为正或都为负），则偏差为正。 如果它们向相反方向推动，则偏差为负。"</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Section 7: Summary and Key Takeaways -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">7. Summary: The Big Picture</span>
+                        <span data-lang="zh">7. 总结：大局观</span>
+                    </h2>
+
+                    <div class="guide-finding">
+                        <h4 data-lang="en">WHAT YOU NOW UNDERSTAND</h4>
+                        <h4 data-lang="zh">你现在理解的内容</h4>
+                        <ul>
+                            <li>
+                                <span data-lang="en"><strong>A model is a recipe:</strong> Y = β₀ + β₁X + u says earnings depend on education, a baseline, and random stuff.</span>
+                                <span data-lang="zh"><strong>一个模型是一个方法：</strong> Y = β₀ + β₁X + u 说收入取决于教育、基线和随机的东西。</span>
+                            </li>
+                            <li>
+                                <span data-lang="en"><strong>Omitting a variable means:</strong> We know reality has two variables, but we pretend one doesn't exist in our regression.</span>
+                                <span data-lang="zh"><strong>遗漏一个变量意味着：</strong>我们知道现实有两个变量，但我们假装其中一个在我们的回归中不存在。</span>
+                            </li>
+                            <li>
+                                <span data-lang="en"><strong>The algebra shows:</strong> When we do this, our estimate of β₁ becomes biased. The bias equals β₂ × π.</span>
+                                <span data-lang="zh"><strong>代数显示：</strong>当我们这样做时，我们对 β₁ 的估计变得有偏差。 偏差等于 β₂ × π。</span>
+                            </li>
+                            <li>
+                                <span data-lang="en"><strong>The bias formula tells us three things:</strong> (1) How big is the bias? (2) Is it positive or negative? (3) When can we safely ignore it?</span>
+                                <span data-lang="zh"><strong>偏差公式告诉我们三件事：</strong>（1）偏差有多大？（2）是正的还是负的？（3）我们何时可以安全地忽略它？</span>
+                            </li>
+                            <li>
+                                <span data-lang="en"><strong>The Monte Carlo simulation demonstrates:</strong> When we run 1,000 fake datasets, the empirical bias matches the theoretical formula perfectly.</span>
+                                <span data-lang="zh"><strong>蒙特卡洛模拟演示：</strong>当我们运行 1,000 个假数据集时，经验偏差与理论公式完全匹配。</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <h3>
+                        <span data-lang="en">The Formula at a Glance</span>
+                        <span data-lang="zh">一目了然的公式</span>
+                    </h3>
+
+                    <div class="math-display">
+                        $$\text{OVB} = \beta_2 \times \pi$$
+                    </div>
+
+                    <p style="text-align: center;">
+                        <span data-lang="en"><em>Bias = (True effect of omitted variable) × (Correlation with included variable)</em></span>
+                        <span data-lang="zh"><em>偏差 = （遗漏变量的真实效应）×（与包含变量的相关性）</em></span>
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">What To Do About It</span>
+                        <span data-lang="zh">如何处理</span>
+                    </h3>
+
+                    <ol>
+                        <li>
+                            <span data-lang="en"><strong>Best:</strong> Include the variable if you can measure it.</span>
+                            <span data-lang="zh"><strong>最好：</strong>如果你能测量它，就包含这个变量。</span>
+                        </li>
+                        <li>
+                            <span data-lang="en"><strong>Good:</strong> Use instrumental variables (IV) if the variable is unobserved but you can find an instrument.</span>
+                            <span data-lang="zh"><strong>好：</strong>如果变量是未观察到的但你可以找到工具，请使用工具变量 (IV)。</span>
+                        </li>
+                        <li>
+                            <span data-lang="en"><strong>Acceptable:</strong> Use matching or stratification to account for the omitted variable indirectly.</span>
+                            <span data-lang="zh"><strong>可接受：</strong>使用匹配或分层来间接考虑遗漏的变量。</span>
+                        </li>
+                        <li>
+                            <span data-lang="en"><strong>Honest:</strong> Report the potential bias and discuss its direction and magnitude.</span>
+                            <span data-lang="zh"><strong>诚实：</strong>报告潜在的偏差并讨论其方向和大小。</span>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- Back link at bottom -->
+                <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--parchment); text-align: center;">
+                    <a href="../index.html" class="guide-back" data-lang="en">Back to Empirical Modeling</a>
+                    <a href="../index.html" class="guide-back" data-lang="zh">返回经验建模</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Language toggle script -->
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langBtns = document.querySelectorAll('.guide-lang-btn');
+        // Exclude buttons from content elements
+        const enElements = document.querySelectorAll('.guide-content [data-lang="en"], .guide-breadcrumb [data-lang="en"], a.guide-back[data-lang="en"], .guide-header [data-lang="en"], .guide-tag [data-lang="en"]');
+        const zhElements = document.querySelectorAll('.guide-content [data-lang="zh"], .guide-breadcrumb [data-lang="zh"], a.guide-back[data-lang="zh"], .guide-header [data-lang="zh"], .guide-tag [data-lang="zh"]');
+        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        setLanguage(savedLang);
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                localStorage.setItem('preferred-lang', lang);
+                setLanguage(lang);
+            });
+        });
+        function setLanguage(lang) {
+            langBtns.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('.guide-lang-btn[data-lang="' + lang + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            if (lang === 'en') {
+                enElements.forEach(el => { el.style.display = ''; });
+                zhElements.forEach(el => { el.style.display = 'none'; });
+                document.body.className = 'en';
+            } else {
+                enElements.forEach(el => { el.style.display = 'none'; });
+                zhElements.forEach(el => { el.style.display = ''; });
+                document.body.className = 'zh';
+            }
+        }
+    });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Preprocessing Lab — Research Methods Notebook</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="./guide-style.css">
+<style>
+/* ── Tab interface ───────────────────────────────── */
+.tab-bar{display:flex;gap:0;border-bottom:2px solid var(--parchment);margin-bottom:24px}
+.tab-btn{font-family:var(--sans);font-size:12px;font-weight:500;padding:9px 20px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer;color:var(--ink-ghost);letter-spacing:.04em;transition:color .15s,border-color .15s}
+.tab-btn:hover{color:var(--ink)}
+.tab-btn.active{color:var(--red);border-bottom-color:var(--red);font-weight:600}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* ── Sim panel ───────────────────────────────────── */
+.sim-panel{background:var(--paper);border:1px solid var(--parchment);border-radius:4px;padding:24px 28px;margin:16px 0}
+.sim-panel textarea{width:100%;font-family:var(--mono);font-size:12.5px;line-height:1.65;border:1px solid var(--parchment);border-radius:3px;padding:10px 12px;background:var(--cream,#F5F0E8);color:var(--ink);resize:vertical;box-sizing:border-box}
+.output-panel{font-family:var(--mono);font-size:12.5px;line-height:1.65;background:var(--cream,#F5F0E8);border:1px solid var(--parchment);border-radius:3px;padding:10px 12px;min-height:60px;color:var(--ink-soft);white-space:pre-wrap;word-break:break-word}
+.output-panel.empty{color:var(--ink-ghost);font-style:italic}
+.step-btns{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+.step-btn{font-family:var(--sans);font-size:11.5px;font-weight:600;padding:7px 14px;border:1px solid var(--parchment);border-radius:3px;cursor:pointer;background:var(--paper);color:var(--ink-faded);letter-spacing:.03em;transition:all .15s}
+.step-btn:hover{border-color:var(--ink-soft);color:var(--ink)}
+.step-btn.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.step-btn.done{background:rgba(181,55,42,.08);border-color:rgba(181,55,42,.3);color:var(--red)}
+.step-label{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-ghost);margin-bottom:6px}
+.step-arrow{color:var(--gold);font-size:14px;line-height:34px}
+
+/* ── Word freq table ─────────────────────────────── */
+.freq-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+.freq-table th{background:var(--ink);color:var(--paper);font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.08em;padding:8px 12px;text-align:left}
+.freq-table td{padding:7px 12px;border-bottom:1px solid var(--parchment);color:var(--ink-faded)}
+.freq-table tr:hover td{background:var(--warm,#F7F3EB)}
+.freq-bar{display:inline-block;height:8px;background:rgba(181,55,42,.35);border-radius:2px;vertical-align:middle;margin-left:6px}
+
+/* ── Compare columns ─────────────────────────────── */
+.compare-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:16px 0}
+@media(max-width:760px){.compare-cols{grid-template-columns:1fr}}
+.compare-col-box{border:1px solid var(--parchment);border-radius:4px;padding:16px;background:var(--paper)}
+.compare-col-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:10px}
+.compare-col-box.mid .compare-col-label{color:var(--gold)}
+.compare-col-box.agg .compare-col-label{color:var(--leather)}
+.word-list{font-family:var(--mono);font-size:12.5px;line-height:1.8;color:var(--ink-faded)}
+.word-list span.shared{color:var(--ink-soft);font-weight:500}
+
+/* ── Math note ───────────────────────────────────── */
+.math-note{font-family:var(--mono);font-size:12px;background:var(--parchment);padding:12px 16px;border-radius:3px;margin:10px 0;color:var(--ink-soft)}
+.insight-box{background:var(--cream,#F5F0E8);border-left:3px solid var(--gold);padding:14px 18px;margin:16px 0;border-radius:0 4px 4px 0}
+.insight-box p{font-size:14.5px;line-height:1.7;color:var(--ink-faded);margin:0}
+.insight-box strong{color:var(--leather)}
+</style>
+</head>
+<body class="zh">
+<div class="guide-layout">
+
+  <!-- TOP BAR -->
+  <div class="guide-topbar">
+    <div class="guide-breadcrumb">
+      <a href="../text-analysis.html" data-lang="en">Text as Data</a>
+      <a href="../text-analysis.html" data-lang="zh">文本分析</a>
+      <span class="sep">/</span>
+      <span data-lang="en">Text Preprocessing Lab</span>
+      <span data-lang="zh">文本预处理实验室</span>
+    </div>
+    <div class="guide-lang-toggle">
+      <button class="guide-lang-btn active" data-lang="zh" onclick="setLang('zh')">中文</button>
+      <button class="guide-lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="guide-content-wrapper">
+    <div class="guide-content">
+
+      <a href="../text-analysis.html" class="guide-back" data-lang="en">Text as Data</a>
+      <a href="../text-analysis.html" class="guide-back" data-lang="zh">文本分析</a>
+
+      <div class="guide-header">
+        <div class="guide-tag">
+          <span data-lang="en">INTERACTIVE GUIDE · TEXT AS DATA</span>
+          <span data-lang="zh">互动指南 · 文本分析</span>
+        </div>
+        <h1>
+          <span data-lang="en">Text Preprocessing Lab</span>
+          <span data-lang="zh">文本预处理实验室</span>
+        </h1>
+        <p>
+          <span data-lang="en">Step through the preprocessing pipeline and see how each decision shapes your corpus.</span>
+          <span data-lang="zh">分步演示预处理流程，观察每个决策如何改变语料库。</span>
+        </p>
+      </div>
+
+      <!-- TAB BAR -->
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="pipeline" onclick="switchTab('pipeline')">
+          <span data-lang="en">Pipeline Demo</span>
+          <span data-lang="zh">流程演示</span>
+        </button>
+        <button class="tab-btn" data-tab="choices" onclick="switchTab('choices')">
+          <span data-lang="en">Choices Matter</span>
+          <span data-lang="zh">选择的影响</span>
+        </button>
+      </div>
+
+      <!-- TAB 1: PIPELINE DEMO -->
+      <div class="tab-pane active" id="tab-pipeline">
+        <div class="guide-section">
+          <h2>
+            <span data-lang="en">Step-by-Step Pipeline</span>
+            <span data-lang="zh">逐步流程</span>
+          </h2>
+          <p>
+            <span data-lang="en">Enter any text, then click through each preprocessing step to see what changes. The output at each stage feeds into the next.</span>
+            <span data-lang="zh">输入任意文本，逐步点击预处理步骤，观察每步的变化。每步输出作为下一步的输入。</span>
+          </p>
+
+          <div class="sim-panel">
+            <div class="step-label" data-lang="en">INPUT TEXT</div>
+            <div class="step-label" data-lang="zh">输入文本</div>
+            <textarea id="raw-input" rows="5">Congress passed the Affordable Care Act in 2010, dramatically expanding health insurance coverage across the United States. Republicans repeatedly tried to repeal the legislation, arguing it was overreaching government intervention in healthcare markets.</textarea>
+
+            <div class="step-btns" id="step-buttons">
+              <button class="step-btn active" id="btn-raw" onclick="showStep('raw')">
+                <span data-lang="en">① Raw</span>
+                <span data-lang="zh">① 原始</span>
+              </button>
+              <button class="step-btn" id="btn-tokenize" onclick="showStep('tokenize')">
+                <span data-lang="en">② Tokenize</span>
+                <span data-lang="zh">② 分词</span>
+              </button>
+              <button class="step-btn" id="btn-lower" onclick="showStep('lower')">
+                <span data-lang="en">③ Lowercase</span>
+                <span data-lang="zh">③ 小写</span>
+              </button>
+              <button class="step-btn" id="btn-stop" onclick="showStep('stop')">
+                <span data-lang="en">④ Remove Stop Words</span>
+                <span data-lang="zh">④ 去停用词</span>
+              </button>
+              <button class="step-btn" id="btn-stem" onclick="showStep('stem')">
+                <span data-lang="en">⑤ Stem</span>
+                <span data-lang="zh">⑤ 词干还原</span>
+              </button>
+            </div>
+
+            <div class="step-label" id="output-label-en" data-lang="en">OUTPUT</div>
+            <div class="step-label" id="output-label-zh" data-lang="zh">输出</div>
+            <div class="output-panel" id="step-output"></div>
+          </div>
+
+          <div class="sim-panel" id="freq-panel" style="display:none">
+            <div class="step-label" data-lang="en">WORD FREQUENCY (after full pipeline)</div>
+            <div class="step-label" data-lang="zh">词频统计（完整流程后）</div>
+            <table class="freq-table" id="freq-table">
+              <thead>
+                <tr>
+                  <th data-lang="en">Token</th>
+                  <th data-lang="zh">词元</th>
+                  <th data-lang="en">Count</th>
+                  <th data-lang="zh">频次</th>
+                  <th data-lang="en">Frequency</th>
+                  <th data-lang="zh">分布</th>
+                </tr>
+              </thead>
+              <tbody id="freq-body"></tbody>
+            </table>
+          </div>
+
+          <div class="math-note">
+            <span data-lang="en">Pipeline: raw text → tokenize (split on whitespace/punctuation) → lowercase → remove stop words → stem (suffix stripping)</span>
+            <span data-lang="zh">流程：原文 → 分词（按空格/标点切分）→ 小写 → 去停用词 → 词干还原（后缀剥离）</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: CHOICES MATTER -->
+      <div class="tab-pane" id="tab-choices">
+        <div class="guide-section">
+          <h2>
+            <span data-lang="en">Why Preprocessing Choices Matter</span>
+            <span data-lang="zh">为什么预处理选择很重要</span>
+          </h2>
+          <p>
+            <span data-lang="en">Denny &amp; Spirling (2018) show that preprocessing decisions — which stop words to remove, whether to stem, minimum term frequency — substantially change the top words extracted from a corpus. Three pipelines, same text, very different vocabularies.</span>
+            <span data-lang="zh">Denny &amp; Spirling (2018) 表明，预处理决策——去除哪些停用词、是否词干化、最低词频阈值——会显著改变从语料库中提取的高频词。三套流程，同一文本，截然不同的词汇表。</span>
+          </p>
+
+          <div class="sim-panel">
+            <div class="step-label" data-lang="en">INPUT TEXT (edit to try your own)</div>
+            <div class="step-label" data-lang="zh">输入文本（可编辑）</div>
+            <textarea id="choices-input" rows="5">Congress passed the Affordable Care Act in 2010, dramatically expanding health insurance coverage across the United States. Republicans repeatedly tried to repeal the legislation, arguing it was overreaching government intervention in healthcare markets. Democrats defended the law, emphasizing that millions of Americans gained coverage and insurance companies could no longer deny coverage based on pre-existing conditions.</textarea>
+            <button class="step-btn active" style="margin-top:12px" onclick="runChoices()">
+              <span data-lang="en">▶ Compare Pipelines</span>
+              <span data-lang="zh">▶ 对比三套流程</span>
+            </button>
+          </div>
+
+          <div class="compare-cols" id="choices-output" style="display:none">
+            <div class="compare-col-box">
+              <div class="compare-col-label" data-lang="en">Minimal</div>
+              <div class="compare-col-label" data-lang="zh">最少处理</div>
+              <div class="word-list" id="col-minimal"></div>
+            </div>
+            <div class="compare-col-box mid">
+              <div class="compare-col-label" data-lang="en">Standard</div>
+              <div class="compare-col-label" data-lang="zh">标准处理</div>
+              <div class="word-list" id="col-standard"></div>
+            </div>
+            <div class="compare-col-box agg">
+              <div class="compare-col-label" data-lang="en">Aggressive</div>
+              <div class="compare-col-label" data-lang="zh">强力处理</div>
+              <div class="word-list" id="col-aggressive"></div>
+            </div>
+          </div>
+
+          <div class="insight-box">
+            <p>
+              <span data-lang="en"><strong>Key insight (Denny &amp; Spirling 2018):</strong> No single preprocessing strategy dominates. The "right" choices depend on your research question. For topic models, aggressive stemming may collapse meaningful distinctions. For scaling models, keeping function words matters. <em>Always justify your pipeline.</em></span>
+              <span data-lang="zh"><strong>核心结论（Denny &amp; Spirling 2018）：</strong>没有一种预处理策略能普遍最优。"正确"的选择取决于研究问题。对于主题模型，激进的词干化可能合并有意义的区分。对于位置估计模型，保留功能词很重要。<em>务必说明你的流程选择理由。</em></span>
+            </p>
+          </div>
+
+          <div class="math-note">
+            <span data-lang="en">Minimal: tokenize + lowercase only | Standard: + stop words + stem | Aggressive: + short tokens removed (≤2 chars) + rare terms filtered</span>
+            <span data-lang="zh">最少：仅分词+小写 | 标准：+去停用词+词干化 | 强力：+去除短词（≤2字符）+过滤低频词</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Language toggle ───────────────────────────────────────
+function setLang(lang) {
+  document.body.className = lang;
+  document.querySelectorAll('.guide-lang-btn').forEach(btn => {
+    const active = btn.getAttribute('data-lang') === lang;
+    btn.classList.toggle('active', active);
+  });
+  localStorage.setItem('preferred-lang', lang);
+}
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('preferred-lang') || 'zh';
+  setLang(saved);
+  showStep('raw');
+});
+
+// ── Tab switching ─────────────────────────────────────────
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[data-tab="${id}"]`).classList.add('active');
+  document.getElementById(`tab-${id}`).classList.add('active');
+}
+
+// ── NLP functions ─────────────────────────────────────────
+const STOP = new Set([
+  'a','an','the','is','are','was','were','be','been','being',
+  'have','has','had','do','does','did','will','would','could','should','may','might',
+  'to','of','in','for','on','with','at','by','from','but','and','or','not','nor',
+  'as','if','this','these','those','that','it','its','which','who','what','when','where',
+  'i','you','he','she','we','they','me','him','her','us','them',
+  'my','your','his','our','their','all','each','some','any','also','just','very',
+  'into','than','then','so','up','out','about','more','over','after','before'
+]);
+
+function tokenize(text) {
+  return text.replace(/[^a-zA-Z\s]/g, ' ').split(/\s+/).filter(w => w.length > 0);
+}
+
+function stem(word) {
+  if (word.length <= 3) return word;
+  const rules = [
+    [/ations$/, 'ate'], [/ation$/, 'ate'], [/izing$/, 'ize'],
+    [/ising$/, 'ise'], [/izing$/, 'ize'], [/ments$/, ''],
+    [/ment$/, ''], [/ness$/, ''], [/ings$/, ''], [/ing$/, ''],
+    [/edly$/, ''], [/edly$/, ''], [/edly$/, ''],
+    [/edly$/, ''], [/ally$/, ''], [/fully$/, ''],
+    [/lessly$/, ''], [/lessly$/, ''], [/lessly$/, ''],
+    [/ibly$/, ''], [/ably$/, ''], [/edly$/, ''],
+    [/ied$/, 'y'], [/ies$/, 'y'], [/ed$/, ''],
+    [/ly$/, ''], [/ful$/, ''], [/less$/, ''],
+    [/ness$/, ''], [/ive$/, ''], [/ize$/, ''],
+    [/ise$/, ''], [/er$/, ''], [/est$/, ''],
+    [/ies$/, 'y'], [/es$/, ''], [/s$/, '']
+  ];
+  for (const [pattern, replacement] of rules) {
+    const stemmed = word.replace(pattern, replacement);
+    if (pattern.test(word) && stemmed.length >= 3)
+      return stemmed;
+  }
+  return word;
+}
+
+function wordFreq(tokens) {
+  const counts = {};
+  tokens.forEach(w => counts[w] = (counts[w]||0)+1);
+  return Object.entries(counts).sort((a,b) => b[1]-a[1]);
+}
+
+// ── Pipeline steps ────────────────────────────────────────
+let currentStep = 'raw';
+
+function showStep(step) {
+  currentStep = step;
+  const text = document.getElementById('raw-input').value;
+  const tokens = tokenize(text);
+  const lower = tokens.map(w => w.toLowerCase());
+  const noStop = lower.filter(w => !STOP.has(w));
+  const stemmed = noStop.map(stem);
+
+  const stepMap = {
+    raw:      { result: text, label_en: 'RAW TEXT', label_zh: '原始文本' },
+    tokenize: { result: tokens.join(' | '), label_en: `TOKENS (${tokens.length})`, label_zh: `词元 (${tokens.length})` },
+    lower:    { result: lower.join(' | '), label_en: `LOWERCASED (${lower.length})`, label_zh: `小写化 (${lower.length})` },
+    stop:     { result: noStop.join(' | '), label_en: `AFTER STOP WORDS REMOVED (${noStop.length}, removed ${lower.length-noStop.length})`, label_zh: `去停用词后 (${noStop.length}，去除 ${lower.length-noStop.length} 个)` },
+    stem:     { result: stemmed.join(' | '), label_en: `STEMMED (${stemmed.length} unique after dedup: ${[...new Set(stemmed)].length})`, label_zh: `词干化后 (${stemmed.length}，去重后 ${[...new Set(stemmed)].length})` }
+  };
+
+  const out = document.getElementById('step-output');
+  const labelEn = document.getElementById('output-label-en');
+  const labelZh = document.getElementById('output-label-zh');
+  out.textContent = stepMap[step].result;
+  out.classList.remove('empty');
+  labelEn.textContent = stepMap[step].label_en;
+  labelZh.textContent = stepMap[step].label_zh;
+
+  // Update button states
+  const steps = ['raw','tokenize','lower','stop','stem'];
+  const idx = steps.indexOf(step);
+  steps.forEach((s, i) => {
+    const btn = document.getElementById(`btn-${s}`);
+    btn.classList.remove('active','done');
+    if (i === idx) btn.classList.add('active');
+    else if (i < idx) btn.classList.add('done');
+  });
+
+  // Show freq table on stem step
+  const freqPanel = document.getElementById('freq-panel');
+  if (step === 'stem') {
+    freqPanel.style.display = 'block';
+    const freq = wordFreq(stemmed);
+    const max = freq[0] ? freq[0][1] : 1;
+    const tbody = document.getElementById('freq-body');
+    tbody.innerHTML = freq.slice(0,15).map(([w,c]) =>
+      `<tr><td>${w}</td><td>${c}</td><td><span class="freq-bar" style="width:${Math.round(c/max*120)}px"></span></td></tr>`
+    ).join('');
+  } else {
+    freqPanel.style.display = 'none';
+  }
+}
+
+// Update on textarea change
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('raw-input').addEventListener('input', () => showStep(currentStep));
+});
+
+// ── Choices Matter ────────────────────────────────────────
+function runChoices() {
+  const text = document.getElementById('choices-input').value;
+  const tokens = tokenize(text);
+  const lower = tokens.map(w => w.toLowerCase());
+
+  // Minimal: tokenize + lowercase
+  const minimal = wordFreq(lower).slice(0,10);
+
+  // Standard: + stop words + stem
+  const std = wordFreq(lower.filter(w => !STOP.has(w)).map(stem)).slice(0,10);
+
+  // Aggressive: + short tokens (>2) + only terms appearing ≥2 times
+  const aggTokens = lower.filter(w => !STOP.has(w) && w.length > 2);
+  const aggStemmed = aggTokens.map(stem);
+  const aggFreq = wordFreq(aggStemmed);
+  const maxFreq = aggFreq[0] ? aggFreq[0][1] : 1;
+  const agg = aggFreq.filter(([,c]) => c >= 2 || maxFreq === 1).slice(0,10);
+
+  // Find words shared across all three top-10 sets
+  const minSet = new Set(minimal.map(([w]) => w));
+  const stdSet = new Set(std.map(([w]) => w));
+  const aggSet = new Set(agg.map(([w]) => w));
+
+  function renderList(pairs, otherSets) {
+    return pairs.map(([w, c]) => {
+      const shared = otherSets.every(s => s.has(w));
+      return `<div><span class="${shared ? 'shared' : ''}">${w}</span> <span style="color:var(--ink-ghost);font-size:11px">(${c})</span></div>`;
+    }).join('');
+  }
+
+  document.getElementById('col-minimal').innerHTML = renderList(minimal, [stdSet, aggSet]);
+  document.getElementById('col-standard').innerHTML = renderList(std, [minSet, aggSet]);
+  document.getElementById('col-aggressive').innerHTML = renderList(agg, [minSet, stdSet]);
+  document.getElementById('choices-output').style.display = 'grid';
+}
+</script>
+</body>
+</html>

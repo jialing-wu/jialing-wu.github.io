@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistic Regression from First Principles | Machine Learning</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Base Styles -->
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Guide Styles -->
+    <link rel="stylesheet" href="guide-style.css">
+
+    <!-- MathJax for Mathematics -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Override: text paragraphs inside math-box should not inherit monospace */
+        .math-box p, .math-box .step-text {
+            font-family: var(--body, "EB Garamond", serif);
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--ink-faded);
+            margin-bottom: 10px;
+        }
+        /* Step label style */
+        .step-label {
+            font-family: var(--sans);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+        /* Divider between steps within a derivation block */
+        .step-block {
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(194,153,61,.2);
+        }
+        .step-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    </style>
+</head>
+
+<body class="zh">
+    <div class="guide-layout">
+        <!-- Topbar -->
+        <div class="guide-topbar">
+            <div class="guide-breadcrumb">
+                <a href="../machine-learning.html" data-lang="en">Machine Learning</a>
+                <a href="../machine-learning.html" data-lang="zh">机器学习</a>
+                <span class="sep">/</span>
+                <span data-lang="en">Logistic Regression from First Principles</span>
+                <span data-lang="zh">从第一性原理理解逻辑回归</span>
+            </div>
+            <div class="guide-lang-toggle">
+                <button class="guide-lang-btn active" data-lang="zh">中文</button>
+                <button class="guide-lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="guide-content-wrapper">
+            <div class="guide-content">
+                <!-- Back link -->
+                <a href="../machine-learning.html#ml-classification" class="guide-back" data-lang="en">← Back to Machine Learning: Classification</a>
+                <a href="../machine-learning.html#ml-classification" class="guide-back" data-lang="zh">← 返回机器学习：分类</a>
+
+                <!-- Page header -->
+                <div class="guide-header">
+                    <div class="guide-tag">
+                        <span data-lang="en">DEEP DIVE · MODULE 1b · CLASSIFICATION</span>
+                        <span data-lang="zh">深入指南 · 模块 1b · 分类</span>
+                    </div>
+                    <h1>
+                        <span data-lang="en">Logistic Regression from First Principles</span>
+                        <span data-lang="zh">从第一性原理理解逻辑回归</span>
+                    </h1>
+                    <p>
+                        <span data-lang="en">Why OLS fails for binary outcomes, how the sigmoid squashes any number into a probability, and what cross-entropy loss is really measuring</span>
+                        <span data-lang="zh">为什么 OLS 无法处理二元结果、sigmoid 函数如何将任意数值压缩为概率，以及交叉熵损失的真正含义</span>
+                    </p>
+                </div>
+
+                <!-- ========== SECTION 1 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">1. Why Not Just Use OLS for Binary Outcomes?</span>
+                        <span data-lang="zh">1. 为什么不直接对二元结果用 OLS？</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        Imagine you are predicting whether a country experienced democratic backsliding in a given year — the outcome is either 1 (yes) or 0 (no). A natural instinct is to run OLS: regress the binary outcome on GDP, inequality, and political history. This is called the <span class="highlight-key">Linear Probability Model (LPM)</span>, and it can work tolerably in some settings. But it has two fundamental problems.
+                    </p>
+                    <p data-lang="zh">
+                        假设你要预测某国某年是否发生了民主倒退——结果非 1（是）即 0（否）。一个自然的想法是用 OLS：将二元结果对 GDP、不平等程度和政治历史回归。这叫做<span class="highlight-key">线性概率模型（LPM）</span>，在某些场景下勉强可用。但它有两个根本性问题。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Problem 1 — Predictions outside [0, 1]</span>
+                        <span data-lang="zh">问题 1 — 预测值超出 [0, 1]</span>
+                    </h3>
+                    <p data-lang="en">
+                        OLS has no guardrails. For very rich or very stable countries, OLS might predict a backsliding probability of −0.3; for very fragile states it might predict 1.4. Probabilities below zero or above one are mathematically meaningless. You cannot interpret "−30% chance of backsliding."
+                    </p>
+                    <p data-lang="zh">
+                        OLS 没有任何约束。对于非常富裕或稳定的国家，OLS 可能预测民主倒退的概率为 −0.3；对于极度脆弱的国家则可能预测 1.4。小于零或大于一的概率在数学上毫无意义。你无法解释"发生倒退的概率为 −30%"。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Problem 2 — Heteroskedasticity is baked in</span>
+                        <span data-lang="zh">问题 2 — 异方差性天然存在</span>
+                    </h3>
+                    <p data-lang="en">
+                        For a binary outcome y, the variance of the error is p(1−p), where p = P(y=1). Since p varies across observations, the error variance is never constant — OLS standard errors are wrong by construction. Inference (t-tests, p-values, confidence intervals) is unreliable.
+                    </p>
+                    <p data-lang="zh">
+                        对于二元结果 y，误差的方差为 p(1−p)，其中 p = P(y=1)。由于 p 随观测值变化，误差方差永远不是常数——OLS 标准误从一开始就是错的。推断（t 检验、p 值、置信区间）也随之失效。
+                    </p>
+
+                    <div class="definition-box">
+                        <span data-lang="en"><strong>The fix:</strong> Instead of modelling E[y] = Xθ directly, model the log-odds log(p/1−p) = Xθ. This keeps predictions bounded in (0,1) and correctly handles the binary distribution. That is logistic regression.</span>
+                        <span data-lang="zh"><strong>解决方案：</strong>不直接建模 E[y] = Xθ，而是建模 log 优势比 log(p/1−p) = Xθ。这使预测值被约束在 (0,1) 之间，并正确处理二元分布。这就是逻辑回归。</span>
+                    </div>
+                </div>
+
+                <!-- ========== SECTION 2 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">2. The Sigmoid Function: Squashing Any Number into a Probability</span>
+                        <span data-lang="zh">2. Sigmoid 函数：将任意数值压缩为概率</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        The core trick in logistic regression is the <span class="highlight-key">sigmoid function</span> σ(z), also called the logistic function. It takes any real number z — positive or negative, large or small — and maps it to the interval (0, 1).
+                    </p>
+                    <p data-lang="zh">
+                        逻辑回归的核心技巧是 <span class="highlight-key">sigmoid 函数</span> σ(z)，也称 logistic 函数。它将任意实数 z（无论正负大小）映射到区间 (0, 1)。
+                    </p>
+
+                    <div class="math-box">
+$$\sigma(z) = \frac{1}{1 + e^{-z}}$$
+                    </div>
+
+                    <p data-lang="en">
+                        Think of z = Xθ as a raw "backsliding score" computed from country characteristics. A very negative z (stable, wealthy, long-democratic country) → σ(z) ≈ 0. A very positive z (fragile, unequal, short history of democracy) → σ(z) ≈ 1. z = 0 → σ(z) = 0.5, the 50/50 tipping point.
+                    </p>
+                    <p data-lang="zh">
+                        把 z = Xθ 想象成根据国家特征计算出的原始"倒退得分"。z 极度为负（稳定、富裕、长期民主化国家）→ σ(z) ≈ 0。z 极度为正（脆弱、不平等、民主历史短的国家）→ σ(z) ≈ 1。z = 0 → σ(z) = 0.5，即 50/50 的临界点。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Where does the sigmoid come from?</span>
+                        <span data-lang="zh">Sigmoid 函数从何而来？</span>
+                    </h3>
+                    <p data-lang="en">
+                        Start with the <span class="highlight-key">odds</span> of an event: odds = p / (1−p). If p = 0.75, odds = 3 (three-to-one in favour). The log-odds — called the <span class="highlight-key">logit</span> — is:
+                    </p>
+                    <p data-lang="zh">
+                        从事件的<span class="highlight-key">优势比（odds）</span>出发：odds = p / (1−p)。若 p = 0.75，则 odds = 3（三比一）。对数优势比——称为 <span class="highlight-key">logit</span>——为：
+                    </p>
+
+                    <div class="math-box">
+$$\text{logit}(p) = \log\frac{p}{1-p} = z = x^\top\theta$$
+                    </div>
+
+                    <p data-lang="en">
+                        Solving this equation for p gives the sigmoid: p = 1/(1+e⁻ᶻ). So logistic regression models the log-odds as a linear function of features, which is equivalent to modelling the probability through a sigmoid.
+                    </p>
+                    <p data-lang="zh">
+                        对 p 求解这个方程，就得到 sigmoid：p = 1/(1+e⁻ᶻ)。因此，逻辑回归将对数优势比建模为特征的线性函数，等价于通过 sigmoid 函数建模概率。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">A useful derivative</span>
+                        <span data-lang="zh">一个有用的导数性质</span>
+                    </h3>
+                    <p data-lang="en">
+                        The sigmoid has an elegant self-referential derivative that simplifies calculus enormously:
+                    </p>
+                    <p data-lang="zh">
+                        Sigmoid 函数的导数有一个优美的自引用性质，极大简化了微积分推导：
+                    </p>
+
+                    <div class="math-box">
+$$\sigma'(z) = \sigma(z)\bigl(1 - \sigma(z)\bigr)$$
+                    </div>
+
+                    <p data-lang="en">
+                        In plain English: the rate of change of σ(z) depends on where you are on the curve — steep in the middle (near z=0), flat at the extremes. This matters when we compute gradients for optimization.
+                    </p>
+                    <p data-lang="zh">
+                        直白地说：σ(z) 的变化速率取决于你在曲线上的位置——在中间（z≈0）附近变化最陡，在两端趋于平缓。这在计算优化所需的梯度时非常重要。
+                    </p>
+                </div>
+
+                <!-- ========== SECTION 3 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">3. The Cost Function: Cross-Entropy Loss</span>
+                        <span data-lang="zh">3. 成本函数：交叉熵损失</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        In linear regression, we minimized squared error. Can we do the same for logistic regression? No — and here is why.
+                    </p>
+                    <p data-lang="zh">
+                        在线性回归中，我们最小化平方误差。逻辑回归能做同样的事吗？不能——原因如下。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Why squared error fails for classification</span>
+                        <span data-lang="zh">为什么平方误差不适用于分类</span>
+                    </h3>
+                    <p data-lang="en">
+                        The composition of a sigmoid with a squared error creates a <span class="highlight-key">non-convex</span> cost function — full of local minima. Gradient descent would get stuck and never reliably find the global optimum. We need a different loss that is convex over θ.
+                    </p>
+                    <p data-lang="zh">
+                        将 sigmoid 与平方误差组合会产生一个<span class="highlight-key">非凸</span>成本函数——充满局部最小值。梯度下降会陷入局部最小值，无法可靠地找到全局最优解。我们需要一个对 θ 来说是凸函数的损失。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Deriving the cost from maximum likelihood</span>
+                        <span data-lang="zh">从最大似然推导成本函数</span>
+                    </h3>
+                    <p data-lang="en">
+                        For a binary outcome, each observation follows a Bernoulli distribution: P(yᵢ | xᵢ, θ) = pᵢ^yᵢ · (1−pᵢ)^(1−yᵢ), where pᵢ = σ(xᵢᵀθ). The likelihood of the entire dataset (assuming independent observations) is the product of these terms. Taking the log and flipping the sign gives the <span class="highlight-key">negative log-likelihood</span>, which we minimize:
+                    </p>
+                    <p data-lang="zh">
+                        对于二元结果，每个观测服从伯努利分布：P(yᵢ | xᵢ, θ) = pᵢ^yᵢ · (1−pᵢ)^(1−yᵢ)，其中 pᵢ = σ(xᵢᵀθ)。整个数据集的似然（假设观测独立）是这些项的乘积。取对数并翻转符号，得到<span class="highlight-key">负对数似然</span>，即我们要最小化的：
+                    </p>
+
+                    <div class="math-box">
+$$J(\theta) = -\frac{1}{n}\sum_{i=1}^{n}\Bigl[y_i\log\hat{p}_i + (1-y_i)\log(1-\hat{p}_i)\Bigr]$$
+                    </div>
+
+                    <p data-lang="en">
+                        This is the <span class="highlight-key">binary cross-entropy loss</span>. It has an elegant interpretation: when yᵢ = 1 (backsliding occurred), only the first term matters — we are penalized by −log(p̂ᵢ). If the model predicts p̂ᵢ = 0.99, the penalty is tiny (−log(0.99) ≈ 0.01). If the model predicts p̂ᵢ = 0.01 for a country that actually backslid, the penalty explodes (−log(0.01) ≈ 4.6). Cross-entropy punishes confident wrong predictions harshly.
+                    </p>
+                    <p data-lang="zh">
+                        这就是<span class="highlight-key">二元交叉熵损失</span>。它有一个优美的解释：当 yᵢ = 1（发生了倒退）时，只有第一项有效——惩罚为 −log(p̂ᵢ)。如果模型预测 p̂ᵢ = 0.99，惩罚很小（−log(0.99) ≈ 0.01）。如果模型对一个实际发生倒退的国家预测 p̂ᵢ = 0.01，惩罚则爆炸式增长（−log(0.01) ≈ 4.6）。交叉熵对自信但错误的预测给予严厉惩罚。
+                    </p>
+
+                    <div class="definition-box">
+                        <span data-lang="en"><strong>Probabilistic connection:</strong> Minimizing cross-entropy is exactly equivalent to finding the Maximum Likelihood Estimate (MLE) of θ. There is no "arbitrary" choice of loss function here — cross-entropy is what the probability model itself demands. It is also a convex function in θ, guaranteeing that gradient descent finds the global minimum.</span>
+                        <span data-lang="zh"><strong>概率联系：</strong>最小化交叉熵与求 θ 的最大似然估计（MLE）完全等价。这里没有"任意"的损失函数选择——交叉熵正是概率模型本身所要求的。它对 θ 也是凸函数，保证梯度下降能找到全局最小值。</span>
+                    </div>
+                </div>
+
+                <!-- ========== SECTION 4 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">4. The Gradient and the Update Rule</span>
+                        <span data-lang="zh">4. 梯度与更新规则</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        Unlike linear regression, there is no closed-form solution for logistic regression. We must minimize J(θ) using gradient descent. The gradient has a surprisingly clean form.
+                    </p>
+                    <p data-lang="zh">
+                        与线性回归不同，逻辑回归没有闭式解。我们必须用梯度下降来最小化 J(θ)。其梯度有一个出人意料的简洁形式。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Deriving the gradient</span>
+                        <span data-lang="zh">推导梯度</span>
+                    </h3>
+                    <p data-lang="en">
+                        Apply the chain rule: ∂J/∂θ = ∂J/∂p̂ · ∂p̂/∂z · ∂z/∂θ. Using σ'(z) = σ(z)(1−σ(z)) and p̂ = σ(z):
+                    </p>
+                    <p data-lang="zh">
+                        应用链式法则：∂J/∂θ = ∂J/∂p̂ · ∂p̂/∂z · ∂z/∂θ。利用 σ'(z) = σ(z)(1−σ(z)) 以及 p̂ = σ(z)：
+                    </p>
+
+                    <div class="math-box">
+$$\nabla_\theta J(\theta) = \frac{1}{n} X^\top (\hat{p} - y)$$
+                    </div>
+
+                    <p data-lang="en">
+                        The gradient is exactly the same form as in OLS: (1/n) Xᵀ(ŷ − y), with ŷ replaced by p̂ = σ(Xθ). The sigmoid's self-referential derivative cancels out neatly through the chain rule. This clean result is not a coincidence — it follows from using the natural loss function (cross-entropy) paired with its natural link function (logit/sigmoid).
+                    </p>
+                    <p data-lang="zh">
+                        梯度与 OLS 中的形式完全相同：(1/n) Xᵀ(ŷ − y)，只是将 ŷ 换为 p̂ = σ(Xθ)。Sigmoid 的自引用导数在链式法则中巧妙抵消。这一简洁结果并非巧合——它来自于将自然损失函数（交叉熵）与自然连接函数（logit/sigmoid）配对使用。
+                    </p>
+
+                    <p data-lang="en">The gradient descent update rule is therefore:</p>
+                    <p data-lang="zh">因此，梯度下降更新规则为：</p>
+
+                    <div class="math-box">
+$$\theta \leftarrow \theta - \frac{\alpha}{n} X^\top\bigl(\sigma(X\theta) - y\bigr)$$
+                    </div>
+
+                    <p data-lang="en">
+                        Each step computes the predicted probabilities σ(Xθ), subtracts the true labels y, and nudges θ in the direction that reduces the cross-entropy. With a well-chosen learning rate α, this converges to the MLE solution.
+                    </p>
+                    <p data-lang="zh">
+                        每一步计算预测概率 σ(Xθ)，减去真实标签 y，然后将 θ 向减少交叉熵的方向移动一小步。选择合适的学习率 α，这将收敛到 MLE 解。
+                    </p>
+                </div>
+
+                <!-- ========== SECTION 5 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">5. Interpreting Coefficients as Odds Ratios</span>
+                        <span data-lang="zh">5. 将系数解释为优势比</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        In linear regression, θⱼ means "a one-unit increase in xⱼ changes y by θⱼ, holding all else constant." In logistic regression, the interpretation is different — and more nuanced.
+                    </p>
+                    <p data-lang="zh">
+                        在线性回归中，θⱼ 的含义是"控制其他变量后，xⱼ 每增加一个单位，y 变化 θⱼ"。在逻辑回归中，解释方式不同——也更加微妙。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Coefficient → log-odds → odds ratio</span>
+                        <span data-lang="zh">系数 → 对数优势 → 优势比</span>
+                    </h3>
+                    <p data-lang="en">
+                        Because the model is log(p/1−p) = Xθ, each coefficient θⱼ is the change in log-odds per unit increase in xⱼ. Exponentiating gives the <span class="highlight-key">odds ratio</span>:
+                    </p>
+                    <p data-lang="zh">
+                        因为模型为 log(p/1−p) = Xθ，每个系数 θⱼ 是 xⱼ 每增加一个单位对应的对数优势变化。取指数得到<span class="highlight-key">优势比</span>：
+                    </p>
+
+                    <div class="math-box">
+$$\text{Odds Ratio}_j = e^{\theta_j}$$
+                    </div>
+
+                    <p data-lang="en">
+                        An odds ratio of 1.5 means the odds of backsliding multiply by 1.5 for each one-unit increase in xⱼ. If xⱼ is the Gini index (0–1 scale), θⱼ = 0.4 means OR = e^0.4 ≈ 1.49: a one-point increase in inequality is associated with 49% higher odds of democratic backsliding, holding all other predictors constant.
+                    </p>
+                    <p data-lang="zh">
+                        优势比为 1.5 意味着 xⱼ 每增加一个单位，发生倒退的优势就乘以 1.5。如果 xⱼ 是基尼系数（0–1 刻度），θⱼ = 0.4 则优势比 = e^0.4 ≈ 1.49：控制其他预测变量后，不平等程度每增加一个单位，民主倒退的优势提高 49%。
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">Three reference points for odds ratios</span>
+                        <span data-lang="zh">优势比的三个参考点</span>
+                    </h3>
+
+                    <table class="guide-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <span data-lang="en">Odds Ratio eᶿ</span>
+                                    <span data-lang="zh">优势比 eᶿ</span>
+                                </th>
+                                <th>
+                                    <span data-lang="en">What it means</span>
+                                    <span data-lang="zh">含义</span>
+                                </th>
+                                <th>
+                                    <span data-lang="en">Example (backsliding)</span>
+                                    <span data-lang="zh">示例（民主倒退）</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>eᶿ &lt; 1</strong></td>
+                                <td>
+                                    <span data-lang="en">Protective factor: higher xⱼ → lower odds of the event</span>
+                                    <span data-lang="zh">保护因素：xⱼ 越大 → 事件发生的优势越低</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">e.g. eᶿ = 0.6 for log GDP — wealthier countries less likely to backslide</span>
+                                    <span data-lang="zh">例如 log GDP 的 eᶿ = 0.6 ——越富裕的国家越不可能发生倒退</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>eᶿ = 1</strong></td>
+                                <td>
+                                    <span data-lang="en">No effect: xⱼ is unrelated to the odds (θⱼ = 0)</span>
+                                    <span data-lang="zh">无影响：xⱼ 与优势无关（θⱼ = 0）</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">e.g. geographic area — country size has no effect on backsliding odds</span>
+                                    <span data-lang="zh">例如地理面积——国家大小对倒退优势无影响</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>eᶿ &gt; 1</strong></td>
+                                <td>
+                                    <span data-lang="en">Risk factor: higher xⱼ → higher odds of the event</span>
+                                    <span data-lang="zh">风险因素：xⱼ 越大 → 事件发生的优势越高</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">e.g. eᶿ = 1.8 for Gini — more inequality raises backsliding odds by 80%</span>
+                                    <span data-lang="zh">例如基尼系数的 eᶿ = 1.8 ——更高的不平等使倒退优势提高 80%</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="definition-box">
+                        <span data-lang="en"><strong>Caution on marginal effects:</strong> The effect of xⱼ on the <em>probability</em> p (not just the odds) depends on where you are on the sigmoid curve. Near p=0.5, a unit increase in xⱼ has a large effect on probability; near p=0 or p=1 it has almost none (the sigmoid is flat there). For the average marginal effect on probability, compute ∂p/∂xⱼ = θⱼ·p̂(1−p̂) evaluated at each observation and then average. Most statistical software (Stata: <code>margins</code>, R: <code>marginaleffects</code> package) does this automatically.</span>
+                        <span data-lang="zh"><strong>边际效应注意事项：</strong>xⱼ 对<em>概率</em> p（而非优势比）的影响取决于你在 sigmoid 曲线上的位置。在 p≈0.5 附近，xⱼ 增加一个单位对概率影响很大；在 p≈0 或 p≈1 附近几乎没有影响（sigmoid 在那里是平的）。如需对概率的平均边际效应，计算 ∂p/∂xⱼ = θⱼ·p̂(1−p̂) 并对所有观测取平均。大多数统计软件（Stata：<code>margins</code>，R：<code>marginaleffects</code> 包）可自动完成。</span>
+                    </div>
+                </div>
+
+                <!-- ========== SECTION 6 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">6. Multi-Class Extension: Softmax Regression</span>
+                        <span data-lang="zh">6. 多分类扩展：Softmax 回归</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        Logistic regression handles two classes (backsliding / no backsliding). What if there are K > 2 classes — say, five regime types: liberal democracy, electoral democracy, competitive authoritarianism, electoral authoritarianism, and closed autocracy?
+                    </p>
+                    <p data-lang="zh">
+                        逻辑回归处理两个类别（倒退/不倒退）。如果有 K > 2 个类别——比如五种政体类型：自由民主、选举民主、竞争性威权主义、选举威权主义和封闭专制——该怎么办？
+                    </p>
+
+                    <h3>
+                        <span data-lang="en">The softmax function</span>
+                        <span data-lang="zh">Softmax 函数</span>
+                    </h3>
+                    <p data-lang="en">
+                        We maintain K separate weight vectors θ₁, θ₂, …, θ_K (one per class). For each observation, we compute K raw scores z_k = xᵀθ_k, then convert them to probabilities using softmax:
+                    </p>
+                    <p data-lang="zh">
+                        我们为每个类别维护一个权重向量 θ₁, θ₂, …, θ_K。对每个观测，计算 K 个原始得分 z_k = xᵀθ_k，然后用 softmax 将其转换为概率：
+                    </p>
+
+                    <div class="math-box">
+$$P(y = k \mid x, \Theta) = \frac{e^{z_k}}{\sum_{j=1}^{K} e^{z_j}} = \frac{e^{x^\top\theta_k}}{\sum_{j=1}^{K} e^{x^\top\theta_j}}$$
+                    </div>
+
+                    <p data-lang="en">
+                        Why exponentiate? Two reasons: (1) e^z is always positive, guaranteeing non-negative probabilities; (2) e^z amplifies differences between raw scores, making the highest-scoring class stand out more sharply. Dividing by the sum normalizes everything to sum to 1.
+                    </p>
+                    <p data-lang="zh">
+                        为什么取指数？两个原因：(1) e^z 总是正数，保证概率非负；(2) e^z 放大了原始得分之间的差异，使得分最高的类别更加突出。除以总和使所有概率加起来等于 1。
+                    </p>
+
+                    <p data-lang="en">
+                        Notice that when K=2, softmax reduces to the standard sigmoid. The loss function generalizes to categorical cross-entropy:
+                    </p>
+                    <p data-lang="zh">
+                        注意当 K=2 时，softmax 退化为标准 sigmoid。损失函数推广为分类交叉熵：
+                    </p>
+
+                    <div class="math-box">
+$$J(\Theta) = -\frac{1}{n}\sum_{i=1}^{n}\sum_{k=1}^{K} \mathbf{1}[y_i = k]\log P(y_i = k \mid x_i, \Theta)$$
+                    </div>
+
+                    <p data-lang="en">
+                        Here 𝟏[yᵢ = k] is an indicator: it equals 1 only when observation i truly belongs to class k. At each step, the model is penalized only for getting the true class probability wrong.
+                    </p>
+                    <p data-lang="zh">
+                        其中 𝟏[yᵢ = k] 是指示函数：仅当观测 i 真正属于类别 k 时等于 1。在每一步中，模型仅因把真实类别的概率预测错误而受到惩罚。
+                    </p>
+                </div>
+
+                <!-- ========== SECTION 7 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">7. OLS vs. Logistic Regression: When to Use Which</span>
+                        <span data-lang="zh">7. OLS 与逻辑回归：何时用哪个</span>
+                    </h2>
+
+                    <table class="guide-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <span data-lang="en">Criterion</span>
+                                    <span data-lang="zh">比较维度</span>
+                                </th>
+                                <th>
+                                    <span data-lang="en">OLS / Linear Regression</span>
+                                    <span data-lang="zh">OLS / 线性回归</span>
+                                </th>
+                                <th>
+                                    <span data-lang="en">Logistic Regression</span>
+                                    <span data-lang="zh">逻辑回归</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <span data-lang="en">Outcome type</span>
+                                    <span data-lang="zh">结果类型</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Continuous (democracy score, GDP, life expectancy)</span>
+                                    <span data-lang="zh">连续型（民主程度得分、GDP、预期寿命）</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Binary (backsliding yes/no) or multi-class (regime type)</span>
+                                    <span data-lang="zh">二元（倒退与否）或多类（政体类型）</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span data-lang="en">Prediction range</span>
+                                    <span data-lang="zh">预测值范围</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Unbounded (−∞, +∞) — can predict impossible values</span>
+                                    <span data-lang="zh">无界（−∞, +∞）——可能预测出不可能的值</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Bounded (0, 1) — always a valid probability</span>
+                                    <span data-lang="zh">有界 (0, 1)——始终是有效概率</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span data-lang="en">Loss function</span>
+                                    <span data-lang="zh">损失函数</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Mean Squared Error (MSE)</span>
+                                    <span data-lang="zh">均方误差（MSE）</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Cross-entropy (negative log-likelihood)</span>
+                                    <span data-lang="zh">交叉熵（负对数似然）</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span data-lang="en">Closed-form solution?</span>
+                                    <span data-lang="zh">有闭式解？</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Yes — Normal Equation θ* = (X⊤X)⁻¹X⊤y</span>
+                                    <span data-lang="zh">有——法线方程 θ* = (X⊤X)⁻¹X⊤y</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">No — requires iterative gradient descent or Newton-Raphson</span>
+                                    <span data="zh">无——需要梯度下降或 Newton-Raphson 迭代</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span data-lang="en">Coefficient interpretation</span>
+                                    <span data-lang="zh">系数解释</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Direct: θⱼ = change in y per unit xⱼ</span>
+                                    <span data-lang="zh">直接：θⱼ = xⱼ 每变化一单位，y 的变化量</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Indirect: eᶿʲ = odds ratio; marginal effect on p varies</span>
+                                    <span data-lang="zh">间接：eᶿʲ = 优势比；对概率 p 的边际效应随位置变化</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span data-lang="en">Error variance assumption</span>
+                                    <span data-lang="zh">误差方差假设</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Homoskedastic errors required for valid SEs</span>
+                                    <span data-lang="zh">需要同方差误差以获得有效标准误</span>
+                                </td>
+                                <td>
+                                    <span data-lang="en">Bernoulli variance p(1−p) is built into the model — no separate assumption needed</span>
+                                    <span data-lang="zh">伯努利方差 p(1−p) 内置于模型中——无需单独假设</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ========== SECTION 8 ========== -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">8. Key Takeaways</span>
+                        <span data-lang="zh">8. 核心要点</span>
+                    </h2>
+
+                    <p data-lang="en">
+                        Logistic regression is the principled solution to the binary classification problem. Every design choice — the sigmoid, the log-odds link, the cross-entropy loss — follows logically from the requirement that predictions be valid probabilities derived from maximum likelihood.
+                    </p>
+                    <p data-lang="zh">
+                        逻辑回归是二元分类问题的有原则的解决方案。每一个设计选择——sigmoid、对数优势连接函数、交叉熵损失——都从"预测值必须是最大似然推导出的有效概率"这一要求中逻辑地推导而来。
+                    </p>
+
+                    <div class="definition-box">
+                        <span data-lang="en">
+                            Binary outcome y ∈ {0,1} → can't use OLS (unbounded predictions, heteroskedastic errors) → model log-odds = Xθ instead → solving for p gives sigmoid p̂ = σ(Xθ) → maximize likelihood ≡ minimize cross-entropy loss J(θ) → no closed form, so use gradient descent with update θ ← θ − (α/n)Xᵀ(p̂ − y) → coefficients θⱼ interpreted as log-odds effects; eᶿʲ is the odds ratio → extend to K classes via softmax.
+                        </span>
+                        <span data-lang="zh">
+                            二元结果 y ∈ {0,1} → 不能用 OLS（预测值无界，误差异方差）→ 转而建模对数优势比 = Xθ → 解出 p 得到 sigmoid：p̂ = σ(Xθ) → 最大化似然 ≡ 最小化交叉熵损失 J(θ) → 无闭式解，用梯度下降更新 θ ← θ − (α/n)Xᵀ(p̂ − y) → 系数 θⱼ 解释为对数优势效应；eᶿʲ 为优势比 → 通过 softmax 推广到 K 个类别。
+                        </span>
+                    </div>
+                </div>
+
+                <!-- References -->
+                <div class="guide-section">
+                    <h2>
+                        <span data-lang="en">References</span>
+                        <span data-lang="zh">参考文献</span>
+                    </h2>
+                    <p class="footnote">
+                        Hastie, T., Tibshirani, R., &amp; Friedman, J. (2009). <em>The Elements of Statistical Learning</em> (2nd ed.). Springer. [Ch. 4]<br>
+                        Murphy, K. P. (2022). <em>Probabilistic Machine Learning: An Introduction</em>. MIT Press. [Ch. 10]<br>
+                        Ng, A. (2000). <em>CS229 Lecture Notes: Logistic Regression and Generalized Linear Models</em>. Stanford University.<br>
+                        King, G., &amp; Zeng, L. (2001). Logistic Regression in Rare Events Data. <em>Political Analysis</em>, 9(2), 137–163.<br>
+                        Long, J. S. (1997). <em>Regression Models for Categorical and Limited Dependent Variables</em>. SAGE Publications.
+                    </p>
+                </div>
+
+                <!-- Back link at bottom -->
+                <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--parchment); text-align: center;">
+                    <a href="../machine-learning.html#ml-classification" class="guide-back" data-lang="en">← Back to Machine Learning: Classification</a>
+                    <a href="../machine-learning.html#ml-classification" class="guide-back" data-lang="zh">← 返回机器学习：分类</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langBtns = document.querySelectorAll('.guide-lang-btn');
+        const enElements = document.querySelectorAll('[data-lang="en"]');
+        const zhElements = document.querySelectorAll('[data-lang="zh"]');
+        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        setLanguage(savedLang);
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                localStorage.setItem('preferred-lang', lang);
+                setLanguage(lang);
+            });
+        });
+        function setLanguage(lang) {
+            langBtns.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('.guide-lang-btn[data-lang="' + lang + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            enElements.forEach(el => { el.style.display = lang === 'en' ? '' : 'none'; });
+            zhElements.forEach(el => { el.style.display = lang === 'zh' ? '' : 'none'; });
+            document.body.className = lang;
+        }
+    });
+    </script>
+
+</body>
+</html>

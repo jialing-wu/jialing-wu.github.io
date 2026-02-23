@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang="en">Time Series: Lags, Stationarity &amp; Cointegration | Empirical Modeling</title>
+    <title data-lang="zh">时间序列：滞后、平稳性与协整 | 经验建模</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="guide-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="zh">
+    <div class="guide-layout">
+        <div class="guide-topbar">
+            <div class="guide-breadcrumb">
+                <a href="../empirical-modeling.html" data-lang="en">Empirical Modeling</a>
+                <a href="../empirical-modeling.html" data-lang="zh">经验建模</a>
+                <span class="sep">/</span>
+                <span data-lang="en">Time Series: Lags, Stationarity & Cointegration</span>
+                <span data-lang="zh">时间序列：滞后、平稳性与协整</span>
+            </div>
+            <div class="guide-lang-toggle">
+                <button class="guide-lang-btn active" data-lang="zh">中文</button>
+                <button class="guide-lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+
+        <div class="guide-content-wrapper">
+            <div class="guide-content">
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="en">Back to Empirical Modeling</a>
+                <a href="../empirical-modeling.html" class="guide-back" data-lang="zh">返回经验建模</a>
+
+                <div class="guide-header">
+                    <div class="guide-tag">
+                        <span data-lang="en">ZERO-BASE FRIENDLY · FROM FIRST PRINCIPLES</span>
+                        <span data-lang="zh">零基础友好 · 从首原理</span>
+                    </div>
+                    <h1>
+                        <span data-lang="en">Time Series: Lags, Stationarity & Cointegration</span>
+                        <span data-lang="zh">时间序列：滞后、平稳性与协整</span>
+                    </h1>
+                    <p>
+                        <span data-lang="en">From lags and autoregression to unit roots, stationarity, and cointegration — understanding how time changes everything.</span>
+                        <span data-lang="zh">从滞后和自回归到单位根、平稳性和协整——理解时间如何改变一切。</span>
+                    </p>
+                </div>
+
+                <section class="guide-section">
+                <h2 class="section-title" data-lang="en">1. Time Series vs Cross-Section Data</h2>
+                <h2 class="section-title" data-lang="zh">1. 时间序列与横截面数据</h2>
+
+                <div class="content-block" data-lang="en">
+                    <p>Before diving into dynamics, we need to understand what makes time series data different from the cross-sectional data you may have seen before.</p>
+
+                    <h3>Cross-Section Data</h3>
+                    <p><strong>Definition:</strong> A snapshot of many units (individuals, firms, countries) at one point in time.</p>
+                    <p><strong>Example:</strong> Wages of 500 workers in 2023. Or house prices in 100 cities in January 2024.</p>
+                    <p>In cross-sectional data, the order doesn't matter. You could shuffle the rows and the analysis stays the same.</p>
+
+                    <h3>Time Series Data</h3>
+                    <p><strong>Definition:</strong> One unit (or a few) measured repeatedly over many time periods.</p>
+                    <p><strong>Example:</strong> US GDP measured quarterly from 2000 to 2024. Or your own heart rate recorded every minute for an hour.</p>
+                    <p>In time series, <strong>order matters crucially</strong>. Yesterday's value often influences today's value. The sequence is everything.</p>
+
+                    <h3>Why Does Time Order Matter?</h3>
+                    <ul>
+                        <li><strong>Autocorrelation:</strong> A series is often correlated with its own past values.</li>
+                        <li><strong>Trend:</strong> The series may drift upward or downward systematically.</li>
+                        <li><strong>Momentum:</strong> Changes don't happen in isolation; they build on previous changes.</li>
+                    </ul>
+                    <p>This is the fundamental reason we can't just apply ordinary regression to time series and expect good results.</p>
+                </div>
+
+                <div class="content-block" data-lang="zh">
+                    <p>在深入动态之前，我们需要理解时间序列数据与你可能见过的横截面数据之间的区别。</p>
+
+                    <h3>横截面数据</h3>
+                    <p><strong>定义：</strong>在某一时间点对许多单位（个人、企业、国家）的快照。</p>
+                    <p><strong>例子：</strong>2023年500名工人的工资。或2024年1月100个城市的房价。</p>
+                    <p>在横截面数据中，顺序无关紧要。你可以打乱行的顺序，分析结果保持不变。</p>
+
+                    <h3>时间序列数据</h3>
+                    <p><strong>定义：</strong>一个单位（或少数几个）在许多时间段内的重复测量。</p>
+                    <p><strong>例子：</strong>2000年至2024年期间按季度测量的美国GDP。或者在一小时内每分钟记录一次你自己的心率。</p>
+                    <p>在时间序列中，<strong>顺序至关重要</strong>。昨天的值通常会影响今天的值。序列本身就是一切。</p>
+
+                    <h3>为什么时间顺序很重要？</h3>
+                    <ul>
+                        <li><strong>自相关：</strong>一个序列通常与其自身的过去值相关。</li>
+                        <li><strong>趋势：</strong>序列可能系统地向上或向下漂移。</li>
+                        <li><strong>动力：</strong>变化不会孤立发生；它们基于之前的变化而发展。</li>
+                    </ul>
+                    <p>这是我们不能简单地对时间序列应用普通回归并期望得到好结果的根本原因。</p>
+                </div>
+            </section>
+
+            <!-- Section 2: What is a Lag -->
+            <section class="guide-section">
+                <h2 class="section-title" data-lang="en">2. What is a "Lag"?</h2>
+                <h2 class="section-title" data-lang="zh">2. 什么是"滞后"？</h2>
+
+                <div class="content-block" data-lang="en">
+                    <p>A <strong>lag</strong> is simply "a previous value" of a variable. It's not mysterious—just a shift backward in time.</p>
+
+                    <h3>The Subscript is a Clock</h3>
+                    <p>We use subscript <strong>t</strong> to denote time. Think of it as the date or period number.</p>
+                    <ul>
+                        <li>$$Y_t$$ = the value of Y right now (today, this quarter, this year)</li>
+                        <li>$$Y_{t-1}$$ = the value of Y one period ago (yesterday, last quarter, last year)</li>
+                        <li>$$Y_{t-2}$$ = the value of Y two periods ago</li>
+                    </ul>
+
+                    <h3>Concrete Example</h3>
+                    <p>Imagine you're tracking monthly unemployment (in percent):</p>
+                    <table class="simple-table">
+                        <tr>
+                            <th>Month</th>
+                            <th>$$Y_t$$ (Unemployment %)</th>
+                        </tr>
+                        <tr>
+                            <td>January (t=1)</td>
+                            <td>4.0</td>
+                        </tr>
+                        <tr>
+                            <td>February (t=2)</td>
+                            <td>4.2</td>
+                        </tr>
+                        <tr>
+                            <td>March (t=3)</td>
+                            <td>4.1</td>
+                        </tr>
+                        <tr>
+                            <td>April (t=4)</td>
+                            <td>4.3</td>
+                        </tr>
+                    </table>
+
+                    <p>Now:</p>
+                    <ul>
+                        <li>$$Y_4$$ = 4.3 (April unemployment)</li>
+                        <li>$$Y_{4-1} = Y_3$$ = 4.1 (March unemployment, the lag of April)</li>
+                        <li>$$Y_{4-2} = Y_2$$ = 4.2 (February unemployment, the 2-lag of April)</li>
+                    </ul>
+
+                    <h3>Why Lags Matter</h3>
+                    <p>Often, the variable you want to explain depends on where it was before. "Does last quarter's GDP affect this quarter's growth?" That's asking about a lag.</p>
+                </div>
+
+                <div class="content-block" data-lang="zh">
+                    <p><strong>滞后</strong>就是简单的"一个变量的先前值"。这并不神秘——只是时间上的向后移动。</p>
+
+                    <h3>下标是一个时钟</h3>
+                    <p>我们使用下标<strong>t</strong>来表示时间。将其视为日期或时期编号。</p>
+                    <ul>
+                        <li>$$Y_t$$ = Y的当前值（今天、本季度、本年）</li>
+                        <li>$$Y_{t-1}$$ = Y一个时期前的值（昨天、上季度、去年）</li>
+                        <li>$$Y_{t-2}$$ = Y两个时期前的值</li>
+                    </ul>
+
+                    <h3>具体例子</h3>
+                    <p>想象你在跟踪月度失业率（百分比）：</p>
+                    <table class="simple-table">
+                        <tr>
+                            <th>月份</th>
+                            <th>$$Y_t$$（失业率%）</th>
+                        </tr>
+                        <tr>
+                            <td>1月 (t=1)</td>
+                            <td>4.0</td>
+                        </tr>
+                        <tr>
+                            <td>2月 (t=2)</td>
+                            <td>4.2</td>
+                        </tr>
+                        <tr>
+                            <td>3月 (t=3)</td>
+                            <td>4.1</td>
+                        </tr>
+                        <tr>
+                            <td>4月 (t=4)</td>
+                            <td>4.3</td>
+                        </tr>
+                    </table>
+
+                    <p>现在：</p>
+                    <ul>
+                        <li>$$Y_4$$ = 4.3（4月失业率）</li>
+                        <li>$$Y_{4-1} = Y_3$$ = 4.1（3月失业率，4月的滞后）</li>
+                        <li>$$Y_{4-2} = Y_2$$ = 4.2（2月失业率，4月的2阶滞后）</li>
+                    </ul>
+
+                    <h3>为什么滞后重要</h3>
+                    <p>通常，你想解释的变量取决于它之前的位置。"上季度的GDP是否影响本季度的增长？"这就是在询问一个滞后。</p>
+                </div>
+            </section>
+
+            <!-- Section 3: Lagged Dependent Variable (LDV) -->
+            <section class="guide-section">
+                <h2 class="section-title" data-lang="en">3. Lagged Dependent Variable (LDV) Models</h2>
+                <h2 class="section-title" data-lang="zh">3. 滞后被解释变量(LDV)模型</h2>
+
+                <div class="content-block" data-lang="en">
+                    <h3>The Basic Model</h3>
+                    <p>An LDV model includes the lagged value of the dependent variable as a regressor:</p>
+                    $$Y_t = \alpha + \beta_1 Y_{t-1} + u_t$$
+
+                    <p>This is called an <strong>AR(1) process</strong> (autoregressive of order 1) because Y depends on its own first lag.</p>
+
+                    <h3>Interpretation: "Today Depends on Yesterday"</h3>
+                    <p>The coefficient $$\beta_1$$ tells you how much of yesterday's value "carries forward" to today.</p>
+
+                    <h3>Numerical Example</h3>
+                    <p>Suppose we have the simple AR(1) model:</p>
+                    $$Y_t = 10 + 0.8 \cdot Y_{t-1} + u_t$$
+                    <p>(with $$u_t = 0$$ for simplicity)</p>
+
+                    <table class="simple-table">
+                        <tr>
+                            <th>Period</th>
+                            <th>$$Y_{t-1}$$</th>
+                            <th>$$Y_t = 10 + 0.8 \times Y_{t-1}$$</th>
+                        </tr>
+                        <tr>
+                            <td>$$t=1$$</td>
+                            <td>—</td>
+                            <td>50 (starting value)</td>
+                        </tr>
+                        <tr>
+                            <td>$$t=2$$</td>
+                            <td>50</td>
+                            <td>$$10 + 0.8(50) = 50$$</td>
+                        </tr>
+                        <tr>
+                            <td>$$t=3$$</td>
+                            <td>50</td>
+                            <td>$$10 + 0.8(50) = 50$$</td>
+                        </tr>
+                        <tr>
+                            <td>$$t=4$$</td>
+                            <td>50</td>
+                            <td>$$10 + 0.8(50) = 50$$</td>
+                        </tr>
+                    </table>
+
+                    <p><strong>Observation:</strong> The series stabilizes. With $$\beta_1 = 0.8$$, the system "remembers" 80% of its past value each period. The remaining 20% gets refreshed by the constant term.</p>
+
+                    <h3>What Does $$\beta_1$$ Mean?</h3>
+                    <ul>
+                        <li><strong>$$\beta_1$$ near 1:</strong> The series is very persistent. Changes take a long time to die out. (Very high autocorrelation.)</li>
+                        <li><strong>$$\beta_1$$ near 0:</strong> The series is quickly "reset" each period. Past values matter little.</li>
+                        <li><strong>$$\beta_1$$ = 0.8:</strong> Each period, the series retains 80% of last period's deviation from the long-run level.</li>
+                    </ul>
+
+                    <h3>The Long-Run Level</h3>
+                    <p>In steady state, $$Y_t = Y_{t-1} = Y^*$$. Plugging into the model:</p>
+                    $$Y^* = \alpha + \beta_1 Y^* + 0$$
+                    $$Y^* = \frac{\alpha}{1 - \beta_1}$$
+
+                    <p>For our example: $$Y^* = \frac{10}{1-0.8} = \frac{10}{0.2} = 50$$. The series eventually settles at 50.</p>
+                </div>
+
+                <div class="content-block" data-lang="zh">
+                    <h3>基本模型</h3>
+                    <p>LDV模型包括被解释变量的滞后值作为回归量：</p>
+                    $$Y_t = \alpha + \beta_1 Y_{t-1} + u_t$$
+
+                    <p>这称为<strong>AR(1)过程</strong>（1阶自回归），因为Y依赖于其自身的第一个滞后。</p>
+
+                    <h3>解释："今天取决于昨天"</h3>
+                    <p>系数$$\beta_1$$告诉你昨天的值有多少会"传递"到今天。</p>
+
+                    <h3>数值例子</h3>
+                    <p>假设我们有一个简单的AR(1)模型：</p>
+                    $$Y_t = 10 + 0.8 \cdot Y_{t-1} + u_t$$
+                    <p>（为简单起见，$$u_t = 0$$）</p>
+
+                    <table class="simple-table">
+                        <tr>
+                            <th>时期</th>
+                            <th>$$Y_{t-1}$$</th>
+                            <th>$$Y_t = 10 + 0.8 \times Y_{t-1}$$</th>
+                        </tr>
+                        <tr>
+                            <td>$$t=1$$</td>
+                            <td>—</td>
+                            <td>50（初始值）</td>
+                        </tr>
+                        <tr>
+                            <td>$$t=2$$</td>
+                            <td>50</td>
+                            <td>$$10 + 0.8(50) = 50$$</td>
+                        </tr>
+                        <tr>
+                            <td>$$t=3$$</td>
+                            <td>50</td>
+                            <td>$$10 + 0.8(50) = 50$$</td>
+                        </tr>
+                        <tr>
+                            <td>$$t=4$$</td>
+                            <td>50</td>
+                            <td>$$10 + 0.8(50) = 50$$</td>
+                        </tr>
+                    </table>
+
+                    <p><strong>观察：</strong>该序列稳定。当$$\beta_1 = 0.8$$时，系统每个时期"记住"其过去值的80%。剩余的20%由常数项刷新。</p>
+
+                    <h3>$$\beta_1$$是什么意思？</h3>
+                    <ul>
+                        <li><strong>$$\beta_1$$接近1：</strong>该序列非常持久。变化需要很长时间才能消失。（非常高的自相关。）</li>
+                        <li><strong>$$\beta_1$$接近0：</strong>该序列每个时期迅速"重置"。过去的值意义不大。</li>
+                        <li><strong>$$\beta_1$$ = 0.8：</strong>每个时期，该序列保留上一时期与长期水平的偏差的80%。</li>
+                    </ul>
+
+                    <h3>长期水平</h3>
+                    <p>在稳态，$$Y_t = Y_{t-1} = Y^*$$。代入模型：</p>
+                    $$Y^* = \alpha + \beta_1 Y^* + 0$$
+                    $$Y^* = \frac{\alpha}{1 - \beta_1}$$
+
+                    <p>对于我们的例子：$$Y^* = \frac{10}{1-0.8} = \frac{10}{0.2} = 50$$。该序列最终在50处稳定。</p>
+                </div>
+            </section>
+
+            <!-- Section 4: ADL Model -->
+            <section class="guide-section">
+                <h2 class="section-title" data-lang="en">4. ADL (Autoregressive Distributed Lag) Model</h2>
+                <h2 class="section-title" data-lang="zh">4. ADL（自回归分布滞后）模型</h2>
+
+                <div class="content-block" data-lang="en">
+                    <h3>Adding an Explanatory Variable and Its Lag</h3>
+                    <p>The ADL model extends the AR(1) by including a regressor $$X_t$$ and its lag:</p>
+                    $$Y_t = \alpha + \beta_1 Y_{t-1} + \gamma_0 X_t + \gamma_1 X_{t-1} + u_t$$
+
+                    <p>This is denoted <strong>ADL(1,1)</strong>: one lag of Y, and lags up to 1 for X.</p>
+
+                    <h3>Interpretation of Coefficients</h3>
+                    <ul>
+                        <li>$$\gamma_0$$: The <strong>immediate effect</strong> of X on Y. A one-unit increase in X today changes Y today by $$\gamma_0$$.</li>
+                        <li>$$\gamma_1$$: The <strong>lagged effect</strong> of X on Y. Last period's X affects current Y through this coefficient.</li>
+                        <li>$$\beta_1$$: The persistence of Y itself.</li>
+                    </ul>
+
+                    <h3>Numerical Example: 5-Period Simulation</h3>
+                    <p>Consider the ADL(1,1) model:</p>
+                    $$Y_t = 5 + 0.6 Y_{t-1} + 2.0 X_t + 1.5 X_{t-1} + u_t$$
+                    <p>($$u_t = 0$$ for simplicity)</p>
+
+                    <p>Assume X follows a simple path: $$X_0 = 10, X_1 = 10, X_2 = 11, X_3 = 11, X_4 = 11, X_5 = 11$$</p>
+
+                    <p>And we start with $$Y_0 = 50$$.</p>
+
+                    <table class="simple-table">
+                        <tr>
+                            <th>$$t$$</th>
+                            <th>$$X_t$$</th>
+                            <th>$$Y_{t-1}$$</th>
+                            <th>$$X_{t-1}$$</th>
+                            <th>$$Y_t = 5 + 0.6Y_{t-1} + 2X_t + 1.5X_{t-1}$$</th>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>10</td>
+                            <td>50</td>
+                            <td>10</td>
+                            <td>$$5 + 0.6(50) + 2(10) + 1.5(10) = 5 + 30 + 20 + 15 = 70$$</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>10</td>
+                            <td>70</td>
+                            <td>10</td>
+                            <td>$$5 + 0.6(70) + 2(10) + 1.5(10) = 5 + 42 + 20 + 15 = 82$$</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>11</td>
+                            <td>82</td>
+                            <td>10</td>
+                            <td>$$5 + 0.6(82) + 2(11) + 1.5(10) = 5 + 49.2 + 22 + 15 = 91.2$$</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>11</td>
+                            <td>91.2</td>
+                            <td>11</td>
+                            <td>$$5 + 0.6(91.2) + 2(11) + 1.5(11) = 5 + 54.72 + 22 + 16.5 = 98.22$$</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>11</td>
+                            <td>98.22</td>
+                            <td>11</td>
+                            <td>$$5 + 0.6(98.22) + 2(11) + 1.5(11) = 5 + 58.93 + 22 + 16.5 = 102.43$$</td>
+                        </tr>
+                    </table>
+
+                    <h3>Key Insight: Immediate vs. Cumulative Effect</h3>
+                    <p><strong>Between t=2 and t=3:</strong> X increases from 10 to 11 (change of +1).</p>
+                    <ul>
+                        <li>Immediate effect: $$\gamma_0 \times \Delta X = 2.0 \times 1 = 2.0$$</li>
+                        <li>Lagged effect (felt at t=4): $$\gamma_1 \times \Delta X = 1.5 \times 1 = 1.5$$</li>
+                        <li>Total cumulative effect of the shock: $$2.0 + 1.5 = 3.5$$</li>
+                    </ul>
+                    <p>But the impact doesn't stop there! Because $$\beta_1 = 0.6$$, the higher Y then persists, multiplying the shock forward.</p>
+                </div>
+
+                <div class="content-block" data-lang="zh">
+                    <h3>添加解释变量及其滞后</h3>
+                    <p>ADL模型通过包含回归变量$$X_t$$及其滞后来扩展AR(1)：</p>
+                    $$Y_t = \alpha + \beta_1 Y_{t-1} + \gamma_0 X_t + \gamma_1 X_{t-1} + u_t$$
+
+                    <p>这被记为<strong>ADL(1,1)</strong>：Y的一个滞后，X的滞后到1。</p>
+
+                    <h3>系数解释</h3>
+                    <ul>
+                        <li>$$\gamma_0$$：X对Y的<strong>直接效应</strong>。今天X增加一个单位会改变今天的Y$$\gamma_0$$。</li>
+                        <li>$$\gamma_1$$：X对Y的<strong>滞后效应</strong>。上一时期的X通过这个系数影响当前Y。</li>
+                        <li>$$\beta_1$$：Y本身的持久性。</li>
+                    </ul>
+
+                    <h3>数值例子：5期模拟</h3>
+                    <p>考虑ADL(1,1)模型：</p>
+                    $$Y_t = 5 + 0.6 Y_{t-1} + 2.0 X_t + 1.5 X_{t-1} + u_t$$
+                    <p>（为简单起见，$$u_t = 0$$）</p>
+
+                    <p>假设X遵循简单路径：$$X_0 = 10, X_1 = 10, X_2 = 11, X_3 = 11, X_4 = 11, X_5 = 11$$</p>
+
+                    <p>我们从$$Y_0 = 50$$开始。</p>
+
+                    <table class="simple-table">
+                        <tr>
+                            <th>$$t$$</th>
+                            <th>$$X_t$$</th>
+                            <th>$$Y_{t-1}$$</th>
+                            <th>$$X_{t-1}$$</th>
+                            <th>$$Y_t = 5 + 0.6Y_{t-1} + 2X_t + 1.5X_{t-1}$$</th>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>10</td>
+                            <td>50</td>
+                            <td>10</td>
+                            <td>$$5 + 0.6(50) + 2(10) + 1.5(10) = 70$$</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>10</td>
+                            <td>70</td>
+                            <td>10</td>
+                            <td>$$5 + 0.6(70) + 2(10) + 1.5(10) = 82$$</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>11</td>
+                            <td>82</td>
+                            <td>10</td>
+                            <td>$$5 + 0.6(82) + 2(11) + 1.5(10) = 91.2$$</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>11</td>
+                            <td>91.2</td>
+                            <td>11</td>
+                            <td>$$5 + 0.6(91.2) + 2(11) + 1.5(11) = 98.22$$</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>11</td>
+                            <td>98.22</td>
+                            <td>11</td>
+                            <td>$$5 + 0.6(98.22) + 2(11) + 1.5(11) = 102.43$$</td>
+                        </tr>
+                    </table>
+
+                    <h3>关键洞察：直接效应与累积效应</h3>
+                    <p><strong>在t=2和t=3之间：</strong> X从10增加到11（变化+1）。</p>
+                    <ul>
+                        <li>直接效应：$$\gamma_0 \times \Delta X = 2.0 \times 1 = 2.0$$</li>
+                        <li>滞后效应（在t=4感受到）：$$\gamma_1 \times \Delta X = 1.5 \times 1 = 1.5$$</li>
+                        <li>冲击的累积总效应：$$2.0 + 1.5 = 3.5$$</li>
+                    </ul>
+                    <p>但影响不会止于此！因为$$\beta_1 = 0.6$$，更高的Y随后持续存在，使冲击倍增前进。</p>
+                </div>
+            </section>
+
+            <!-- Section 5: Short-Run vs Long-Run Multiplier -->
+            <section class="guide-section">
+                <h2 class="section-title" data-lang="en">5. Short-Run vs Long-Run Multiplier</h2>
+                <h2 class="section-title" data-lang="zh">5. 短期与长期乘数</h2>
+
+                <div class="content-block" data-lang="en">
+                    <h3>The Question</h3>
+                    <p>In the ADL(1,1) model, suppose X increases by 1 unit and stays there permanently. How much does Y increase in the long run?</p>
+
+                    <h3>Short-Run Multiplier</h3>
+                    <p>The immediate impact on Y when X increases by 1 unit is simply $$\gamma_0$$.</p>
+                    <p>This is the <strong>impact multiplier</strong> or <strong>short-run multiplier</strong>.</p>
+
+                    <h3>Long-Run Multiplier Derivation</h3>
+                    <p>In long-run equilibrium, $$Y_t = Y_{t-1} = Y^*$$ and $$X_t = X_{t-1} = X^*$$. The ADL equation becomes:</p>
+                    $$Y^* = \alpha + \beta_1 Y^* + \gamma_0 X^* + \gamma_1 X^*$$
+
+                    <p>Rearranging:</p>
+                    $$Y^* - \beta_1 Y^* = \alpha + (\gamma_0 + \gamma_1) X^*$$
+                    $$(1 - \beta_1) Y^* = \alpha + (\gamma_0 + \gamma_1) X^*$$
+
+                    <p>Now suppose X increases from $$X_0$$ to $$X_0 + 1$$. The long-run Y changes by:</p>
+                    $$\Delta Y^* = \frac{\gamma_0 + \gamma_1}{1 - \beta_1} \times 1 = \frac{\gamma_0 + \gamma_1}{1 - \beta_1}$$
+
+                    <p>This is the <strong>long-run multiplier</strong>:</p>
+                    $$\boxed{\text{LRM} = \frac{\gamma_0 + \gamma_1}{1 - \beta_1}}$$
+
+                    <h3>Geometric Series Intuition</h3>
+                    <p>Why does $$\frac{1}{1 - \beta_1}$$ appear? Think of the persistence factor.</p>
+
+                    <p>When X increases by 1, Y immediately increases by $$\gamma_0$$. But then:</p>
+                    <ul>
+                        <li>Next period, that higher Y (times $$\beta_1$$) feeds back. Additionally, lagged X contributes $$\gamma_1$$ more.</li>
+                        <li>The period after, an even higher Y feeds back again.</li>
+                        <li>This continues indefinitely, but with geometrically declining contributions.</li>
+                    </ul>
+
+                    <p>The cumulative effect is:</p>
+                    $$\gamma_0 + \beta_1 \gamma_0 + \beta_1^2 \gamma_0 + \cdots = \gamma_0 \left( 1 + \beta_1 + \beta_1^2 + \cdots \right) = \frac{\gamma_0}{1 - \beta_1}$$
+
+                    <p>Plus the direct lagged effect $$\gamma_1$$, which also compounds:</p>
+                    $$\gamma_1 + \beta_1 \gamma_1 + \beta_1^2 \gamma_1 + \cdots = \frac{\gamma_1}{1 - \beta_1}$$
+
+                    <p>Total:</p>
+                    $$\text{LRM} = \frac{\gamma_0 + \gamma_1}{1 - \beta_1}$$
+
+                    <h3>Numerical Example: The Snowball Effect</h3>
+                    <p>Recall our ADL model: $$Y_t = 5 + 0.6 Y_{t-1} + 2.0 X_t + 1.5 X_{t-1}$$</p>
+
+                    <p>So $$\gamma_0 = 2.0, \gamma_1 = 1.5, \beta_1 = 0.6$$.</p>
+
+                    <p><strong>Short-run multiplier:</strong> $$\gamma_0 = 2.0$$</p>
+
+                    <p><strong>Long-run multiplier:</strong></p>
+                    $$\text{LRM} = \frac{2.0 + 1.5}{1 - 0.6} = \frac{3.5}{0.4} = 8.75$$
+
+                    <p><strong>Interpretation:</strong> A permanent 1-unit increase in X leads to an immediate 2.0-unit increase in Y, but in the long run, Y increases by 8.75 units—a 4.4x amplification!</p>
+
+                    <p>This is the "snowball" or "multiplier" effect: the initial shock of 2.0 snowballs through feedback loops into a much larger 8.75.</p>
+
+                    <h3>When is $$\text{LRM}$$ Large?</h3>
+                    <p>The denominator $$(1 - \beta_1)$$ is small when $$\beta_1$$ is close to 1. This means high persistence in Y leads to a large multiplier effect.</p>
+                </div>
+
+                <div class="content-block" data-lang="zh">
+                    <h3>问题</h3>
+                    <p>在ADL(1,1)模型中，假设X增加1个单位并永久保持。从长期来看，Y增加多少？</p>
+
+                    <h3>短期乘数</h3>
+                    <p>当X增加1个单位时，Y的直接影响只是$$\gamma_0$$。</p>
+                    <p>这是<strong>影响乘数</strong>或<strong>短期乘数</strong>。</p>
+
+                    <h3>长期乘数推导</h3>
+                    <p>在长期均衡中，$$Y_t = Y_{t-1} = Y^*$$和$$X_t = X_{t-1} = X^*$$。ADL方程变为：</p>
+                    $$Y^* = \alpha + \beta_1 Y^* + \gamma_0 X^* + \gamma_1 X^*$$
+
+                    <p>重排：</p>
+                    $$Y^* - \beta_1 Y^* = \alpha + (\gamma_0 + \gamma_1) X^*$$
+                    $$(1 - \beta_1) Y^* = \alpha + (\gamma_0 + \gamma_1) X^*$$
+
+                    <p>现在假设X从$$X_0$$增加到$$X_0 + 1$$。长期Y的变化为：</p>
+                    $$\Delta Y^* = \frac{\gamma_0 + \gamma_1}{1 - \beta_1} \times 1 = \frac{\gamma_0 + \gamma_1}{1 - \beta_1}$$
+
+                    <p>这是<strong>长期乘数</strong>：</p>
+                    $$\boxed{\text{LRM} = \frac{\gamma_0 + \gamma_1}{1 - \beta_1}}$$
+
+                    <h3>几何级数直观</h3>
+                    <p>为什么会出现$$\frac{1}{1 - \beta_1}$？考虑持久性因素。</p>
+
+                    <p>当X增加1时，Y立即增加$$\gamma_0$$。但之后：</p>
+                    <ul>
+                        <li>下一时期，更高的Y（乘以$$\beta_1$$）反馈。另外，滞后的X贡献$$\gamma_1$$。</li>
+                        <li>再一个时期，更高的Y再次反馈。</li>
+                        <li>这继续无限进行，但贡献呈几何递减。</li>
+                    </ul>
+
+                    <p>累积效果为：</p>
+                    $$\gamma_0 + \beta_1 \gamma_0 + \beta_1^2 \gamma_0 + \cdots = \gamma_0 \left( 1 + \beta_1 + \beta_1^2 + \cdots \right) = \frac{\gamma_0}{1 - \beta_1}$$
+
+                    <p>加上直接滞后效应$$\gamma_1$，它也会复利：</p>
+                    $$\gamma_1 + \beta_1 \gamma_1 + \beta_1^2 \gamma_1 + \cdots = \frac{\gamma_1}{1 - \beta_1}$$
+
+                    <p>总计：</p>
+                    $$\text{LRM} = \frac{\gamma_0 + \gamma_1}{1 - \beta_1}$$
+
+                    <h3>数值例子：雪球效应</h3>
+                    <p>回顾我们的ADL模型：$$Y_t = 5 + 0.6 Y_{t-1} + 2.0 X_t + 1.5 X_{t-1}$$</p>
+
+                    <p>所以$$\gamma_0 = 2.0, \gamma_1 = 1.5, \beta_1 = 0.6$$。</p>
+
+                    <p><strong>短期乘数：</strong> $$\gamma_0 = 2.0$$</p>
+
+                    <p><strong>长期乘数：</strong></p>
+                    $$\text{LRM} = \frac{2.0 + 1.5}{1 - 0.6} = \frac{3.5}{0.4} = 8.75$$
+
+                    <p><strong>解释：</strong>X永久增加1个单位会导致Y立即增加2.0个单位，但从长期来看，Y增加8.75个单位——增幅为4.4倍！</p>
+
+                    <p>这是"雪球"或"乘数"效应：初始冲击2.0通过反馈回路滚成更大的8.75。</p>
+
+                    <h3>何时$$\text{LRM}$$很大？</h3>
+                    <p>当$$\beta_1$$接近1时，分母$$(1 - \beta_1)$$很小。这意味着Y的高持久性导致大的乘数效应。</p>
+                </div>
+            </section>
+
+            <!-- Section 6: Stationarity -->
+            <section class="guide-section">
+                <h2 class="section-title" data-lang="en">6. Stationarity</h2>
+                <h2 class="section-title" data-lang="zh">6. 平稳性</h2>
+
+                <div class="content-block" data-lang="en">
+                    <h3>Definition</h3>
+                    <p>A time series is <strong>stationary</strong> if its mean and variance do not change over time.</p>
+
+                    <p><strong>More formally:</strong></p>
+                    <ul>
+                        <li>$$E[Y_t] = \mu$$ for all t (constant mean)</li>
+                        <li>$$\text{Var}(Y_t) = \sigma^2$$ for all t (constant variance)</li>
+                        <li>$$\text{Cov}(Y_t, Y_{t-k}) = \gamma_k$$ depends only on lag k, not on t (constant autocovariance)</li>
+                    </ul>
+
+                    <h3>Stationary vs Non-Stationary: Visual Intuition</h3>
+
+                    <p><strong>Stationary Series:</strong> Fluctuates around a stable, unchanging mean. Shocks die out over time.</p>
+                    <p>Example: Temperature deviations from the seasonal average. Temperature noise around the trend.</p>
+
+                    <p><strong>Non-Stationary Series:</strong> Drifts without a clear anchor. Shocks have permanent effects. The mean itself changes over time.</p>
+                    <p>Example: Stock prices, GDP levels, cumulative rainfall over years.</p>
+
+                    <h3>Example: AR(1) Stationarity Condition</h3>
+                    <p>Recall the AR(1) model:</p>
+                    $$Y_t = \alpha + \beta_1 Y_{t-1} + u_t$$
+
+                    <p>This series is stationary if and only if:</p>
+                    $$|\beta_1| < 1$$
+
+                    <p>Why? If $$|\beta_1| < 1$$, shocks $$u_t$$ die out exponentially. Each period, their influence is multiplied by $$\beta_1$$, getting smaller and smaller.</p>
+
+                    <p>If $$\beta_1 = 1$$ (or $$\beta_1 > 1$$), shocks are permanent (or explosive), and the series is non-stationary.</p>
+
+                    <h3>Why Stationarity Matters</h3>
+                    <ul>
+                        <li><strong>Predictable behavior:</strong> A stationary series fluctuates in a known range. Forecasting is sensible.</li>
+                        <li><strong>Valid inference:</strong> Standard regression tests (t-stats, F-stats) rely on stationarity. Non-stationary series can give you false significance.</li>
+                        <li><strong>Long-run relationships:</strong> Two non-stationary series might be "cointegrated"—tied together by a stationary relationship.</li>
+                    </ul>
+                </div>
+
+                <div class="content-block" data-lang="zh">
+                    <h3>定义</h3>
+                    <p>如果时间序列的均值和方差不随时间变化，则该序列是<strong>平稳的</strong>。</p>
+
+                    <p><strong>更正式地说：</strong></p>
+                    <ul>
+                        <li>$$E[Y_t] = \mu$$对所有t（常数均值）</li>
+                        <li>$$\text{Var}(Y_t) = \sigma^2$$对所有t（常数方差）</li>
+                        <li>$$\text{Cov}(Y_t, Y_{t-k}) = \gamma_k$$仅取决于滞后k，不取决于t（常数自协方差）</li>
+                    </ul>
+
+                    <h3>平稳与非平稳：视觉直观</h3>
+
+                    <p><strong>平稳序列：</strong>围绕稳定、不变的均值波动。冲击随时间消退。</p>
+                    <p>例子：季节平均值的温度偏差。趋势周围的温度噪声。</p>
+
+                    <p><strong>非平稳序列：</strong>在没有明确锚点的情况下漂移。冲击具有永久影响。均值本身随时间变化。</p>
+                    <p>例子：股票价格、GDP水平、多年来的累积降雨量。</p>
+
+                    <h3>例子：AR(1)平稳性条件</h3>
+                    <p>回顾AR(1)模型：</p>
+                    $$Y_t = \alpha + \beta_1 Y_{t-1} + u_t$$
+
+                    <p>当且仅当以下条件成立时，该序列是平稳的：</p>
+                    $$|\beta_1| < 1$$
+
+                    <p>为什么？如果$$|\beta_1| < 1$$，冲击$$u_t$$呈指数衰减。每个时期，它们的影响乘以$$\beta_1$$，变得越来越小。</p>
+
+                    <p>如果$$\beta_1 = 1$$（或$$\beta_1 > 1$$），冲击是永久的（或爆炸性的），序列是非平稳的。</p>
+
+                    <h3>为什么平稳性重要</h3>
+                    <ul>
+                        <li><strong>可预测的行为：</strong>平稳序列在已知范围内波动。预测是有意义的。</li>
+                        <li><strong>有效推理：</strong>标准回归测试（t统计、F统计）依赖于平稳性。非平稳序列可能会给你虚假的显著性。</li>
+                        <li><strong>长期关系：</strong>两个非平稳序列可能被"协整"——通过一个平稳关系联系在一起。</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 7: Unit Roots -->
+            <section class="guide-section">
+                <h2 class="section-title" data-lang="en">7. Unit Roots and Random Walks</h2>
+                <h2 class="section-title" data-lang="zh">7. 单位根和随机游走</h2>
+
+                <div class="content-block" data-lang="en">
+                    <h3>The Unit Root Case: $$\beta_1 = 1$$</h3>
+                    <p>Consider an AR(1) with $$\beta_1 = 1$$:</p>
+                    $$Y_t = \alpha + Y_{t-1} + u_t$$
+
+                    <p>Rearranging:</p>
+                    $$Y_t - Y_{t-1} = \alpha + u_t$$
+                    $$\Delta Y_t = \alpha + u_t$$
+
+                    <p>This says the <strong>change</strong> in Y is just noise (plus a possible drift $$\alpha$$).</p>
+
+                    <h3>Random Walk</h3>
+                    <p>The simplest case is $$\alpha = 0$$:</p>
+                    $$Y_t = Y_{t-1} + u_t$$
+
+                    <p>This is a <strong>random walk</strong>. Each period, Y takes a random step. There's no force pulling it back to a center.</p>
+
+                    <h3>Why "Unit Root"?</h3>
+                    <p>In time-series terminology, the characteristic equation of $$Y_t = \beta_1 Y_{t-1} + u_t$$ is $$1 - \beta_1 L = 0$$, where L is the lag operator. When $$\beta_1 = 1$$, the "root" of this polynomial is 1, hence "unit root."</p>
+
+                    <h3>Key Properties of a Random Walk</h3>
+                    <ul>
+                        <li><strong>Non-stationary:</strong> The variance grows without bound as $$t \to \infty$$.</li>
+                        <li><strong>Shocks are permanent:</strong> A one-time shock to $$u_t$$ affects all future values of Y forever.</li>
+                        <li><strong>No mean reversion:</strong> Once Y drifts high, it has no gravity pulling it back down.</li>
+                    </ul>
+
+                    <h3>Intuitive Example</h3>
+                    <p>Imagine a drunk person walking on a street with no barriers. Each second, they take a random step left or right (the shock $$u_t$$). They have no reason to return to their starting point. Over time, they might end up very far from where they started. That's a random walk.</p>
+
+                    <h3>Why We Care: Estimation</h3>
+                    <p>If the data is a random walk ($$\beta_1 = 1$$) but you naively estimate an AR(1), standard inference breaks down. The t-statistics and confidence intervals are wrong.</p>
+
+                    <p>This is why testing for unit roots (Section 8) is so important.</p>
+                </div>
+
+                <div class="content-block" data-lang="zh">
+                    <h3>单位根情况：$$\beta_1 = 1$$</h3>
+                    <p>考虑$$\beta_1 = 1$$的AR(1)：</p>
+                    $$Y_t = \alpha + Y_{t-1} + u_t$$
+
+                    <p>重排：</p>
+                    $$Y_t - Y_{t-1} = \alpha + u_t$$
+                    $$\Delta Y_t = \alpha + u_t$$
+
+                    <p>这说明Y的<strong>变化</strong>只是噪声（加上可能的漂移$$\alpha$$）。</p>
+
+                    <h3>随机游走</h3>
+                    <p>最简单的情况是$$\alpha = 0$$：</p>
+                    $$Y_t = Y_{t-1} + u_t$$
+
+                    <p>这是一个<strong>随机游走</strong>。每个时期，Y迈出随机的一步。没有力量将其拉回中心。</p>
+
+                    <h3>为什么叫"单位根"？</h3>
+                    <p>在时间序列术语中，$$Y_t = \beta_1 Y_{t-1} + u_t$$的特征方程是$$1 - \beta_1 L = 0$$，其中L是滞后算子。当$$\beta_1 = 1$$时，该多项式的"根"是1，因此叫"单位根"。</p>
+
+                    <h3>随机游走的关键属性</h3>
+                    <ul>
+                        <li><strong>非平稳：</strong>当$$t \to \infty$$时，方差无限增长。</li>
+                        <li><strong>冲击是永久的：</strong>一次对$$u_t$$的冲击永远影响Y的所有未来值。</li>
+                        <li><strong>没有均值回归：</strong>一旦Y漂移很高，就没有重力将其拉回。</li>
+                    </ul>
+
+                    <h3>直观例子</h3>
+                    <p>想象一个醉汉在一条没有栏杆的街上行走。每秒钟，他们向左或向右迈出随机的一步（冲击$$u_t$$）。他们没有理由回到起点。随着时间推移，他们可能最终会离起点很远。这就是随机游走。</p>
+
+                    <h3>为什么我们关心：估计</h3>
+                    <p>如果数据是随机游走（$$\beta_1 = 1$$），但你天真地估计AR(1)，标准推理崩溃。t统计和置信区间是错的。</p>
+
+                    <p>这就是为什么测试单位根（第8节）非常重要。</p>
+                </div>
+            </section>
+
+            <!-- Section 8: Testing for Unit Roots (ADF Test) -->
+            <section class="guide-section">
+                <h2 class="section-title" data-lang="en">8. Testing for Unit Roots: The ADF Test</h2>
+                <h2 class="section-title" data-lang="zh">8. 单位根检验：ADF测试</h2>
+
+                <div class="content-block" data-lang="en">
+                    <h3>The Augmented Dickey-Fuller (ADF) Test</h3>
+                    <p>The <strong>Augmented Dickey-Fuller test</strong> is the standard tool for testing whether a series has a unit root.</p>
+
+                    <h3>Hypotheses</h3>
+                    <ul>
+                        <li><strong>Null ($$H_0$$):</strong> The series has a unit root (is non-stationary).</li>
+                        <li><strong>Alternative ($$H_1$$):</strong> The series is stationary (no unit root).</li>
+                    </ul>
+
+                    <h3>The Test Regression</h3>
+                    <p>The ADF test runs the regression:</p>
+                    $$\Delta Y_t = \alpha + \rho Y_{t-1} + \sum_{i=1}^{p} \phi_i \Delta Y_{t-i} + u_t$$
+
+                    <p>Where:</p>
+                    <ul>
+                        <li>$$\Delta Y_t = Y_t - Y_{t-1}$$ is the first difference.</li>
+                        <li>$$\rho$$ is the key parameter. If $$\rho = 0$$, there's a unit root.</li>
+                        <li>The $$\phi_i$$ terms (lagged differences) control for serial correlation.</li>
+                    </ul>
+
+                    <h3>Interpretation</h3>
+                    <p><strong>Short version:</strong> The ADF test gives you a t-statistic for $$\rho = 0$$. But this t-statistic does NOT follow a standard normal distribution under the null. Instead, it follows the <strong>Dickey-Fuller distribution</strong>.</p>
+
+                    <p><strong>In practice:</strong></p>
+                    <ul>
+                        <li>Software (Stata, Python, R) computes the ADF test statistic and its p-value automatically.</li>
+                        <li>If p-value < 0.05, you reject the null → <strong>Series is stationary.</strong></li>
+                        <li>If p-value ≥ 0.05, you fail to reject the null → <strong>Series likely has a unit root.</strong></li>
+                    </ul>
+
+                    <h3>Decision Rule</h3>
+                    <p>After running an ADF test on your series:</p>
+                    <ol>
+                        <li><strong>p < 0.05:</strong> Reject $$H_0$$. The series is stationary. You can use it as-is in regression.</li>
+                        <li><strong>p ≥ 0.05:</strong> Fail to reject $$H_0$$. The series has a unit root. You should difference it (or consider cointegration).</li>
+                    </ol>
+
+                    <h3>Example Interpretation</h3>
+                    <p><strong>Scenario 1:</strong> You test US GDP levels. ADF test gives p = 0.87. Conclusion: GDP has a unit root. It's non-stationary. Do not use levels in a simple regression.</p>
+
+                    <p><strong>Scenario 2:</strong> You test the change in GDP ($$\Delta \text{GDP}$$). ADF test gives p = 0.02. Conclusion: Changes in GDP are stationary. You can use them in regression.</p>
+                </div>
+
+                <div class="content-block" data-lang="zh">
+                    <h3>增强型Dickey-Fuller（ADF）检验</h3>
+                    <p><strong>增强型Dickey-Fuller检验</strong>是测试序列是否存在单位根的标准工具。</p>
+
+                    <h3>假设</h3>
+                    <ul>
+                        <li><strong>原假设（$$H_0$$）：</strong>该序列存在单位根（非平稳）。</li>
+                        <li><strong>备择假设（$$H_1$$）：</strong>该序列是平稳的（无单位根）。</li>
+                    </ul>
+
+                    <h3>测试回归</h3>
+                    <p>ADF测试运行回归：</p>
+                    $$\Delta Y_t = \alpha + \rho Y_{t-1} + \sum_{i=1}^{p} \phi_i \Delta Y_{t-i} + u_t$$
+
+                    <p>其中：</p>
+                    <ul>
+                        <li>$$\Delta Y_t = Y_t - Y_{t-1}$$是第一阶差分。</li>
+                        <li>$$\rho$$是关键参数。如果$$\rho = 0$$，就存在单位根。</li>
+                        <li>$$\phi_i$$项（滞后差分）控制序列相关性。</li>
+                    </ul>
+
+                    <h3>解释</h3>
+                    <p><strong>简短版本：</strong>ADF检验为$$\rho = 0$$给出一个t统计。但该t统计在原假设下不遵循标准正态分布。相反，它遵循<strong>Dickey-Fuller分布</strong>。</p>
+
+                    <p><strong>实际上：</strong></p>
+                    <ul>
+                        <li>软件（Stata、Python、R）自动计算ADF检验统计和p值。</li>
+                        <li>如果p值<0.05，拒绝原假设→<strong>序列是平稳的。</strong></li>
+                        <li>如果p值≥0.05，未能拒绝原假设→<strong>序列可能有单位根。</strong></li>
+                    </ul>
+
+                    <h3>决策规则</h3>
+                    <p>在序列上运行ADF测试后：</p>
+                    <ol>
+                        <li><strong>p<0.05：</strong>拒绝$$H_0$$。序列是平稳的。你可以按原样在回归中使用它。</li>
+                        <li><strong>p≥0.05：</strong>未能拒绝$$H_0$$。序列有单位根。你应该差分它（或考虑协整）。</li>
+                    </ol>
+
+                    <h3>例子解释</h3>
+                    <p><strong>情景1：</strong>你测试美国GDP水平。ADF测试给出p=0.87。结论：GDP有单位根。它是非平稳的。不要在简单回归中使用水平。</p>
+
+                    <p><strong>情景2：</strong>你测试GDP的变化（$$\Delta \text{GDP}$$）。ADF测试给出p=0.02。结论：GDP的变化是平稳的。你可以在回归中使用它们。</p>
+                </div>
+            </section>
+
+            <!-- Section 9: Differencing -->
+            <section class="guide-section">
+                <h2 class="section-title" data-lang="en">9. Differencing to Induce Stationarity</h2>
+                <h2 class="section-title" data-lang="zh">9. 差分以诱导平稳性</h2>
+
+                <div class="content-block" data-lang="en">
+                    <h3>Definition</h3>
+                    <p>The first difference of a series is:</p>
+                    $$\Delta Y_t = Y_t - Y_{t-1}$$
+
+                    <p>The second difference is:</p>
+                    $$\Delta^2 Y_t = \Delta Y_t - \Delta Y_{t-1} = (Y_t - Y_{t-1}) - (Y_{t-1} - Y_{t-2})$$
+
+                    <h3>Why Differencing Works</h3>
+                    <p>If $$Y_t$$ is I(1)—integrated of order 1, meaning it has one unit root—then $$\Delta Y_t$$ is I(0), meaning it's stationary.</p>
+
+                    <p><strong>Intuition:</strong> A unit root process wanders without bound. Its differences, however, are the random shocks driving it, which are typically stationary (white noise).</p>
+
+                    <h3>Practical Approach</h3>
+                    <ol>
+                        <li>Test your series with ADF test.</li>
+                        <li>If it has a unit root (p ≥ 0.05), difference it: create $$\Delta Y_t = Y_t - Y_{t-1}$$.</li>
+                        <li>Test $$\Delta Y_t$$ with ADF. Usually it will be stationary.</li>
+                        <li>Use $$\Delta Y_t$$ in your regression instead of $$Y_t$$.</li>
+                    </ol>
+
+                    <h3>Example: GDP Growth vs GDP Levels</h3>
+
+                    <p><strong>US GDP (in levels):</strong></p>
+                    <ul>
+                        <li>2010: $15,049 billion</li>
+                        <li>2015: $18,238 billion</li>
+                        <li>2020: $20,933 billion</li>
+                    </ul>
+                    <p>This is a random walk (non-stationary). High autocorrelation. ADF test would fail to reject the unit root.</p>
+
+                    <p><strong>US GDP Growth (first differences):</strong></p>
+                    <ul>
+                        <li>2010-2011 change: +430 billion</li>
+                        <li>2014-2015 change: +376 billion</li>
+                        <li>2019-2020 change: -608 billion (COVID)</li>
+                    </ul>
+                    <p>These changes fluctuate around a mean. Much more stationary. ADF test would likely reject the unit root.</p>
+
+                    <h3>Trade-Off: Loss of Level Information</h3>
+                    <p>By differencing, you lose information about the levels. Your coefficients now represent how changes in X affect changes in Y, not how levels relate.</p>
+
+                    <p>This is often acceptable, but not always—especially if you care about long-run relationships. (This is where cointegration comes in.)</p>
+                </div>
+
+                <div class="content-block" data-lang="zh">
+                    <h3>定义</h3>
+                    <p>序列的第一阶差分为：</p>
+                    $$\Delta Y_t = Y_t - Y_{t-1}$$
+
+                    <p>第二阶差分为：</p>
+                    $$\Delta^2 Y_t = \Delta Y_t - \Delta Y_{t-1} = (Y_t - Y_{t-1}) - (Y_{t-1} - Y_{t-2})$$
+
+                    <h3>为什么差分有效</h3>
+                    <p>如果$$Y_t$$是I(1)——一阶积分，意味着它有一个单位根——那么$$\Delta Y_t$$是I(0)，意味着它是平稳的。</p>
+
+                    <p><strong>直观：</strong>单位根过程无限漂移。但它的差分是驱动它的随机冲击，这些通常是平稳的（白噪声）。</p>
+
+                    <h3>实用方法</h3>
+                    <ol>
+                        <li>用ADF测试测试你的序列。</li>
+                        <li>如果它有单位根（p≥0.05），差分它：创建$$\Delta Y_t = Y_t - Y_{t-1}$$。</li>
+                        <li>用ADF测试$$\Delta Y_t$$。通常它会是平稳的。</li>
+                        <li>在你的回归中使用$$\Delta Y_t$$而不是$$Y_t$$。</li>
+                    </ol>
+
+                    <h3>例子：GDP增长与GDP水平</h3>
+
+                    <p><strong>美国GDP（水平）：</strong></p>
+                    <ul>
+                        <li>2010年：15,049亿美元</li>
+                        <li>2015年：18,238亿美元</li>
+                        <li>2020年：20,933亿美元</li>
+                    </ul>
+                    <p>这是一个随机游走（非平稳）。高自相关。ADF测试会未能拒绝单位根。</p>
+
+                    <p><strong>美国GDP增长（第一阶差分）：</strong></p>
+                    <ul>
+                        <li>2010-2011变化：+430亿</li>
+                        <li>2014-2015变化：+376亿</li>
+                        <li>2019-2020变化：-608亿（新冠）</li>
+                    </ul>
+                    <p>这些变化围绕均值波动。更加平稳。ADF测试可能会拒绝单位根。</p>
+
+                    <h3>权衡：水平信息的损失</h3>
+                    <p>通过差分，你会丢失有关水平的信息。你的系数现在代表X的变化如何影响Y的变化，而不是水平如何相关。</p>
+
+                    <p>这通常是可以接受的，但并不总是——特别是当你关心长期关系时。（这是协整发挥作用的地方。）</p>
+                </div>
+            </section>
+
+            <!-- Section 10: Spurious Regression -->
+            <section class="guide-section">
+                <h2 class="section-title" data-lang="en">10. Spurious Regression: A Warning</h2>
+                <h2 class="section-title" data-lang="zh">10. 虚假回归：一个警告</h2>
+
+                <div class="content-block" data-lang="en">
+                    <h3>The Problem</h3>
+                    <p>Suppose you regress one random walk on another random walk that is <strong>completely independent</strong>. You would expect the regression results to show no relationship.</p>
+
+                    <p><strong>But they don't!</strong> Instead, you often get:</p>
+                    <ul>
+                        <li>High $$R^2$$</li>
+                        <li>Statistically significant coefficients (low p-values)</li>
+                        <li>But absolutely no true relationship between the variables</li>
+                    </ul>
+
+                    <p>This is called <strong>spurious regression</strong>.</p>
+
+                    <h3>Why Does This Happen?</h3>
+                    <p>When both variables are non-stationary (unit roots), they often "trend" together just by coincidence. The standard OLS error terms are not white noise; they're likely non-stationary too. This violates fundamental regression assumptions, making t-stats and R² unreliable.</p>
+
+                    <h3>Numerical Illustration</h3>
+                    <p>Imagine two completely independent random walks:</p>
+
+                    <p><strong>Series A:</strong> $$A_t = A_{t-1} + \epsilon_t^A$$</p>
+                    <p><strong>Series B:</strong> $$B_t = B_{t-1} + \epsilon_t^B$$</p>
+
+                    <p>where $$\epsilon_t^A$$ and $$\epsilon_t^B$$ are independent white noise (mean zero, constant variance).</p>
+
+                    <p>You regress $$B_t$$ on $$A_t$$:</p>
+                    $$B_t = \alpha + \beta A_t + u_t$$
+
+                    <p>Under the null (true relationship is zero, i.e., $$\beta = 0$$), the standard regression test should have a 5% chance of yielding p < 0.05.</p>
+
+                    <p><strong>But in reality:</strong> With 100 or 500 observations of random walks, you might get p < 0.05 with probability 50% or more! The test is severely biased.</p>
+
+                    <h3>How to Avoid Spurious Regression</h3>
+                    <ol>
+                        <li><strong>Check for stationarity:</strong> Run ADF tests on all your variables. If they're non-stationary, do not regress one on another directly.</li>
+                        <li><strong>Difference if needed:</strong> If both have unit roots, difference them and work with the stationary differences.</li>
+                        <li><strong>Consider cointegration:</strong> If you believe there's a genuine long-run relationship despite non-stationarity, test for cointegration (next section).</li>
+                    </ol>
+
+                    <h3>The Lesson</h3>
+                    <p>Always check the stationarity of your time series variables. A high R² and significant t-stats do not guarantee a real relationship when dealing with non-stationary data.</p>
+                </div>
+
+                <div class="content-block" data-lang="zh">
+                    <h3>问题</h3>
+                    <p>假设你将一个随机游走回归到另一个<strong>完全独立</strong>的随机游走。你会期望回归结果显示没有关系。</p>
+
+                    <p><strong>但他们不！</strong>相反，你通常会得到：</p>
+                    <ul>
+                        <li>高$$R^2$$</li>
+                        <li>统计上显著的系数（低p值）</li>
+                        <li>但变量之间绝对没有真实关系</li>
+                    </ul>
+
+                    <p>这被称为<strong>虚假回归</strong>。</p>
+
+                    <h3>为什么会这样？</h3>
+                    <p>当两个变量都非平稳（有单位根）时，它们通常碰巧"一起趋向"。标准OLS误差项不是白噪声；它们可能也是非平稳的。这违反了基本回归假设，使t统计和R²不可靠。</p>
+
+                    <h3>数值说明</h3>
+                    <p>想象两个完全独立的随机游走：</p>
+
+                    <p><strong>系列A：</strong> $$A_t = A_{t-1} + \epsilon_t^A$$</p>
+                    <p><strong>系列B：</strong> $$B_t = B_{t-1} + \epsilon_t^B$$</p>
+
+                    <p>其中$$\epsilon_t^A$$和$$\epsilon_t^B$$是独立的白噪声（平均值为零，方差不变）。</p>
+
+                    <p>你回归$$B_t$$在$$A_t$$上：</p>
+                    $$B_t = \alpha + \beta A_t + u_t$$
+
+                    <p>在原假设下（真实关系为零，即$$\beta = 0$$），标准回归测试应该有5%的机会产生p<0.05。</p>
+
+                    <p><strong>但实际上：</strong>对于100或500个随机游走观察，你可能有50%或更高的概率得到p<0.05！测试严重有偏。</p>
+
+                    <h3>如何避免虚假回归</h3>
+                    <ol>
+                        <li><strong>检查平稳性：</strong>在你的所有变量上运行ADF测试。如果它们非平稳，不要直接将一个回归到另一个。</li>
+                        <li><strong>根据需要差分：</strong>如果两者都有单位根，差分它们并使用平稳差分。</li>
+                        <li><strong>考虑协整：</strong>如果你相信尽管非平稳仍存在真实的长期关系，测试协整（下一节）。</li>
+                    </ol>
+
+                    <h3>教训</h3>
+                    <p>始终检查你的时间序列变量的平稳性。在处理非平稳数据时，高R²和显著的t统计不能保证真实的关系。</p>
+                </div>
+            </section>
+
+            <!-- Section 11: Cointegration (Brief) -->
+            <section class="guide-section">
+                <h2 class="section-title" data-lang="en">11. Cointegration: When Non-Stationary Variables Share a Trend</h2>
+                <h2 class="section-title" data-lang="zh">11. 协整：当非平稳变量共享趋势时</h2>
+
+                <div class="content-block" data-lang="en">
+                    <h3>The Core Idea</h3>
+                    <p>Sometimes two series are individually non-stationary (each has a unit root), but a linear combination of them is stationary.</p>
+
+                    <p><strong>Example:</strong> Let $$X_t$$ and $$Y_t$$ both be random walks. But suppose there's a constant $$\beta$$ such that:</p>
+                    $$Y_t - \beta X_t \text{ is stationary}$$
+
+                    <p>When this holds, we say $$X_t$$ and $$Y_t$$ are <strong>cointegrated</strong> with cointegrating vector $$(1, -\beta)$$.</p>
+
+                    <h3>Economic Interpretation</h3>
+                    <p>Cointegration implies a <strong>long-run equilibrium relationship</strong> between the variables.</p>
+
+                    <p><strong>Example: Consumption and Income</strong></p>
+                    <ul>
+                        <li>Both $$C_t$$ (consumption) and $$Y_t$$ (income) are typically I(1)—they grow without bound over time.</li>
+                        <li>But they may be cointegrated: in the long run, consumption is proportional to income.</li>
+                        <li>The gap $$C_t - \beta Y_t$$ (where $$\beta \approx 0.9$$) fluctuates around zero but is stationary.</li>
+                        <li>If consumption drifts far above this long-run ratio, it will eventually adjust back down.</li>
+                    </ul>
+
+                    <h3>Comparison to Differencing</h3>
+                    <p><strong>Differencing approach:</strong> If you difference both C and Y, you can regress $$\Delta C_t$$ on $$\Delta Y_t$$. This works but loses level information.</p>
+
+                    <p><strong>Cointegration approach:</strong> If C and Y are cointegrated, you can directly estimate the long-run relationship via the Engle-Granger two-step procedure or VEC (Vector Error Correction) model.</p>
+
+                    <h3>Testing for Cointegration (Brief)</h3>
+                    <p>One simple approach (Engle-Granger):</p>
+                    <ol>
+                        <li>Check that both $$X_t$$ and $$Y_t$$ are I(1) (have unit roots).</li>
+                        <li>Regress $$Y_t$$ on $$X_t$$: $$\hat{Y}_t = \hat{\alpha} + \hat{\beta} X_t$$</li>
+                        <li>Compute residuals: $$\hat{u}_t = Y_t - \hat{Y}_t$$</li>
+                        <li>Test if $$\hat{u}_t$$ is stationary (using ADF test).</li>
+                        <li>If $$\hat{u}_t$$ is stationary, then X and Y are cointegrated.</li>
+                    </ol>
+
+                    <p><strong>Key point:</strong> Even though the regression of $$Y_t$$ on $$X_t$$ might not be spurious (if they're cointegrated), standard inference still needs adjustment. VEC models or other cointegration-aware approaches are preferred.</p>
+
+                    <h3>When to Use Cointegration</h3>
+                    <ul>
+                        <li>You have non-stationary variables but believe a long-run relationship exists.</li>
+                        <li>You're interested in both short-run dynamics (via error correction) and long-run equilibrium.</li>
+                        <li>Economic theory suggests a long-run relationship even if short-term dynamics are noisy.</li>
+                    </ul>
+                </div>
+
+                <div class="content-block" data-lang="zh">
+                    <h3>核心思想</h3>
+                    <p>有时两个序列个别非平稳（每个都有单位根），但它们的线性组合是平稳的。</p>
+
+                    <p><strong>例子：</strong>让$$X_t$$和$$Y_t$$都是随机游走。但假设有一个常数$$\beta$$使得：</p>
+                    $$Y_t - \beta X_t \text{ 是平稳的}$$
+
+                    <p>当这成立时，我们说$$X_t$$和$$Y_t$$是<strong>协整的</strong>，协整向量为$$(1, -\beta)$$。</p>
+
+                    <h3>经济学解释</h3>
+                    <p>协整意味着变量之间存在<strong>长期均衡关系</strong>。</p>
+
+                    <p><strong>例子：消费和收入</strong></p>
+                    <ul>
+                        <li>$$C_t$$（消费）和$$Y_t$$（收入）通常都是I(1)——随着时间推移它们无限增长。</li>
+                        <li>但它们可能是协整的：从长期来看，消费与收入成比例。</li>
+                        <li>差距$$C_t - \beta Y_t$$（其中$$\beta \approx 0.9$$）围绕零波动但是平稳的。</li>
+                        <li>如果消费远高于这个长期比率漂移，它最终会调整回来。</li>
+                    </ul>
+
+                    <h3>与差分的比较</h3>
+                    <p><strong>差分方法：</strong>如果你对C和Y进行差分，你可以回归$$\Delta C_t$$在$$\Delta Y_t$$上。这行得通但丢失了水平信息。</p>
+
+                    <p><strong>协整方法：</strong>如果C和Y协整，你可以通过Engle-Granger两步法或VEC（向量误差修正）模型直接估计长期关系。</p>
+
+                    <h3>协整检验（简介）</h3>
+                    <p>一种简单的方法（Engle-Granger）：</p>
+                    <ol>
+                        <li>检查$$X_t$$和$$Y_t$$都是I(1)（有单位根）。</li>
+                        <li>回归$$Y_t$$在$$X_t$$上：$$\hat{Y}_t = \hat{\alpha} + \hat{\beta} X_t$$</li>
+                        <li>计算残差：$$\hat{u}_t = Y_t - \hat{Y}_t$$</li>
+                        <li>测试$$\hat{u}_t$$是否平稳（使用ADF测试）。</li>
+                        <li>如果$$\hat{u}_t$$平稳，那么X和Y协整。</li>
+                    </ol>
+
+                    <p><strong>关键要点：</strong>尽管$$Y_t$$在$$X_t$$上的回归可能不是虚假的（如果它们协整），标准推理仍需要调整。VEC模型或其他协整感知方法是首选。</p>
+
+                    <h3>何时使用协整</h3>
+                    <ul>
+                        <li>你有非平稳变量但相信存在长期关系。</li>
+                        <li>你对短期动态（通过误差修正）和长期均衡都感兴趣。</li>
+                        <li>经济理论表明存在长期关系，即使短期动态很嘈杂。</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Summary Section -->
+            <section class="guide-section">
+                <h2 class="section-title" data-lang="en">Summary & Checklist</h2>
+                <h2 class="section-title" data-lang="zh">总结与检查表</h2>
+
+                <div class="content-block" data-lang="en">
+                    <h3>Key Concepts Recap</h3>
+                    <ul>
+                        <li><strong>Lag:</strong> A past value. $$Y_{t-1}$$ is last period's Y.</li>
+                        <li><strong>AR(1):</strong> Yₜ depends on Yₜ₋₁. The coefficient tells you persistence.</li>
+                        <li><strong>ADL:</strong> Adds a regressor X and its lag. Captures both immediate and lagged effects.</li>
+                        <li><strong>Short-run multiplier:</strong> Immediate impact of X on Y. Just $$\gamma_0$$.</li>
+                        <li><strong>Long-run multiplier:</strong> Total cumulative effect including feedback. Formula: $$(γ₀+γ₁)/(1-β₁)$$</li>
+                        <li><strong>Stationarity:</strong> Constant mean and variance over time. Stationary series fluctuate around a stable level.</li>
+                        <li><strong>Unit root:</strong> When $$\beta_1 = 1$$. The series is a random walk. Non-stationary.</li>
+                        <li><strong>ADF test:</strong> Tests for unit roots. Reject $$H_0$$ if p < 0.05 → series is stationary.</li>
+                        <li><strong>Differencing:</strong> Take first difference $$\Delta Y_t = Y_t - Y_{t-1}$$. Converts I(1) to I(0).</li>
+                        <li><strong>Spurious regression:</strong> Two independent random walks can appear related. Check stationarity first.</li>
+                        <li><strong>Cointegration:</strong> Two I(1) series with a stationary linear combination. Implies long-run relationship.</li>
+                    </ul>
+
+                    <h3>Workflow Checklist</h3>
+                    <ol>
+                        <li><input type="checkbox"> Understand your variables: Are they likely stationary or trending?</li>
+                        <li><input type="checkbox"> Test for unit roots: Run ADF test on all key time series.</li>
+                        <li><input type="checkbox"> If ADF p < 0.05: Series is stationary. Proceed with standard regression or LDV/ADL models.</li>
+                        <li><input type="checkbox"> If ADF p ≥ 0.05: Series has unit root. Consider differencing or cointegration.</li>
+                        <li><input type="checkbox"> After differencing, test again: ADF test on $$\Delta Y_t$$. Expect p < 0.05.</li>
+                        <li><input type="checkbox"> Regress with appropriate form: Use levels if stationary, differences if I(1), or cointegrating relationship if applicable.</li>
+                        <li><input type="checkbox"> Interpret coefficients carefully: Remember that if differenced, coefficients are about changes, not levels.</li>
+                        <li><input type="checkbox"> Check residuals: Are they white noise? If not, add more lags or reconsider the model.</li>
+                    </ol>
+                </div>
+
+                <div class="content-block" data-lang="zh">
+                    <h3>关键概念回顾</h3>
+                    <ul>
+                        <li><strong>滞后：</strong>一个过去的值。$$Y_{t-1}$$是上一时期的Y。</li>
+                        <li><strong>AR(1)：</strong>Yₜ依赖于Yₜ₋₁。系数告诉你持久性。</li>
+                        <li><strong>ADL：</strong>添加回归变量X及其滞后。捕捉直接和滞后效应。</li>
+                        <li><strong>短期乘数：</strong>X对Y的直接影响。只是$$\gamma_0$$。</li>
+                        <li><strong>长期乘数：</strong>包括反馈的总累积效应。公式：$$(γ₀+γ₁)/(1-β₁)$$</li>
+                        <li><strong>平稳性：</strong>随时间变化的常数均值和方差。平稳序列围绕稳定水平波动。</li>
+                        <li><strong>单位根：</strong>当$$\beta_1 = 1$$。序列是随机游走。非平稳。</li>
+                        <li><strong>ADF测试：</strong>测试单位根。如果p<0.05则拒绝$$H_0$$→序列平稳。</li>
+                        <li><strong>差分：</strong>取第一阶差分$$\Delta Y_t = Y_t - Y_{t-1}$$。将I(1)转换为I(0)。</li>
+                        <li><strong>虚假回归：</strong>两个独立的随机游走可能看起来相关。先检查平稳性。</li>
+                        <li><strong>协整：</strong>两个I(1)序列的平稳线性组合。暗示长期关系。</li>
+                    </ul>
+
+                    <h3>工作流检查表</h3>
+                    <ol>
+                        <li><input type="checkbox"> 理解你的变量：它们可能是平稳的还是趋势的？</li>
+                        <li><input type="checkbox"> 测试单位根：在所有关键时间序列上运行ADF测试。</li>
+                        <li><input type="checkbox"> 如果ADF p<0.05：序列平稳。继续标准回归或LDV/ADL模型。</li>
+                        <li><input type="checkbox"> 如果ADF p≥0.05：序列有单位根。考虑差分或协整。</li>
+                        <li><input type="checkbox"> 差分后再测试：在$$\Delta Y_t$$上运行ADF测试。期望p<0.05。</li>
+                        <li><input type="checkbox"> 用适当形式回归：如果平稳则使用水平，如果I(1)则使用差分，如果适用则使用协整关系。</li>
+                        <li><input type="checkbox"> 仔细解释系数：记住如果差分，系数是关于变化的，不是水平。</li>
+                        <li><input type="checkbox"> 检查残差：它们是白噪声吗？如果不是，添加更多滞后或重新考虑模型。</li>
+                    </ol>
+                </div>
+            </section></section>
+
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langBtns = document.querySelectorAll('.guide-lang-btn');
+        // Exclude buttons from content elements
+        const enElements = document.querySelectorAll('.guide-content [data-lang="en"], .guide-breadcrumb [data-lang="en"], a.guide-back[data-lang="en"], .guide-header [data-lang="en"], .guide-tag [data-lang="en"]');
+        const zhElements = document.querySelectorAll('.guide-content [data-lang="zh"], .guide-breadcrumb [data-lang="zh"], a.guide-back[data-lang="zh"], .guide-header [data-lang="zh"], .guide-tag [data-lang="zh"]');
+        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        setLanguage(savedLang);
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                localStorage.setItem('preferred-lang', lang);
+                setLanguage(lang);
+            });
+        });
+        function setLanguage(lang) {
+            langBtns.forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('.guide-lang-btn[data-lang="' + lang + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            if (lang === 'en') {
+                enElements.forEach(el => { el.style.display = ''; });
+                zhElements.forEach(el => { el.style.display = 'none'; });
+                document.body.className = 'en';
+            } else {
+                enElements.forEach(el => { el.style.display = 'none'; });
+                zhElements.forEach(el => { el.style.display = ''; });
+                document.body.className = 'zh';
+            }
+        }
+    });
+    </script>
+
+</body>
+</html>
