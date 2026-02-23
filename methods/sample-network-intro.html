@@ -6,7 +6,11 @@ bilingual: true
 ---
 
 <style>
-/* ── Presentation Mode ───────────────────────────────── */
+/* ══════════════════════════════════════════════════════
+   PRESENTATION MODE
+   ══════════════════════════════════════════════════════ */
+
+/* Toggle button */
 .pres-toggle{
   display:inline-flex;align-items:center;gap:8px;
   font-family:var(--sans);font-size:12px;font-weight:600;
@@ -19,7 +23,7 @@ bilingual: true
 .pres-toggle:hover{background:var(--gold);color:var(--paper);border-color:var(--gold)}
 .pres-toggle .pres-icon{font-size:16px}
 
-/* Slide mode */
+/* Hide chrome */
 body.presenting .sidebar,
 body.presenting .sidebar-overlay,
 body.presenting .topbar,
@@ -30,49 +34,84 @@ body.presenting .pres-hide{display:none!important}
 
 body.presenting .layout{display:block}
 body.presenting .main{margin:0;padding:0;width:100vw}
-body.presenting .content{
-  max-width:100vw!important;padding:0!important;margin:0!important;
-}
-body.presenting .slide{
-  display:none;
-  width:100vw;height:100vh;
-  padding:60px 10vw;
-  box-sizing:border-box;
-  overflow-y:auto;
-  background:var(--paper);
-}
-body.presenting .slide.active{display:flex;flex-direction:column;justify-content:center}
-body.presenting .slide h2{font-size:2.4rem;margin-bottom:24px}
-body.presenting .slide h3{font-size:1.6rem}
-body.presenting .slide p,
-body.presenting .slide li{font-size:1.15rem;line-height:1.8}
-body.presenting .slide .method-desc{font-size:1.15rem;line-height:1.8}
-body.presenting .slide .method-analogy,
-body.presenting .slide .method-when,
-body.presenting .slide .method-example{font-size:1.05rem}
+body.presenting .content{max-width:100vw!important;padding:0!important;margin:0!important}
 
-/* Slide counter */
+/* Slide container */
+body.presenting .slide{
+  display:none;width:100vw;height:100vh;
+  padding:48px 0;box-sizing:border-box;
+  overflow-y:auto;background:var(--paper);
+}
+body.presenting .slide.active{
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+}
+/* Max-width centering for all children */
+body.presenting .slide > *{
+  width:100%;max-width:880px;
+  padding-left:40px;padding-right:40px;
+  box-sizing:border-box;
+}
+
+/* Presentation typography */
+body.presenting .slide .slide-num{font-size:11px;margin-bottom:8px}
+body.presenting .slide h2{font-size:2.2rem;margin-bottom:20px;line-height:1.25;letter-spacing:-.01em}
+body.presenting .slide h3{font-size:1.5rem;margin-bottom:12px}
+body.presenting .slide p,
+body.presenting .slide li{font-size:1.1rem;line-height:1.9}
+body.presenting .slide .method-desc{font-size:1.1rem;line-height:1.9;margin-bottom:16px}
+body.presenting .slide .method-analogy{font-size:1.05rem;line-height:1.8}
+body.presenting .slide .method-when{font-size:1.05rem;line-height:1.8}
+
+/* Presentation: vis panels */
+body.presenting .vis-panel{padding:24px 28px}
+body.presenting .vis-panel svg{max-width:420px;margin:0 auto;display:block}
+body.presenting .vis-caption{font-size:13px;margin-top:12px}
+body.presenting .vis-label{font-size:12px}
+
+/* Presentation: check cards */
+body.presenting .check-grid{gap:20px;margin:24px 0}
+body.presenting .check-card{padding:22px 20px}
+body.presenting .check-icon{width:32px;height:32px;font-size:12px;margin-bottom:12px}
+body.presenting .check-title{font-size:14px;margin-bottom:8px}
+body.presenting .check-desc{font-size:13.5px;line-height:1.65}
+
+/* Presentation: flow diagram */
+body.presenting .flow-step{padding:14px 22px;min-width:130px}
+body.presenting .flow-step .flow-title{font-size:15px}
+body.presenting .flow-arrow{font-size:22px;padding:0 8px}
+
+/* Presentation: centrality */
+body.presenting .cent-btns{margin:12px 0 16px}
+body.presenting .cent-btn{font-size:13px;padding:8px 20px}
+
+/* Presentation: step details */
+body.presenting .step-item{font-size:1rem;line-height:1.8;padding:6px 16px}
+
+/* Slide counter, ESC hint, progress bar */
 body.presenting .slide-counter{
   position:fixed;bottom:24px;right:32px;
   font-family:var(--sans);font-size:13px;
-  color:var(--ink-ghost);letter-spacing:.05em;
-  z-index:999;
+  color:var(--ink-ghost);letter-spacing:.05em;z-index:999;
 }
-/* ESC hint */
 body.presenting .pres-esc{
   position:fixed;top:20px;right:28px;
   font-family:var(--sans);font-size:11px;
   color:var(--ink-ghost);letter-spacing:.05em;
   opacity:.6;z-index:999;
 }
-/* Progress bar */
 body.presenting .pres-progress{
   position:fixed;top:0;left:0;height:3px;
   background:var(--gold);z-index:999;
   transition:width .3s ease;
 }
 
-/* ── Section number badge ───────────────────────────── */
+/* ══════════════════════════════════════════════════════
+   NORMAL MODE — PAGE-SPECIFIC COMPONENTS
+   (all scoped to avoid conflicts with style.css)
+   ══════════════════════════════════════════════════════ */
+
+/* Section number badge */
 .slide-num{
   font-family:var(--sans);font-size:11px;font-weight:700;
   letter-spacing:.12em;text-transform:uppercase;
@@ -80,32 +119,120 @@ body.presenting .pres-progress{
 }
 
 /* ── Visualization panels ─────────────────────────── */
-.vis-row{display:flex;gap:24px;margin:20px 0;flex-wrap:wrap;align-items:flex-start}
-.vis-panel{flex:1;min-width:260px;background:var(--warm);border:1px solid var(--parchment);border-radius:6px;padding:20px;text-align:center}
-.vis-panel svg{max-width:100%;height:auto}
-.vis-label{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
-.vis-caption{font-family:var(--sans);font-size:12px;color:var(--ink-faded);margin-top:8px;line-height:1.5}
+.vis-row{
+  display:flex;gap:20px;margin:24px 0;
+  flex-wrap:wrap;align-items:stretch;
+}
+.vis-panel{
+  flex:1;min-width:220px;
+  background:var(--warm);border:1px solid var(--parchment);
+  border-radius:6px;padding:18px 20px;text-align:center;
+  display:flex;flex-direction:column;
+}
+.vis-panel svg{
+  max-width:100%;height:auto;margin:4px auto 0;
+  display:block;flex:1;min-height:0;
+}
+.vis-label{
+  font-family:var(--sans);font-size:11px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:8px;flex-shrink:0;
+}
+.vis-caption{
+  font-family:var(--sans);font-size:11.5px;
+  color:var(--ink-faded);margin-top:10px;line-height:1.5;flex-shrink:0;
+}
 
-/* Centrality interactive buttons */
-.cent-btns{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
-.cent-btn{font-family:var(--sans);font-size:12px;font-weight:600;padding:6px 16px;border:1px solid var(--parchment);border-radius:4px;background:var(--warm);color:var(--ink-faded);cursor:pointer;transition:all .2s}
+/* ── Centrality interactive ───────────────────────── */
+.cent-btns{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 16px}
+.cent-btn{
+  font-family:var(--sans);font-size:12px;font-weight:600;
+  padding:6px 16px;border:1px solid var(--parchment);border-radius:4px;
+  background:var(--warm);color:var(--ink-faded);cursor:pointer;
+  transition:all .2s;
+}
 .cent-btn:hover,.cent-btn.active{background:var(--gold);color:var(--paper);border-color:var(--gold)}
 
-/* Flow diagram */
-.flow-row{display:flex;align-items:center;gap:0;margin:20px 0;flex-wrap:wrap;justify-content:center}
-.flow-step{background:var(--warm);border:1px solid var(--parchment);border-radius:6px;padding:12px 18px;text-align:center;min-width:120px}
-.flow-step .flow-num{font-family:var(--sans);font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.1em}
-.flow-step .flow-title{font-family:var(--serif);font-size:14px;color:var(--ink);margin-top:4px}
-.flow-arrow{font-size:20px;color:var(--gold);padding:0 6px}
-@media(max-width:700px){.flow-row{flex-direction:column}.flow-arrow{transform:rotate(90deg)}}
+/* Centrality detail box — override .method-desc base */
+#cent-detail-en,
+#cent-detail-zh{
+  background:var(--warm);
+  border-left:3px solid var(--gold);border:1px solid var(--parchment);
+  border-left:3px solid var(--gold);
+  padding:14px 18px;border-radius:0 4px 4px 0;
+  margin:16px 0 12px;
+}
 
-/* Decision checklist */
-.check-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:20px 0}
-.check-card{background:var(--warm);border:1px solid var(--parchment);border-radius:6px;padding:18px;text-align:center}
-.check-icon{font-size:28px;margin-bottom:8px}
-.check-title{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px}
-.check-desc{font-family:var(--sans);font-size:12px;color:var(--ink-faded);line-height:1.5}
-@media(max-width:700px){.check-grid{grid-template-columns:1fr}}
+/* ── Flow diagram ─────────────────────────────────── */
+.flow-row{
+  display:flex;align-items:center;gap:0;
+  margin:24px 0;flex-wrap:wrap;justify-content:center;
+}
+.flow-step{
+  background:var(--warm);border:1px solid var(--parchment);
+  border-radius:6px;padding:12px 18px;text-align:center;min-width:110px;
+}
+.flow-step .flow-num{font-family:var(--sans);font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.1em}
+.flow-step .flow-title{font-family:var(--body);font-size:14px;color:var(--ink);margin-top:4px}
+.flow-arrow{font-size:18px;color:var(--gold);padding:0 6px}
+
+/* ── Decision checklist ───────────────────────────── */
+.check-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:20px 0}
+.check-card{
+  background:var(--warm);border:1px solid var(--parchment);
+  border-radius:6px;padding:18px 16px;
+  text-align:left;
+}
+.check-icon{
+  font-family:var(--sans);font-size:11px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--paper);background:var(--gold);
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:4px;margin-bottom:10px;
+}
+.check-title{font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.check-desc{font-family:var(--sans);font-size:12px;color:var(--ink-faded);line-height:1.6}
+
+/* ── Step details (workflow breakdown) ─────────────── */
+.step-details{display:grid;grid-template-columns:1fr;gap:6px;margin:16px 0}
+.step-item{
+  font-size:14px;line-height:1.7;color:var(--ink-faded);
+  padding:8px 14px;
+  border-left:2px solid var(--parchment);
+  transition:border-color .2s;
+}
+.step-item:hover{border-left-color:var(--gold)}
+.step-item strong{color:var(--ink-soft)}
+
+/* ── method-when (not in style.css — define from scratch) */
+.method-when{
+  margin:12px 0;padding:10px 14px;border-radius:4px;
+  background:rgba(90,122,107,.05);border:1px solid rgba(90,122,107,.2);
+  font-size:14.5px;line-height:1.65;color:var(--ink-faded);
+}
+.method-when strong{color:var(--leather);font-style:normal}
+
+/* ── Override intro-cards to 2-col for this page (has 2 cards, not 3) */
+.intro-cards{grid-template-columns:1fr 1fr!important}
+
+/* ── Responsive ───────────────────────────────────── */
+@media(max-width:1000px){
+  .check-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:700px){
+  .flow-row{flex-direction:column;gap:4px}
+  .flow-arrow{transform:rotate(90deg);padding:2px 0}
+  .check-grid{grid-template-columns:1fr}
+  .vis-row{flex-direction:column}
+  .vis-panel{min-width:100%}
+  .intro-cards{grid-template-columns:1fr!important}
+  body.presenting .slide > *{padding-left:24px;padding-right:24px}
+}
+@media(max-width:900px){
+  body.presenting .slide h2{font-size:1.8rem}
+  body.presenting .slide .method-desc{font-size:1rem}
+  body.presenting .check-desc{font-size:12px}
+}
 </style>
 
 <!-- PRESENTATION TOGGLE -->
@@ -292,7 +419,7 @@ body.presenting .pres-progress{
     <button class="cent-btn" onclick="showCent('eigen')" data-lang="en">Eigenvector</button>
     <button class="cent-btn" onclick="showCent('eigen')" data-lang="zh">特征向量</button>
   </div>
-  <div class="vis-panel" style="max-width:500px">
+  <div class="vis-panel" style="max-width:540px">
     <svg id="cent-svg" viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
       <line x1="80" y1="60" x2="200" y2="50" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
       <line x1="80" y1="60" x2="140" y2="140" stroke="#c29a3d" stroke-width="1.5" opacity=".4"/>
@@ -334,7 +461,7 @@ body.presenting .pres-progress{
 
   <!-- VIS: Community network -->
   <div class="vis-row">
-    <div class="vis-panel" style="max-width:500px">
+    <div class="vis-panel" style="max-width:540px">
       <svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
         <line x1="60" y1="50" x2="120" y2="40" stroke="#b85450" stroke-width="2" opacity=".4"/>
         <line x1="60" y1="50" x2="90" y2="110" stroke="#b85450" stroke-width="2" opacity=".4"/>
@@ -364,14 +491,49 @@ body.presenting .pres-progress{
     </div>
   </div>
 
-  <p class="method-desc" data-lang="en"><em>Intuition:</em> find groups where members are more connected to each other than to outsiders — like identifying lunch tables in a high school cafeteria. <em>Theory:</em> the most common approach maximizes <strong>modularity</strong> Q = (1/2m) Σ [A<sub>ij</sub> − k<sub>i</sub>k<sub>j</sub>/2m] δ(c<sub>i</sub>, c<sub>j</sub>), which compares actual within-group edges to what you'd expect under a random null model. The Louvain algorithm solves this efficiently even for million-node networks.</p>
-  <p class="method-desc" data-lang="zh"><em>直觉：</em>找到成员之间联系比对外联系更紧密的群体——就像识别高中食堂里的午餐桌。<em>理论：</em>最常用的方法最大化<strong>模块性</strong> Q = (1/2m) Σ [A<sub>ij</sub> − k<sub>i</sub>k<sub>j</sub>/2m] δ(c<sub>i</sub>, c<sub>j</sub>)，比较实际组内边与随机零模型的预期。Louvain 算法即使面对百万节点网络也能高效求解。</p>
+  <p class="method-desc" data-lang="en"><em>Intuition:</em> find groups where members are more connected to each other than to outsiders — like identifying lunch tables in a high school cafeteria. The algorithm doesn't need labels; it discovers structure purely from the pattern of connections. This is powerful because the groups it finds often reveal real social divisions that surveys miss.</p>
+  <p class="method-desc" data-lang="zh"><em>直觉：</em>找到成员之间联系比对外联系更紧密的群体——就像识别高中食堂里的午餐桌。算法不需要标签，纯粹从连接模式中发现结构。这很有用，因为它找到的群体常常揭示问卷遗漏的真实社会划分。</p>
+</div>
+
+<!-- SLIDE: Network Methods Overview -->
+<div class="slide" id="slide-methods-overview">
+  <div class="slide-num" data-lang="en">Part 1 · Slide 5</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 5 页</div>
+  <h2 data-lang="en">Common Network Methods at a Glance</h2>
+  <h2 data-lang="zh">常用网络方法一览</h2>
+
+  <p class="method-desc" data-lang="en">Once you have network data, several methods are available. Each answers a different question:</p>
+  <p class="method-desc" data-lang="zh">有了网络数据后，有多种方法可用，每种回答不同的问题：</p>
+
+  <div class="check-grid">
+    <div class="check-card">
+      <div class="check-title" data-lang="en">QAP Regression</div>
+      <div class="check-title" data-lang="zh">QAP 回归</div>
+      <div class="check-desc" data-lang="en"><em>Question:</em> Do two networks correlate? E.g. do friendship ties predict advice ties? <em>How:</em> permutation-based test that handles non-independence. Think of shuffling one network many times and checking if the real correlation is unusually strong.</div>
+      <div class="check-desc" data-lang="zh"><em>问题：</em>两个网络是否相关？如友谊关系能预测建议关系吗？<em>方法：</em>基于置换的检验，处理非独立性。想象把一个网络洗牌很多次，看真实相关是否异常强。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-title" data-lang="en">SAOM / Siena</div>
+      <div class="check-title" data-lang="zh">SAOM / Siena</div>
+      <div class="check-desc" data-lang="en"><em>Question:</em> Does the network shape behavior, or does behavior shape the network? <em>How:</em> longitudinal model that separates <em>selection</em> (who befriends whom) from <em>influence</em> (do friends become similar). Requires panel data (≥2 time points).</div>
+      <div class="check-desc" data-lang="zh"><em>问题：</em>是网络塑造行为，还是行为塑造网络？<em>方法：</em>纵向模型，区分<em>选择</em>（谁和谁交友）与<em>影响</em>（朋友是否变得相似）。需要面板数据（≥2 个时间点）。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-title" data-lang="en">ERGM</div>
+      <div class="check-title" data-lang="zh">ERGM</div>
+      <div class="check-desc" data-lang="en"><em>Question:</em> What local tendencies (reciprocity, homophily, popularity) make the observed network more likely than random? <em>How:</em> like logistic regression, but for networks — models the probability of the whole network as a function of structural patterns. <strong>Today's focus.</strong></div>
+      <div class="check-desc" data-lang="zh"><em>问题：</em>什么局部倾向（互惠、同质性、人气）使观测网络比随机网络更可能出现？<em>方法：</em>相当于网络的逻辑回归——将整个网络的概率建模为结构模式的函数。<strong>今天的重点。</strong></div>
+    </div>
+  </div>
+
+  <div class="method-when" data-lang="en"><strong>Today we focus on ERGM</strong> — because our paper (Köhler et al. 2024) uses it to answer: what drives advice-seeking ties in an organization? Part 2 walks through this paper step by step.</div>
+  <div class="method-when" data-lang="zh"><strong>今天我们聚焦 ERGM</strong>——因为我们要拆解的论文（Köhler et al. 2024）用它来回答：什么驱动了组织中的求助关系？第二部分将逐步拆解这篇论文。</div>
 </div>
 
 <!-- SLIDE: When to Use -->
 <div class="slide" id="slide-when">
-  <div class="slide-num" data-lang="en">Part 1 · Slide 5</div>
-  <div class="slide-num" data-lang="zh">第一部分 · 第 5 页</div>
+  <div class="slide-num" data-lang="en">Part 1 · Slide 6</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 6 页</div>
   <h2 data-lang="en">Should You Use Network Analysis?</h2>
   <h2 data-lang="zh">你应该用网络分析吗？</h2>
 
@@ -381,21 +543,21 @@ body.presenting .pres-progress{
   <!-- VIS: Decision checklist -->
   <div class="check-grid">
     <div class="check-card">
-      <div class="check-icon">🔗</div>
+      <div class="check-icon">01</div>
       <div class="check-title" data-lang="en">Relational Data?</div>
       <div class="check-title" data-lang="zh">关系数据？</div>
       <div class="check-desc" data-lang="en">Your data has pairs (who↔whom). If each row is an independent person with no ties, standard methods may suffice.</div>
       <div class="check-desc" data-lang="zh">你的数据包含配对（谁↔谁）。如果每行是独立个体且没有联系，标准方法可能足够。</div>
     </div>
     <div class="check-card">
-      <div class="check-icon">📍</div>
+      <div class="check-icon">02</div>
       <div class="check-title" data-lang="en">Position Matters?</div>
       <div class="check-title" data-lang="zh">位置重要？</div>
       <div class="check-desc" data-lang="en">Structural position (connections, brokerage, community) shapes outcomes beyond individual attributes. Network analysis captures what regression cannot.</div>
       <div class="check-desc" data-lang="zh">结构位置（连接、中介角色、社区归属）影响结果，超越个体属性。网络分析能捕捉回归无法捕捉的东西。</div>
     </div>
     <div class="check-card">
-      <div class="check-icon">🌊</div>
+      <div class="check-icon">03</div>
       <div class="check-title" data-lang="en">Dependence Is the Story?</div>
       <div class="check-title" data-lang="zh">依赖性是核心？</div>
       <div class="check-desc" data-lang="en">Observations are <em>not</em> independent — your friend's behavior affects yours, one country's policy spills over to neighbors.</div>
@@ -406,8 +568,8 @@ body.presenting .pres-progress{
 
 <!-- SLIDE: Steps to a Network Analysis Paper -->
 <div class="slide" id="slide-steps">
-  <div class="slide-num" data-lang="en">Part 1 · Slide 6</div>
-  <div class="slide-num" data-lang="zh">第一部分 · 第 6 页</div>
+  <div class="slide-num" data-lang="en">Part 1 · Slide 7</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 7 页</div>
   <h2 data-lang="en">From Idea to Paper: A Network Analysis Workflow</h2>
   <h2 data-lang="zh">从想法到论文：网络分析的工作流程</h2>
 
@@ -424,8 +586,20 @@ body.presenting .pres-progress{
     <div class="flow-step"><div class="flow-num">STEP 5</div><div class="flow-title" data-lang="en">Robustness</div><div class="flow-title" data-lang="zh">稳健性</div></div>
   </div>
 
-  <p class="method-desc" data-lang="en"><strong>1 Define</strong> — what are nodes and edges? Be explicit (e.g. "Nodes = senators; edge = co-sponsored ≥3 bills"). This is the most important decision. <strong>2 Construct</strong> — build edge list / adjacency matrix; visualize early to spot issues. <strong>3 Describe</strong> — compute density, centrality, communities — this is your descriptive statistics. <strong>4 Model</strong> — if causal questions arise, use ERGM, QAP, or latent space models. <strong>5 Robustness</strong> — vary thresholds, measures, and node removals to test fragility.</p>
-  <p class="method-desc" data-lang="zh"><strong>1 定义</strong>——节点和边是什么？要明确（如"节点 = 参议员；边 = 共同联署 ≥3 项法案"）。这是最重要的决定。<strong>2 构建</strong>——建立边表/邻接矩阵，尽早可视化以发现问题。<strong>3 描述</strong>——计算密度、中心性、社区——这是你的描述性统计。<strong>4 建模</strong>——如果涉及因果问题，使用 ERGM、QAP 或潜在空间模型。<strong>5 稳健性</strong>——改变阈值、指标和节点移除来测试结果的脆弱性。</p>
+  <div class="step-details" data-lang="en">
+    <div class="step-item"><strong>1 Define</strong> — what are nodes and edges? Be explicit (e.g. "Nodes = senators; edge = co-sponsored ≥3 bills"). This is the most important decision.</div>
+    <div class="step-item"><strong>2 Construct</strong> — build edge list / adjacency matrix; visualize early to spot issues.</div>
+    <div class="step-item"><strong>3 Describe</strong> — compute density, centrality, communities — this is your descriptive statistics.</div>
+    <div class="step-item"><strong>4 Model</strong> — if causal questions arise, use ERGM, QAP, or latent space models.</div>
+    <div class="step-item"><strong>5 Robustness</strong> — vary thresholds, measures, and node removals to test fragility.</div>
+  </div>
+  <div class="step-details" data-lang="zh">
+    <div class="step-item"><strong>1 定义</strong>——节点和边是什么？要明确（如"节点 = 参议员；边 = 共同联署 ≥3 项法案"）。这是最重要的决定。</div>
+    <div class="step-item"><strong>2 构建</strong>——建立边表/邻接矩阵，尽早可视化以发现问题。</div>
+    <div class="step-item"><strong>3 描述</strong>——计算密度、中心性、社区——这是你的描述性统计。</div>
+    <div class="step-item"><strong>4 建模</strong>——如果涉及因果问题，使用 ERGM、QAP 或潜在空间模型。</div>
+    <div class="step-item"><strong>5 稳健性</strong>——改变阈值、指标和节点移除来测试结果的脆弱性。</div>
+  </div>
 
   <div class="method-when" data-lang="en"><strong>Now let's see this workflow in action.</strong> Part 2 walks through a real published paper — from research question to findings.</div>
   <div class="method-when" data-lang="zh"><strong>现在让我们看看这个流程的实战。</strong>第二部分将逐步拆解一篇真实发表的论文——从研究问题到发现。</div>
@@ -446,17 +620,37 @@ body.presenting .pres-progress{
 
   <p class="method-desc" data-lang="en">Köhler, Rausch, Biemann &amp; Büchsenschuss (2024). "Expertise and specialization in organizations: a social network analysis." <em>European Journal of Work and Organizational Psychology</em>, 34(2), 282–297. <a href="https://doi.org/10.1080/1359432X.2024.2387874" target="_blank">Open Access</a></p>
   <p class="method-desc" data-lang="zh">Köhler, Rausch, Biemann &amp; Büchsenschuss (2024). "组织中的专业知识与专业化：一项社会网络分析。" <em>European Journal of Work and Organizational Psychology</em>, 34(2), 282–297. <a href="https://doi.org/10.1080/1359432X.2024.2387874" target="_blank">开放获取</a></p>
+
+  <p class="method-desc" data-lang="en"><em>Background:</em> Organizations depend on employees' <strong>expertise</strong> and <strong>specialization</strong> to drive innovation and knowledge sharing. But prior research left three gaps: (1) Are you sought for advice because you are truly skilled in that domain, or simply because you are "well-known"? (2) What factors drive the formation of an advice-seeking tie? (3) Do real-world skill profiles of "experts" and "specialists" match theoretical descriptions?</p>
+  <p class="method-desc" data-lang="zh"><em>背景：</em>组织依赖员工的<strong>专业知识（expertise）</strong>和<strong>专业化（specialization）</strong>来推动创新和知识共享。但以往研究有三个空白：（1）被人请教是因为你在那个技能领域真的强，还是只要你"出名"就什么都有人来问？（2）什么因素决定了一条求助关系的形成？（3）现实中真正的"专家"和"专才"的技能画像，和理论上描述的一样吗？</p>
 </div>
 
-<!-- SLIDE: Research Question -->
+<!-- SLIDE: Research Question & Core Concepts -->
 <div class="slide" id="slide-rq">
   <div class="slide-num" data-lang="en">Part 2 · Slide 1</div>
   <div class="slide-num" data-lang="zh">第二部分 · 第 1 页</div>
-  <h2 data-lang="en">The Research Question</h2>
-  <h2 data-lang="zh">研究问题</h2>
+  <h2 data-lang="en">Research Question &amp; Core Concepts</h2>
+  <h2 data-lang="zh">研究问题与核心概念</h2>
 
   <p class="method-desc" data-lang="en">In an organization, who do you turn to when you hit a work problem? Is it the person who is truly the most skilled — or simply the person who is already well-known? This paper asks: <strong>What drives the formation of advice-seeking ties in an organizational network?</strong> Specifically, do expertise and specialization predict who gets asked, or do structural effects (reciprocity, homophily) dominate?</p>
   <p class="method-desc" data-lang="zh">在组织中，遇到工作问题你会找谁？是真正技能最强的人——还是已经很出名的人？这篇论文问的是：<strong>什么驱动了组织建议网络中关系的形成？</strong>具体来说，是专业知识和专业化预测谁被咨询，还是结构效应（互惠性、同质性）占主导？</p>
+
+  <div class="check-grid" style="grid-template-columns:1fr 1fr">
+    <div class="check-card">
+      <div class="check-icon">E</div>
+      <div class="check-title" data-lang="en">Expert (Expertise)</div>
+      <div class="check-title" data-lang="zh">专家（Expertise）</div>
+      <div class="check-desc" data-lang="en">Sustained superior performance relative to peers in a domain. Both breadth and depth of skills are high, developed through long-term accumulation. <em>Network prediction:</em> central position — sought by many.</div>
+      <div class="check-desc" data-lang="zh">在某个领域相对于同行有持续卓越的表现。技能广度和深度都高，通过长期积累发展而来。<em>网络预测：</em>处于中心位置——被很多人请教。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">S</div>
+      <div class="check-title" data-lang="en">Specialist (Specialization)</div>
+      <div class="check-title" data-lang="zh">专才（Specialization）</div>
+      <div class="check-desc" data-lang="en">Mid-to-high competence on tasks others don't do — arising from division of labor, not necessarily long-term accumulation. Two forms: sole-responsible (e.g. the only lawyer) or task-specific within a shared domain. <em>Network prediction:</em> peripheral — only those needing that task come to you.</div>
+      <div class="check-desc" data-lang="zh">对别人不做的任务有中高水平的能力——来自分工，不一定需要长期积累。两种形态：唯一负责人（如公司唯一的律师）或共同领域内承担特定任务。<em>网络预测：</em>处于边缘——只有需要那几项任务的人才来找你。</div>
+    </div>
+  </div>
 
   <div class="method-when" data-lang="en"><strong>Why network analysis?</strong> Advice-seeking is inherently relational (who asks whom) and non-independent (if A asks B, B is more likely to ask A back). Standard regression ignores this interdependence — ERGM is designed for it.</div>
   <div class="method-when" data-lang="zh"><strong>为什么用网络分析？</strong>建议寻求本质上是关系性的（谁问谁）且非独立的（A 问了 B，B 更可能反过来问 A）。标准回归忽略了这种相互依赖——ERGM 就是为此设计的。</div>
@@ -471,139 +665,154 @@ body.presenting .pres-progress{
 
   <div class="check-grid">
     <div class="check-card">
-      <div class="check-icon">🏢</div>
+      <div class="check-icon">01</div>
       <div class="check-title" data-lang="en">Setting</div>
       <div class="check-title" data-lang="zh">场景</div>
-      <div class="check-desc" data-lang="en">A global insurance company, risk analysis domain. N = 344 employees (78% response rate).</div>
-      <div class="check-desc" data-lang="zh">一家全球保险公司，风险分析部门。N = 344 名员工（78% 响应率）。</div>
+      <div class="check-desc" data-lang="en">A global insurance company, risk analysis domain. N = 344 employees (78% response rate). Mean age 47, mean tenure 11 years, roughly gender-balanced.</div>
+      <div class="check-desc" data-lang="zh">一家全球保险公司，风险分析部门。N = 344 名员工（78% 响应率）。平均年龄 47 岁，平均工龄 11 年，男女各半。</div>
     </div>
     <div class="check-card">
-      <div class="check-icon">🔗</div>
+      <div class="check-icon">02</div>
       <div class="check-title" data-lang="en">Network</div>
       <div class="check-title" data-lang="zh">网络</div>
-      <div class="check-desc" data-lang="en">Directed, binary. 535 ties. Density = .0045 (very sparse). Ego network → inferred complete network.</div>
-      <div class="check-desc" data-lang="zh">有向、二元。535 条边。密度 = .0045（非常稀疏）。自我网络 → 推断完整网络。</div>
+      <div class="check-desc" data-lang="en">Directed, binary. 535 ties. Density = .0045 (very sparse). Ego network (each person names up to 5 contacts) → inferred complete network.</div>
+      <div class="check-desc" data-lang="zh">有向、二元。535 条边。密度 = .0045（非常稀疏）。自我网络（每人最多提名 5 人）→ 推断完整网络。</div>
     </div>
     <div class="check-card">
-      <div class="check-icon">📋</div>
-      <div class="check-title" data-lang="en">Survey</div>
-      <div class="check-title" data-lang="zh">调查</div>
-      <div class="check-desc" data-lang="en">"Who do you ask for advice about work problems?" (up to 5 names × 3 skill bundles: core, software, social).</div>
-      <div class="check-desc" data-lang="zh">"遇到工作问题你找谁请教？"（最多 5 人 × 3 个技能类别：核心、软件、社交）。</div>
+      <div class="check-icon">03</div>
+      <div class="check-title" data-lang="en">Three Data Sources</div>
+      <div class="check-title" data-lang="zh">三个数据来源</div>
+      <div class="check-desc" data-lang="en">Company database (age, gender, tenure); questionnaire (29-item skill self-assessment, expertise/specialist scales); network nomination ("Who do you ask for advice?" × 3 skill bundles).</div>
+      <div class="check-desc" data-lang="zh">公司数据库（年龄、性别、工龄）；问卷（29 项技能自评、专家/专才量表）；网络提名（"你找谁请教？" × 3 个技能领域）。</div>
     </div>
   </div>
 
-  <p class="method-desc" data-lang="en"><em>Key design choice:</em> Nodes = employees; a directed edge A→B means "A asks B for advice." The network is binary (yes/no), not weighted. Node attributes include self-assessed skills (29 items on 4-point scale), expertise and specialization scales, tenure, age, gender, and leadership responsibility.</p>
-  <p class="method-desc" data-lang="zh"><em>关键设计选择：</em>节点 = 员工；有向边 A→B 表示"A 向 B 请教"。网络是二元的（是/否），不加权。节点属性包括自评技能（29 项，4 级量表）、专业知识和专业化量表、任期、年龄、性别和领导责任。</p>
+  <p class="method-desc" data-lang="en"><em>Key design choice:</em> Nodes = employees; a directed edge A→B means "A asks B for advice." The network is binary (yes/no), not weighted. The 29 skills are grouped into three bundles: 18 core insurance skills, 7 software skills, and 4 social skills. Node attributes also include self-rated expertise and specialization scales, tenure, age, gender, and leadership responsibility.</p>
+  <p class="method-desc" data-lang="zh"><em>关键设计选择：</em>节点 = 员工；有向边 A→B 表示"A 向 B 请教"。网络是二元的（是/否），不加权。29 项技能分三类：18 项核心保险技能、7 项软件技能、4 项社交技能。节点属性还包括自评专家和专才量表、任期、年龄、性别和领导责任。</p>
 </div>
 
-<!-- SLIDE: ERGM Introduction + Methods -->
+<!-- SLIDE: Three-Study Design + Methods -->
 <div class="slide" id="slide-methods">
   <div class="slide-num" data-lang="en">Part 2 · Slide 3</div>
   <div class="slide-num" data-lang="zh">第二部分 · 第 3 页</div>
-  <h2 data-lang="en">What Is an ERGM?</h2>
-  <h2 data-lang="zh">什么是 ERGM？</h2>
-
-  <p class="method-desc" data-lang="en">An <strong>Exponential Random Graph Model</strong> is like logistic regression for networks. It models the probability of observing the entire network as a function of local structural patterns. The core equation: P(Y = y) ∝ exp(θ<sup>T</sup> · g(y)), where g(y) are network statistics (e.g., number of edges, reciprocal pairs, triangles) and θ are coefficients — just like regression coefficients, but for network features.</p>
-  <p class="method-desc" data-lang="zh"><strong>指数随机图模型（ERGM）</strong>相当于网络的逻辑回归。它将观测到整个网络的概率建模为局部结构模式的函数。核心公式：P(Y = y) ∝ exp(θ<sup>T</sup> · g(y))，其中 g(y) 是网络统计量（如边数、互惠对数、三角形数），θ 是系数——就像回归系数，但用于网络特征。</p>
-
-  <p class="method-desc" data-lang="en"><em>Intuition:</em> imagine all possible networks with 344 nodes. ERGM asks: "Which local tendencies — reciprocity? homophily? popularity? — make the <em>observed</em> network more likely than random alternatives?" This paper builds a 3-step model:</p>
-  <p class="method-desc" data-lang="zh"><em>直觉：</em>想象 344 个节点的所有可能网络。ERGM 问的是："哪些局部倾向——互惠？同质性？人气？——使<em>观测到的</em>网络比随机网络更可能出现？"本文构建了 3 步模型：</p>
+  <h2 data-lang="en">Method: Three Studies in One Paper</h2>
+  <h2 data-lang="zh">方法：一篇论文中的三个研究</h2>
 
   <div class="flow-row">
-    <div class="flow-step"><div class="flow-num">MODEL 1</div><div class="flow-title" data-lang="en">Baseline</div><div class="flow-title" data-lang="zh">基线</div></div>
+    <div class="flow-step"><div class="flow-num">STUDY 1</div><div class="flow-title" data-lang="en">Halo Effect</div><div class="flow-title" data-lang="zh">光环效应</div></div>
     <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="flow-num">MODEL 2</div><div class="flow-title" data-lang="en">+ Structure</div><div class="flow-title" data-lang="zh">+ 结构</div></div>
+    <div class="flow-step"><div class="flow-num">STUDY 2</div><div class="flow-title" data-lang="en">ERGM</div><div class="flow-title" data-lang="zh">ERGM</div></div>
     <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="flow-num">MODEL 3</div><div class="flow-title" data-lang="en">+ Attributes</div><div class="flow-title" data-lang="zh">+ 属性</div></div>
+    <div class="flow-step"><div class="flow-num">STUDY 3</div><div class="flow-title" data-lang="en">Skill Profiles</div><div class="flow-title" data-lang="zh">技能画像</div></div>
   </div>
 
-  <p class="method-desc" data-lang="en"><strong>Model 1</strong> (edges + reciprocity) → <strong>Model 2</strong> adds endogenous structure (in-degree distribution, two-path brokerage) → <strong>Model 3</strong> adds node attributes (expertise, specialization, tenure, skills, leadership match). Software: R <code>ergm</code> package (Statnet).</p>
-  <p class="method-desc" data-lang="zh"><strong>模型 1</strong>（边 + 互惠性）→ <strong>模型 2</strong> 加入内生结构（入度分布、二路径中介）→ <strong>模型 3</strong> 加入节点属性（专业知识、专业化、任期、技能、领导匹配）。软件：R <code>ergm</code> 包（Statnet）。</p>
+  <div class="step-details" data-lang="en">
+    <div class="step-item"><strong>Study 1 — Spearman correlations:</strong> Is a person's in-degree centrality in one skill domain correlated with their in-degree in other domains, or with their actual skill levels? Tests whether a "halo effect" exists.</div>
+    <div class="step-item"><strong>Study 2 — ERGM (Exponential Random Graph Model):</strong> Models the probability of the entire observed network as P(Y = y) ∝ exp(θ<sup>T</sup> · g(y)). Like logistic regression for networks — simultaneously controls for structural effects (reciprocity, brokerage) and node attributes (expertise, specialization, skill levels, tenure, leadership). Built in 3 steps: Model 1 (edges + reciprocity) → Model 2 (+ endogenous structure) → Model 3 (+ node attributes). Software: R <code>ergm</code> (Statnet).</div>
+    <div class="step-item"><strong>Study 3 — Optimal Matching:</strong> Computes the "distance" between each person's actual skill profile and theoretically defined expert/specialist profiles. Then correlates these distances with self-assessed expertise/specialization scales and network centrality.</div>
+  </div>
+  <div class="step-details" data-lang="zh">
+    <div class="step-item"><strong>研究一 — Spearman 相关：</strong>一个人在某个技能领域的入度中心性，与他在其他领域的入度、以及实际技能水平相关吗？检验是否存在"光环效应"。</div>
+    <div class="step-item"><strong>研究二 — ERGM（指数随机图模型）：</strong>将整个观测网络的概率建模为 P(Y = y) ∝ exp(θ<sup>T</sup> · g(y))。相当于网络的逻辑回归——同时控制结构效应（互惠、中介）和节点属性（专业知识、专业化、技能水平、任期、领导责任）。分 3 步构建：模型 1（边 + 互惠性）→ 模型 2（+ 内生结构）→ 模型 3（+ 节点属性）。软件：R <code>ergm</code>（Statnet）。</div>
+    <div class="step-item"><strong>研究三 — 最优匹配分析：</strong>计算每个人的实际技能画像与理论上专家/专才画像的"距离"。然后将这些距离与自评专家/专才量表及网络中心度做相关。</div>
+  </div>
+
+  <div class="method-when" data-lang="en"><strong>Why this combination?</strong> Study 1 reveals the pattern (halo effect); Study 2 tests causal drivers while controlling for network structure; Study 3 validates whether theoretical categories match reality.</div>
+  <div class="method-when" data-lang="zh"><strong>为什么用这个组合？</strong>研究一揭示模式（光环效应）；研究二在控制网络结构的同时检验驱动因素；研究三验证理论分类是否与现实匹配。</div>
 </div>
 
-<!-- SLIDE: Key Findings -->
-<div class="slide" id="slide-findings">
+<!-- SLIDE: Study 1 — Halo Effect -->
+<div class="slide" id="slide-study1">
   <div class="slide-num" data-lang="en">Part 2 · Slide 4</div>
   <div class="slide-num" data-lang="zh">第二部分 · 第 4 页</div>
-  <h2 data-lang="en">Reading the ERGM Results</h2>
-  <h2 data-lang="zh">解读 ERGM 结果</h2>
+  <h2 data-lang="en">Study 1: The Halo Effect</h2>
+  <h2 data-lang="zh">研究一：光环效应</h2>
 
-  <p class="method-desc" data-lang="en">ERGM coefficients read like logistic regression: a positive coefficient means the corresponding network pattern is <em>more likely</em> than chance. Key findings from the full model (Model 3):</p>
-  <p class="method-desc" data-lang="zh">ERGM 系数的读法与逻辑回归类似：正系数意味着相应的网络模式比随机情况<em>更可能</em>出现。完整模型（模型 3）的关键发现：</p>
+  <p class="method-desc" data-lang="en">The core finding: correlations between in-degree centrality <em>across</em> the three skill domains are <strong>stronger</strong> than correlations between in-degree and actual skill levels <em>within</em> each domain. In plain language: if you're asked for advice on core insurance skills, you're also asked about software and social skills — regardless of your actual ability in those areas.</p>
+  <p class="method-desc" data-lang="zh">核心发现：不同技能领域的入度中心性<em>之间</em>的相关性，<strong>强于</strong>入度与该领域实际技能水平<em>之内</em>的相关性。通俗来说：一个人在核心技能领域被请教多，在软件技能和社交技能领域也会被请教多——不管他在那些领域实际能力如何。</p>
 
-  <div class="check-grid">
-    <div class="check-card">
-      <div class="check-icon">🔄</div>
-      <div class="check-title" data-lang="en">Reciprocity ✓</div>
-      <div class="check-title" data-lang="zh">互惠性 ✓</div>
-      <div class="check-desc" data-lang="en">Strong positive effect. If A asks B, B is much more likely to ask A back. Advice is a two-way street.</div>
-      <div class="check-desc" data-lang="zh">强正效应。如果 A 问了 B，B 很可能反过来问 A。建议是双向的。</div>
-    </div>
-    <div class="check-card">
-      <div class="check-icon">💻</div>
-      <div class="check-title" data-lang="en">Skill Homophily ✓</div>
-      <div class="check-title" data-lang="zh">技能同质性 ✓</div>
-      <div class="check-desc" data-lang="en">People ask peers with <em>similar</em> software skill levels — not necessarily the most skilled. Pronounced for software skills; weaker for core and social skills.</div>
-      <div class="check-desc" data-lang="zh">人们倾向于向软件技能水平<em>相似</em>的同事请教——不一定是最强的。软件技能效应最强；核心和社交技能较弱。</div>
-    </div>
-    <div class="check-card">
-      <div class="check-icon">📊</div>
-      <div class="check-title" data-lang="en">Expertise: Small ✓</div>
-      <div class="check-title" data-lang="zh">专业知识：效应小 ✓</div>
-      <div class="check-desc" data-lang="en">Higher expertise slightly increases being asked. But specialization shows <em>no</em> significant effect — specialists are not approached more often.</div>
-      <div class="check-desc" data-lang="zh">更高的专业知识略微增加被咨询的概率。但专业化<em>没有</em>显著效应——专家型员工并没有更常被请教。</div>
-    </div>
-  </div>
-
-  <p class="method-desc" data-lang="en"><strong>Surprise finding — the halo effect:</strong> being asked for advice in one skill bundle strongly predicts being asked across <em>all</em> skill bundles. In-degree centralities across the three domains correlate more strongly with each other than with actual skill levels. People seem to go to "known helpers" regardless of topic.</p>
-  <p class="method-desc" data-lang="zh"><strong>意外发现——光环效应：</strong>在某个技能领域被请教强烈预测在<em>所有</em>技能领域都被请教。三个领域的入度中心性之间的相关比与实际技能水平的相关更强。人们似乎倾向于找"知名帮手"，而不看具体话题。</p>
+  <div class="method-analogy" data-lang="en"><strong>What this means:</strong> Being sought for advice reflects overall <em>reputation</em> more than domain-specific competence. People go to "known helpers" regardless of topic. Possible mechanisms: high-visibility employees are more accessible, more willing to help, or colleagues simply don't know each other's specific strengths well enough to discriminate.</div>
+  <div class="method-analogy" data-lang="zh"><strong>这意味着：</strong>被请教更多反映的是整体<em>声誉</em>，而非特定领域的能力。人们倾向于找"知名帮手"，不看具体话题。可能的机制：高可见度员工更容易被接触、更愿意帮忙，或者同事们根本不太清楚彼此具体擅长什么。</div>
 </div>
 
-<!-- SLIDE: Extensions -->
-<div class="slide" id="slide-extend">
+<!-- SLIDE: Study 2 — ERGM Results -->
+<div class="slide" id="slide-study2">
   <div class="slide-num" data-lang="en">Part 2 · Slide 5</div>
   <div class="slide-num" data-lang="zh">第二部分 · 第 5 页</div>
-  <h2 data-lang="en">Discussion &amp; What Could Be Done Differently</h2>
-  <h2 data-lang="zh">讨论与改进方向</h2>
+  <h2 data-lang="en">Study 2: ERGM Results</h2>
+  <h2 data-lang="zh">研究二：ERGM 结果</h2>
 
-  <p class="method-desc" data-lang="en"><strong>Limitations:</strong> The network was inferred from ego networks (each person named up to 5 contacts), not directly observed — which can underestimate ties. Self-assessed skills may introduce common method bias. The cross-sectional design cannot tell us whether expertise <em>causes</em> more ties or vice versa.</p>
-  <p class="method-desc" data-lang="zh"><strong>局限性：</strong>网络从自我网络推断（每人最多提名 5 人），而非直接观测——可能低估边数。自评技能可能引入共同方法偏差。横截面设计无法告诉我们是专业知识<em>导致</em>更多关系还是反过来。</p>
-
-  <p class="method-desc" data-lang="en"><strong>Extensions to consider:</strong> Use a <em>Temporal ERGM (TERGM)</em> to track how the advice network evolves over time. Add objective performance data instead of self-assessed skills. Use <em>SAOM (Stochastic Actor-Oriented Models)</em> to disentangle selection effects from influence effects. Expand to multiple organizations for comparison.</p>
-  <p class="method-desc" data-lang="zh"><strong>可以考虑的延伸：</strong>使用<em>时序 ERGM (TERGM)</em> 追踪建议网络随时间的演变。用客观绩效数据替代自评技能。使用<em>SAOM（随机行动者导向模型）</em>区分选择效应和影响效应。扩展到多个组织进行比较。</p>
-</div>
-
-<!-- SLIDE: Other Methods -->
-<div class="slide" id="slide-other-methods">
-  <div class="slide-num" data-lang="en">Part 2 · Slide 6</div>
-  <div class="slide-num" data-lang="zh">第二部分 · 第 6 页</div>
-  <h2 data-lang="en">Beyond ERGM: Other Network Methods</h2>
-  <h2 data-lang="zh">ERGM 之外：其他网络方法</h2>
+  <p class="method-desc" data-lang="en">ERGM coefficients read like logistic regression: a positive coefficient means the pattern is <em>more likely</em> than chance. After controlling for network structure, key findings from the full model (Model 3):</p>
+  <p class="method-desc" data-lang="zh">ERGM 系数的读法与逻辑回归类似：正系数意味着相应模式比随机情况<em>更可能</em>出现。在控制网络结构后，完整模型（模型 3）的关键发现：</p>
 
   <div class="check-grid">
     <div class="check-card">
-      <div class="check-title" data-lang="en">QAP Regression</div>
-      <div class="check-title" data-lang="zh">QAP 回归</div>
-      <div class="check-desc" data-lang="en">Tests if two networks correlate (e.g., do friendship ties predict advice ties?). Uses permutation to handle non-independence. See: Krackhardt (1988).</div>
-      <div class="check-desc" data-lang="zh">检验两个网络是否相关（如友谊关系预测建议关系？）。用置换处理非独立性。参见：Krackhardt (1988)。</div>
+      <div class="check-icon">+</div>
+      <div class="check-title" data-lang="en">Significant Positive</div>
+      <div class="check-title" data-lang="zh">显著正效应</div>
+      <div class="check-desc" data-lang="en"><strong>Reciprocity</strong> (strong); <strong>expertise</strong> (small positive); high <strong>core skill</strong> level; high <strong>software skill</strong> level. Experts get asked — but the effect is modest.</div>
+      <div class="check-desc" data-lang="zh"><strong>互惠性</strong>（强）；<strong>专家身份</strong>（小正效应）；<strong>核心技能</strong>平均水平高；<strong>软件技能</strong>平均水平高。专家会被请教——但效应不大。</div>
     </div>
     <div class="check-card">
-      <div class="check-title" data-lang="en">SAOM / Siena</div>
-      <div class="check-title" data-lang="zh">SAOM / Siena</div>
-      <div class="check-desc" data-lang="en">Longitudinal models that separate network <em>selection</em> (who befriends whom) from <em>influence</em> (do friends become similar). See: Snijders et al. (2010).</div>
-      <div class="check-desc" data-lang="zh">纵向模型，区分网络<em>选择</em>（谁和谁交友）与<em>影响</em>（朋友是否变得相似）。参见：Snijders et al. (2010)。</div>
+      <div class="check-icon">=</div>
+      <div class="check-title" data-lang="en">Homophily Effects</div>
+      <div class="check-title" data-lang="zh">同质性效应</div>
+      <div class="check-desc" data-lang="en"><strong>Software skill similarity</strong> (very significant); <strong>similar tenure</strong>; <strong>same job level</strong>. People ask peers like themselves — especially for software skills.</div>
+      <div class="check-desc" data-lang="zh"><strong>软件技能水平相近</strong>（非常显著）；<strong>工龄相近</strong>；<strong>职级相同</strong>。人们向与自己相似的同事求助——尤其是软件技能。</div>
     </div>
     <div class="check-card">
-      <div class="check-title" data-lang="en">Latent Space Models</div>
-      <div class="check-title" data-lang="zh">潜在空间模型</div>
-      <div class="check-desc" data-lang="en">Embeds nodes in a latent geometric space; closer nodes are more likely to connect. Good for visualization and clustering. See: Hoff et al. (2002).</div>
-      <div class="check-desc" data-lang="zh">将节点嵌入潜在几何空间；距离近的节点更可能连接。适合可视化和聚类。参见：Hoff et al. (2002)。</div>
+      <div class="check-icon">—</div>
+      <div class="check-title" data-lang="en">Not Significant</div>
+      <div class="check-title" data-lang="zh">不显著</div>
+      <div class="check-desc" data-lang="en"><strong>Specialization</strong> (no effect — specialists are not approached more often); <strong>social skills</strong>. Also: <em>negative</em> two-path effect — people go directly to the source rather than through intermediaries.</div>
+      <div class="check-desc" data-lang="zh"><strong>专才身份</strong>（无显著效应——专才并没有更常被请教）；<strong>社交技能</strong>。此外：简单中介路径为<em>负向</em>——人们倾向于直接找可能有答案的人，而不是通过中间人转介。</div>
     </div>
   </div>
+</div>
 
-  <div class="method-when" data-lang="en"><strong>How to choose?</strong> Cross-sectional + tie formation → ERGM. Longitudinal + co-evolution → SAOM. Network correlation → QAP. Visualization + clustering → Latent space. All can be implemented in R (statnet, RSiena, latentnet).</div>
-  <div class="method-when" data-lang="zh"><strong>如何选择？</strong>横截面 + 关系形成 → ERGM。纵向 + 共同演化 → SAOM。网络相关 → QAP。可视化 + 聚类 → 潜在空间。全部可在 R 中实现（statnet, RSiena, latentnet）。</div>
+<!-- SLIDE: Study 3 — Skill Profiles -->
+<div class="slide" id="slide-study3">
+  <div class="slide-num" data-lang="en">Part 2 · Slide 6</div>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 6 页</div>
+  <h2 data-lang="en">Study 3: Do Real Skill Profiles Match Theory?</h2>
+  <h2 data-lang="zh">研究三：真实技能画像与理论匹配吗？</h2>
+
+  <p class="method-desc" data-lang="en">Using <strong>optimal matching</strong>, the authors computed the "distance" between each employee's actual skill profile and theoretically defined expert/specialist profiles, then correlated these distances with self-assessed scales and network centrality.</p>
+  <p class="method-desc" data-lang="zh">通过<strong>最优匹配分析</strong>，作者计算每位员工的实际技能画像与理论专家/专才画像的"距离"，然后将这些距离与自评量表及网络中心度做相关。</p>
+
+  <div class="check-grid" style="grid-template-columns:1fr 1fr">
+    <div class="check-card">
+      <div class="check-icon">E</div>
+      <div class="check-title" data-lang="en">Expert Profile</div>
+      <div class="check-title" data-lang="zh">专家画像</div>
+      <div class="check-desc" data-lang="en">Results match theory. Higher self-rated expertise → skill profile closer to theoretical expert profile. More advice-seeking ties received → also closer. Theory and reality align.</div>
+      <div class="check-desc" data-lang="zh">结果符合理论。自评专家程度越高 → 技能画像越接近理论专家画像。被请教越多 → 也越接近。理论与现实比较一致。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">S</div>
+      <div class="check-title" data-lang="en">Specialist Profile</div>
+      <div class="check-title" data-lang="zh">专才画像</div>
+      <div class="check-desc" data-lang="en">Results contradict theory. Higher self-rated specialization → skill profile <em>farther</em> from theoretical specialist profile. Likely because the sample contains two types of specialists, but the theoretical profile only fits one (task-specific within a shared domain), not the sole-responsible type.</div>
+      <div class="check-desc" data-lang="zh">结果与理论矛盾。自评专才程度越高 → 技能画像反而离理论专才画像<em>越远</em>。原因可能是样本中同时存在两种专才，但理论画像只对应其中一种（共同领域内承担特定任务），不适用于整个领域只有他一人负责的那种。</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE: Contributions & Limitations -->
+<div class="slide" id="slide-extend">
+  <div class="slide-num" data-lang="en">Part 2 · Slide 7</div>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 7 页</div>
+  <h2 data-lang="en">Contributions &amp; Limitations</h2>
+  <h2 data-lang="zh">理论贡献与局限性</h2>
+
+  <p class="method-desc" data-lang="en"><strong>Key theoretical contribution:</strong> This paper integrates two previously separate classification frameworks — expert/non-expert and specialist/generalist — and proposes distinguishing four types within the same domain: non-expert, non-specialist, expert, and specialist. The use of ERGM allows simultaneous control of network-endogenous factors, making the analysis more rigorous than simple correlations.</p>
+  <p class="method-desc" data-lang="zh"><strong>主要理论贡献：</strong>这篇文章把专家/非专家和专才/通才这两套以往各说各话的分类框架整合起来，提出在同一个领域内应同时区分四类人：非专家、非专才、专家、专才。ERGM 的使用让研究能同时控制网络结构内生因素，比单纯做相关分析更严谨。</p>
+
+  <p class="method-desc" data-lang="en"><strong>Limitations:</strong> All skills are self-assessed (common method variance risk). Each person could name at most 5 contacts, potentially missing important ties. Ego-network data used to infer the complete network introduces some error. Physical proximity (e.g. seating arrangements) was not controlled. The cross-sectional design cannot tell us whether expertise <em>causes</em> more ties or vice versa.</p>
+  <p class="method-desc" data-lang="zh"><strong>局限性：</strong>技能全靠自评（共同方法变异风险）。每人最多提名 5 人，可能遗漏重要关系。用自我网络数据推断全网络有一定误差。没有控制座位相邻等物理因素。横截面设计无法告诉我们是专业知识<em>导致</em>更多关系还是反过来。</p>
+
+  <p class="method-desc" data-lang="en"><strong>Extensions to consider:</strong> Use a <em>Temporal ERGM (TERGM)</em> to track network evolution over time. Add objective performance data instead of self-assessed skills. Use <em>SAOM (Stochastic Actor-Oriented Models)</em> to disentangle selection from influence. Expand to multiple organizations for comparison.</p>
+  <p class="method-desc" data-lang="zh"><strong>可以考虑的延伸：</strong>使用<em>时序 ERGM (TERGM)</em> 追踪网络随时间的演变。用客观绩效数据替代自评技能。使用<em>SAOM（随机行动者导向模型）</em>区分选择效应和影响效应。扩展到多个组织进行比较。</p>
 </div>
 
 <!-- SLIDE: Takeaway -->
