@@ -1,7 +1,7 @@
 ---
 layout: methods-guide
-title: "ERGM: Mathematical Foundations"
-title_zh: "ERGM：数学基础"
+title: "ERGM: From Intuition to Math"
+title_zh: "ERGM：从直觉到数学"
 parent_title: "Network Analysis"
 parent_title_zh: "网络分析"
 parent_url: "reg-network.html"
@@ -9,13 +9,205 @@ bilingual: true
 mathjax: true
 ---
 
+<style>
+/* ── Level badges ─────────────────────────────────── */
+.level-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--sans);font-size:10px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 12px;border-radius:20px;
+  margin-bottom:8px;
+}
+.level-badge.beginner{background:rgba(91,140,133,.12);color:#4a7a72}
+.level-badge.intermediate{background:rgba(194,153,61,.12);color:#9a7a2e}
+.level-badge.advanced{background:rgba(181,55,42,.1);color:#a0382e}
+
+/* ── Section dividers with labels ─────────────────── */
+.depth-divider{
+  display:flex;align-items:center;gap:16px;
+  margin:40px 0 28px;
+}
+.depth-divider::before,.depth-divider::after{
+  content:'';flex:1;height:1px;background:var(--parchment);
+}
+.depth-divider span{
+  font-family:var(--sans);font-size:10px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-ghost);white-space:nowrap;
+}
+
+/* ── Concept cards ────────────────────────────────── */
+.concept-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+  margin:20px 0;
+}
+.concept-card{
+  background:var(--paper);border:1px solid var(--parchment);
+  border-radius:6px;padding:18px 20px;
+  transition:all .3s ease;
+  box-shadow:0 1px 3px rgba(30,24,15,.03);
+}
+.concept-card:hover{
+  border-color:var(--gold-soft);
+  box-shadow:0 3px 12px rgba(194,153,61,.08);
+  transform:translateY(-1px);
+}
+.concept-card .card-icon{
+  font-family:var(--sans);font-size:10px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--paper);background:var(--gold);
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:6px;margin-bottom:10px;
+  box-shadow:0 2px 4px rgba(194,153,61,.2);
+}
+.concept-card h4{
+  font-family:var(--sans);font-size:13px;font-weight:600;
+  color:var(--ink-soft);margin:0 0 6px;
+}
+.concept-card p{
+  font-size:13.5px;line-height:1.7;color:var(--ink-faded);margin:0;
+}
+
+/* ── Math display box ─────────────────────────────── */
+.math-box{
+  background:rgba(30,24,15,.03);
+  border:1px solid var(--parchment);
+  border-radius:6px;padding:20px 24px;
+  margin:20px 0;text-align:center;
+  font-size:16px;line-height:1.8;
+  color:var(--ink-soft);
+  font-family:var(--mono);
+  letter-spacing:.02em;
+  overflow-x:auto;
+}
+
+/* ── Unpack list (for formula breakdowns) ─────────── */
+.unpack-list{
+  display:grid;grid-template-columns:1fr;gap:10px;
+  margin:16px 0;padding:0;list-style:none;
+}
+.unpack-item{
+  display:flex;gap:14px;align-items:flex-start;
+  padding:12px 16px;
+  background:var(--paper);border:1px solid var(--parchment);
+  border-radius:6px;
+  transition:border-color .25s;
+}
+.unpack-item:hover{border-color:var(--gold-soft)}
+.unpack-item .symbol{
+  font-family:var(--mono);font-size:14px;font-weight:600;
+  color:var(--gold);white-space:nowrap;min-width:80px;
+  padding-top:1px;
+}
+.unpack-item .explain{
+  font-size:13.5px;line-height:1.7;color:var(--ink-faded);
+}
+
+/* ── Callout boxes ────────────────────────────────── */
+.callout{
+  border-left:3px solid var(--gold);
+  background:rgba(194,153,61,.04);
+  padding:16px 20px;margin:20px 0;
+  border-radius:0 6px 6px 0;
+}
+.callout.tip{border-left-color:#5b8c85;background:rgba(91,140,133,.04)}
+.callout.warn{border-left-color:var(--red);background:rgba(181,55,42,.04)}
+.callout .callout-label{
+  font-family:var(--sans);font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:6px;
+}
+.callout.tip .callout-label{color:#5b8c85}
+.callout.warn .callout-label{color:var(--red)}
+.callout p{font-size:14px;line-height:1.75;color:var(--ink-faded);margin:0}
+.callout p + p{margin-top:8px}
+
+/* ── Steps (numbered flow) ────────────────────────── */
+.step-flow{
+  display:grid;grid-template-columns:1fr;gap:10px;
+  margin:16px 0;padding:0;list-style:none;counter-reset:step;
+}
+.step-flow li{
+  counter-increment:step;
+  display:flex;gap:14px;align-items:flex-start;
+  padding:12px 16px;
+  background:var(--paper);border:1px solid var(--parchment);
+  border-radius:6px;font-size:13.5px;line-height:1.7;color:var(--ink-faded);
+  transition:border-color .25s;
+}
+.step-flow li:hover{border-color:var(--gold-soft)}
+.step-flow li::before{
+  content:counter(step);
+  font-family:var(--sans);font-size:11px;font-weight:700;
+  color:var(--paper);background:var(--gold);
+  min-width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+  box-shadow:0 1px 3px rgba(194,153,61,.2);
+}
+
+/* ── Code block ───────────────────────────────────── */
+.code-block{
+  background:var(--ink);color:#e8e0d4;
+  padding:24px 28px;border-radius:6px;
+  overflow-x:auto;font-size:13px;line-height:1.55;
+  font-family:var(--mono);
+  margin:20px 0;
+  box-shadow:0 2px 8px rgba(30,24,15,.15);
+}
+.code-block .comment{color:#9a8e7e}
+
+/* ── Collapsible section ──────────────────────────── */
+.collapsible-toggle{
+  display:flex;align-items:center;gap:8px;
+  cursor:pointer;padding:12px 0;
+  font-family:var(--sans);font-size:12px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-ghost);
+  border:none;background:none;
+  transition:color .25s;
+}
+.collapsible-toggle:hover{color:var(--gold)}
+.collapsible-toggle .arrow{
+  transition:transform .3s;font-size:10px;
+}
+.collapsible-toggle.open .arrow{transform:rotate(90deg)}
+.collapsible-content{
+  max-height:0;overflow:hidden;
+  transition:max-height .4s ease;
+}
+.collapsible-content.open{max-height:5000px}
+
+/* ── Summary box ──────────────────────────────────── */
+.summary-box{
+  background:var(--warm);border:1px solid var(--parchment);
+  border-radius:6px;padding:24px 28px;margin:28px 0;
+}
+.summary-box .summary-label{
+  font-family:var(--sans);font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:10px;
+}
+.summary-box p{font-size:14px;line-height:1.75;color:var(--ink-faded);margin:0}
+
+/* ── Responsive ───────────────────────────────────── */
+@media(max-width:700px){
+  .concept-row{grid-template-columns:1fr}
+  .unpack-item{flex-direction:column;gap:4px}
+  .unpack-item .symbol{min-width:auto}
+}
+</style>
+
 <!-- ═══════════════════════════════════════════════════
-     LEVEL 1 — INTUITION (no math, pure story)
+     LEVEL 1 — THE 30-SECOND VERSION
      ═══════════════════════════════════════════════════ -->
 
+<div class="level-badge beginner" data-lang="en">Beginner</div>
+<div class="level-badge beginner" data-lang="zh">入门</div>
+
 <h2 id="what-is-ergm">
-  <span data-lang="en">What Is ERGM? (No Math Version)</span>
-  <span data-lang="zh">ERGM 是什么？（零数学版）</span>
+  <span data-lang="en">What Is ERGM?</span>
+  <span data-lang="zh">ERGM 是什么？</span>
 </h2>
 
 <p data-lang="en">
@@ -26,95 +218,106 @@ Imagine you have a map of "who asks whom for advice" in an office. You want to u
 想象你有一张办公室里"谁找谁请教"的关系图。你想理解这些连线<strong>为什么</strong>存在。是因为人们找和自己相似的人？因为请教是互相的？还是因为某些人就是受欢迎？
 </p>
 
+<div class="callout">
+  <div class="callout-label" data-lang="en">One-sentence definition</div>
+  <div class="callout-label" data-lang="zh">一句话定义</div>
+  <p data-lang="en"><strong>ERGM = logistic regression for networks.</strong> Regular logistic regression predicts whether an event happens (yes/no) based on some factors. ERGM predicts whether a <em>tie between two people</em> exists (yes/no) based on network patterns and personal traits.</p>
+  <p data-lang="zh"><strong>ERGM = 给网络做的逻辑回归。</strong>普通逻辑回归根据因素预测事件是否发生（是/否）。ERGM 根据网络模式和个人特征预测两人之间的<em>关系</em>是否存在（是/否）。</p>
+</div>
+
 <p data-lang="en">
-<strong>ERGM (Exponential Random Graph Model)</strong> is a statistical tool that answers this. Think of it as <strong>logistic regression, but for networks</strong>. In regular logistic regression, you predict whether an event happens (yes/no) based on some factors. In ERGM, you predict whether a tie between two people exists (yes/no) based on network patterns and personal traits.
+<strong>Key difference from regular regression:</strong> in regular regression, each observation is independent. In a network, ties are <em>not</em> independent — whether Alice asks Bob depends on whether Alice also asks Carol, whether Bob asks Alice back, etc. ERGM is built to handle this.
 </p>
 
 <p data-lang="zh">
-<strong>ERGM（指数随机图模型）</strong>就是回答这个问题的统计工具。你可以把它理解为<strong>给网络做的逻辑回归</strong>。普通逻辑回归根据一些因素预测某件事是否发生（是/否）。ERGM 根据网络模式和个人特征预测两个人之间的关系是否存在（是/否）。
+<strong>和普通回归的关键区别：</strong>普通回归里每个观测是独立的。但在网络里，关系<em>不是</em>独立的——Alice 是否请教 Bob，取决于她是否也请教了 Carol、Bob 是否反过来请教她等等。ERGM 就是专门处理这种相互依赖的。
 </p>
 
-<p data-lang="en">
-<strong>Key difference from regular regression:</strong> In regular regression, each observation is independent. In a network, ties are <em>not</em> independent — whether A asks B for advice depends on whether A also asks C, whether B asks A back, etc. ERGM handles this interdependence.
-</p>
-
-<p data-lang="zh">
-<strong>和普通回归的关键区别：</strong>普通回归里每个观测是独立的。但在网络里，关系<em>不是</em>独立的——A 是否请教 B，取决于 A 是否也请教了 C、B 是否反过来也请教 A，等等。ERGM 就是专门处理这种相互依赖的。
-</p>
-
-<h3 id="analogy">
-  <span data-lang="en">An Analogy</span>
-  <span data-lang="zh">一个类比</span>
-</h3>
-
-<p data-lang="en">
-Think of a network like a jigsaw puzzle. Regular regression looks at each piece individually. ERGM looks at how pieces fit <em>together</em> — it asks: "Given the overall pattern of the puzzle, what makes this particular piece more likely to connect to that one?"
-</p>
-
-<p data-lang="zh">
-把网络想象成一幅拼图。普通回归一块一块地看每个拼图碎片。ERGM 看的是碎片怎么<em>组合在一起</em>——它问的是："考虑到拼图的整体模式，是什么让这块碎片更可能和那块连在一起？"
-</p>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+<div class="callout tip">
+  <div class="callout-label" data-lang="en">Analogy</div>
+  <div class="callout-label" data-lang="zh">类比</div>
+  <p data-lang="en">Think of a network like a jigsaw puzzle. Regular regression looks at each piece individually. ERGM looks at how pieces fit <em>together</em> — it asks: "given the overall pattern, what makes this piece more likely to connect to that one?"</p>
+  <p data-lang="zh">把网络想象成一幅拼图。普通回归一块一块地看。ERGM 看的是碎片怎么<em>组合在一起</em>——它问："考虑到整体模式，是什么让这块更可能和那块连在一起？"</p>
+</div>
 
 <!-- ═══════════════════════════════════════════════════
-     LEVEL 2 — CONCEPTS (light math, building blocks)
+     LEVEL 2 — WHY NOT REGRESSION?
      ═══════════════════════════════════════════════════ -->
 
-<h2 id="why-not-simple-regression">
+<div class="depth-divider"><span data-lang="en">Going Deeper</span><span data-lang="zh">深入一步</span></div>
+
+<div class="level-badge beginner" data-lang="en">Beginner</div>
+<div class="level-badge beginner" data-lang="zh">入门</div>
+
+<h2 id="why-not-regression">
   <span data-lang="en">Why Can't We Just Use Regular Regression?</span>
   <span data-lang="zh">为什么不能直接用普通回归？</span>
 </h2>
 
 <p data-lang="en">
-The simplest network model is the <strong>random graph</strong> (Bernoulli model): every pair of people has the same probability <em>p</em> of being connected, and each connection is independent. This is basically logistic regression with no predictors — just a coin flip for each pair.
+The simplest network model is the <strong>random graph</strong>: every pair has the same probability <em>p</em> of being connected, independently. That is basically logistic regression with no predictors — just a coin flip for each pair.
 </p>
 
 <p data-lang="zh">
-最简单的网络模型是<strong>随机图</strong>（伯努利模型）：每对人之间有相同的概率 <em>p</em> 产生连线，每条连线互相独立。这基本上就是没有预测变量的逻辑回归——对每对人掷一次硬币。
+最简单的网络模型是<strong>随机图</strong>：每对人之间有相同的概率 <em>p</em> 产生连线，互相独立。这基本上就是没有预测变量的逻辑回归——对每对人掷硬币。
 </p>
 
 <p data-lang="en">
-But real networks have patterns that random graphs cannot produce:
+But real networks have patterns that random graphs can't produce:
 </p>
 
 <p data-lang="zh">
 但真实网络有随机图产生不了的规律：
 </p>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Reciprocity:</strong> If I ask you for advice, you're likely to ask me too. In a random graph, this would just be coincidence.</li>
-  <li data-lang="zh"><strong>互惠性：</strong>我找你请教，你很可能也来找我。在随机图里这只是巧合。</li>
-</ul>
+<div class="concept-row">
+  <div class="concept-card">
+    <div class="card-icon">R</div>
+    <h4 data-lang="en">Reciprocity</h4>
+    <h4 data-lang="zh">互惠性</h4>
+    <p data-lang="en">I ask you for advice, you're likely to ask me too. In a random graph, this would just be coincidence.</p>
+    <p data-lang="zh">我找你请教，你很可能也来找我。在随机图里这只是巧合。</p>
+  </div>
+  <div class="concept-card">
+    <div class="card-icon">C</div>
+    <h4 data-lang="en">Clustering</h4>
+    <h4 data-lang="zh">聚类</h4>
+    <p data-lang="en">If A knows B and B knows C, then A and C likely know each other. "Friends of friends." Random graphs don't produce this.</p>
+    <p data-lang="zh">如果 A 认识 B，B 认识 C，那 A 和 C 也很可能认识。"朋友的朋友。" 随机图不会产生这种结构。</p>
+  </div>
+</div>
+<div class="concept-row">
+  <div class="concept-card">
+    <div class="card-icon">P</div>
+    <h4 data-lang="en">Popularity</h4>
+    <h4 data-lang="zh">人气差异</h4>
+    <p data-lang="en">Some people get asked by many others (hubs). Random graphs give everyone roughly equal connections.</p>
+    <p data-lang="zh">有些人被很多人请教（中心节点）。随机图让每个人的连接数差不多。</p>
+  </div>
+  <div class="concept-card">
+    <div class="card-icon">H</div>
+    <h4 data-lang="en">Homophily</h4>
+    <h4 data-lang="zh">同质性</h4>
+    <p data-lang="en">People connect with those similar to them (same age, same department). Random graphs ignore personal traits entirely.</p>
+    <p data-lang="zh">人们和相似的人交往（同年龄、同部门）。随机图完全忽略个人特征。</p>
+  </div>
+</div>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Clustering:</strong> If A knows B and B knows C, then A and C are likely to know each other ("friends of friends"). Random graphs don't produce this.</li>
-  <li data-lang="zh"><strong>聚类：</strong>如果 A 认识 B，B 认识 C，那 A 和 C 也很可能认识（"朋友的朋友"）。随机图不会产生这种结构。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Popularity:</strong> Some people get asked by many others (hubs). Random graphs give everyone roughly the same number of connections.</li>
-  <li data-lang="zh"><strong>人气差异：</strong>有些人被很多人请教（中心节点）。随机图让每个人的连接数差不多。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Homophily:</strong> People connect with those similar to them (same age, same skill level). Random graphs ignore personal traits entirely.</li>
-  <li data-lang="zh"><strong>同质性：</strong>人们和相似的人交往（同年龄、同技能水平）。随机图完全忽略个人特征。</li>
-</ul>
-
-<p data-lang="en">
-<strong>ERGM solves this</strong> by letting the probability of each tie depend on these network patterns — not just individual traits, but the <em>structure</em> of the network itself.
-</p>
-
-<p data-lang="zh">
-<strong>ERGM 的解决方法</strong>是让每条关系的概率取决于这些网络模式——不仅是个人特征，还有网络<em>本身的结构</em>。
-</p>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+<div class="callout">
+  <div class="callout-label" data-lang="en">Key point</div>
+  <div class="callout-label" data-lang="zh">要点</div>
+  <p data-lang="en">ERGM lets the probability of each tie depend on these network patterns — not just individual traits, but the <em>structure</em> of the network itself.</p>
+  <p data-lang="zh">ERGM 让每条关系的概率取决于这些网络模式——不仅是个人特征，还有网络<em>本身的结构</em>。</p>
+</div>
 
 <!-- ═══════════════════════════════════════════════════
-     LEVEL 3 — THE CORE FORMULA (accessible math)
+     LEVEL 3 — THE CORE FORMULA
      ═══════════════════════════════════════════════════ -->
+
+<div class="depth-divider"><span data-lang="en">The Math Begins</span><span data-lang="zh">开始数学</span></div>
+
+<div class="level-badge intermediate" data-lang="en">Intermediate</div>
+<div class="level-badge intermediate" data-lang="zh">进阶</div>
 
 <h2 id="ergm-formula">
   <span data-lang="en">The Core Formula</span>
@@ -122,14 +325,14 @@ But real networks have patterns that random graphs cannot produce:
 </h2>
 
 <p data-lang="en">
-ERGM says: the probability of observing a particular network depends on how many "interesting patterns" it contains. Written as a formula:
+ERGM says: the probability of observing a particular network depends on how many "interesting patterns" it contains:
 </p>
 
 <p data-lang="zh">
-ERGM 说：观察到某个特定网络的概率，取决于它包含多少"有趣的模式"。写成公式：
+ERGM 说：观察到某个特定网络的概率，取决于它包含多少"有趣的模式"：
 </p>
 
-<div class="math-note">
+<div class="math-box">
 P(Y = y) = exp(θ₁ × g₁(y) + θ₂ × g₂(y) + ... ) / κ
 </div>
 
@@ -138,85 +341,79 @@ Don't panic — let's unpack each piece:
 </p>
 
 <p data-lang="zh">
-别慌——我们一个一个拆解：
+别慌——逐个拆解：
 </p>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>g₁(y), g₂(y), ...</strong> = <strong>network statistics</strong>. These are things you count in the network: how many ties? how many reciprocal pairs? how many triangles? how many ties between people of the same job level? Each g is just a count.</li>
-  <li data-lang="zh"><strong>g₁(y), g₂(y), ...</strong> = <strong>网络统计量</strong>。就是你在网络里能数的东西：多少条关系？多少对互惠？多少个三角形？多少条关系发生在同职级的人之间？每个 g 就是一个计数。</li>
-</ul>
+<div class="unpack-list">
+  <div class="unpack-item">
+    <div class="symbol" data-lang="en">g₁(y), g₂(y)</div>
+    <div class="symbol" data-lang="zh">g₁(y), g₂(y)</div>
+    <div class="explain" data-lang="en"><strong>Network statistics</strong> — things you count in the network. How many ties? How many reciprocal pairs? How many triangles? How many ties between same-department people? Each g is just a count.</div>
+    <div class="explain" data-lang="zh"><strong>网络统计量</strong>——你在网络里能数的东西。多少条关系？多少对互惠？多少个三角形？多少条同部门的关系？每个 g 就是一个计数。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">θ₁, θ₂, ...</div>
+    <div class="explain" data-lang="en"><strong>Parameters (weights)</strong> — what ERGM estimates. Positive θ = "more of this pattern makes the network more likely." Negative θ = "less likely." Just like regression coefficients.</div>
+    <div class="explain" data-lang="zh"><strong>参数（权重）</strong>——ERGM 要估计的东西。正 θ = "这个模式越多，网络越可能出现"。负 θ = "越不可能"。和回归系数一样。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">exp(...)</div>
+    <div class="explain" data-lang="en">Just makes all values positive — probabilities must be positive.</div>
+    <div class="explain" data-lang="zh">只是让所有值变成正数——概率必须为正。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">κ</div>
+    <div class="explain" data-lang="en"><strong>Normalizing constant</strong> — makes all probabilities sum to 1. You never compute it directly (more on this later).</div>
+    <div class="explain" data-lang="zh"><strong>归一化常数</strong>——让所有概率加起来等于 1。你永远不直接算它（后面会说为什么）。</div>
+  </div>
+</div>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>θ₁, θ₂, ...</strong> = <strong>parameters (weights)</strong>. These are what ERGM estimates. A positive θ means "more of this pattern makes the network more likely." A negative θ means "more of this pattern makes it less likely." Just like coefficients in logistic regression.</li>
-  <li data-lang="zh"><strong>θ₁, θ₂, ...</strong> = <strong>参数（权重）</strong>。这是 ERGM 要估计的。正的 θ 意味着"这个模式越多，网络越可能"。负的 θ 意味着"越多越不可能"。和逻辑回归的系数一样。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>exp(...)</strong> = just makes all values positive (probabilities must be positive).</li>
-  <li data-lang="zh"><strong>exp(...)</strong> = 只是让所有值变成正数（概率必须为正）。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>κ</strong> = a <strong>normalizing constant</strong> that makes all probabilities sum to 1. You never compute it directly (more on this later).</li>
-  <li data-lang="zh"><strong>κ</strong> = 一个<strong>归一化常数</strong>，让所有概率加起来等于 1。你永远不用直接算它（后面会解释为什么）。</li>
-</ul>
-
-<h3 id="reading-like-regression">
+<h3 id="tie-level">
   <span data-lang="en">Reading ERGM Like Logistic Regression</span>
   <span data-lang="zh">像读逻辑回归一样读 ERGM</span>
 </h3>
 
 <p data-lang="en">
-The really useful version of the formula is the <strong>tie-level</strong> version. For any specific pair (i, j), the probability that they are connected is:
+The really useful version is the <strong>tie-level formula</strong>. For any specific pair (i, j):
 </p>
 
 <p data-lang="zh">
-真正实用的版本是<strong>关系层面</strong>的公式。对于任意一对 (i, j)，他们之间有关系的概率是：
+真正实用的是<strong>关系层面</strong>的公式。对于任意一对 (i, j)：
 </p>
 
-<div class="math-note">
+<div class="math-box">
 log(odds of tie i→j) = θ₁ × Δg₁ + θ₂ × Δg₂ + ...
 </div>
 
 <p data-lang="en">
-where <strong>Δg</strong> ("change statistic") = how much each network statistic changes if we add this one tie. This is exactly logistic regression form! The only difference: in regular logistic regression, predictors are fixed numbers (age, income). In ERGM, predictors <em>change</em> depending on the rest of the network.
+<strong>Δg</strong> ("change statistic") = how much each network statistic changes if we add this one tie. This is exactly logistic regression form! The only difference: in regular logistic regression, predictors are fixed (age, income). In ERGM, predictors <em>change</em> depending on the rest of the network.
 </p>
 
 <p data-lang="zh">
-其中 <strong>Δg</strong>（"变化统计量"）= 如果我们加上这一条关系，每个网络统计量变化多少。这和逻辑回归的形式完全一样！唯一区别：普通逻辑回归的预测变量是固定数字（年龄、收入）。ERGM 的预测变量会随网络其他部分<em>变化</em>。
+<strong>Δg</strong>（"变化统计量"）= 加上这条关系后，每个统计量变化多少。这和逻辑回归形式完全一样！唯一区别：普通逻辑回归的预测变量是固定的（年龄、收入），ERGM 的预测变量会随网络其他部分<em>变化</em>。
 </p>
 
-<p data-lang="en">
-<strong>Example:</strong> Suppose your model has reciprocity and homophily on tenure. For the pair (Alice → Bob):
-</p>
-
-<p data-lang="zh">
-<strong>举例：</strong>假设模型包含互惠性和工龄同质性。对于 (Alice → Bob) 这对：
-</p>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en">Δg<sub>reciprocity</sub> = 1 if Bob already asks Alice (adding Alice→Bob creates a mutual pair), 0 otherwise</li>
-  <li data-lang="zh">Δg<sub>互惠</sub> = 1（如果 Bob 已经找 Alice 请教，加上 Alice→Bob 就形成互惠对），否则为 0</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en">Δg<sub>tenure homophily</sub> = 1 if Alice and Bob have similar tenure, 0 otherwise</li>
-  <li data-lang="zh">Δg<sub>工龄同质性</sub> = 1（如果 Alice 和 Bob 工龄相近），否则为 0</li>
-</ul>
-
-<p data-lang="en">
-If θ<sub>reciprocity</sub> = 2.0 and θ<sub>tenure</sub> = 0.5, and Bob already asks Alice and they have similar tenure, then: log(odds) = 2.0 × 1 + 0.5 × 1 = 2.5, meaning Alice is quite likely to ask Bob.
-</p>
-
-<p data-lang="zh">
-如果 θ<sub>互惠</sub> = 2.0，θ<sub>工龄</sub> = 0.5，而且 Bob 已经找 Alice 请教、两人工龄相近，那么：log(odds) = 2.0 × 1 + 0.5 × 1 = 2.5，说明 Alice 很可能会找 Bob 请教。
-</p>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+<div class="callout tip">
+  <div class="callout-label" data-lang="en">Example: Alice → Bob</div>
+  <div class="callout-label" data-lang="zh">举例：Alice → Bob</div>
+  <p data-lang="en">Suppose the model has reciprocity and tenure homophily. For (Alice → Bob):</p>
+  <p data-lang="zh">假设模型包含互惠性和工龄同质性。对于 (Alice → Bob)：</p>
+  <p data-lang="en">Δg<sub>reciprocity</sub> = 1 if Bob already asks Alice (adding this tie creates a mutual pair), 0 otherwise.<br>
+  Δg<sub>tenure</sub> = 1 if Alice and Bob have similar tenure, 0 otherwise.</p>
+  <p data-lang="zh">Δg<sub>互惠</sub> = 1（如果 Bob 已经找 Alice 请教），否则 0。<br>
+  Δg<sub>工龄</sub> = 1（如果两人工龄相近），否则 0。</p>
+  <p data-lang="en">If θ<sub>reciprocity</sub> = 2.0, θ<sub>tenure</sub> = 0.5, and Bob already asks Alice with similar tenure: log(odds) = 2.0 × 1 + 0.5 × 1 = 2.5 → Alice is quite likely to ask Bob.</p>
+  <p data-lang="zh">如果 θ<sub>互惠</sub> = 2.0，θ<sub>工龄</sub> = 0.5，Bob 已经找 Alice、两人工龄相近：log(odds) = 2.0 + 0.5 = 2.5 → Alice 很可能找 Bob。</p>
+</div>
 
 <!-- ═══════════════════════════════════════════════════
-     LEVEL 4 — HOW IT'S ESTIMATED (MCMC intuition)
+     LEVEL 4 — HOW IT'S ESTIMATED
      ═══════════════════════════════════════════════════ -->
+
+<div class="depth-divider"><span data-lang="en">Under the Hood</span><span data-lang="zh">底层机制</span></div>
+
+<div class="level-badge intermediate" data-lang="en">Intermediate</div>
+<div class="level-badge intermediate" data-lang="zh">进阶</div>
 
 <h2 id="estimation">
   <span data-lang="en">How ERGM Finds the Parameters</span>
@@ -224,111 +421,73 @@ If θ<sub>reciprocity</sub> = 2.0 and θ<sub>tenure</sub> = 0.5, and Bob already
 </h2>
 
 <p data-lang="en">
-Here's the computational challenge: that normalizing constant κ requires summing over <strong>every possible network</strong>. For 10 people, there are 2<sup>45</sup> ≈ 35 trillion possible networks. For 100 people, the number is unimaginable. You simply cannot enumerate them all.
+The computational challenge: that normalizing constant κ requires summing over <strong>every possible network</strong>. For just 10 people, there are 2<sup>45</sup> ≈ 35 trillion possible networks. You can't enumerate them all.
 </p>
 
 <p data-lang="zh">
-计算上的挑战是：归一化常数 κ 需要对<strong>所有可能的网络</strong>求和。10 个人就有 2<sup>45</sup> ≈ 35 万亿种可能的网络。100 个人的话，数字大到无法想象。你根本没法一个一个列举。
+计算上的挑战：归一化常数 κ 需要对<strong>所有可能的网络</strong>求和。光是 10 个人就有 2<sup>45</sup> ≈ 35 万亿种可能网络。根本没法一个一个列举。
 </p>
 
 <p data-lang="en">
-<strong>Solution: MCMC (Markov Chain Monte Carlo).</strong> Instead of checking every possible network, the computer does this:
+<strong>Solution: MCMC (Markov Chain Monte Carlo).</strong> Instead of checking every possible network, the computer:
 </p>
 
 <p data-lang="zh">
-<strong>解决办法：MCMC（马尔可夫链蒙特卡罗）。</strong>不逐一检查每个网络，计算机这样做：
+<strong>解决办法：MCMC（马尔可夫链蒙特卡罗）。</strong>不逐一检查，计算机这样做：
 </p>
 
-<ol style="margin-left: 2rem;">
+<ol class="step-flow">
   <li data-lang="en">Start with the observed network and an initial guess for θ.</li>
   <li data-lang="zh">从观察到的网络和初始猜测的 θ 开始。</li>
-</ol>
-
-<ol style="margin-left: 2rem;">
   <li data-lang="en">Randomly add or remove one tie at a time, creating simulated networks.</li>
   <li data-lang="zh">每次随机加上或去掉一条关系，生成模拟网络。</li>
+  <li data-lang="en">Compare: do the simulated networks' statistics match the real one? Too few triangles → increase θ<sub>triangle</sub>. Too many → decrease it.</li>
+  <li data-lang="zh">比较：模拟网络的统计量和真实网络一致吗？三角形太少 → 增大 θ<sub>三角形</sub>。太多 → 减小。</li>
+  <li data-lang="en">Repeat until simulated networks look like the real one. Then θ is your answer.</li>
+  <li data-lang="zh">重复，直到模拟网络看起来像真实网络。这时候的 θ 就是答案。</li>
 </ol>
 
-<ol style="margin-left: 2rem;">
-  <li data-lang="en">Compare: do the simulated networks' statistics match the real network? If the simulations have too few triangles compared to reality, increase θ<sub>triangle</sub>. If too many, decrease it.</li>
-  <li data-lang="zh">比较：模拟网络的统计量和真实网络一致吗？如果模拟的三角形太少，就增大 θ<sub>三角形</sub>。太多就减小。</li>
-</ol>
-
-<ol style="margin-left: 2rem;">
-  <li data-lang="en">Repeat until the simulated networks look like the real one. Then θ is your answer.</li>
-  <li data-lang="zh">重复，直到模拟网络看起来像真实网络。这时候的 θ 就是你的答案。</li>
-</ol>
-
-<p data-lang="en">
-<strong>In plain language:</strong> ERGM finds parameters by repeatedly asking "if these were the true rules of the network, would we see something like the real network?" It tweaks the rules until the answer is yes.
-</p>
-
-<p data-lang="zh">
-<strong>通俗说：</strong>ERGM 反复问"如果这些是网络的真实规则，我们能看到类似真实网络的东西吗？"然后不断调整规则直到答案是"能"。
-</p>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+<div class="callout">
+  <div class="callout-label" data-lang="en">In plain language</div>
+  <div class="callout-label" data-lang="zh">通俗说</div>
+  <p data-lang="en">ERGM finds parameters by repeatedly asking "if these were the true rules, would we see something like the real network?" It tweaks the rules until the answer is yes.</p>
+  <p data-lang="zh">ERGM 反复问"如果这些是真实规则，我们能看到类似真实网络的东西吗？"然后不断调整直到答案是"能"。</p>
+</div>
 
 <!-- ═══════════════════════════════════════════════════
      LEVEL 5 — COMMON PITFALLS
      ═══════════════════════════════════════════════════ -->
+
+<div class="depth-divider"><span data-lang="en">Practical Knowledge</span><span data-lang="zh">实操知识</span></div>
+
+<div class="level-badge intermediate" data-lang="en">Intermediate</div>
+<div class="level-badge intermediate" data-lang="zh">进阶</div>
 
 <h2 id="pitfalls">
   <span data-lang="en">Common Pitfalls</span>
   <span data-lang="zh">常见陷阱</span>
 </h2>
 
-<h3 id="degeneracy">
-  <span data-lang="en">The Degeneracy Problem</span>
-  <span data-lang="zh">退化问题</span>
-</h3>
-
-<p data-lang="en">
-Some model specifications break ERGM. The classic example: if you use a raw "triangle count" term, the model can become unstable — it only considers networks that are almost empty or almost completely connected, ignoring everything in between. This is called <strong>degeneracy</strong>.
-</p>
-
-<p data-lang="zh">
-有些模型设定会让 ERGM 崩溃。经典例子：如果你用原始的"三角形计数"项，模型会变得不稳定——它只考虑几乎没有连线或几乎全部连满的网络，忽略中间状态。这叫<strong>退化</strong>。
-</p>
-
-<p data-lang="en">
-<strong>Why?</strong> Each new triangle makes more triangles easier to form (positive feedback loop). The model either collapses to empty or explodes to full.
-</p>
-
-<p data-lang="zh">
-<strong>为什么？</strong>每多一个三角形都让形成更多三角形变得更容易（正反馈循环）。模型要么坍缩到空网络，要么爆炸到全连接。
-</p>
-
-<p data-lang="en">
-<strong>Solution:</strong> Use <strong>geometrically weighted terms</strong> (GWESP, GWDegree). These add diminishing returns — the first shared friend matters a lot, the second less, the third even less. This prevents the runaway feedback.
-</p>
-
-<p data-lang="zh">
-<strong>解决办法：</strong>使用<strong>几何加权项</strong>（GWESP、GWDegree）。它们引入递减效应——第一个共同朋友很重要，第二个没那么重要，第三个更不重要。这能防止失控的正反馈。
-</p>
-
-<h3 id="convergence">
-  <span data-lang="en">Convergence Issues</span>
-  <span data-lang="zh">收敛问题</span>
-</h3>
-
-<p data-lang="en">
-Since ERGM uses MCMC (a simulation-based method), it can fail to converge — meaning the computer hasn't found stable parameter values. Signs of trouble: parameter estimates keep changing, or simulated networks look nothing like the real one.
-</p>
-
-<p data-lang="zh">
-因为 ERGM 用的是 MCMC（基于模拟的方法），它可能不收敛——意思是计算机没找到稳定的参数值。出问题的迹象：参数估计一直在变，或者模拟出来的网络和真实网络完全不像。
-</p>
-
-<p data-lang="en">
-<strong>Fixes:</strong> Increase the number of simulations (burn-in, sample size). Use geometrically weighted terms. Simplify the model — start small, then add terms one at a time.
-</p>
-
-<p data-lang="zh">
-<strong>修复方法：</strong>增加模拟次数（burn-in、样本量）。使用几何加权项。简化模型——从小模型开始，逐个添加项。
-</p>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+<div class="concept-row">
+  <div class="concept-card">
+    <div class="card-icon" style="background:var(--red)">!</div>
+    <h4 data-lang="en">Degeneracy</h4>
+    <h4 data-lang="zh">退化问题</h4>
+    <p data-lang="en">If you use raw "triangle count," the model can become unstable — it only considers nearly-empty or nearly-full networks. <strong>Why?</strong> Each new triangle makes more triangles easier (positive feedback loop).</p>
+    <p data-lang="zh">如果你用原始的"三角形计数"项，模型会变得不稳定——只考虑几乎空或几乎满的网络。<strong>为什么？</strong>每多一个三角形都让更多三角形更容易形成（正反馈）。</p>
+    <p data-lang="en" style="margin-top:8px"><strong>Fix:</strong> Use <strong>geometrically weighted terms</strong> (GWESP, GWDegree). They add diminishing returns — the 1st shared friend matters a lot, the 2nd less, the 3rd even less.</p>
+    <p data-lang="zh" style="margin-top:8px"><strong>解决：</strong>使用<strong>几何加权项</strong>（GWESP、GWDegree）。引入递减效应——第一个共同朋友很重要，第二个没那么重要。</p>
+  </div>
+  <div class="concept-card">
+    <div class="card-icon" style="background:var(--red)">!</div>
+    <h4 data-lang="en">Convergence Issues</h4>
+    <h4 data-lang="zh">收敛问题</h4>
+    <p data-lang="en">Since ERGM uses simulation (MCMC), it can fail to converge — the computer hasn't found stable parameter values. <strong>Signs:</strong> estimates keep changing, or simulated networks look nothing like the real one.</p>
+    <p data-lang="zh">因为 ERGM 用模拟方法（MCMC），可能不收敛——计算机没找到稳定的参数值。<strong>迹象：</strong>估计值一直在变，或模拟网络和真实网络完全不像。</p>
+    <p data-lang="en" style="margin-top:8px"><strong>Fixes:</strong> Increase simulations (burn-in, sample size). Use geometrically weighted terms. Start small, add terms one at a time.</p>
+    <p data-lang="zh" style="margin-top:8px"><strong>修复：</strong>增加模拟次数。使用几何加权项。从小模型开始，逐个添加项。</p>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════════════════
      LEVEL 6 — READING OUTPUT
@@ -347,93 +506,108 @@ ERGM output looks like logistic regression output. For each term you get an esti
 ERGM 输出看起来像逻辑回归输出。每个项都有估计值、标准误和 p 值：
 </p>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Positive estimate:</strong> This pattern increases the probability of a tie. Example: θ<sub>reciprocity</sub> = +2.1 → ties tend to be reciprocal.</li>
-  <li data-lang="zh"><strong>正的估计值：</strong>这个模式增加关系形成的概率。例：θ<sub>互惠</sub> = +2.1 → 关系倾向于互惠。</li>
-</ul>
+<div class="unpack-list">
+  <div class="unpack-item">
+    <div class="symbol" data-lang="en">θ = +2.1</div>
+    <div class="symbol" data-lang="zh">θ = +2.1</div>
+    <div class="explain" data-lang="en"><strong>Positive estimate</strong> → this pattern <em>increases</em> tie probability. E.g. θ<sub>reciprocity</sub> = +2.1 means ties tend to be reciprocal.</div>
+    <div class="explain" data-lang="zh"><strong>正的估计值</strong> → 这个模式<em>增加</em>关系形成概率。例：θ<sub>互惠</sub> = +2.1 说明关系倾向于互惠。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol" data-lang="en">θ = −3.5</div>
+    <div class="symbol" data-lang="zh">θ = −3.5</div>
+    <div class="explain" data-lang="en"><strong>Negative estimate</strong> → this pattern <em>decreases</em> probability. E.g. θ<sub>edges</sub> = −3.5 means the network is sparse (most pairs are NOT connected).</div>
+    <div class="explain" data-lang="zh"><strong>负的估计值</strong> → 这个模式<em>降低</em>概率。例：θ<sub>边</sub> = −3.5 说明网络是稀疏的。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">p < 0.05</div>
+    <div class="explain" data-lang="en">The effect is statistically significant.</div>
+    <div class="explain" data-lang="zh">效应在统计上显著。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol" data-lang="en">Larger |θ|</div>
+    <div class="symbol" data-lang="zh">|θ| 越大</div>
+    <div class="explain" data-lang="en">Stronger effect.</div>
+    <div class="explain" data-lang="zh">效应越强。</div>
+  </div>
+</div>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Negative estimate:</strong> This pattern decreases the probability. Example: θ<sub>edges</sub> = −3.5 → the network is sparse (most pairs are NOT connected).</li>
-  <li data-lang="zh"><strong>负的估计值：</strong>这个模式降低概率。例：θ<sub>边</sub> = −3.5 → 网络是稀疏的（大多数人之间没有连线）。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>p &lt; 0.05:</strong> The effect is statistically significant.</li>
-  <li data-lang="zh"><strong>p &lt; 0.05：</strong>效应在统计上显著。</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Larger |estimate|:</strong> Stronger effect.</li>
-  <li data-lang="zh"><strong>|估计值| 越大：</strong>效应越强。</li>
-</ul>
-
-<p data-lang="en">
-<strong>Goodness-of-fit check:</strong> After fitting, simulate 100+ networks from the model and compare their statistics to the real network. If the real network's statistics fall within the range of simulated ones, the model fits well.
-</p>
-
-<p data-lang="zh">
-<strong>拟合优度检查：</strong>拟合之后，从模型模拟 100+ 个网络，把它们的统计量和真实网络比较。如果真实网络的统计量在模拟范围之内，说明模型拟合得不错。
-</p>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+<div class="callout tip">
+  <div class="callout-label" data-lang="en">Goodness-of-fit</div>
+  <div class="callout-label" data-lang="zh">拟合优度</div>
+  <p data-lang="en">After fitting, simulate 100+ networks from the model and compare their statistics to the real network. If the real statistics fall within the simulated range, the model fits well.</p>
+  <p data-lang="zh">拟合之后，从模型模拟 100+ 个网络，把统计量和真实网络比较。如果真实统计量在模拟范围之内，说明模型拟合不错。</p>
+</div>
 
 <!-- ═══════════════════════════════════════════════════
      LEVEL 7 — R CODE
      ═══════════════════════════════════════════════════ -->
+
+<div class="depth-divider"><span data-lang="en">Hands-On</span><span data-lang="zh">上手实操</span></div>
+
+<div class="level-badge intermediate" data-lang="en">Intermediate</div>
+<div class="level-badge intermediate" data-lang="zh">进阶</div>
 
 <h2 id="r-code">
   <span data-lang="en">R Code Example</span>
   <span data-lang="zh">R 代码示例</span>
 </h2>
 
-<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
-# Load package
+<pre class="code-block"><span class="comment"># Load package</span>
 library(ergm)
 
-# Use built-in dataset
+<span class="comment"># Use built-in dataset</span>
 data(florentine)
 
-# Fit a simple model:
+<span class="comment"># Fit a simple model:
 #   edges       → controls overall density (like an intercept)
 #   mutual      → do ties tend to be reciprocal?
-#   gwesp(0.5)  → do friends-of-friends connect? (geometrically weighted)
+#   gwesp(0.5)  → do friends-of-friends connect? (geometrically weighted)</span>
 model &lt;- ergm(flo_net ~ edges + mutual + gwesp(0.5, fixed = TRUE),
               control = control.ergm(seed = 123))
 
-# View results — read just like logistic regression
+<span class="comment"># View results — read just like logistic regression</span>
 summary(model)
 
-# Check model fit: simulate networks and compare to real one
+<span class="comment"># Check model fit: simulate networks and compare to real one</span>
 gof_result &lt;- gof(model)
 plot(gof_result)
-# Good fit = observed statistics (red line) within simulated range (boxplots)
-</pre>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+<span class="comment"># Good fit = observed (red line) within simulated range (boxplots)</span></pre>
 
 <!-- ═══════════════════════════════════════════════════
-     LEVEL 8 — DEEP DIVE (full math for advanced readers)
+     LEVEL 8 — DEEP DIVE (collapsible)
      ═══════════════════════════════════════════════════ -->
+
+<div class="depth-divider"><span data-lang="en">Advanced Theory</span><span data-lang="zh">高级理论</span></div>
+
+<div class="level-badge advanced" data-lang="en">Advanced</div>
+<div class="level-badge advanced" data-lang="zh">高级</div>
 
 <h2 id="deep-dive">
   <span data-lang="en">Deep Dive: Full Mathematical Details</span>
   <span data-lang="zh">深入：完整数学细节</span>
 </h2>
 
-<p data-lang="en">
-<em>This section is for readers comfortable with probability theory and statistical modeling. If you understood the sections above, you already have enough to read ERGM papers. The math below explains the "why" behind each step.</em>
-</p>
+<div class="callout warn">
+  <div class="callout-label" data-lang="en">Prerequisite</div>
+  <div class="callout-label" data-lang="zh">前置知识</div>
+  <p data-lang="en">This section is for readers comfortable with probability theory and statistical modeling. If you understood the sections above, you already have enough to read ERGM papers.</p>
+  <p data-lang="zh">本节面向熟悉概率论和统计建模的读者。如果你看懂了上面的内容，已经足够读 ERGM 论文了。</p>
+</div>
 
-<p data-lang="zh">
-<em>本节面向熟悉概率论和统计建模的读者。如果你看懂了上面的内容，已经足够读 ERGM 论文了。下面的数学解释每一步背后的"为什么"。</em>
-</p>
+<button class="collapsible-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+  <span class="arrow">▶</span>
+  <span data-lang="en">Show full mathematical derivation</span>
+  <span data-lang="zh">展开完整数学推导</span>
+</button>
+<div class="collapsible-content">
 
 <h3 id="formal-model">
   <span data-lang="en">Formal Probability Model</span>
   <span data-lang="zh">形式概率模型</span>
 </h3>
 
-<div class="math-note">
+<div class="math-box">
 P(Y = y | θ) = exp(θ<sup>T</sup> g(y)) / κ(θ)
 </div>
 
@@ -458,16 +632,16 @@ Conditioning on all other ties (Y<sub>−ij</sub>), the probability of tie (i, j
 在给定所有其他关系（Y<sub>−ij</sub>）的条件下，关系 (i, j) 存在的概率为：
 </p>
 
-<div class="math-note">
+<div class="math-box">
 logit P(Y<sub>ij</sub> = 1 | Y<sub>−ij</sub>) = θ<sup>T</sup> δg<sub>ij</sub>
 </div>
 
 <p data-lang="en">
-where δg<sub>ij</sub> = g(y<sub>+ij</sub>) − g(y<sub>−ij</sub>) is the change in network statistics when edge (i, j) is toggled. The normalizing constant κ cancels out, making this computationally tractable.
+where δg<sub>ij</sub> = g(y<sub>+ij</sub>) − g(y<sub>−ij</sub>) is the change in network statistics when edge (i, j) is toggled. The normalizing constant κ cancels out.
 </p>
 
 <p data-lang="zh">
-其中 δg<sub>ij</sub> = g(y<sub>+ij</sub>) − g(y<sub>−ij</sub>) 是翻转边 (i, j) 时网络统计量的变化。归一化常数 κ 被约掉了，使计算变得可行。
+其中 δg<sub>ij</sub> = g(y<sub>+ij</sub>) − g(y<sub>−ij</sub>) 是翻转边 (i, j) 时网络统计量的变化。归一化常数 κ 被约掉了。
 </p>
 
 <h3 id="mcmc-mle">
@@ -475,27 +649,15 @@ where δg<sub>ij</sub> = g(y<sub>+ij</sub>) − g(y<sub>−ij</sub>) is the chan
   <span data-lang="zh">MCMC-MLE 算法</span>
 </h3>
 
-<ol style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Initialize</strong> with observed network y<sub>obs</sub> and initial θ<sup>(0)</sup>.</li>
+<ol class="step-flow">
+  <li data-lang="en"><strong>Initialize</strong> with observed y<sub>obs</sub> and initial θ<sup>(0)</sup>.</li>
   <li data-lang="zh"><strong>初始化：</strong>观察网络 y<sub>obs</sub> 和初始 θ<sup>(0)</sup>。</li>
-</ol>
-
-<ol style="margin-left: 2rem;">
   <li data-lang="en"><strong>Simulate</strong> via Metropolis-Hastings: propose y' by toggling one edge; accept with probability α = min(1, exp(θ<sup>T</sup>[g(y') − g(y<sup>(t)</sup>)])).</li>
-  <li data-lang="zh"><strong>模拟：</strong>Metropolis-Hastings 方法——翻转一条边提议 y'，以概率 α = min(1, exp(θ<sup>T</sup>[g(y') − g(y<sup>(t)</sup>)])) 接受。</li>
-</ol>
-
-<ol style="margin-left: 2rem;">
+  <li data-lang="zh"><strong>模拟：</strong>Metropolis-Hastings——翻转一条边提议 y'，以概率 α = min(1, exp(θ<sup>T</sup>[g(y') − g(y<sup>(t)</sup>)])) 接受。</li>
   <li data-lang="en"><strong>After burn-in</strong>, collect S thinned samples. Compute ḡ<sub>sim</sub> = (1/S) Σ g(y<sup>(t)</sup>).</li>
   <li data-lang="zh"><strong>灼烧期后</strong>，收集 S 个稀疏样本。计算 ḡ<sub>sim</sub> = (1/S) Σ g(y<sup>(t)</sup>)。</li>
-</ol>
-
-<ol style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Update:</strong> θ<sup>(t+1)</sup> = θ<sup>(t)</sup> + step × [g(y<sub>obs</sub>) − ḡ<sub>sim</sub>]. This is stochastic gradient ascent on the log-likelihood.</li>
-  <li data-lang="zh"><strong>更新：</strong>θ<sup>(t+1)</sup> = θ<sup>(t)</sup> + step × [g(y<sub>obs</sub>) − ḡ<sub>sim</sub>]。这是对数似然的随机梯度上升。</li>
-</ol>
-
-<ol style="margin-left: 2rem;">
+  <li data-lang="en"><strong>Update:</strong> θ<sup>(t+1)</sup> = θ<sup>(t)</sup> + step × [g(y<sub>obs</sub>) − ḡ<sub>sim</sub>]. Stochastic gradient ascent on log-likelihood.</li>
+  <li data-lang="zh"><strong>更新：</strong>θ<sup>(t+1)</sup> = θ<sup>(t)</sup> + step × [g(y<sub>obs</sub>) − ḡ<sub>sim</sub>]。对数似然的随机梯度上升。</li>
   <li data-lang="en"><strong>Converge</strong> when g(y<sub>obs</sub>) ≈ ḡ<sub>sim</sub>.</li>
   <li data-lang="zh"><strong>收敛：</strong>当 g(y<sub>obs</sub>) ≈ ḡ<sub>sim</sub> 时停止。</li>
 </ol>
@@ -506,11 +668,11 @@ where δg<sub>ij</sub> = g(y<sub>+ij</sub>) − g(y<sub>−ij</sub>) is the chan
 </h3>
 
 <p data-lang="en">
-For a model with edges and triangles: P(Y = y) ∝ exp(θ<sub>E</sub>|E| + θ<sub>T</sub>|T|). When θ<sub>T</sub> &gt; 0, the change statistic for edge (i,j) includes +2L<sub>ij</sub> (twice the number of common neighbors). In dense regions, L<sub>ij</sub> is large → adding edges becomes self-reinforcing → the distribution becomes bimodal (near-empty or near-complete). <strong>Geometrically weighted terms</strong> (GWESP) fix this by applying exponential decay: each additional shared partner contributes λ times less (0 &lt; λ &lt; 1), capping the positive feedback.
+For a model with edges and triangles: P(Y = y) ∝ exp(θ<sub>E</sub>|E| + θ<sub>T</sub>|T|). When θ<sub>T</sub> > 0, the change statistic for edge (i,j) includes +2L<sub>ij</sub> (twice the number of common neighbors). In dense regions, L<sub>ij</sub> is large → adding edges is self-reinforcing → the distribution becomes bimodal. <strong>Geometrically weighted terms</strong> (GWESP) fix this via exponential decay: each additional shared partner contributes λ times less (0 < λ < 1).
 </p>
 
 <p data-lang="zh">
-对于包含边和三角形的模型：P(Y = y) ∝ exp(θ<sub>E</sub>|E| + θ<sub>T</sub>|T|)。当 θ<sub>T</sub> &gt; 0 时，边 (i,j) 的变化统计量包含 +2L<sub>ij</sub>（公共邻居数的两倍）。在密集区域，L<sub>ij</sub> 很大 → 加边自我强化 → 分布变成双峰的（几乎空或几乎满）。<strong>几何加权项</strong>（GWESP）通过指数衰减来修复：每增加一个共享伙伴的贡献乘以 λ（0 &lt; λ &lt; 1），限制了正反馈。
+对于包含边和三角形的模型：P(Y = y) ∝ exp(θ<sub>E</sub>|E| + θ<sub>T</sub>|T|)。当 θ<sub>T</sub> > 0 时，变化统计量包含 +2L<sub>ij</sub>（公共邻居数的两倍）。在密集区域，L<sub>ij</sub> 很大 → 加边自我强化 → 分布变成双峰的。<strong>几何加权项</strong>（GWESP）通过指数衰减修复：每增加一个共享伙伴贡献乘以 λ（0 < λ < 1）。
 </p>
 
 <h3 id="convergence-diagnostics">
@@ -518,27 +680,40 @@ For a model with edges and triangles: P(Y = y) ∝ exp(θ<sub>E</sub>|E| + θ<su
   <span data-lang="zh">收敛诊断清单</span>
 </h3>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Trace plots:</strong> θ<sup>(t)</sup> should look like white noise around a mean. Drift = not converged.</li>
-  <li data-lang="zh"><strong>轨迹图：</strong>θ<sup>(t)</sup> 应像围绕均值的白噪声。漂移 = 未收敛。</li>
-</ul>
+<div class="unpack-list">
+  <div class="unpack-item">
+    <div class="symbol" data-lang="en">Trace plots</div>
+    <div class="symbol" data-lang="zh">轨迹图</div>
+    <div class="explain" data-lang="en">θ<sup>(t)</sup> should look like white noise around a mean. Drift = not converged.</div>
+    <div class="explain" data-lang="zh">θ<sup>(t)</sup> 应像围绕均值的白噪声。漂移 = 未收敛。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol" data-lang="en">GOF plots</div>
+    <div class="symbol" data-lang="zh">GOF 图</div>
+    <div class="explain" data-lang="en">Observed statistics should fall within simulated range.</div>
+    <div class="explain" data-lang="zh">观察统计量应在模拟范围之内。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">ESS ≥ 100</div>
+    <div class="explain" data-lang="en">Effective sample size per parameter. ESS = S / (1 + 2Σρ<sub>k</sub>).</div>
+    <div class="explain" data-lang="zh">每个参数的有效样本量。ESS = S / (1 + 2Σρ<sub>k</sub>)。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">PSRF ≈ 1.0</div>
+    <div class="explain" data-lang="en">Gelman-Rubin statistic. Run multiple chains; > 1.05 = problem.</div>
+    <div class="explain" data-lang="zh">Gelman-Rubin 统计量。运行多条链；> 1.05 = 有问题。</div>
+  </div>
+</div>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>GOF plots:</strong> Observed statistics should fall within simulated range.</li>
-  <li data-lang="zh"><strong>GOF 图：</strong>观察统计量应在模拟范围之内。</li>
-</ul>
+</div><!-- end collapsible -->
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Effective sample size (ESS):</strong> Should be ≥ 100 per parameter. ESS = S / (1 + 2Σρ<sub>k</sub>).</li>
-  <li data-lang="zh"><strong>有效样本量（ESS）：</strong>每个参数应 ≥ 100。ESS = S / (1 + 2Σρ<sub>k</sub>)。</li>
-</ul>
+<!-- ═══════════════════════════════════════════════════
+     SUMMARY
+     ═══════════════════════════════════════════════════ -->
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Gelman-Rubin PSRF:</strong> Run multiple chains; PSRF ≈ 1.0 indicates convergence. &gt; 1.05 = problem.</li>
-  <li data-lang="zh"><strong>Gelman-Rubin PSRF：</strong>运行多条链；PSRF ≈ 1.0 表示收敛。&gt; 1.05 = 有问题。</li>
-</ul>
-
-<div class="insight-box" style="background: var(--warm); color: white; padding: 1rem; border-radius: 0.3rem; margin-top: 1rem;">
-  <p data-lang="en"><strong>Summary:</strong> ERGM is logistic regression for networks. It predicts ties based on network patterns (reciprocity, clustering, homophily) and personal traits. The key challenge is estimation (MCMC) and model stability (degeneracy). Start simple, check convergence, and use geometrically weighted terms.</p>
-  <p data-lang="zh"><strong>总结：</strong>ERGM 是给网络做的逻辑回归。它根据网络模式（互惠、聚类、同质性）和个人特征预测关系。关键挑战是估计（MCMC）和模型稳定性（退化）。从简单模型开始，检查收敛，使用几何加权项。</p>
+<div class="summary-box">
+  <div class="summary-label" data-lang="en">Summary</div>
+  <div class="summary-label" data-lang="zh">总结</div>
+  <p data-lang="en">ERGM is logistic regression for networks. It predicts ties based on network patterns (reciprocity, clustering, homophily) and personal traits. The key challenge is estimation (MCMC) and model stability (degeneracy). Start simple, check convergence, and use geometrically weighted terms.</p>
+  <p data-lang="zh">ERGM 是给网络做的逻辑回归。它根据网络模式（互惠、聚类、同质性）和个人特征预测关系。关键挑战是估计（MCMC）和模型稳定性（退化）。从简单模型开始，检查收敛，使用几何加权项。</p>
 </div>
