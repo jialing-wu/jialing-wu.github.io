@@ -66,6 +66,8 @@ next:
   <a href="#ta-s3" data-lang="zh">我想从文本中测量情感、意识形态或立场<span class="pi-arrow">&rarr; &sect;3</span></a>
   <a href="#ta-s4" data-lang="en">I want to use large language models to label or classify text <span class="pi-arrow">&rarr; &sect;4</span></a>
   <a href="#ta-s4" data-lang="zh">我想用大语言模型对文本进行标注或分类<span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#ta-s5" data-lang="en">I want to classify documents with traditional supervised learning <span class="pi-arrow">&rarr; &sect;5</span></a>
+  <a href="#ta-s5" data-lang="zh">我想用传统监督学习对文档分类<span class="pi-arrow">&rarr; &sect;5</span></a>
 </div>
 
 <hr class="section-divider">
@@ -238,6 +240,37 @@ next:
 </div>
 
 <hr class="section-divider">
+
+<!-- SECTION 5 -->
+<div class="section" id="ta-s5">
+  <h2 data-lang="en">I Want to Classify Documents With Traditional Supervised Learning</h2>
+  <h2 data-lang="zh">我想用传统监督学习对文档分类</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You have thousands of news articles to code as "protest event" or "not protest," congressional bills to classify by policy domain, or social media posts to sort by topic. Hand-coding all of them is impractical. Traditional supervised learning lets you hand-code a training set (hundreds of documents), train a classifier to learn the pattern, and let the computer code the rest. Unlike LLMs, these models are transparent, reproducible, and free.</p>
+    <p data-lang="zh"><strong>问题：</strong>有数千篇新闻要编码为"抗议事件"或"非抗议"，国会法案要按政策领域分类，或社交媒体帖子要按主题排序。全部人工编码不切实际。传统监督学习让你手工编码训练集（数百文档），训练分类器学习模式，让计算机编码剩余。不同于 LLM，这些模型透明、可重复且免费。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">The Supervised Classification Pipeline</h3>
+    <h3 data-lang="zh">监督分类流程</h3>
+    <p class="method-desc" data-lang="en">The workflow: (1) <strong>Hand-code a training set</strong> — typically 500–2000 documents, coded by trained human coders with an intercoder reliability check (Cohen's κ > 0.7). (2) <strong>Represent documents as features</strong> — use BoW or TF-IDF from §1. (3) <strong>Train a classifier</strong> — Naive Bayes, SVM, or logistic regression. (4) <strong>Evaluate on a held-out test set</strong> — never evaluate on the same data you trained on. (5) <strong>Apply to remaining documents</strong> — the model classifies thousands in seconds.</p>
+    <p class="method-desc" data-lang="zh">流程：（1）<strong>手工编码训练集</strong>——通常 500–2000 份文档，由受训的人类编码者编码，做编码者间信度检查（Cohen's κ > 0.7）。（2）<strong>将文档表示为特征</strong>——用§1 的 BoW 或 TF-IDF。（3）<strong>训练分类器</strong>——朴素贝叶斯、SVM 或逻辑回归。（4）<strong>在留出的测试集上评估</strong>——永远不在训练数据上评估。（5）<strong>应用到剩余文档</strong>——模型在几秒内分类数千份。</p>
+    <p class="method-desc" data-lang="en"><strong>Naive Bayes</strong> is the workhorse: it assumes word independence (unrealistic but surprisingly effective) and classifies by computing P(category | words) using Bayes' theorem. Fast, handles high-dimensional sparse data well, and serves as a strong baseline. <strong>Support Vector Machine (SVM)</strong> finds the hyperplane that best separates categories in feature space; often the most accurate traditional classifier for text. <strong>Logistic regression</strong> with L1 penalty (Lasso) gives you interpretable coefficients — you can see exactly which words drive each classification.</p>
+    <p class="method-desc" data-lang="zh"><strong>朴素贝叶斯</strong>是主力：假设词独立（不现实但出奇有效），用贝叶斯定理计算 P(类别|词) 来分类。快、处理高维稀疏数据好，作为强基线。<strong>支持向量机（SVM）</strong>找到特征空间中最佳分隔类别的超平面；常是文本最准确的传统分类器。<strong>逻辑回归</strong>加 L1 惩罚（Lasso）给出可解释系数——能精确看到哪些词驱动每个分类。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Evaluation: Precision, Recall, and F1</h3>
+    <h3 data-lang="zh">评估：精确率、召回率与 F1</h3>
+    <p class="method-desc" data-lang="en">Accuracy alone is misleading when classes are imbalanced (if only 5% of articles are protests, predicting "not protest" always gives 95% accuracy). Use instead: <strong>Precision</strong> = of documents I labeled "protest," what fraction truly are? (avoids false positives). <strong>Recall</strong> = of all true protests, what fraction did I find? (avoids false negatives). <strong>F1</strong> = harmonic mean of precision and recall, balancing both. Report the confusion matrix and F1 for each category.</p>
+    <p class="method-desc" data-lang="zh">类别不平衡时准确率有误导（如果只有 5% 文章是抗议，总预测"非抗议"就有 95% 准确率）。用：<strong>精确率</strong> = 我标为"抗议"的文档中多少确实是？（避免假阳性）。<strong>召回率</strong> = 所有真正的抗议中多少被找到？（避免假阴性）。<strong>F1</strong> = 精确率和召回率的调和均值，平衡两者。报告混淆矩阵和每个类别的 F1。</p>
+    <div class="method-when" data-lang="en"><strong>When to use:</strong> When you have a clear classification task and can invest in hand-coding a training set. Preferable to LLMs when transparency, reproducibility, and interpretability are priorities. Combine with active learning: let the classifier flag uncertain cases for human review, iteratively improving the training set.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用：</strong>有明确分类任务且能投入人工编码训练集时。当透明性、可重复性和可解释性优先时优于 LLM。结合主动学习：让分类器标出不确定案例供人工审查，迭代改进训练集。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
 <!-- GUIDES -->
 <div class="section" id="ta-guides">
   <h2 data-lang="en">Guides</h2>
@@ -258,7 +291,6 @@ next:
 
 <hr class="section-divider">
 <!-- RESOURCES -->
-<hr class="section-divider">
 <div class="section" id="ta-resources">
   <h2 data-lang="en">Resources</h2>
   <h2 data-lang="zh">资源</h2>
@@ -266,23 +298,15 @@ next:
   <div class="method-section">
     <h3 data-lang="en">Key References</h3>
     <h3 data-lang="zh">关键参考</h3>
-    <ul style="font-size:14.5px;line-height:1.8;color:var(--ink-faded);margin-left:20px">
-      <li>Grimmer, J., Roberts, M. E., &amp; Stewart, B. M. (2022). <em>Text as Data: A New Framework for Machine Learning and the Social Sciences.</em> Princeton University Press.</li>
-      <li>Blei, D. M., Ng, A. Y., &amp; Jordan, M. I. (2003). Latent Dirichlet allocation. <em>Journal of Machine Learning Research</em>, 3, 993–1022.</li>
-      <li>Roberts, M. E., Stewart, B. M., Tingley, D., et al. (2014). Structural topic models for open-ended survey responses. <em>American Journal of Political Science</em>, 58(4), 1064–1082.</li>
-      <li>Slapin, J. B., &amp; Proksch, S.-O. (2008). A scaling model for estimating time-series party positions from texts. <em>American Journal of Political Science</em>, 52(3), 705–722.</li>
-      <li>Gilardi, F., Alizadeh, M., &amp; Kubli, M. (2023). Chatgpt outperforms crowd-workers for text-annotation tasks. <em>arXiv:2303.15056</em>.</li>
-    </ul>
+    <p class="method-desc" data-lang="en">Grimmer, Roberts &amp; Stewart (2022), <em>Text as Data</em>, Princeton University Press — the definitive textbook for social scientists. Blei, Ng &amp; Jordan (2003), "Latent Dirichlet Allocation," <em>JMLR</em> — the foundational topic model paper. Roberts et al. (2014), "Structural Topic Models," <em>AJPS</em> — STM with covariates for social science. Slapin &amp; Proksch (2008), "A Scaling Model for Estimating Time-Series Party Positions," <em>AJPS</em> — Wordfish. Denny &amp; Spirling (2018), "Text Preprocessing for Unsupervised Learning," <em>Political Analysis</em> — systematic evaluation of preprocessing choices. Gilardi, Alizadeh &amp; Kubli (2023), "ChatGPT Outperforms Crowd-Workers for Text-Annotation Tasks" — LLM annotation validation.</p>
+    <p class="method-desc" data-lang="zh">Grimmer、Roberts &amp; Stewart (2022)，<em>Text as Data</em>，普林斯顿大学出版社——社会科学家的权威教材。Blei、Ng &amp; Jordan (2003)，"Latent Dirichlet Allocation"，<em>JMLR</em>——奠基性主题模型论文。Roberts et al. (2014)，"Structural Topic Models"，<em>AJPS</em>——带协变量的 STM。Slapin &amp; Proksch (2008)，"A Scaling Model for Estimating Time-Series Party Positions"，<em>AJPS</em>——Wordfish。Denny &amp; Spirling (2018)，"Text Preprocessing for Unsupervised Learning"，<em>Political Analysis</em>——预处理选择的系统评估。Gilardi、Alizadeh &amp; Kubli (2023)，"ChatGPT Outperforms Crowd-Workers"——LLM 标注验证。</p>
   </div>
 
   <div class="method-section">
     <h3 data-lang="en">Software Tools</h3>
     <h3 data-lang="zh">软件工具</h3>
-    <ul style="font-size:14.5px;line-height:1.8;color:var(--ink-faded);margin-left:20px">
-      <li><strong>R:</strong> quanteda (DTM, Wordscores, Wordfish), stm (Structural Topic Models), tidytext (tidy text workflows)</li>
-      <li><strong>Python:</strong> scikit-learn (TF-IDF, classification), gensim (LDA, Word2Vec), spaCy (preprocessing, NER), transformers (BERT, fine-tuning)</li>
-      <li><strong>LLM APIs:</strong> OpenAI (GPT-4, GPT-3.5), HuggingFace (open-source models)</li>
-    </ul>
+    <p class="method-desc" data-lang="en"><strong>R:</strong> quanteda (DTM, TF-IDF, Wordscores, Wordfish, Naive Bayes), stm (Structural Topic Models), tidytext (tidy text workflows), text2vec (GloVe embeddings). <strong>Python:</strong> scikit-learn (TF-IDF, Naive Bayes, SVM, logistic regression), gensim (LDA, Word2Vec), spaCy (preprocessing, NER), transformers (BERT fine-tuning). <strong>LLM APIs:</strong> OpenAI (GPT-4), Anthropic (Claude), HuggingFace (open-source models for local deployment).</p>
+    <p class="method-desc" data-lang="zh"><strong>R：</strong>quanteda（DTM、TF-IDF、Wordscores、Wordfish、朴素贝叶斯）、stm（结构主题模型）、tidytext（整洁文本工作流）、text2vec（GloVe 嵌入）。<strong>Python：</strong>scikit-learn（TF-IDF、朴素贝叶斯、SVM、逻辑回归）、gensim（LDA、Word2Vec）、spaCy（预处理、NER）、transformers（BERT 微调）。<strong>LLM API：</strong>OpenAI（GPT-4）、Anthropic（Claude）、HuggingFace（本地部署的开源模型）。</p>
   </div>
 </div>
 

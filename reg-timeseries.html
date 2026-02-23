@@ -59,6 +59,8 @@ next:
   <a href="#ts-s3" data-lang="zh">我有多个单位各自随时间观测的数据（面板数据）<span class="pi-arrow">&rarr; &sect;3</span></a>
   <a href="#ts-s4" data-lang="en">Do two variables have a dynamic causal relationship? <span class="pi-arrow">&rarr; &sect;4</span></a>
   <a href="#ts-s4" data-lang="zh">两个变量之间有动态因果关系吗？<span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#ts-s5" data-lang="en">My variables trend together — is this spurious or a real long-run relationship? <span class="pi-arrow">&rarr; &sect;5</span></a>
+  <a href="#ts-s5" data-lang="zh">我的变量一起趋势——这是虚假的还是真实的长期关系？<span class="pi-arrow">&rarr; &sect;5</span></a>
 </div>
 
 <hr class="section-divider">
@@ -270,6 +272,40 @@ next:
 </div>
 
 <hr class="section-divider">
+
+<!-- SECTION 5 -->
+<div class="section" id="ts-s5">
+  <h2 data-lang="en">Cointegration and Error Correction: When Trends Are Real</h2>
+  <h2 data-lang="zh">协整与误差修正：当趋势是真实的</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> GDP and government spending both trend upward. Regressing one on the other shows a strong relationship — but is it real or just two rising lines? Differencing removes the relationship entirely, losing long-run information. Cointegration offers a third way: if two non-stationary series share a common trend (their difference is stationary), they have a genuine long-run equilibrium relationship. Error correction models capture both the long-run link and short-run adjustment dynamics.</p>
+    <p data-lang="zh"><strong>问题：</strong>GDP 和政府支出都向上趋势。一个对另一个的回归显示很强的关系——但这是真实的还是只是两条上升的线？差分完全移除了关系，丢失了长期信息。协整提供了第三种方式：如果两个非平稳序列共享共同趋势（它们的差是平稳的），它们有真正的长期均衡关系。误差修正模型捕捉长期联系和短期调整动态。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Spurious Regression vs. Cointegration</h3>
+    <h3 data-lang="zh">虚假回归与协整</h3>
+    <p class="method-desc" data-lang="en">Regressing two independent random walks produces significant-looking but meaningless results (spurious regression). R² is high, t-statistics are large, but the relationship is fiction — two unrelated trends happen to go the same direction. The Engle-Granger test checks: regress Y on X, take residuals, and test whether those residuals are stationary (ADF test). If residuals are stationary, Y and X are cointegrated — they share a long-run equilibrium. Deviations from this equilibrium are temporary; the system self-corrects. The Johansen test extends this to multiple variables, testing how many cointegrating relationships exist in a system.</p>
+    <p class="method-desc" data-lang="zh">对两个独立随机游走进行回归会产生看似显著但毫无意义的结果（虚假回归）。R² 很高，t 统计量很大，但关系是虚构的——两个无关趋势碰巧朝同一方向。Engle-Granger 检验：对 X 回归 Y，取残差，检验残差是否平稳（ADF 检验）。如果残差平稳，Y 和 X 是协整的——共享长期均衡。偏离均衡是暂时的；系统自我修正。Johansen 检验将此扩展到多个变量，检验系统中存在多少个协整关系。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Two dogs on separate leashes can wander independently — that's spurious correlation (both happen to walk right). Two dogs on the same leash wander but can't get too far apart — that's cointegration. The leash (equilibrium relationship) pulls them back together whenever they drift apart. The error correction is the tug of the leash.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>两只分别牵着的狗可以独立游走——这是虚假相关（两只都碰巧向右走）。两只在同一条皮带上的狗游走但不能离太远——这是协整。皮带（均衡关系）在它们漂移分开时把它们拉回来。误差修正就是皮带的拉扯。</div>
+    <div class="method-when" data-lang="en"><strong>When to use:</strong> When both series are I(1) (non-stationary, have unit roots) and theory suggests a long-run equilibrium (income and consumption, government spending and revenue, imports and exports). <strong>When NOT to use:</strong> When series are I(0) (already stationary) — just use standard regression. When series have different orders of integration (I(1) and I(2)) — cointegration doesn't apply in the standard sense.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用：</strong>当两个序列都是 I(1)（非平稳，有单位根）且理论暗示长期均衡时（收入与消费、政府支出与收入、进口与出口）。<strong>何时不用：</strong>当序列是 I(0)（已平稳）——直接用标准回归。当序列有不同积分阶数（I(1) 和 I(2)）——协整在标准意义上不适用。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Error Correction Models: Short-Run and Long-Run Together</h3>
+    <h3 data-lang="zh">误差修正模型：短期与长期共存</h3>
+    <p class="method-desc" data-lang="en">Once you've established cointegration, the Error Correction Model (ECM) captures both dynamics. The ECM regresses the change in Y on: (1) lagged changes in X (short-run effects), and (2) the lagged error correction term — the residual from the cointegrating regression (how far the system was from equilibrium last period). The coefficient on the error correction term (α) should be negative: when the system is above equilibrium, it adjusts downward. A larger |α| means faster adjustment. ECM lets you answer: "How much of a shock persists?" and "How quickly does the system return to equilibrium?"</p>
+    <p class="method-desc" data-lang="zh">建立协整后，误差修正模型（ECM）同时捕捉两种动态。ECM 对 Y 的变化回归于：（1）X 的滞后变化（短期效应），和（2）滞后误差修正项——协整回归的残差（上一期系统偏离均衡多远）。误差修正项的系数（α）应为负：当系统高于均衡时，它向下调整。|α| 越大意味着调整越快。ECM 让你回答："冲击有多少持续？"和"系统多快回到均衡？"</p>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Government spending and tax revenue in a country (1960–2020). Both are I(1). Engle-Granger test finds cointegration (residuals are stationary). ECM: ΔRevenue_t = α(Revenue_{t-1} − β*Spending_{t-1}) + γ*ΔSpending_t + ε_t. The α = −0.35 means 35% of the gap between revenue and spending is corrected each year. γ = 0.20 means a sudden spending increase immediately raises revenue by 20% of the increase (short-run fiscal multiplier). The long-run multiplier β = 0.85 says that for every dollar of permanent spending increase, revenue eventually rises by 85 cents.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>一个国家的政府支出和税收收入（1960-2020）。两者都是 I(1)。Engle-Granger 检验发现协整（残差平稳）。ECM：ΔRevenue_t = α(Revenue_{t-1} − β*Spending_{t-1}) + γ*ΔSpending_t + ε_t。α = −0.35 意味着收入和支出之间的差距每年修正 35%。γ = 0.20 意味着突然的支出增加立即使收入提高增加额的 20%（短期财政乘数）。长期乘数 β = 0.85 说每一美元永久支出增加，收入最终增加 85 美分。</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
 <!-- GUIDES -->
 <div class="section" id="ts-guides">
   <h2 data-lang="en">Guides</h2>
@@ -300,7 +336,6 @@ next:
 
 <hr class="section-divider">
 <!-- RESOURCES -->
-<hr class="section-divider">
 <div class="section" id="ts-resources">
   <h2 data-lang="en">Resources</h2>
   <h2 data-lang="zh">资源</h2>
@@ -311,8 +346,8 @@ next:
     <p class="method-desc" data-lang="en"><strong>Software Tutorials:</strong> R package <code>forecast</code> (auto.arima, ggplot for ACF) is user-friendly. Stata's <code>tsset</code> and <code>xtset</code> commands for time series setup. <code>plm</code> package in R for panel FE/RE models. <code>vars</code> package for VAR and Granger tests.</p>
     <p class="method-desc" data-lang="zh"><strong>软件教程：</strong>R 包 <code>forecast</code>（auto.arima、ACF 的 ggplot）很易用。Stata 的 <code>tsset</code> 和 <code>xtset</code> 命令用于时间序列设置。<code>plm</code> R 包用于面板 FE/RE 模型。<code>vars</code> 包用于 VAR 和 Granger 检验。</p>
 
-    <p class="method-desc" data-lang="en"><strong>Key Papers:</strong> Hausman (1978) on FE vs. RE specification test. Newey & West (1987) on HAC standard errors. Jorda (2005) on local projections as alternative to SVAR. Leek & Peng (2015) on reproducibility in time series (diagnostic importance).</p>
-    <p class="method-desc" data-lang="zh"><strong>关键论文：</strong>Hausman (1978) 关于 FE 与 RE 规范检验。Newey & West (1987) 关于 HAC 标准误。Jorda (2005) 关于作为 SVAR 替代的本地投影。Leek & Peng (2015) 关于时间序列可重复性（诊断重要性）。</p>
+    <p class="method-desc" data-lang="en"><strong>Key Papers:</strong> Hausman (1978) on FE vs. RE specification test. Newey &amp; West (1987) on HAC standard errors. Engle &amp; Granger (1987) on cointegration and error correction. Jorda (2005) on local projections as alternative to SVAR. De Boef &amp; Keele (2008) on dynamic models in political science — essential for ADL and ECM interpretation.</p>
+    <p class="method-desc" data-lang="zh"><strong>关键论文：</strong>Hausman (1978) 关于 FE 与 RE 规范检验。Newey &amp; West (1987) 关于 HAC 标准误。Engle &amp; Granger (1987) 关于协整与误差修正。Jorda (2005) 关于作为 SVAR 替代的本地投影。De Boef &amp; Keele (2008) 关于政治科学中的动态模型——ADL 和 ECM 解释的必读。</p>
   </div>
 </div>
 

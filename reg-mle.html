@@ -65,6 +65,10 @@ next:
   <a href="#mle-s3" data-lang="zh">结果是计数数据——用什么方法？<span class="pi-arrow">&rarr; &sect;3</span></a>
   <a href="#mle-s4" data-lang="en">How does maximum likelihood estimation actually work? <span class="pi-arrow">&rarr; &sect;4</span></a>
   <a href="#mle-s4" data-lang="zh">最大似然估计究竟是怎么工作的？<span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#mle-s5" data-lang="en">My outcome has multiple unordered categories — what do I do? <span class="pi-arrow">&rarr; &sect;5</span></a>
+  <a href="#mle-s5" data-lang="zh">结果有多个无序类别——怎么办？<span class="pi-arrow">&rarr; &sect;5</span></a>
+  <a href="#mle-s6" data-lang="en">How do I know if my model fits the data well? <span class="pi-arrow">&rarr; &sect;6</span></a>
+  <a href="#mle-s6" data-lang="zh">怎么知道模型拟合得好不好？<span class="pi-arrow">&rarr; &sect;6</span></a>
 </div>
 
 <hr class="section-divider">
@@ -277,8 +281,6 @@ next:
     <p class="method-desc" data-lang="zh">MLE 假设模型规范正确。如果选了错的函数形式、预测变量太少或误指定误差分布，MLE 会找该错模型的最佳参数，但估计有偏差。MLE 也可能遇到数值问题：非收敛（算法找不到最大值）、分离（在二元 logit，结果完美预测自预测变量，产生无限系数）或不稳定估计（似然曲面几乎平）。检查收敛消息，看残差图，用诊断（影响措施、共线性检查），就像用 OLS 一样。</p>
   </div>
 
-</div>
-
   <div class="method-section">
     <h3 data-lang="en">Choosing a Link Function: Decision Framework</h3>
     <h3 data-lang="zh">选择链接函数：决策框架</h3>
@@ -392,6 +394,87 @@ next:
     <p class="method-desc" data-lang="zh"><strong>如何选择：</strong>从因变量的本质开始。是二元、有序的还是计数的？选择对应的行。链接函数在一个家族内的选择（如二元的 logit 对比 probit）通常不如选对家族重要。有疑问时，对二元用 logit，对计数用负二项。从业者之间的大多数分歧集中在家族选择（比如，我的结果真的足够连续以至于能用 OLS，还是应该用有序 logit？），而不是链接函数。</p>
   </div>
 
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 5 -->
+<div class="section" id="mle-s5">
+  <h2 data-lang="en">My Outcome Has Multiple Unordered Categories — What Do I Do?</h2>
+  <h2 data-lang="zh">我的结果有多个无序类别——怎么办？</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> A voter can choose Democrat, Republican, or third-party. A refugee can settle in Country A, B, or C. A worker can commute by car, bus, or bike. These categories have no natural ordering — "Democrat" is not "more" than "Republican." Binary logit forces you to collapse categories (Democrat vs. everyone else), losing information. Ordered logit imposes a ranking that doesn't exist. You need multinomial logit, which models the probability of each category simultaneously.</p>
+    <p data-lang="zh"><strong>问题：</strong>选民可以选民主党、共和党或第三方。难民可以在 A、B 或 C 国定居。通勤者可以开车、坐公交或骑车。这些类别没有自然顺序——「民主党」不比「共和党」「更多」。二元 logit 迫使你合并类别（民主党对所有其他），丢失信息。有序 logit 强加不存在的排序。你需要多项 logit，同时建模每个类别的概率。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">How Multinomial Logit Works</h3>
+    <h3 data-lang="zh">多项 Logit 如何运作</h3>
+    <p class="method-desc" data-lang="en">Multinomial logit picks one category as the baseline (say, Republican) and estimates separate log-odds equations for each other category relative to that baseline. So you get one set of coefficients for Democrat-vs-Republican and another for Third-party-vs-Republican. Each set tells you how predictors shift the log-odds of choosing that category over the baseline. The predicted probabilities for all categories sum to 1.</p>
+    <p class="method-desc" data-lang="zh">多项 logit 选一个类别作基准（比如共和党），为每个其他类别相对基准估计单独的对数赔率方程。所以你得到一组系数描述民主党对共和党，另一组描述第三方对共和党。每组系数告诉你预测变量如何改变选择该类别而非基准的对数赔率。所有类别的预测概率之和为 1。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Imagine a restaurant with three dishes. You pick one as the reference dish (pasta). Then you ask: compared to pasta, what makes someone more likely to order steak? What makes them more likely to order salad? You're making two comparisons, each against the same reference. That's multinomial logit — a series of pairwise comparisons against a baseline.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>想象餐厅有三道菜。选一道作参照（意面）。然后问：和意面相比，什么让人更可能点牛排？什么让人更可能点沙拉？你在做两组比较，都和同一个参照比。这就是多项 logit——一系列对基准的配对比较。</div>
+    <div class="method-when" data-lang="en"><strong>When to use:</strong> Party choice (Democrat/Republican/Independent), transportation mode (car/bus/train/bike), job sector (public/private/nonprofit), country of destination. Any outcome with 3+ unordered categories. <strong>When NOT to use:</strong> If categories are ordered (use ordered logit). If the outcome is binary (use binary logit). If there are many categories with very few observations each, estimation becomes unstable.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用：</strong>政党选择（民主党/共和党/独立）、交通方式（汽车/公交/火车/自行车）、工作部门（公共/私营/非营利）、目的地国家。任何有 3 个以上无序类别的结果。<strong>何时不用：</strong>类别有序（用有序 logit）。结果二元（用二元 logit）。类别多而各类观测极少时，估计不稳定。</div>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> Alvarez and Nagler (1998) studied third-party voting in U.S. presidential elections. Outcome: vote for Democrat, Republican, or Perot. Predictors: ideology, party ID, economic evaluations. The multinomial logit showed that economic dissatisfaction shifted voters toward Perot (not toward the other major party), while ideology primarily distinguished Democrat from Republican voters. This insight would be lost in a binary logit that collapsed Perot into "other."</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>Alvarez 和 Nagler（1998）研究美国总统选举中的第三方投票。结果：投民主党、共和党或 Perot。预测变量：意识形态、党派认同、经济评价。多项 logit 显示经济不满使选民转向 Perot（而非另一个主要党），而意识形态主要区分民主党和共和党选民。如果用二元 logit 把 Perot 合并到「其他」，这个发现就丢失了。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">The IIA Assumption and Its Consequences</h3>
+    <h3 data-lang="zh">IIA 假设及其后果</h3>
+    <p class="method-desc" data-lang="en">Multinomial logit assumes Independence of Irrelevant Alternatives (IIA): the relative odds of choosing A over B don't change when a third option C is added or removed. The classic illustration is the "red bus / blue bus" problem. Suppose commuters choose between car and red bus with equal probability (50/50). Now add a blue bus identical to the red bus. IIA predicts car still gets 50%, and each bus gets 25%. But in reality, car should get 50% and the two buses split the remaining 50%. IIA fails when alternatives are similar to each other.</p>
+    <p class="method-desc" data-lang="zh">多项 logit 假设无关替代独立性（IIA）：选择 A 而非 B 的相对赔率不因第三选项 C 的加入或移除而改变。经典例子是「红巴士/蓝巴士」问题。假设通勤者在汽车和红巴士之间各 50% 概率选择。现在加一辆与红巴士相同的蓝巴士。IIA 预测汽车仍 50%，每辆巴士各 25%。但实际上，汽车应得 50%，两辆巴士分剩下的 50%。当替代选项彼此相似时，IIA 失败。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> You're choosing between pizza and sushi for dinner (50/50). A new sushi restaurant opens next door. IIA says your pizza preference stays at 50% and each sushi place gets 25%. But really, you'd probably still want pizza half the time and split sushi nights between the two restaurants. The new option "steals" from the similar option, not equally from all.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>你晚饭在披萨和寿司之间选（50/50）。隔壁开了一家新寿司店。IIA 说你选披萨的偏好仍是 50%，每家寿司店各 25%。但实际上，你大概仍然一半时间想吃披萨，寿司的日子在两家之间分。新选项「抢走」了相似选项的份额，而不是均匀从所有选项抢。</div>
+    <div class="method-when" data-lang="en"><strong>When IIA holds:</strong> When alternatives are genuinely distinct (party choice is often fine — Democrat, Republican, and Green differ substantially). <strong>When it fails:</strong> When some alternatives are close substitutes (bus vs. subway, two similar candidates). Test with Hausman-McFadden test. If IIA is violated, consider mixed logit (random-parameter logit), nested logit, or multinomial probit, which relax IIA.</div>
+    <div class="method-when" data-lang="zh"><strong>IIA 成立时：</strong>替代选项确实不同时（政党选择通常没问题——民主党、共和党和绿党差异很大）。<strong>失败时：</strong>部分替代选项是近似替代品（公交 vs. 地铁，两个相似候选人）。用 Hausman-McFadden 检验。IIA 违反时，考虑混合 logit（随机参数 logit）、嵌套 logit 或多项 probit，它们放松 IIA。</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
+
+<!-- SECTION 6 -->
+<div class="section" id="mle-s6">
+  <h2 data-lang="en">How Do I Know If My Model Fits the Data Well?</h2>
+  <h2 data-lang="zh">怎么知道模型拟合得好不好？</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You've run a logit model and obtained coefficients. But how well does the model actually describe your data? OLS has R², but logit and other GLMs have no direct equivalent. You need model-fit diagnostics that work for MLE-estimated models: pseudo-R², deviance tests, classification accuracy, and ROC curves.</p>
+    <p data-lang="zh"><strong>问题：</strong>你跑了 logit 模型，得到系数。但模型到底多好地描述了数据？OLS 有 R²，但 logit 和其他 GLM 没有直接等价物。你需要适用于 MLE 估计模型的拟合诊断：伪 R²、偏差检验、分类准确率和 ROC 曲线。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Pseudo-R² Measures</h3>
+    <h3 data-lang="zh">伪 R² 指标</h3>
+    <p class="method-desc" data-lang="en">Several pseudo-R² measures exist, none perfect. McFadden's R² compares your model's log-likelihood to a null model (intercept only): 1 − (LL_model / LL_null). Values of 0.2–0.4 represent excellent fit in logistic regression — do NOT compare pseudo-R² to OLS R². Tjur's R² (for binary outcomes) is the difference in mean predicted probabilities between Y=1 and Y=0 cases — intuitive and easy to visualize. Nagelkerke's R² is scaled to range from 0 to 1 but has no clear interpretation. Report McFadden or Tjur; avoid treating pseudo-R² as the sole fit measure.</p>
+    <p class="method-desc" data-lang="zh">有多种伪 R²，没有一个完美。McFadden R² 比较模型对数似然与空模型（仅截距）：1 − (LL_model / LL_null)。在逻辑回归中 0.2–0.4 表示极好的拟合——别拿伪 R² 和 OLS R² 比。Tjur R²（对二元结果）是 Y=1 和 Y=0 案例平均预测概率的差——直观且易可视化。Nagelkerke R² 缩放到 0–1 但没有清晰解释。报告 McFadden 或 Tjur；别把伪 R² 当唯一拟合指标。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> Pseudo-R² is like grading on a different scale. An 85% in one class might mean the same as a 40% in a harder class. McFadden's 0.3 is excellent for logit, even though it looks low compared to OLS R² of 0.7. Know the scale before judging the number.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>伪 R² 像不同评分标准。一门课 85% 可能等价于更难的课 40%。McFadden 0.3 对 logit 已经很好了，即使和 OLS 的 R² = 0.7 比起来很低。评判数字前要了解标准。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Classification and ROC Curves</h3>
+    <h3 data-lang="zh">分类与 ROC 曲线</h3>
+    <p class="method-desc" data-lang="en">For binary outcomes, you can evaluate how well the model classifies cases. At a threshold of 0.5: if predicted probability > 0.5, predict Y=1; otherwise Y=0. Then compare predictions to actual outcomes in a confusion matrix (true positives, false positives, true negatives, false negatives). The ROC curve plots sensitivity (true positive rate) against 1−specificity (false positive rate) across all possible thresholds. The area under the curve (AUC) summarizes overall discrimination: 0.5 = no better than coin flip, 0.7 = acceptable, 0.8 = good, 0.9+ = excellent.</p>
+    <p class="method-desc" data-lang="zh">对二元结果，可以评估模型分类效果。阈值 0.5 时：预测概率 > 0.5 预测 Y=1，否则 Y=0。然后在混淆矩阵中比较预测与实际（真阳性、假阳性、真阴性、假阴性）。ROC 曲线在所有阈值上画灵敏度（真阳性率）对 1−特异度（假阳性率）。曲线下面积（AUC）概括整体区分力：0.5 = 不比抛硬币好，0.7 = 可接受，0.8 = 好，0.9+ = 优秀。</p>
+    <div class="method-when" data-lang="en"><strong>When to use ROC:</strong> When you want to evaluate predictive discrimination (e.g., "Can my model distinguish voters from non-voters?"). Useful for comparing two models on the same data. <strong>Caveat:</strong> ROC evaluates prediction, not causal explanation. A model with good AUC doesn't prove the predictors cause the outcome. For causal research, focus on coefficient estimates and marginal effects rather than classification accuracy.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用 ROC：</strong>想评估预测区分力时（比如「我的模型能区分投票者和非投票者吗？」）。比较同一数据上两个模型时有用。<strong>注意：</strong>ROC 评估预测，不是因果解释。AUC 好不能证明预测变量导致结果。因果研究应关注系数估计和边际效应，而非分类准确率。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Separation: When Your Model Explodes</h3>
+    <h3 data-lang="zh">分离：当模型「爆炸」时</h3>
+    <p class="method-desc" data-lang="en">Complete separation occurs when a predictor perfectly predicts the outcome: all observations with X > c have Y=1 and all with X ≤ c have Y=0. The MLE algorithm tries to push the coefficient to infinity to make predictions perfectly 0 or 1. You'll see enormous coefficients, huge standard errors, and convergence warnings. Quasi-complete separation is the milder version: the predictor almost perfectly predicts the outcome. Both indicate the data can't reliably estimate that coefficient.</p>
+    <p class="method-desc" data-lang="zh">完全分离发生在预测变量完美预测结果时：X > c 的所有观测 Y=1，X ≤ c 的全部 Y=0。MLE 算法试图把系数推到无穷，使预测完美为 0 或 1。你会看到巨大系数、巨大标准误和收敛警告。准完全分离是温和版：预测变量几乎完美预测结果。两者都表明数据无法可靠估计该系数。</p>
+    <div class="method-when" data-lang="en"><strong>Solutions:</strong> (1) Remove or combine the problematic predictor. (2) Use penalized likelihood / Firth's logit, which shrinks coefficients away from infinity. In R: <code>logistf::logistf(y ~ x)</code>. (3) Use Bayesian estimation with informative priors. (4) Collect more data. Separation is common with small samples, rare events, or many categorical predictors with sparse cells.</div>
+    <div class="method-when" data-lang="zh"><strong>解决办法：</strong>（1）移除或合并问题预测变量。（2）用惩罚似然 / Firth logit，把系数从无穷拉回来。R 中：<code>logistf::logistf(y ~ x)</code>。（3）用贝叶斯估计加信息先验。（4）收集更多数据。分离常见于小样本、罕见事件或类别预测变量多而稀疏时。</div>
+  </div>
+
+</div>
+
 <hr class="section-divider">
 <!-- GUIDES -->
 <div class="section" id="mle-guides">
@@ -423,13 +506,14 @@ next:
 
 <hr class="section-divider">
 <!-- RESOURCES -->
-<hr class="section-divider">
 <div class="section" id="mle-resources">
   <h2 data-lang="en">Resources</h2>
   <h2 data-lang="zh">资源</h2>
   <div class="method-section">
-    <p class="method-desc" data-lang="en"><strong>R packages:</strong> glm() in base R for binary logit/probit; ordered() and polr() from MASS for ordered logit; glm(..., family=poisson) for Poisson; glm.nb() from MASS for negative binomial; zeroinfl() from pscl for zero-inflated models. <strong>Stata:</strong> logit, probit, ologit, poisson, nbreg, zinb. <strong>Key references:</strong> Long & Freese (2014) on GLM interpretation; King (1989) on multinomial models. Always compute marginal effects (margins in Stata, marginaleffects or prediction packages in R).</p>
-    <p class="method-desc" data-lang="zh"><strong>R 包：</strong>基础 R 的 glm() 二元 logit/probit；MASS 的 ordered() 和 polr() 有序 logit；glm(..., family=poisson) 泊松；MASS 的 glm.nb() 负二项；pscl 的 zeroinfl() 零膨胀。<strong>Stata：</strong>logit、probit、ologit、poisson、nbreg、zinb。<strong>关键参考：</strong>Long & Freese (2014) 关于 GLM 解释；King (1989) 关于多项式。总是计算边际效应（Stata margins，R marginaleffects 或 prediction 包）。</p>
+    <p class="method-desc" data-lang="en"><strong>R packages:</strong> <code>glm()</code> in base R for binary logit/probit; <code>MASS::polr()</code> for ordered logit; <code>glm(..., family=poisson)</code> for Poisson; <code>MASS::glm.nb()</code> for negative binomial; <code>pscl::zeroinfl()</code> for zero-inflated models; <code>nnet::multinom()</code> for multinomial logit; <code>logistf::logistf()</code> for Firth's penalized logit (separation). <strong>Stata:</strong> logit, probit, ologit, mlogit, poisson, nbreg, zinb. Always compute marginal effects: <code>marginaleffects</code> package in R, <code>margins</code> in Stata.</p>
+    <p class="method-desc" data-lang="zh"><strong>R 包：</strong>基础 R 的 <code>glm()</code> 二元 logit/probit；<code>MASS::polr()</code> 有序 logit；<code>glm(..., family=poisson)</code> 泊松；<code>MASS::glm.nb()</code> 负二项；<code>pscl::zeroinfl()</code> 零膨胀；<code>nnet::multinom()</code> 多项 logit；<code>logistf::logistf()</code> Firth 惩罚 logit（分离）。<strong>Stata：</strong>logit、probit、ologit、mlogit、poisson、nbreg、zinb。始终计算边际效应：R 的 <code>marginaleffects</code> 包，Stata 的 <code>margins</code>。</p>
+    <p class="method-desc" data-lang="en"><strong>Key references:</strong> Agresti (2019) <em>An Introduction to Categorical Data Analysis</em> — the standard textbook for binary, ordinal, and nominal outcomes. Long &amp; Freese (2014) <em>Regression Models for Categorical Dependent Variables Using Stata</em> — practical interpretation guide. King (1998) <em>Unifying Political Methodology</em> — MLE foundations for social scientists. Cameron &amp; Trivedi (2013) <em>Regression Analysis of Count Data</em> — the definitive treatment of Poisson, negative binomial, and zero-inflated models. Train (2009) <em>Discrete Choice Methods with Simulation</em> — multinomial logit, IIA, and mixed logit.</p>
+    <p class="method-desc" data-lang="zh"><strong>关键参考：</strong>Agresti (2019)《分类数据分析导论》——二元、有序、名义结果的标准教材。Long &amp; Freese (2014)《用 Stata 做分类因变量回归模型》——实用解释指南。King (1998)《统一政治方法论》——面向社会科学家的 MLE 基础。Cameron &amp; Trivedi (2013)《计数数据回归分析》——泊松、负二项和零膨胀的权威论述。Train (2009)《离散选择方法与模拟》——多项 logit、IIA 和混合 logit。</p>
   </div>
 </div>
 

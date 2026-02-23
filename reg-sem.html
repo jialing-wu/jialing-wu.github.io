@@ -244,7 +244,6 @@ next:
     <div class="method-example" data-lang="en"><strong>Democratic backsliding theory comparison:</strong> Theory 1: Erosion of democratic norms → institutional weakness → backsliding. Theory 2: Economic inequality → institutional weakness → backsliding. Both are SEMs with different causal structures. If both fit the data reasonably (CFI > 0.90), compare with AIC/BIC. The theory with lower AIC is more parsimonious (simpler model, better fit given complexity). This guides theory development without claiming one is "true."</div>
     <div class="method-example" data-lang="zh"><strong>民主退化理论比较：</strong>理论 1：民主规范侵蚀 → 制度弱 → 退化。理论 2：经济不平等 → 制度弱 → 退化。两者都是具有不同因果结构的 SEMs。如果两者都相当好地拟合数据（CFI > 0.90），用 AIC/BIC 比较。具有较低 AIC 的理论更简洁（更简单模型，给定复杂性更好拟合）。这指导理论发展而不声称一个是"真的"。</div>
   </div>
-</div>
 
   <div class="method-section">
     <h3 data-lang="en">Visual Representation: Path Diagrams</h3>
@@ -397,6 +396,7 @@ next:
     <p class="method-desc" data-lang="en"><strong>Quick decision rule:</strong> If all four indices (CFI, TLI, RMSEA, SRMR) suggest good fit, your model is solid. If one index is borderline or poor while others are good, investigate further. Poor fit usually means model misspecification (missing paths, incorrect causal direction, or unmeasured confounding). Do not use fit indices to hunt for significant paths — that leads to overfitting. Instead, let theory guide your model, then check fit.</p>
     <p class="method-desc" data-lang="zh"><strong>快速决策规则：</strong>如果四个指标（CFI、TLI、RMSEA、SRMR）都表示良好拟合，你的模型很坚实。如果一个指标边界或差，而其他好，进一步调查。差拟合通常意味着模型误设（缺失路径、错误因果方向或未测量混淆）。别用拟合指标来寻找显著路径——那导致过度拟合。反而，让理论指导你的模型，然后检查拟合。</p>
   </div>
+</div>
 
 <hr class="section-divider">
 <!-- GUIDES -->
@@ -429,27 +429,21 @@ next:
 
 <hr class="section-divider">
 <!-- RESOURCES -->
-<hr class="section-divider">
 <div class="section" id="sem-resources">
   <h2 data-lang="en">Resources</h2>
   <h2 data-lang="zh">资源</h2>
   <div class="method-section">
-    <p class="method-desc" data-lang="en"><strong>SEM theory and foundations:</strong></p>
-    <p class="method-desc" data-lang="zh"><strong>SEM 理论与基础：</strong></p>
-    <ul style="margin-left:20px;line-height:1.8;color:var(--ink-faded)">
-      <li><strong>Kline, R. B. (2016).</strong> <em>Principles and Practice of Structural Equation Modeling</em> (4th ed.). — Comprehensive textbook; excellent on path analysis (Chapter 6), measurement models (Chapter 7), fit indices (Chapter 9).</li>
-      <li><strong>Putnam, R. D. (2000).</strong> <em>Bowling Alone: The Collapse and Revival of American Community</em> — Chapter 2 uses path analysis to decompose social capital effects. Exemplar of causal decomposition in social science.</li>
-      <li><strong>Jackman, S. (2001).</strong> "Multidimensional Analysis of Roll Call Data via Bayesian Ideal-Point Estimation." <em>Political Analysis</em>, 9(3), 227-241. — Models latent ideology from voting; demonstrates measurement and structural models combined.</li>
-      <li><strong>Hu, L. T., & Bentler, P. M. (1999).</strong> "Cutoff Criteria for Fit Indices in Covariance Structure Analysis." <em>Structural Equation Modeling</em>, 6(1), 1-55. — Canonical reference for fit index cutoffs (CFI, RMSEA, SRMR); required reading before interpreting fit.</li>
-    </ul>
-    <p class="method-desc" data-lang="en"><strong>Software and implementation:</strong></p>
-    <p class="method-desc" data-lang="zh"><strong>软件与实现：</strong></p>
-    <ul style="margin-left:20px;line-height:1.8;color:var(--ink-faded)">
-      <li><strong>lavaan (R):</strong> Latent Variable Analysis. Intuitive formula syntax: <code>model &lt;- 'latent_var =~ item1 + item2 + item3; outcome ~ latent_var'</code>. Free, powerful, well-documented. Produces all standard fit indices and modification indices.</li>
-      <li><strong>semPlot (R):</strong> Visualize SEM path diagrams. Essential for communicating results.</li>
-      <li><strong>Stata sem:</strong> Built-in SEM command; integrates with broader Stata workflow.</li>
-      <li><strong>Mplus:</strong> Gold standard for complex SEMs, mixture models, multilevel SEMs. Expensive but powerful. Good for publication-quality confirmatory analyses.</li>
-    </ul>
+    <h3 data-lang="en">Key References</h3>
+    <h3 data-lang="zh">关键参考</h3>
+    <p class="method-desc" data-lang="en">Kline (2016), <em>Principles and Practice of Structural Equation Modeling</em> (4th ed.) — the most comprehensive SEM textbook; excellent on path analysis, measurement models, and fit indices. Hoyle (2012), <em>Handbook of Structural Equation Modeling</em> — authoritative reference covering advanced topics. Hu &amp; Bentler (1999), "Cutoff Criteria for Fit Indices in Covariance Structure Analysis," <em>SEM</em> — canonical reference for CFI/RMSEA/SRMR cutoffs. Bollen (1989), <em>Structural Equations with Latent Variables</em> — the mathematical foundation. In political science: Jackman (2001) on Bayesian ideal-point estimation from roll calls.</p>
+    <p class="method-desc" data-lang="zh">Kline (2016)，<em>Principles and Practice of Structural Equation Modeling</em>（第 4 版）——最全面的 SEM 教材；路径分析、测量模型和拟合指标讲得极好。Hoyle (2012)，<em>Handbook of Structural Equation Modeling</em>——涵盖高级话题的权威参考。Hu &amp; Bentler (1999)，"Cutoff Criteria for Fit Indices"，<em>SEM</em>——CFI/RMSEA/SRMR 截断值的经典参考。Bollen (1989)，<em>Structural Equations with Latent Variables</em>——数学基础。政治学中：Jackman (2001) 关于点名投票的贝叶斯理想点估计。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Software Tools</h3>
+    <h3 data-lang="zh">软件工具</h3>
+    <p class="method-desc" data-lang="en"><strong>R:</strong> lavaan (CFA, full SEM, mediation, multi-group invariance — intuitive syntax: <code>'latent =~ item1 + item2; outcome ~ latent'</code>), semPlot (path diagram visualization), semTools (measurement invariance, reliability). <strong>Stata:</strong> sem (built-in SEM command with GUI builder). <strong>Mplus:</strong> Gold standard for complex SEMs, mixture models, multilevel SEM, Bayesian SEM. Expensive but powerful for publication-quality confirmatory analyses.</p>
+    <p class="method-desc" data-lang="zh"><strong>R：</strong>lavaan（CFA、完整 SEM、中介、多组不变性——直观语法：<code>'latent =~ item1 + item2; outcome ~ latent'</code>）、semPlot（路径图可视化）、semTools（测量不变性、信度）。<strong>Stata：</strong>sem（内置 SEM 命令带 GUI 构建器）。<strong>Mplus：</strong>复杂 SEM、混合模型、多层 SEM、贝叶斯 SEM 的金标准。昂贵但发表质量的验证性分析很强大。</p>
   </div>
 </div>
 

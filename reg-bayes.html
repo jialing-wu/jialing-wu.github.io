@@ -59,6 +59,8 @@ next:
   <a href="#bm-s3" data-lang="zh">我的数据有层次结构——贝叶斯方法怎么帮助？<span class="pi-arrow">&rarr; &sect;3</span></a>
   <a href="#bm-s4" data-lang="en">How do I check whether my Bayesian model is reliable? <span class="pi-arrow">&rarr; &sect;4</span></a>
   <a href="#bm-s4" data-lang="zh">我怎么检查贝叶斯模型是否可靠？<span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#bm-s5" data-lang="en">How do I compare competing Bayesian models? <span class="pi-arrow">&rarr; &sect;5</span></a>
+  <a href="#bm-s5" data-lang="zh">怎么比较竞争的贝叶斯模型？<span class="pi-arrow">&rarr; &sect;5</span></a>
 </div>
 
 <hr class="section-divider">
@@ -254,6 +256,40 @@ next:
 </div>
 
 <hr class="section-divider">
+
+<!-- SECTION 5 -->
+<div class="section" id="bm-s5">
+  <h2 data-lang="en">How Do I Compare Competing Bayesian Models?</h2>
+  <h2 data-lang="zh">怎么比较竞争的贝叶斯模型？</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> You have two models — one with three predictors, one with six. In frequentist statistics you might use AIC or BIC. But Bayesian models need Bayesian comparison tools. The frequentist AIC doesn't account for priors and doesn't use the posterior properly. You need tools that evaluate out-of-sample predictive performance from within a Bayesian framework: LOO-CV, WAIC, or Bayes factors.</p>
+    <p data-lang="zh"><strong>问题：</strong>你有两个模型——一个三个预测变量，一个六个。频率统计可能用 AIC 或 BIC。但贝叶斯模型需要贝叶斯比较工具。频率 AIC 不考虑先验，也没正确使用后验。你需要在贝叶斯框架内评估样本外预测表现的工具：LOO-CV、WAIC 或贝叶斯因子。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">LOO-CV and WAIC: Predictive Accuracy Without Refitting</h3>
+    <h3 data-lang="zh">LOO-CV 与 WAIC：不需重拟合的预测精度</h3>
+    <p class="method-desc" data-lang="en">Leave-One-Out Cross-Validation (LOO-CV) asks: how well does the model predict each observation when that observation is left out of fitting? Refitting N times is computationally expensive, but Pareto-Smoothed Importance Sampling (PSIS-LOO) approximates this efficiently from a single model fit. The result is ELPD (expected log pointwise predictive density) — higher is better. WAIC (Widely Applicable Information Criterion) is asymptotically equivalent to LOO-CV but computed differently. Both penalize model complexity automatically through the posterior, unlike AIC which counts parameters. In practice, use LOO-CV (via the <code>loo</code> R package) as the default. Compare two models: if ELPD difference is large relative to its standard error, the better model is preferred.</p>
+    <p class="method-desc" data-lang="zh">留一交叉验证 (LOO-CV) 问：每次留出一个观测时，模型预测它有多好？重拟合 N 次计算代价高，但 Pareto 平滑重要性采样 (PSIS-LOO) 从单次模型拟合高效近似。结果是 ELPD（期望对数逐点预测密度）——越高越好。WAIC（广泛适用信息准则）渐近等价于 LOO-CV 但计算不同。两者通过后验自动惩罚模型复杂性，不同于 AIC 计数参数。实践中，用 LOO-CV（R 的 <code>loo</code> 包）作默认。比较两个模型：ELPD 差异相对其标准误很大时，偏好更好的模型。</p>
+    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> LOO-CV is like a teacher who grades a student's answer to question 5 without the student having seen question 5 during study. If the student consistently predicts well on unseen questions, they truly understand the material (good model). If they only do well on questions they memorized, that's overfitting.</div>
+    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>LOO-CV 就像老师在学生没学过第 5 题时给他打分。如果学生在未见过的题目上持续表现好，说明真正理解了（好模型）。如果只在背过的题上好，那是过拟合。</div>
+    <div class="method-when" data-lang="en"><strong>When to use LOO-CV:</strong> Default for comparing Bayesian models. Works for any model estimated via MCMC. Use <code>loo::loo_compare()</code> in R. <strong>When NOT to use:</strong> When comparing models with fundamentally different likelihoods (e.g., normal vs. Poisson outcome) — ELPD scores are not comparable across different outcome distributions.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用 LOO-CV：</strong>比较贝叶斯模型的默认工具。适用于任何通过 MCMC 估计的模型。R 中用 <code>loo::loo_compare()</code>。<strong>何时不用：</strong>比较似然根本不同的模型（比如正态 vs. 泊松结果）——ELPD 分数在不同结果分布间不可比。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Bayes Factors: Evidence For vs. Against</h3>
+    <h3 data-lang="zh">贝叶斯因子：支持与反对的证据</h3>
+    <p class="method-desc" data-lang="en">A Bayes factor quantifies how much the data favor one model over another. BF₁₂ = P(Data|Model 1) / P(Data|Model 2). If BF₁₂ = 10, the data are 10 times more likely under Model 1 than Model 2. Interpretation conventions: BF 1–3 = anecdotal, 3–10 = moderate, 10–30 = strong, 30–100 = very strong, >100 = decisive evidence. Unlike p-values, Bayes factors can provide evidence FOR the null hypothesis (BF < 1 favors the simpler model). This is a unique advantage: frequentist tests can only reject or fail to reject — they can't say "the data support no effect."</p>
+    <p class="method-desc" data-lang="zh">贝叶斯因子量化数据支持一个模型胜过另一个的程度。BF₁₂ = P(Data|Model 1) / P(Data|Model 2)。BF₁₂ = 10 时，数据在模型 1 下的可能性是模型 2 的 10 倍。解释惯例：BF 1–3 = 轶事性，3–10 = 中等，10–30 = 强，30–100 = 很强，>100 = 决定性证据。不同于 p 值，贝叶斯因子可以为零假设提供证据（BF < 1 支持更简单模型）。这是独特优势：频率检验只能拒绝或未拒绝——不能说「数据支持没有效应」。</p>
+    <div class="method-when" data-lang="en"><strong>When to use Bayes factors:</strong> When you want to quantify evidence for/against specific hypotheses (e.g., "Is the effect exactly zero?"). Useful in replication studies: does the replication support the original finding? <strong>Caveat:</strong> Bayes factors are sensitive to prior specification — different priors can yield different BFs. Always conduct sensitivity analysis. For routine model comparison, LOO-CV is generally preferred because it's less prior-sensitive.</div>
+    <div class="method-when" data-lang="zh"><strong>何时用贝叶斯因子：</strong>想量化支持/反对特定假设的证据时（比如「效应恰好为零吗？」）。复制研究中有用：复制是否支持原始发现？<strong>注意：</strong>贝叶斯因子对先验规范敏感——不同先验可以产生不同 BF。始终做敏感性分析。日常模型比较中，LOO-CV 通常更优因为对先验更不敏感。</div>
+  </div>
+
+</div>
+
+<hr class="section-divider">
 <!-- GUIDES -->
 <div class="section" id="bm-guides">
   <h2 data-lang="en">Guides</h2>
@@ -284,27 +320,14 @@ next:
 
 <hr class="section-divider">
 <!-- RESOURCES -->
-<hr class="section-divider">
 <div class="section" id="bm-resources">
   <h2 data-lang="en">Resources</h2>
   <h2 data-lang="zh">资源</h2>
   <div class="method-section">
-    <p class="method-desc" data-lang="en"><strong>Foundational texts and guides:</strong></p>
-    <p class="method-desc" data-lang="zh"><strong>基础文献与指南：</strong></p>
-    <ul style="margin-left:20px;line-height:1.8;color:var(--ink-faded)">
-      <li><strong>Gelman, A., et al. (2013).</strong> <em>Bayesian Data Analysis</em> (3rd ed.). — The definitive technical reference; dense but authoritative. Chapter 5 covers Bayesian inference; Chapter 11 covers hierarchical models.</li>
-      <li><strong>McElreath, R. (2020).</strong> <em>Statistical Rethinking</em> (2nd ed.). — Accessible introduction emphasizing conceptual understanding over equations. Highly recommended for building intuition before diving into technical material.</li>
-      <li><strong>Jackman, S. (2009).</strong> <em>Bayesian Analysis for the Social Sciences</em>. — Tailored to political science and sociology; see Chapter 2 for regression, Chapter 4 for hierarchical models, Chapter 5 for ideal point estimation.</li>
-      <li><strong>Gelmanan, A., Carlin, J. B., Stern, H. S., & Rubin, D. B. (2003).</strong> Bayesian Data Analysis (2nd ed.), Chapter 6. — Posterior predictive checking explained with examples; foundational paper: Gelman et al. (1996) "Posterior Predictive Assessment of Model Fitness via Realized Discrepancies."</li>
-    </ul>
-    <p class="method-desc" data-lang="en"><strong>Software and implementation:</strong></p>
-    <p class="method-desc" data-lang="zh"><strong>软件与实现：</strong></p>
-    <ul style="margin-left:20px;line-height:1.8;color:var(--ink-faded)">
-      <li><strong>brms (R):</strong> Bayesian Regression Models using Stan. Accessible formula interface; automatic priors; produces posterior samples. <code>brm(y ~ x1 + x2 + (1 | group))</code> for a hierarchical model with random intercepts.</li>
-      <li><strong>Stan:</strong> Probabilistic programming language; powerful for custom models. Steeper learning curve but essential for non-standard models.</li>
-      <li><strong>PyMC (Python):</strong> MCMC in Python with intuitive syntax. Growing community; good for exploratory modeling.</li>
-      <li><strong>Diagnostics:</strong> <code>bayesplot</code> (R) for trace plots and posterior predictive checks; <code>tidybayes</code> for plotting posterior distributions.</li>
-    </ul>
+    <p class="method-desc" data-lang="en"><strong>Foundational texts:</strong> Gelman et al. (2013) <em>Bayesian Data Analysis</em> (3rd ed.) — the definitive technical reference. McElreath (2020) <em>Statistical Rethinking</em> (2nd ed.) — the best conceptual introduction, highly recommended before diving into technical material. Kaplan (2014) <em>Bayesian Statistics for the Social Sciences</em> — tailored to political science and sociology, with chapters on Bayesian SEM and model averaging. Jackman (2009) <em>Bayesian Analysis for the Social Sciences</em> — ideal point estimation, hierarchical models for comparative politics. Kruschke (2015) <em>Doing Bayesian Data Analysis</em> — hands-on R/Stan approach with detailed MCMC explanations.</p>
+    <p class="method-desc" data-lang="zh"><strong>基础文献：</strong>Gelman 等 (2013)《贝叶斯数据分析》第三版——权威技术参考。McElreath (2020)《统计重新思考》第二版——最佳概念入门，强烈推荐在学技术内容前阅读。Kaplan (2014)《社会科学的贝叶斯统计》——面向政治学和社会学，含贝叶斯 SEM 和模型平均章节。Jackman (2009)《社会科学贝叶斯分析》——理想点估计、比较政治的分层模型。Kruschke (2015)《做贝叶斯数据分析》——实操 R/Stan 方法与详细 MCMC 讲解。</p>
+    <p class="method-desc" data-lang="en"><strong>Software:</strong> <code>brms</code> (R) — accessible formula interface using Stan, automatic priors: <code>brm(y ~ x1 + x2 + (1 | group))</code>. <code>rstanarm</code> (R) — drop-in Bayesian replacement for lm/glm/lmer. <code>Stan</code> — probabilistic programming language for custom models. <code>PyMC</code> (Python) — intuitive MCMC syntax. <strong>Diagnostics:</strong> <code>bayesplot</code> for trace plots and posterior predictive checks; <code>loo</code> for LOO-CV and WAIC; <code>tidybayes</code> for posterior visualization; <code>bridgesampling</code> for Bayes factors.</p>
+    <p class="method-desc" data-lang="zh"><strong>软件：</strong><code>brms</code>（R）——基于 Stan 的易用公式界面，自动先验：<code>brm(y ~ x1 + x2 + (1 | group))</code>。<code>rstanarm</code>（R）——lm/glm/lmer 的贝叶斯即插即用替代。<code>Stan</code>——用于自定义模型的概率编程语言。<code>PyMC</code>（Python）——直观的 MCMC 语法。<strong>诊断工具：</strong><code>bayesplot</code> 迹图与后验预测检验；<code>loo</code> LOO-CV 与 WAIC；<code>tidybayes</code> 后验可视化；<code>bridgesampling</code> 贝叶斯因子。</p>
   </div>
 </div>
 

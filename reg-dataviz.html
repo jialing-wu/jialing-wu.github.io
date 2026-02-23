@@ -185,7 +185,7 @@ next:
     <p class="method-desc" data-lang="en">A scatter plot has one variable on the x-axis, another on the y-axis, with each observation plotted as a point. Scatter plots immediately reveal the relationship: positive slope (points drift upward to the right), negative slope (points drift downward to the right), or no clear relationship (points scattered randomly). Scatter plots also reveal outliers, clusters, and nonlinear patterns that a single correlation coefficient cannot capture.</p>
     <p class="method-desc" data-lang="zh">散点图在x轴有一个变量，y轴有另一个，每个观察绘制为一个点。散点图立即揭示关系：正斜率（点向右上方漂移）、负斜率（点向右下方漂移）或无明确关系（点随机散布）。散点图也揭示单个相关系数不能捕获的异常值、聚类和非线性模式。</p>
     <p class="method-desc" data-lang="en">Use color or shape to encode a third variable (e.g., region, treatment group) to show how the relationship differs across groups. Use transparency (alpha) to show overplotting — when many points lie in the same location, making a dense cloud. Transparency reveals density: darker areas have more points, lighter areas have fewer. This is far more effective than jittering (adding random noise) or small-point size.</p>
-    <p class="method-desc" data-lang="zh">用颜色或形状编码第三变量（如地区、处理组）以展示关系如何跨组不同。用透明度（alpha）展示过度绘制——许多点在同一位置，形成密集云。透明度揭示密度：更暗区域有更多点，更亮区域更少。这远有效于抖动（加随机噪声）或小点大小。</div>
+    <p class="method-desc" data-lang="zh">用颜色或形状编码第三变量（如地区、处理组）以展示关系如何跨组不同。用透明度（alpha）展示过度绘制——许多点在同一位置，形成密集云。透明度揭示密度：更暗区域有更多点，更亮区域更少。这远有效于抖动（加随机噪声）或小点大小。</p>
     <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A correlation is like saying "tall people tend to be heavier." A scatter plot shows you the actual people: You see most tall people are heavier, but there are exceptions (a tall basketball player, a short but obese person), and you see the relationship is roughly linear with some scatter. The visual makes the pattern intuitive in a way a number cannot.</div>
     <div class="method-analogy" data-lang="zh"><strong>类比：</strong>相关像说"高个子倾向于较重。"散点图向你展示实际的人：你看到大多数高个子更重，但有例外（高篮球运动员、矮但肥胖的人），你看到关系大致线性带一些散布。视觉以数字不能的方式使模式直观。</div>
     <div class="method-when" data-lang="en"><strong>When to use / not use:</strong> Always use scatter plots to visualize bivariate relationships. A scatter plot should precede any regression or correlation analysis — it may reveal nonlinearity or outliers that violate regression assumptions. Use scatter plots for continuous or mixed variables (one continuous, one categorical is awkward; use boxplots or violins instead). With large samples (n &gt; 1000), add a smoother or transparent colors to avoid over-plotting.</div>
@@ -305,22 +305,22 @@ next:
 
 <hr class="section-divider">
 <!-- RESOURCES -->
-<hr class="section-divider">
 <div class="section" id="dv-resources">
   <h2 data-lang="en">Resources</h2>
   <h2 data-lang="zh">资源</h2>
-  <h3 data-lang="en">Key References</h3>
-  <h3 data-lang="zh">关键参考</h3>
-  <ul class="resource-list">
-    <li data-lang="en"><strong>Tufte, E. R. (1983).</strong> <em>The Visual Display of Quantitative Information.</em> Graphics Press.</li>
-    <li data-lang="zh"><strong>图夫特(1983)。</strong><em>定量信息的视觉展示。</em>Graphics Press。</li>
-    <li data-lang="en"><strong>Cleveland, W. S. (1985).</strong> <em>The Elements of Graphing Data.</em> Wadsworth Advanced Books and Software.</li>
-    <li data-lang="zh"><strong>克利夫兰(1985)。</strong><em>数据制图元素。</em>沃茨沃斯高等书籍和软件。</li>
-    <li data-lang="en"><strong>Wickham, H. (2016).</strong> <em>ggplot2: Elegant Graphics for Data Analysis (2nd ed.)</em>. Springer.</li>
-    <li data-lang="zh"><strong>威克汉(2016)。</strong><em>ggplot2：数据分析的优雅图形(第2版)</em>。施普林格。</li>
-    <li data-lang="en"><strong>Healy, K. (2018).</strong> <em>Data Visualization: A Practical Introduction.</em> Princeton University Press.</li>
-    <li data-lang="zh"><strong>希利(2018)。</strong><em>数据可视化：实用介绍。</em>普林斯顿大学出版社。</li>
-  </ul>
+  <div class="method-section">
+    <p class="method-desc" data-lang="en"><strong>Tufte, E. R. (1983).</strong> <em>The Visual Display of Quantitative Information.</em> Graphics Press. — Foundational text on data visualization principles and the data-ink ratio; essential reading for understanding how design choices shape perception.</p>
+    <p class="method-desc" data-lang="zh"><strong>图夫特（1983）。</strong><em>定量信息的视觉展示。</em>Graphics Press。——关于数据可视化原则和数据墨水比的基础文本；对理解设计选择如何塑造知觉至关重要。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Cleveland, W. S. (1985).</strong> <em>The Elements of Graphing Data.</em> Wadsworth Advanced Books and Software. — Classic guide on designing effective statistical graphics; covers dot plots, bar charts, and common pitfalls in visualization.</p>
+    <p class="method-desc" data-lang="zh"><strong>克利夫兰（1985）。</strong><em>数据制图元素。</em>沃茨沃斯高等书籍和软件。——设计有效统计图表的经典指南；涵盖点图、条形图和可视化中的常见陷阱。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Wickham, H. (2016).</strong> <em>ggplot2: Elegant Graphics for Data Analysis (2nd ed.)</em>. Springer. — Comprehensive guide to ggplot2 in R, with grammar of graphics philosophy and extensive examples for publication-ready visualizations.</p>
+    <p class="method-desc" data-lang="zh"><strong>威克汉（2016）。</strong><em>ggplot2：数据分析的优雅图形（第2版）</em>。施普林格。——R 中 ggplot2 的综合指南，具有图形语法哲学和用于发表级可视化的广泛示例。</p>
+
+    <p class="method-desc" data-lang="en"><strong>Healy, K. (2018).</strong> <em>Data Visualization: A Practical Introduction.</em> Princeton University Press. — Modern practical guide integrating design principles with R code; excellent for learning to see and critique visualizations critically.</p>
+    <p class="method-desc" data-lang="zh"><strong>希利（2018）。</strong><em>数据可视化：实用介绍。</em>普林斯顿大学出版社。——整合设计原则与R代码的现代实践指南；极好地学习以批判眼光看待和评论可视化。</p>
+  </div>
 </div>
 
 <!-- PAGE NAV -->

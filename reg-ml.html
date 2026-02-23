@@ -66,6 +66,8 @@ next:
   <a href="#ml-s3" data-lang="zh">我想用树类模型进行预测<span class="pi-arrow">&rarr; &sect;3</span></a>
   <a href="#ml-s4" data-lang="en">How do I understand what my black-box model is doing? <span class="pi-arrow">&rarr; &sect;4</span></a>
   <a href="#ml-s4" data-lang="zh">我怎么理解黑箱模型在做什么？<span class="pi-arrow">&rarr; &sect;4</span></a>
+  <a href="#ml-s5" data-lang="en">Can ML help me estimate causal effects that vary across individuals? <span class="pi-arrow">&rarr; &sect;5</span></a>
+  <a href="#ml-s5" data-lang="zh">ML 能帮我估计因人而异的因果效应吗？<span class="pi-arrow">&rarr; &sect;5</span></a>
 </div>
 
 <hr class="section-divider">
@@ -248,6 +250,39 @@ next:
 </div>
 
 <hr class="section-divider">
+
+<!-- SECTION 5 -->
+<div class="section" id="ml-s5">
+  <h2 data-lang="en">Can ML Help Me Estimate Causal Effects That Vary Across Individuals?</h2>
+  <h2 data-lang="zh">ML 能帮我估计因人而异的因果效应吗？</h2>
+
+  <div class="challenge-overview">
+    <p data-lang="en"><strong>The problem:</strong> Standard causal inference gives you an average treatment effect (ATE): "the job training program increases earnings by $2,000 on average." But average effects hide heterogeneity — the program may help some subgroups enormously and others not at all. Traditional subgroup analysis (run separate regressions by gender, age, education) is ad hoc and fails with many dimensions. You need a principled way to discover who benefits most.</p>
+    <p data-lang="zh"><strong>问题：</strong>标准因果推断给出平均处理效应（ATE）："职业培训项目平均提高收入 2000 美元。"但平均效应掩盖异质性——项目可能对某些子群帮助巨大而对其他人无效。传统亚组分析（按性别、年龄、学历分别回归）是临时性的，维度多时就失效。你需要有原则地发现谁受益最大。</p>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">Causal Forests and the GRF Framework</h3>
+    <h3 data-lang="zh">因果森林与 GRF 框架</h3>
+    <p class="method-desc" data-lang="en"><strong>Causal Forest</strong> (Athey & Imbens, 2018; Wager & Athey, 2018) adapts the Random Forest algorithm to estimate <strong>conditional average treatment effects</strong> (CATE): τ(x) = E[Y(1) − Y(0) | X = x]. Instead of predicting the outcome Y, each tree splits on the covariates that best reveal treatment effect heterogeneity. The result: an individualized treatment effect estimate for every observation, based on its characteristics.</p>
+    <p class="method-desc" data-lang="zh"><strong>因果森林</strong>（Athey & Imbens, 2018; Wager & Athey, 2018）将随机森林算法改造为估计<strong>条件平均处理效应</strong>（CATE）：τ(x) = E[Y(1) − Y(0) | X = x]。每棵树不是预测结果 Y，而是按最能揭示处理效应异质性的协变量进行分割。结果：基于每个观测的特征给出个体化的处理效应估计。</p>
+    <p class="method-desc" data-lang="en">The <strong>Generalized Random Forest (GRF)</strong> framework extends this idea beyond treatment effects to any estimating equation, including instrumental variables (IV forests), quantile regression, and local average treatment effects. The key innovation is <strong>honest estimation</strong>: the sample used to determine tree splits is different from the sample used to estimate effects within leaves. This prevents overfitting and allows valid confidence intervals — a rarity in ML.</p>
+    <p class="method-desc" data-lang="zh"><strong>广义随机森林（GRF）</strong>框架将此思路从处理效应扩展到任何估计方程，包括工具变量（IV 森林）、分位数回归和局部平均处理效应。关键创新是<strong>诚实估计</strong>：用于确定树分割的样本与用于估计叶节点内效应的样本不同。这防止过拟合并允许有效的置信区间——在 ML 中罕见。</p>
+    <div class="method-example" data-lang="en"><strong>Social science example:</strong> A randomized job training program. OLS tells you the ATE is +$2,000. Causal Forest reveals: young workers without college degrees gain +$5,000, older workers with degrees gain only +$200, and workers in declining industries gain +$8,000. Policymakers can now target resources where they matter most.</div>
+    <div class="method-example" data-lang="zh"><strong>社会科学例子：</strong>随机化职业培训项目。OLS 告诉你 ATE 是 +2000 美元。因果森林揭示：无大学学历的年轻工人获得 +5000 美元，有学历的年长工人仅获得 +200 美元，衰退行业的工人获得 +8000 美元。政策制定者现在可以把资源投向最有效的地方。</div>
+  </div>
+
+  <div class="method-section">
+    <h3 data-lang="en">When to Use Causal ML vs. Traditional Methods</h3>
+    <h3 data-lang="zh">何时用因果 ML vs. 传统方法</h3>
+    <p class="method-desc" data-lang="en">Causal ML is not a replacement for traditional causal inference — it builds on top of it. You still need a valid identification strategy (randomization, IV, RDD, DiD). What Causal ML adds is the ability to explore heterogeneity without specifying interactions in advance. Use Causal Forest when: (1) you have a credible causal design and want to find who benefits most; (2) you have many potential moderators and don't know which matter; (3) sample size is large enough (typically n > 1000). Stick with traditional methods when: (1) sample is small; (2) you have specific, pre-registered hypotheses about effect modifiers; (3) you need coefficient estimates for a familiar audience.</p>
+    <p class="method-desc" data-lang="zh">因果 ML 不是替代传统因果推断——而是在其基础上构建。你仍然需要有效的识别策略（随机化、IV、RDD、DiD）。因果 ML 增加的是在不事先指定交互项的情况下探索异质性的能力。在以下情况使用因果森林：（1）有可靠的因果设计且想找谁受益最大；（2）有很多潜在调节变量且不知道哪些重要；（3）样本量够大（通常 n > 1000）。以下情况坚持传统方法：（1）样本小；（2）有具体的、预注册的效应修饰假设；（3）需要面向熟悉受众的系数估计。</p>
+    <div class="method-when" data-lang="en"><strong>Key tools:</strong> R package <code>grf</code> (Athey, Tibshirani & Wager) is the standard implementation. For Double/Debiased ML, use <code>DoubleML</code> in R or Python. For targeted learning, use <code>tmle</code> or <code>SuperLearner</code>.</div>
+    <div class="method-when" data-lang="zh"><strong>核心工具：</strong>R 包 <code>grf</code>（Athey、Tibshirani & Wager）是标准实现。双重/去偏 ML 用 R 或 Python 的 <code>DoubleML</code>。目标学习用 <code>tmle</code> 或 <code>SuperLearner</code>。</div>
+  </div>
+</div>
+
+<hr class="section-divider">
 <!-- GUIDES -->
 <div class="section" id="ml-guides">
   <h2 data-lang="en">Guides</h2>
@@ -285,23 +320,15 @@ next:
   <div class="method-section">
     <h3 data-lang="en">Key References</h3>
     <h3 data-lang="zh">关键参考</h3>
-    <ul style="font-size:14.5px;line-height:1.8;color:var(--ink-faded);margin-left:20px">
-      <li>Mullainathan, S., &amp; Spiess, J. (2017). Machine learning: An applied econometric approach. <em>Journal of Economic Perspectives</em>, 31(2), 87–106.</li>
-      <li>Chernozhukov, V., Escanciano, J. C., Ichimura, H., et al. (2018). Double/debiased machine learning for treatment and structural parameters. <em>Econometrics Journal</em>, 21(1), C1–C68.</li>
-      <li>Breiman, L. (2001). Random forests. <em>Machine Learning</em>, 45(1), 5–32.</li>
-      <li>Lundberg, S. M., &amp; Lee, S.-I. (2017). A unified approach to interpreting model predictions. <em>NIPS</em>, 30, 4765–4774.</li>
-      <li>Molnar, C. (2020). <em>Interpretable Machine Learning: A Guide for Making Black Box Models Explainable</em>. Available free at christophm.github.io/interpretable-ml-book.</li>
-    </ul>
+    <p class="method-desc" data-lang="en">Mullainathan &amp; Spiess (2017), "Machine Learning: An Applied Econometric Approach," <em>JEP</em> — the essential introduction for social scientists. James, Witten, Hastie &amp; Tibshirani, <em>An Introduction to Statistical Learning</em> (ISLR) — the standard textbook, freely available online. Athey &amp; Imbens (2019), "Machine Learning Methods That Economists Should Know About," <em>Annual Review of Economics</em> — comprehensive survey of causal ML. Molnar (2020), <em>Interpretable Machine Learning</em> — free online book covering SHAP, PDP, LIME, and more. Breiman (2001), "Random Forests" — the foundational paper. Chernozhukov et al. (2018), "Double/Debiased ML" — theoretical foundation for causal inference with ML.</p>
+    <p class="method-desc" data-lang="zh">Mullainathan &amp; Spiess (2017)，"Machine Learning: An Applied Econometric Approach"，<em>JEP</em>——社会科学家的必读入门。James、Witten、Hastie &amp; Tibshirani，<em>An Introduction to Statistical Learning</em>（ISLR）——标准教材，免费在线。Athey &amp; Imbens (2019)，"Machine Learning Methods That Economists Should Know About"，<em>Annual Review of Economics</em>——因果 ML 综合综述。Molnar (2020)，<em>Interpretable Machine Learning</em>——涵盖 SHAP、PDP、LIME 等的免费在线书。Breiman (2001)，"Random Forests"——奠基论文。Chernozhukov et al. (2018)，"Double/Debiased ML"——ML 因果推断理论基础。</p>
   </div>
 
   <div class="method-section">
     <h3 data-lang="en">Software Tools</h3>
     <h3 data-lang="zh">软件工具</h3>
-    <ul style="font-size:14.5px;line-height:1.8;color:var(--ink-faded);margin-left:20px">
-      <li><strong>Python:</strong> scikit-learn (Lasso, Ridge, Random Forest), XGBoost, shap (SHAP values)</li>
-      <li><strong>R:</strong> glmnet (Lasso/Ridge), ranger (Random Forest), xgboost, shap, iml (interpretability)</li>
-      <li><strong>Jupyter/RMarkdown:</strong> For reproducible ML workflows with cross-validation pipelines</li>
-    </ul>
+    <p class="method-desc" data-lang="en"><strong>R:</strong> glmnet (Lasso/Ridge/Elastic Net), ranger (fast Random Forest), xgboost (gradient boosting), tidymodels (unified ML workflow), grf (Causal Forest/GRF), DoubleML (debiased ML), shap &amp; iml (interpretability). <strong>Python:</strong> scikit-learn (Lasso, Ridge, Random Forest, cross-validation), XGBoost/LightGBM (gradient boosting), shap (SHAP values), econml (Microsoft's causal ML library, includes Causal Forest and DML).</p>
+    <p class="method-desc" data-lang="zh"><strong>R：</strong>glmnet（Lasso/Ridge/弹性网）、ranger（快速随机森林）、xgboost（梯度提升）、tidymodels（统一 ML 工作流）、grf（因果森林/GRF）、DoubleML（去偏 ML）、shap 与 iml（可解释性）。<strong>Python：</strong>scikit-learn（Lasso、Ridge、随机森林、交叉验证）、XGBoost/LightGBM（梯度提升）、shap（SHAP 值）、econml（微软因果 ML 库，含因果森林和 DML）。</p>
   </div>
 </div>
 
