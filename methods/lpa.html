@@ -679,44 +679,40 @@ body.presenting .pres-progress{display:block;
   <h2 data-lang="en">LPA Workflow: 5 Steps</h2>
   <h2 data-lang="zh">LPA 工作流程：5 个步骤</h2>
 
-  <div class="flow-row">
-    <div class="flow-step">
-      <div class="flow-num">1</div>
-      <div class="flow-title" data-lang="en">Theory &amp;<br>Indicators</div>
-      <div class="flow-title" data-lang="zh">理论 &amp;<br>指标选择</div>
-      <div class="flow-desc" data-lang="en">Select indicators from theoretical framework</div>
-      <div class="flow-desc" data-lang="zh">基于理论框架选择指标变量</div>
+  <div class="check-grid" style="grid-template-columns:repeat(5,1fr)">
+    <div class="check-card">
+      <div class="check-icon">01</div>
+      <div class="check-title" data-lang="en">Theory &amp; Indicators</div>
+      <div class="check-title" data-lang="zh">理论与指标</div>
+      <div class="check-desc" data-lang="en">Select indicators from theoretical framework</div>
+      <div class="check-desc" data-lang="zh">基于理论框架选择指标变量</div>
     </div>
-    <div class="flow-arrow">&rarr;</div>
-    <div class="flow-step">
-      <div class="flow-num">2</div>
-      <div class="flow-title" data-lang="en">Fit 1 to K<br>Models</div>
-      <div class="flow-title" data-lang="zh">拟合 1 到 K<br>个模型</div>
-      <div class="flow-desc" data-lang="en">Incrementally increase class number</div>
-      <div class="flow-desc" data-lang="zh">逐步增加类别数量</div>
+    <div class="check-card">
+      <div class="check-icon">02</div>
+      <div class="check-title" data-lang="en">Fit 1 to K Models</div>
+      <div class="check-title" data-lang="zh">拟合 1–K 个模型</div>
+      <div class="check-desc" data-lang="en">Incrementally increase class number</div>
+      <div class="check-desc" data-lang="zh">逐步增加类别数量</div>
     </div>
-    <div class="flow-arrow">&rarr;</div>
-    <div class="flow-step">
-      <div class="flow-num">3</div>
-      <div class="flow-title" data-lang="en">Compare<br>Fit Indices</div>
-      <div class="flow-title" data-lang="zh">比较<br>拟合指标</div>
-      <div class="flow-desc">BIC, BLRT, entropy</div>
+    <div class="check-card">
+      <div class="check-icon">03</div>
+      <div class="check-title" data-lang="en">Compare Fit Indices</div>
+      <div class="check-title" data-lang="zh">比较拟合指标</div>
+      <div class="check-desc">BIC, BLRT, entropy</div>
     </div>
-    <div class="flow-arrow">&rarr;</div>
-    <div class="flow-step">
-      <div class="flow-num">4</div>
-      <div class="flow-title" data-lang="en">Interpret<br>Profiles</div>
-      <div class="flow-title" data-lang="zh">解读<br>剖面图</div>
-      <div class="flow-desc" data-lang="en">Read profile plot, name classes</div>
-      <div class="flow-desc" data-lang="zh">阅读剖面图，命名各类别</div>
+    <div class="check-card">
+      <div class="check-icon">04</div>
+      <div class="check-title" data-lang="en">Interpret Profiles</div>
+      <div class="check-title" data-lang="zh">解读剖面图</div>
+      <div class="check-desc" data-lang="en">Read profile plot, name classes</div>
+      <div class="check-desc" data-lang="zh">阅读剖面图，命名各类别</div>
     </div>
-    <div class="flow-arrow">&rarr;</div>
-    <div class="flow-step active">
-      <div class="flow-num">5</div>
-      <div class="flow-title" data-lang="en">Validate</div>
-      <div class="flow-title" data-lang="zh">验证</div>
-      <div class="flow-desc" data-lang="en">Covariates &amp; outcomes (three-step)</div>
-      <div class="flow-desc" data-lang="zh">协变量 &amp; 结果变量（三步法）</div>
+    <div class="check-card">
+      <div class="check-icon">05</div>
+      <div class="check-title" data-lang="en">Validate</div>
+      <div class="check-title" data-lang="zh">验证</div>
+      <div class="check-desc" data-lang="en">Covariates &amp; outcomes (three-step)</div>
+      <div class="check-desc" data-lang="zh">协变量与结果变量（三步法）</div>
     </div>
   </div>
 
@@ -751,6 +747,18 @@ body.presenting .pres-progress{display:block;
       <div class="check-desc" data-lang="zh">有机整合理论（OIT）是自我决定理论的子理论，认为动机不是"高 vs. 低"而是一个连续体——从外部调节到内在动机。每个学生在四种类型上同时有得分，形成独特的组合模式。以变量为中心的方法会遗漏这点；LPA 能捕捉到。</div>
     </div>
   </div>
+</div>
+
+<hr class="section-divider pres-hide">
+
+<!-- ═════════════════════════════════════════════════════════
+     SLIDE 7b: ARTICLE — SAMPLE, INDICATORS, HYPOTHESES
+     ═════════════════════════════════════════════════════════ -->
+<div class="slide" id="slide-article-design">
+  <div class="slide-num" data-lang="en">Part 2 · Slide 2</div>
+  <h2 data-lang="en">Article Example: Study Design</h2>
+  <h2 data-lang="zh">文献示例：研究设计</h2>
+
   <div class="check-grid" style="grid-template-columns:1fr 1fr">
     <div class="check-card">
       <div class="check-icon">01</div>
@@ -791,7 +799,7 @@ body.presenting .pres-progress{display:block;
      SLIDE 8: STEP 1 - MODEL COMPARISON
      ═════════════════════════════════════════════════════════ -->
 <div class="slide" id="slide-step1-comparison">
-  <div class="slide-num" data-lang="en">Part 2 · Slide 2</div>
+  <div class="slide-num" data-lang="en">Part 2 · Slide 3</div>
   <h2 data-lang="en">Step 1: Model Comparison &amp; Class Enumeration</h2>
   <h2 data-lang="zh">步骤一：模型比较与类别数确定</h2>
 
@@ -818,7 +826,7 @@ body.presenting .pres-progress{display:block;
      SLIDE 9: STEP 2 - PROFILE INTERPRETATION
      ═════════════════════════════════════════════════════════ -->
 <div class="slide" id="slide-step2-profiles">
-  <div class="slide-num" data-lang="en">Part 2 · Slide 3</div>
+  <div class="slide-num" data-lang="en">Part 2 · Slide 4</div>
   <h2 data-lang="en">Step 2: Interpreting the Profile Plot</h2>
   <h2 data-lang="zh">步骤二：解读剖面图</h2>
 
@@ -873,7 +881,7 @@ body.presenting .pres-progress{display:block;
      SLIDE 10: STEP 3 - OUTCOME VALIDATION
      ═════════════════════════════════════════════════════════ -->
 <div class="slide" id="slide-step3-outcomes">
-  <div class="slide-num" data-lang="en">Part 2 · Slide 4</div>
+  <div class="slide-num" data-lang="en">Part 2 · Slide 5</div>
   <h2 data-lang="en">Step 3: Outcome Validation</h2>
   <h2 data-lang="zh">步骤三：结果验证</h2>
 
