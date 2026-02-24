@@ -575,9 +575,9 @@ body.presenting .pres-progress{
         <div class="example">"学生中存在哪些不同的动机组合模式？"</div>
       </div>
     </div>
+    <div class="compare-footer" data-lang="en">The mean can mask meaningful heterogeneity — person-centered methods reveal hidden diversity.</div>
+    <div class="compare-footer" data-lang="zh">均值会掩盖有意义的异质性——以个体为中心的方法能揭示隐藏的多样性。</div>
   </div>
-  <div class="compare-footer" data-lang="en">The mean can mask meaningful heterogeneity — person-centered methods reveal hidden diversity.</div>
-  <div class="compare-footer" data-lang="zh">均值会掩盖有意义的异质性——以个体为中心的方法能揭示隐藏的多样性。</div>
 </div>
 
 <hr class="section-divider pres-hide">
@@ -714,7 +714,7 @@ body.presenting .pres-progress{
     <h3 data-lang="zh">概率性分类</h3>
     <div class="method-desc" data-lang="en">Each individual has a probability of belonging to each class — not hard assignment. Classification uses the highest posterior probability.</div>
     <div class="method-desc" data-lang="zh">每个个体都有属于每个类别的概率——不是硬性分配。最终分类取后验概率最高的类别。</div>
-    <div class="method-example" data-lang="en">e.g., A student may have posterior probabilities of .82, .13, and .05 for Profiles 1, 2, and 3 — they would be assigned to Profile 1.</div>
+    <div class="method-example" data-lang="en">e.g., a student may have posterior probabilities of .82, .13, and .05 for Profiles 1, 2, and 3 — they would be assigned to Profile 1.</div>
     <div class="method-example" data-lang="zh">例如：某学生属于 Profile 1、2、3 的后验概率分别为 .82、.13、.05 → 分配到 Profile 1。</div>
     <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A student has 82% probability of belonging to Profile 1, 13% to Profile 2, 5% to Profile 3. We assign them to Profile 1, but acknowledge 18% uncertainty. This is softer than hard clustering (like k-means) which forces 100% membership.</div>
     <div class="method-analogy" data-lang="zh"><strong>类比：</strong>某学生属于 Profile 1 的概率 82%、Profile 2 的概率 13%、Profile 3 的概率 5%。我们把他归入 Profile 1，但承认有 18% 的不确定性。这比硬聚类（如 k-means 强制 100% 归属）更柔和。</div>
@@ -1031,10 +1031,9 @@ body.presenting .pres-progress{
         <p><strong>其他：</strong>多层次 LCA/LPA、因子混合模型、小样本的贝叶斯估计。</p>
       </div>
     </div>
+    <div class="compare-footer" data-lang="en">LPA is the cross-sectional foundation — LTA and GMM extend it to time.</div>
+    <div class="compare-footer" data-lang="zh">LPA 是横截面的基础——LTA 和 GMM 将其拓展到时间维度。</div>
   </div>
-
-  <div class="compare-footer" data-lang="en">LPA is the cross-sectional foundation — LTA and GMM extend it to time.</div>
-  <div class="compare-footer" data-lang="zh">LPA 是横截面的基础——LTA 和 GMM 将其拓展到时间维度。</div>
 </div>
 
 <hr class="section-divider pres-hide">
@@ -1090,22 +1089,6 @@ body.presenting .pres-progress{
 </div>
 
 <script>
-/* ══════════════════════════════════════════════════════
-   LANGUAGE TOGGLE
-   ══════════════════════════════════════════════════════ */
-function setLang(lang) {
-  document.body.className = lang;
-  document.getElementById('btn-en').style.fontWeight = (lang === 'en') ? '600' : '400';
-  document.getElementById('btn-zh').style.fontWeight = (lang === 'zh') ? '600' : '400';
-  document.getElementById('btn-en').style.color = (lang === 'en') ? 'var(--red)' : 'var(--ink-faded)';
-  document.getElementById('btn-zh').style.color = (lang === 'zh') ? 'var(--red)' : 'var(--ink-faded)';
-  localStorage.setItem('preferred-lang', lang);
-}
-window.addEventListener('load', function() {
-  const saved = localStorage.getItem('preferred-lang') || 'zh';
-  setLang(saved);
-});
-
 /* ══════════════════════════════════════════════════════
    PRESENTATION MODE ENGINE
    ══════════════════════════════════════════════════════ */
@@ -1184,5 +1167,3 @@ window.addEventListener('load', function() {
   main.appendChild(progress);
 });
 </script>
-</body>
-</html>
