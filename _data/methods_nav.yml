@@ -14,6 +14,10 @@
       title_zh: "网络分析入门演示"
       url: "sample-network-intro.html"
       num: "01"
+    - title: "Latent Profile Analysis"
+      title_zh: "潜在剖面分析"
+      url: "lpa.html"
+      num: "02"
 
 - category: "Foundations"
   category_zh: "基础课程"
