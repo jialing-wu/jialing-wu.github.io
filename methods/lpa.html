@@ -236,7 +236,7 @@ body.presenting .pres-progress{
 }
 .step-item strong{color:var(--ink-soft)}
 
-/* ── method-when (when to use this method) ───────── */
+/* ── method-when (transitions and callouts) ───────── */
 .method-when{
   margin:16px 0;padding:14px 18px;border-radius:0 4px 4px 0;
   background:rgba(194,153,61,.04);
@@ -246,18 +246,56 @@ body.presenting .pres-progress{
 }
 .method-when strong{color:var(--leather);font-style:normal}
 
+/* ── Override intro-cards to 2-col for this page (has 2 cards, not 3) */
+.intro-cards{grid-template-columns:1fr 1fr!important}
+
 /* ── Red emphasis (selective, replaces some <strong>) ── */
 .red-em{color:var(--red);font-weight:600}
+
+/* ── Hyperlink styling ─────────────────────────────── */
+.method-desc a, .check-desc a{
+  color:var(--red);text-decoration:none;
+  border-bottom:1px solid rgba(181,55,42,.2);
+  padding-bottom:1px;
+  transition:color .2s, border-color .2s;
+}
+.method-desc a:hover, .check-desc a:hover{
+  color:var(--gold);
+  border-bottom-color:var(--gold);
+}
+
+/* ── Three-study comparison table ──────────────────── */
+.study-table{
+  width:100%;border-collapse:collapse;margin:24px 0;
+  font-family:var(--body);font-size:14px;line-height:1.7;
+  border:1px solid var(--parchment);border-radius:6px;
+  overflow:hidden;
+}
+.study-table th{
+  font-family:var(--sans);font-size:10.5px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);background:var(--warm);
+  padding:12px 16px;text-align:left;
+  border-bottom:1px solid var(--parchment);
+}
+.study-table td{
+  padding:14px 16px;color:var(--ink-faded);
+  border-bottom:1px solid rgba(222,212,192,.4);
+  vertical-align:top;
+}
+.study-table tr:last-child td{border-bottom:none}
+.study-table td:first-child{
+  font-family:var(--sans);font-size:11px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-soft);white-space:nowrap;width:90px;
+}
+.study-table em{color:var(--ink-soft);font-style:normal;font-weight:500}
 
 /* ── Section divider enhancement ───────────────────── */
 .section-divider{
   border:none;border-top:1px solid var(--parchment);
   margin:40px 0;opacity:.6;
 }
-
-/* ══════════════════════════════════════════════════════
-   LPA-SPECIFIC COMPONENTS
-   ══════════════════════════════════════════════════════ */
 
 /* ── Profile grid (2x2) ───────────────────────────── */
 .profile-grid{
@@ -384,94 +422,10 @@ body.presenting .pres-progress{
   background:var(--red);color:var(--paper);
 }
 
-/* ── Finding boxes ───────────────────────────────── */
-.finding{
-  background:rgba(194,153,61,.06);border:1px solid rgba(194,153,61,.2);
-  border-left:3px solid var(--gold);border-radius:0 4px 4px 0;
-  padding:16px 18px;margin:16px 0;
-}
-.finding h4{
-  font-family:var(--body);font-size:14px;font-weight:600;
-  color:var(--ink-soft);margin-bottom:10px;
-}
-.finding p{
-  font-size:14px;line-height:1.8;color:var(--ink-faded);margin:0;
-}
-
-/* ── Article box ──────────────────────────────────── */
-.article-box{
-  background:var(--warm);border:1px solid var(--parchment);
-  border-radius:6px;padding:20px;margin:24px 0;
-}
-.article-cite{
-  font-size:14px;line-height:1.9;color:var(--ink-soft);
-  margin-bottom:12px;
-}
-.article-cite em{font-style:italic;color:var(--ink-faded)}
-.article-cite a{
-  color:var(--red);text-decoration:none;
-  border-bottom:1px solid rgba(181,55,42,.2);
-  transition:all .2s;
-}
-.article-cite a:hover{
-  color:var(--gold);border-bottom-color:var(--gold);
-}
-.article-method{
-  font-family:var(--sans);font-size:11px;font-weight:600;
-  letter-spacing:.06em;text-transform:uppercase;
-  color:var(--gold);margin-top:8px;
-}
-
-/* ── Reference list ───────────────────────────────── */
-.ref-list{
-  list-style:none;padding:0;margin:24px 0;
-}
-.ref-list li{
-  font-size:14px;line-height:2;color:var(--ink-faded);
-  margin-bottom:16px;padding-left:0;
-}
-.ref-tag{
-  display:inline-block;
-  font-family:var(--sans);font-size:9.5px;font-weight:700;
-  letter-spacing:.08em;text-transform:uppercase;
-  color:var(--paper);background:var(--gold);
-  border-radius:3px;padding:4px 10px;margin-right:10px;
-}
-.ref-tag.beginner{background:var(--tea)}
-.ref-tag.fit{background:#b8956b}
-
-/* ── Software row ────────────────────────────────── */
-.sw-row{
-  display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;
-  margin:24px 0;
-}
-.sw-pill{
-  background:var(--paper);border:1px solid var(--parchment);
-  border-radius:6px;padding:20px;text-align:center;
-  transition:all .3s ease;box-shadow:0 1px 4px rgba(30,24,15,.03);
-}
-.sw-pill.gold{
-  background:rgba(194,153,61,.08);border-color:var(--gold-soft);
-}
-.sw-pill:hover{
-  border-color:var(--gold-soft);
-  box-shadow:0 3px 12px rgba(194,153,61,.08);
-  transform:translateY(-2px);
-}
-.sw-pill h4{
-  font-family:var(--body);font-size:15px;font-weight:600;
-  color:var(--ink-soft);margin-bottom:12px;
-}
-.sw-pill p{
-  font-size:13.5px;line-height:1.7;color:var(--ink-faded);margin:0;
-}
-
 /* ── Responsive ───────────────────────────────────── */
 @media(max-width:1000px){
   .check-grid{grid-template-columns:1fr 1fr}
   .profile-grid{grid-template-columns:1fr}
-  .sw-row{grid-template-columns:1fr}
-  .card-row{grid-template-columns:1fr 1fr}
 }
 @media(max-width:700px){
   .flow-row{flex-direction:column;gap:6px}
@@ -486,7 +440,6 @@ body.presenting .pres-progress{
   .card-row{grid-template-columns:1fr}
   .profile-grid{grid-template-columns:1fr}
   .compare-grid{grid-template-columns:1fr}
-  .sw-row{grid-template-columns:1fr}
 }
 @media(max-width:900px){
   body.presenting .slide h2{font-size:1.8rem}
@@ -502,44 +455,39 @@ body.presenting .pres-progress{
   <span data-lang="zh">演示模式</span>
 </button>
 
-<!-- ═════════════════════════════════════════════════════════
-     SLIDE 1: TITLE + INTRO CARDS
-     ═════════════════════════════════════════════════════════ -->
+<!-- HEADER -->
 <div class="slide" id="slide-title">
   <div class="method-header">
     <h1 data-lang="en">Latent Profile Analysis</h1>
     <h1 data-lang="zh">潜在剖面分析</h1>
-    <div class="method-meta">Person-Centered Methods · 01</div>
+    <div class="method-meta">Sample · 15–20 min</div>
   </div>
   <div class="intro-cards">
     <div class="intro-card">
-      <div class="card-label" data-lang="en">What Is This Course?</div>
-      <div class="card-label" data-lang="zh">这是什么课程？</div>
-      <p data-lang="en">Latent Profile Analysis (LPA) and related mixture models identify hidden subgroups in your data. Instead of assuming everyone in your sample comes from one population, LPA discovers distinct profiles — groups of people who share similar patterns of characteristics. This is essential for person-centered research in psychology, education, and social science.</p>
-      <p data-lang="zh">潜在剖面分析（LPA）和相关的混合模型可识别数据中的隐藏亚组。不是假设样本中的每个人都来自同一个总体，而是 LPA 发现不同的剖面——具有相似特征模式的人群。这对心理学、教育和社会科学的以个体为中心的研究至关重要。</p>
+      <div class="card-label" data-lang="en">What Is This?</div>
+      <div class="card-label" data-lang="zh">这是什么？</div>
+      <div data-lang="en"><p>Latent Profile Analysis (LPA) is a person-centered method that identifies hidden subgroups in your data. Instead of assuming everyone comes from one population, LPA discovers distinct profiles — groups of people who share similar patterns of characteristics. This is essential for understanding heterogeneity in psychology, education, and social science.</p></div>
+      <div data-lang="zh"><p>潜在剖面分析（LPA）是一种以个体为中心的方法，可识别数据中的隐藏亚组。不是假设样本中的每个人都来自同一个总体，而是 LPA 发现不同的剖面——具有相似特征模式的人群。这对心理学、教育和社会科学中理解异质性至关重要。</p></div>
     </div>
     <div class="intro-card">
-      <div class="card-label" data-lang="en">Prerequisites</div>
-      <div class="card-label" data-lang="zh">前置知识</div>
-      <p data-lang="en">Basic understanding of means, standard deviations, and regression. Familiarity with the concept of probability distributions is helpful but not required. We build up from simple clustering to model-based classification step by step.</p>
-      <p data-lang="zh">对均值、标准差和回归的基本理解。熟悉概率分布的概念会有帮助，但不是必需的。我们从简单聚类逐步建立到基于模型的分类。</p>
-    </div>
-    <div class="intro-card">
-      <div class="card-label" data-lang="en">Software</div>
-      <div class="card-label" data-lang="zh">软件</div>
-      <p data-lang="en">R with tidyLPA and mclust packages for mixture models; Mplus is the gold standard for latent variable models in social science. Python alternatives include scikit-learn's GaussianMixture. All examples provided in R.</p>
-      <p data-lang="zh">R 搭配 tidyLPA 和 mclust 包进行混合模型；Mplus 是社会科学潜在变量模型的黄金标准。Python 替代方案包括 scikit-learn 的 GaussianMixture。所有示例均用 R 提供。</p>
+      <div class="card-label" data-lang="en">Audience</div>
+      <div class="card-label" data-lang="zh">受众</div>
+      <div data-lang="en"><p>Graduate students across disciplines. Basic understanding of means, standard deviations, and regression is helpful but not required. We build from simple clustering to model-based classification step by step. No prior LPA experience assumed.</p></div>
+      <div data-lang="zh"><p>跨学科研究生。对均值、标准差和回归的基本理解会有帮助但非必需。我们从简单聚类逐步建立到基于模型的分类。无需先前的 LPA 经验。</p></div>
     </div>
   </div>
 </div>
 
 <hr class="section-divider pres-hide">
 
-<!-- ═════════════════════════════════════════════════════════
-     SLIDE 2: VARIABLE VS PERSON-CENTERED
-     ═════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  PART 1: LATENT PROFILE ANALYSIS FUNDAMENTALS        -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<!-- SLIDE: Variable vs Person-Centered -->
 <div class="slide" id="slide-var-vs-person">
   <div class="slide-num" data-lang="en">Part 1 · Slide 1</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 1 页</div>
   <h2 data-lang="en">Variable-Centered vs. Person-Centered</h2>
   <h2 data-lang="zh">以变量为中心 vs. 以个体为中心</h2>
   <div class="compare-grid">
@@ -582,11 +530,10 @@ body.presenting .pres-progress{
 
 <hr class="section-divider pres-hide">
 
-<!-- ═════════════════════════════════════════════════════════
-     SLIDE 3: THREE METHODS
-     ═════════════════════════════════════════════════════════ -->
+<!-- SLIDE: Three Methods -->
 <div class="slide" id="slide-three-methods">
   <div class="slide-num" data-lang="en">Part 1 · Slide 2</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 2 页</div>
   <h2 data-lang="en">Person-Centered Analytical Methods</h2>
   <h2 data-lang="zh">以个体为中心的分析方法</h2>
   <div class="card-row">
@@ -643,16 +590,15 @@ body.presenting .pres-progress{
 
 <hr class="section-divider pres-hide">
 
-<!-- ═════════════════════════════════════════════════════════
-     SLIDE 4: HOW LPA WORKS (MIXTURE MODEL)
-     ═════════════════════════════════════════════════════════ -->
+<!-- SLIDE: How LPA Works (Mixture Models) -->
 <div class="slide" id="slide-how-lpa-works">
   <div class="slide-num" data-lang="en">Part 1 · Slide 3</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 3 页</div>
   <h2 data-lang="en">How LPA Works: Mixture Models</h2>
   <h2 data-lang="zh">LPA 的工作原理：混合模型</h2>
 
-  <div class="method-desc" data-lang="en">LPA is built on a <strong>Finite Mixture Model</strong>: observed data is a mixture of <em>K</em> normal distributions, each representing a hidden subgroup. Using the EM algorithm, LPA infers how many subgroups exist, the mean and variance of each on each indicator, and each person's probability of belonging to each subgroup.</div>
-  <div class="method-desc" data-lang="zh">LPA 建立在<strong>有限混合模型</strong>之上：观测数据是 <em>K</em> 个正态分布的混合，每个分布代表一个隐藏的亚组。通过 EM 算法，LPA 推断出有多少个亚组、每个亚组在每个指标上的均值和方差，以及每个个体属于各亚组的概率。</div>
+  <p class="method-desc" data-lang="en">LPA is built on a <strong>Finite Mixture Model</strong>: observed data is a mixture of <em>K</em> normal distributions, each representing a hidden subgroup. Using the EM algorithm, LPA infers how many subgroups exist, the mean and variance of each on each indicator, and each person's probability of belonging to each subgroup.</p>
+  <p class="method-desc" data-lang="zh">LPA 建立在<strong>有限混合模型</strong>之上：观测数据是 <em>K</em> 个正态分布的混合，每个分布代表一个隐藏的亚组。通过 EM 算法，LPA 推断出有多少个亚组、每个亚组在每个指标上的均值和方差，以及每个个体属于各亚组的概率。</p>
 
   <div class="vis-row">
     <div class="vis-panel">
@@ -709,34 +655,19 @@ body.presenting .pres-progress{
     </div>
   </div>
 
-  <div class="method-section">
-    <h3 data-lang="en">Probabilistic Classification</h3>
-    <h3 data-lang="zh">概率性分类</h3>
-    <div class="method-desc" data-lang="en">Each individual has a probability of belonging to each class — not hard assignment. Classification uses the highest posterior probability.</div>
-    <div class="method-desc" data-lang="zh">每个个体都有属于每个类别的概率——不是硬性分配。最终分类取后验概率最高的类别。</div>
-    <div class="method-example" data-lang="en">e.g., a student may have posterior probabilities of .82, .13, and .05 for Profiles 1, 2, and 3 — they would be assigned to Profile 1.</div>
-    <div class="method-example" data-lang="zh">例如：某学生属于 Profile 1、2、3 的后验概率分别为 .82、.13、.05 → 分配到 Profile 1。</div>
-    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A student has 82% probability of belonging to Profile 1, 13% to Profile 2, 5% to Profile 3. We assign them to Profile 1, but acknowledge 18% uncertainty. This is softer than hard clustering (like k-means) which forces 100% membership.</div>
-    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>某学生属于 Profile 1 的概率 82%、Profile 2 的概率 13%、Profile 3 的概率 5%。我们把他归入 Profile 1，但承认有 18% 的不确定性。这比硬聚类（如 k-means 强制 100% 归属）更柔和。</div>
-  </div>
+  <p class="method-desc" data-lang="en"><strong>Probabilistic Classification:</strong> Each individual has a probability of belonging to each class — not hard assignment. Classification uses the highest posterior probability. <em>Example:</em> a student may have posterior probabilities of .82, .13, and .05 for Profiles 1, 2, and 3 — they would be assigned to Profile 1.</p>
+  <p class="method-desc" data-lang="zh"><strong>概率性分类：</strong>每个个体都有属于每个类别的概率——不是硬性分配。最终分类取后验概率最高的类别。<em>例如：</em>某学生属于 Profile 1、2、3 的后验概率分别为 .82、.13、.05 → 分配到 Profile 1。</p>
 
-  <div class="method-section">
-    <h3 data-lang="en">Statistical Fit Indices</h3>
-    <h3 data-lang="zh">统计拟合指标</h3>
-    <div class="method-desc" data-lang="en">BIC (Bayesian Information Criterion) and BLRT (Bootstrapped Likelihood Ratio Test) allow systematic model comparison. Entropy measures classification precision (0–1); values > .80 indicate good quality (Nylund et al., 2007).</div>
-    <div class="method-desc" data-lang="zh">BIC（贝叶斯信息准则）和 BLRT（自助似然比检验）可用于系统性的模型比较。Entropy 衡量分类精度（0–1），> .80 表示分类质量好（Nylund et al., 2007）。</div>
-    <div class="method-analogy" data-lang="en"><strong>BIC:</strong> Lower = better. It measures model fit quality minus a "complexity tax" — penalizes adding more classes to prevent overfitting. Think of it as: how well does the model explain the data, accounting for how complicated it is?</div>
-    <div class="method-analogy" data-lang="zh"><strong>BIC：</strong>越低越好。它衡量模型拟合质量减去一个"复杂度税"——惩罚添加更多类别以防过拟合。想象成：模型解释数据有多好，同时考虑它有多复杂？</div>
-  </div>
+  <div class="method-when" data-lang="en"><strong>Key insight:</strong> Unlike hard clustering, LPA quantifies uncertainty. You assign to the highest probability class but acknowledge 18% chance this person belongs elsewhere.</div>
+  <div class="method-when" data-lang="zh"><strong>关键洞见：</strong>与硬聚类不同，LPA 量化了不确定性。你将其分配到概率最高的类别，但承认这个人属于其他类别的 18% 概率。</div>
 </div>
 
 <hr class="section-divider pres-hide">
 
-<!-- ═════════════════════════════════════════════════════════
-     SLIDE 5: STATISTICAL FIT INDICES (DETAIL)
-     ═════════════════════════════════════════════════════════ -->
+<!-- SLIDE: Fit Indices -->
 <div class="slide" id="slide-fit-indices">
   <div class="slide-num" data-lang="en">Part 1 · Slide 4</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 4 页</div>
   <h2 data-lang="en">Choosing the Right Number of Profiles</h2>
   <h2 data-lang="zh">选择合适的剖面数量</h2>
 
@@ -762,12 +693,12 @@ body.presenting .pres-progress{
       <div class="check-icon" data-lang="zh">Entropy</div>
       <div class="check-title" data-lang="en">Classification Quality</div>
       <div class="check-title" data-lang="zh">分类质量</div>
-      <div class="check-desc" data-lang="en">Ranges 0–1. Values > .80 indicate clear class separation. Close to 1 = clean assignment. But DO NOT use it for class selection alone.</div>
-      <div class="check-desc" data-lang="zh">范围 0–1。> .80 表示清晰的类别分离。接近 1 = 清晰归属。但不要仅用它来选择类别数。</div>
+      <div class="check-desc" data-lang="en">Ranges 0–1. Values > .80 indicate clear class separation. But DO NOT use it for class selection alone.</div>
+      <div class="check-desc" data-lang="zh">范围 0–1。> .80 表示清晰的类别分离。但不要仅用它来选择类别数。</div>
     </div>
   </div>
 
-  <div class="challenge-overview">
+  <div class="method-when">
     <p data-lang="en"><strong>Decision Rule:</strong> When indices disagree, prioritize BLRT + BIC, combined with theoretical interpretability. Class sizes should be at least 5–8% of your sample to avoid unstable profiles.</p>
     <p data-lang="zh"><strong>决策规则：</strong>指标不一致时，优先考虑 BLRT + BIC，结合理论可解释性。类别大小应该至少是样本的 5–8% 以避免不稳定的剖面。</p>
   </div>
@@ -775,11 +706,10 @@ body.presenting .pres-progress{
 
 <hr class="section-divider pres-hide">
 
-<!-- ═════════════════════════════════════════════════════════
-     SLIDE 6: LPA WORKFLOW
-     ═════════════════════════════════════════════════════════ -->
+<!-- SLIDE: LPA Workflow -->
 <div class="slide" id="slide-workflow">
   <div class="slide-num" data-lang="en">Part 1 · Slide 5</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 5 页</div>
   <h2 data-lang="en">LPA Workflow: 5 Steps</h2>
   <h2 data-lang="zh">LPA 工作流程：5 个步骤</h2>
 
@@ -788,119 +718,151 @@ body.presenting .pres-progress{
       <div class="flow-num">1</div>
       <div class="flow-title" data-lang="en">Theory &amp;<br>Indicators</div>
       <div class="flow-title" data-lang="zh">理论 &amp;<br>指标选择</div>
-      <div class="flow-desc" data-lang="en">Select indicators from theoretical framework</div>
-      <div class="flow-desc" data-lang="zh">基于理论框架选择指标变量</div>
     </div>
     <div class="flow-arrow">&rarr;</div>
     <div class="flow-step">
       <div class="flow-num">2</div>
       <div class="flow-title" data-lang="en">Fit 1 to K<br>Models</div>
       <div class="flow-title" data-lang="zh">拟合 1 到 K<br>个模型</div>
-      <div class="flow-desc" data-lang="en">Incrementally increase class number</div>
-      <div class="flow-desc" data-lang="zh">逐步增加类别数量</div>
     </div>
     <div class="flow-arrow">&rarr;</div>
     <div class="flow-step">
       <div class="flow-num">3</div>
       <div class="flow-title" data-lang="en">Compare<br>Fit Indices</div>
       <div class="flow-title" data-lang="zh">比较<br>拟合指标</div>
-      <div class="flow-desc">BIC, BLRT, entropy</div>
     </div>
     <div class="flow-arrow">&rarr;</div>
     <div class="flow-step">
       <div class="flow-num">4</div>
       <div class="flow-title" data-lang="en">Interpret<br>Profiles</div>
       <div class="flow-title" data-lang="zh">解读<br>剖面图</div>
-      <div class="flow-desc" data-lang="en">Read profile plot, name classes</div>
-      <div class="flow-desc" data-lang="zh">阅读剖面图，命名各类别</div>
     </div>
     <div class="flow-arrow">&rarr;</div>
-    <div class="flow-step active">
+    <div class="flow-step">
       <div class="flow-num">5</div>
       <div class="flow-title" data-lang="en">Validate</div>
       <div class="flow-title" data-lang="zh">验证</div>
-      <div class="flow-desc" data-lang="en">Covariates &amp; outcomes (three-step)</div>
-      <div class="flow-desc" data-lang="zh">协变量 &amp; 结果变量（三步法）</div>
     </div>
   </div>
 
-  <div class="challenge-overview">
-    <p data-lang="en"><strong>Practical Tips.</strong> <strong>Sample size:</strong> N ≥ 300–500 (Nylund-Gibson &amp; Choi, 2018). <strong>Random starts:</strong> ≥ 500 to avoid local solutions. <strong>Smallest class:</strong> ≥ 5–8% of sample. <strong>Entropy:</strong> > .80 indicates good classification — but do NOT use it to select K.</p>
-    <p data-lang="zh"><strong>实用建议：</strong><strong>样本量：</strong>N ≥ 300–500（Nylund-Gibson &amp; Choi, 2018）。<strong>随机起始值：</strong>≥ 500 以避免局部最优解。<strong>最小类别比例：</strong>≥ 样本的 5–8%。<strong>Entropy：</strong>> .80 表示分类质量好——但不要用它来选择 K。</p>
+  <div class="method-when">
+    <p data-lang="en"><strong>Practical Tips:</strong> <strong>Sample size:</strong> N ≥ 300–500. <strong>Random starts:</strong> ≥ 500 to avoid local solutions. <strong>Smallest class:</strong> ≥ 5–8% of sample. <strong>Entropy:</strong> > .80 indicates good classification — but do NOT use it to select K alone.</p>
+    <p data-lang="zh"><strong>实用建议：</strong><strong>样本量：</strong>N ≥ 300–500。<strong>随机起始值：</strong>≥ 500 以避免局部最优解。<strong>最小类别比例：</strong>≥ 样本的 5–8%。<strong>Entropy：</strong>> .80 表示分类质量好——但不要用它来选择 K。</p>
   </div>
 </div>
 
 <hr class="section-divider pres-hide">
 
-<!-- ═════════════════════════════════════════════════════════
-     SLIDE 7: ARTICLE EXAMPLE INTRO
-     ═════════════════════════════════════════════════════════ -->
-<div class="slide" id="slide-article-intro">
+<!-- SLIDE: Should You Use LPA? -->
+<div class="slide" id="slide-when-lpa">
+  <div class="slide-num" data-lang="en">Part 1 · Slide 6</div>
+  <div class="slide-num" data-lang="zh">第一部分 · 第 6 页</div>
+  <h2 data-lang="en">Should You Use LPA?</h2>
+  <h2 data-lang="zh">你应该使用 LPA 吗？</h2>
+
+  <div class="check-grid">
+    <div class="check-card">
+      <div class="check-icon">01</div>
+      <div class="check-title" data-lang="en">Good for LPA</div>
+      <div class="check-title" data-lang="zh">适合用 LPA</div>
+      <div class="check-desc" data-lang="en">You suspect distinct subgroups with different patterns. You care about <strong>who</strong> belongs to which group. You have continuous indicators measured on similar scales. Your research question focuses on <strong>heterogeneity</strong>.</div>
+      <div class="check-desc" data-lang="zh">你怀疑存在具有不同模式的不同亚组。你关心<strong>谁</strong>属于哪个组。你有在相似量表上测量的连续型指标。你的研究问题关注<strong>异质性</strong>。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">02</div>
+      <div class="check-title" data-lang="en">Caution</div>
+      <div class="check-title" data-lang="zh">谨慎</div>
+      <div class="check-desc" data-lang="en">Small sample sizes (N < 300). Categorical or mixed indicators — use LCA instead. Imbalanced class sizes may create unstable profiles. Always validate with theoretical and external criteria.</div>
+      <div class="check-desc" data-lang="zh">样本量小（N < 300）。分类或混合型指标——改用 LCA。不平衡的类别大小可能创建不稳定的剖面。始终用理论和外部标准验证。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">03</div>
+      <div class="check-title" data-lang="en">Not LPA</div>
+      <div class="check-title" data-lang="zh">不适合 LPA</div>
+      <div class="check-desc" data-lang="en">Your question is about variable relationships (use regression). You expect one normal population. You only have <strong>time-series</strong> data without cross-sectional variation. You want <strong>dimension reduction</strong> (use PCA/factor analysis).</div>
+      <div class="check-desc" data-lang="zh">你的问题是关于变量关系（改用回归）。你期望一个正态总体。你只有<strong>时间序列</strong>数据而没有横截面差异。你想要<strong>降维</strong>（改用 PCA/因子分析）。</div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider pres-hide">
+
+<!-- TRANSITION -->
+<div class="slide" id="slide-transition">
+  <div class="slide-num" data-lang="en">Transition</div>
+  <div class="slide-num" data-lang="zh">过渡</div>
+  <h2 data-lang="en">Now Let's See This in Action</h2>
+  <h2 data-lang="zh">现在让我们看看实际应用</h2>
+
+  <div class="method-when">
+    <p data-lang="en">Now that we've covered the fundamentals, let's walk through a published paper step by step to see how researchers actually apply LPA in practice.</p>
+    <p data-lang="zh">现在我们已经涵盖了基础知识，让我们逐步拆解一篇发表的论文，看看研究人员如何在实践中真正应用 LPA。</p>
+  </div>
+</div>
+
+<hr class="section-divider pres-hide">
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  PART 2: PAPER WALKTHROUGH                          -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<!-- SLIDE: Part 2 Title -->
+<div class="slide" id="slide-part2-title">
+  <div class="slide-num" data-lang="en">Part 2</div>
+  <div class="slide-num" data-lang="zh">第二部分</div>
+  <h2 data-lang="en">Paper Walkthrough: Motivation Profiles in Math</h2>
+  <h2 data-lang="zh">论文拆解：数学动机剖面</h2>
+
+  <p class="method-desc" data-lang="en"><strong>Citation:</strong> Wang, C. K. J., Liu, W. C., Nie, Y., Chye, S., Lim, B. S. C., Liem, G. A., Tay, E. G., Hong, Y.-Y., &amp; Chiu, C.-Y. (2017). Latent profile analysis of students' motivation and outcomes in mathematics: An organismic integration theory perspective. <em>Heliyon, 3</em>(6), e00308.</p>
+  <p class="method-desc" data-lang="zh"><strong>论文：</strong>Wang, C. K. J., Liu, W. C., Nie, Y., Chye, S., Lim, B. S. C., Liem, G. A., Tay, E. G., Hong, Y.-Y., &amp; Chiu, C.-Y. (2017). 学生数学动机和成果的潜在剖面分析：有机整合理论视角。<em>Heliyon, 3</em>(6), e00308。</p>
+
+  <p class="method-desc" data-lang="en"><em>Core question:</em> Are there distinct subgroups of students characterized by unique combinations of motivation types from Self-Determination Theory? Do these profiles predict different academic outcomes (effort, competence, task value, study time)?</p>
+  <p class="method-desc" data-lang="zh"><em>核心问题：</em>学生中是否存在具有自我决定理论中独特动机组合特征的不同亚组？这些剖面是否能预测不同的学业结果（努力、胜任感、任务价值、学习时间）？</p>
+</div>
+
+<hr class="section-divider pres-hide">
+
+<!-- SLIDE: Research Design -->
+<div class="slide" id="slide-research-design">
   <div class="slide-num" data-lang="en">Part 2 · Slide 1</div>
-  <h2 data-lang="en">Article Example</h2>
-  <h2 data-lang="zh">文献示例</h2>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 1 页</div>
+  <h2 data-lang="en">Research Design &amp; Indicator Selection</h2>
+  <h2 data-lang="zh">研究设计与指标选择</h2>
 
-  <div class="article-box">
-    <div class="article-cite">Wang, C. K. J., Liu, W. C., Nie, Y., Chye, S., Lim, B. S. C., Liem, G. A., Tay, E. G., Hong, Y.-Y., &amp; Chiu, C.-Y. (2017). Latent profile analysis of students' motivation and outcomes in mathematics: An organismic integration theory perspective. <em>Heliyon, 3</em>(6), e00308. <a href="https://doi.org/10.1016/j.heliyon.2017.e00308" target="_blank">https://doi.org/10.1016/j.heliyon.2017.e00308</a></div>
-    <div class="article-method">Organismic Integration Theory (SDT) × Latent Profile Analysis</div>
-  </div>
+  <p class="method-desc" data-lang="en">The study used <strong>Self-Regulation Questionnaire–Academic (SRQ-A)</strong> with four LPA indicators (7-point Likert scale): <strong>External Regulation</strong> (4 items), <strong>Introjected Regulation</strong> (4 items), <strong>Identified Regulation</strong> (3 items), and <strong>Intrinsic Motivation</strong> (3 items). Sample: N = 1,151 secondary students (age 13–17, <em>M</em> = 14.69) from 5 schools in Singapore.</p>
+  <p class="method-desc" data-lang="zh">研究采用<strong>学业自我调节问卷（SRQ-A）</strong>，包含四个 LPA 指标（7 点 Likert 量表）：<strong>外部调节</strong>（4 题）、<strong>内摄调节</strong>（4 题）、<strong>认同调节</strong>（3 题）和<strong>内在动机</strong>（3 题）。样本：来自新加坡 5 所学校的 N = 1,151 名中学生（年龄 13–17 岁，<em>M</em> = 14.69）。</p>
 
-  <div class="section pres-hide">
-    <div class="method-section">
-      <h3 data-lang="en">Research Design &amp; Indicator Selection</h3>
-      <h3 data-lang="zh">研究设计与指标选择</h3>
-      <div class="method-desc" data-lang="en">Organismic Integration Theory (OIT), a sub-theory of Self-Determination Theory, posits that academic motivation is not a simple "high vs. low" dimension but a continuum of self-determination — from external regulation to intrinsic motivation. Variable-centered methods would ask: "For every one-unit increase in intrinsic motivation, does achievement increase by 0.3 points?" But in reality, every student has a simultaneous score on all four motivational types — creating a unique combination pattern.</div>
-      <div class="method-desc" data-lang="zh">有机整合理论（OIT）是自我决定理论的子理论，认为学业动机不是简单的"高 vs. 低"维度，而是一个从外部调节到内在动机的自我决定连续体。以变量为中心的方法会问："内在动机每提高一个单位，成绩是否提高 0.3 分？"但现实中，每个学生在四种动机类型上同时拥有得分——形成独特的组合模式。</div>
-      <div class="method-desc" data-lang="en">The person-centered question: <em>Are there distinct subgroups of students characterized by unique combinations of these motivations?</em></div>
-      <div class="method-desc" data-lang="zh">以个体为中心的研究问题：<em>学生中是否存在具有独特动机组合的不同亚组？</em></div>
-      <div class="method-desc" data-lang="en">The study hypothesized that (H1) at least 4 distinct profiles would emerge based on OIT motivation types, and (H2) more autonomous profiles would show higher effort, value, competence, and extra time on math. Four motivation types from the Self-Regulation Questionnaire–Academic (SRQ-A; Ryan &amp; Connell, 1989) served as LPA indicators — external regulation (4 items), introjected regulation (4 items), identified regulation (3 items), and intrinsic motivation (3 items) — measured on a 7-point Likert scale. The sample comprised N = 1,151 secondary school students (679 males, 444 females, 28 unreported; age 13–17, <em>M</em> = 14.69, <em>SD</em> = .58) from 5 schools in Singapore. Models were estimated in Mplus 7.2 using the MLR estimator with 10,000 random starts (500 best solutions retained).</div>
-      <div class="method-desc" data-lang="zh">研究假设：(H1) 基于 OIT 动机类型至少会出现 4 个不同的剖面；(H2) 更自主的剖面在努力、价值感、胜任感和数学学习时间上表现更好。四种动机类型来自学业自我调节问卷（SRQ-A; Ryan &amp; Connell, 1989）作为 LPA 指标——外部调节（4 题）、内摄调节（4 题）、认同调节（3 题）和内在动机（3 题）——采用 7 点 Likert 量表。样本为新加坡 5 所学校的 N = 1,151 名中学生（679 男，444 女，28 未报告；年龄 13–17 岁，<em>M</em> = 14.69, <em>SD</em> = .58）。使用 Mplus 7.2 的 MLR 估计器，10,000 个随机起始值（保留 500 个最佳解）。</div>
-    </div>
-  </div>
+  <p class="method-desc" data-lang="en"><strong>Why these four?</strong> Self-Determination Theory posits a continuum of self-determination: external → introjected → identified → intrinsic. A person-centered lens reveals that not everyone falls at one point; people cluster into profiles based on <strong>combinations</strong> of these four.</p>
+  <p class="method-desc" data-lang="zh"><strong>为什么选这四个？</strong>自我决定理论假设自我决定的连续体：外部 → 内摄 → 认同 → 内在。以个体为中心的视角揭示，并非每个人都处于一个点；人们根据这四个的<strong>组合</strong>聚集成剖面。</p>
+
+  <p class="method-desc" data-lang="en"><strong>Estimation:</strong> Mplus 7.2 with MLR estimator, 10,000 random starts (500 best solutions retained). Models with 1–8 profiles were estimated and compared.</p>
+  <p class="method-desc" data-lang="zh"><strong>估计方法：</strong>Mplus 7.2 with MLR 估计器，10,000 个随机起始值（保留 500 个最佳解）。估计并比较了 1–8 个剖面的模型。</p>
 </div>
 
 <hr class="section-divider pres-hide">
 
-<!-- ═════════════════════════════════════════════════════════
-     SLIDE 8: STEP 1 - MODEL COMPARISON
-     ═════════════════════════════════════════════════════════ -->
-<div class="slide" id="slide-step1-comparison">
+<!-- SLIDE: Model Comparison -->
+<div class="slide" id="slide-model-comparison">
   <div class="slide-num" data-lang="en">Part 2 · Slide 2</div>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 2 页</div>
   <h2 data-lang="en">Step 1: Model Comparison &amp; Class Enumeration</h2>
   <h2 data-lang="zh">步骤一：模型比较与类别数确定</h2>
 
-  <div class="figure pres-hide">
-    <img src="assets/lpa-fit-table.png" alt="Latent Profile Fit Statistics for Models Based on the Four Motivational Types">
-    <div class="figure-cap" data-lang="en"><strong>Table 2.</strong> Latent profile fit statistics for models with 1–8 profiles based on the four motivational types.</div>
-    <div class="figure-cap" data-lang="zh"><strong>表 2.</strong> 基于四种动机类型的 1–8 个剖面模型的拟合统计量。</div>
-  </div>
+  <p class="method-desc" data-lang="en"><strong>Result:</strong> The 4-profile solution was selected. The aLMR p-value became non-significant (p = .12) beyond 4 profiles, indicating that adding a 5th profile did not significantly improve the model. BIC showed a clear elbow at k=4, and each of the four profiles was theoretically meaningful and interpretable. All indices converged on the same answer.</p>
+  <p class="method-desc" data-lang="zh"><strong>结果：</strong>选择了 4 剖面方案。超过 4 个剖面后 aLMR p 值变得不显著（p = .12），表明添加第 5 个剖面未能显著改进模型。BIC 在 k=4 处出现清晰的拐点，四个剖面都理论上有意义且可解释。所有指标都一致指向同一答案。</p>
 
-  <div class="challenge-overview pres-hide">
-    <p data-lang="en"><strong>Decision Rules</strong> (Nylund et al., 2007; Nylund-Gibson &amp; Choi, 2018). <strong>BIC:</strong> Lower is better — look for the "elbow" where decline slows. <strong>BLRT:</strong> Most accurate across all conditions — significant p means K > K−1. <strong>aLMR:</strong> Adjusted Lo-Mendell-Rubin test — non-significant p suggests current K is sufficient. <strong>When indices disagree:</strong> Prioritize BIC + BLRT, combined with theoretical interpretability and class size. Here, the 4-profile solution was selected: the aLMR became non-significant beyond 4 profiles, fit improvements were marginal, and each profile was theoretically interpretable.</p>
-    <div class="method-analogy" data-lang="en"><strong>BLRT:</strong> Tests whether k classes fit significantly better than k-1. If p &lt; .05, you should add another class. Keep adding until the test says "no significant improvement."</div>
-    <p data-lang="zh"><strong>决策规则</strong>（Nylund et al., 2007; Nylund-Gibson &amp; Choi, 2018）。<strong>BIC：</strong>越低越好——寻找下降趋缓的"拐点"。<strong>BLRT：</strong>在所有条件下最准确——p 显著说明 K 优于 K−1。<strong>aLMR：</strong>调整后的 Lo-Mendell-Rubin 检验——p 不显著说明当前 K 已足够。<strong>指标不一致时：</strong>优先考虑 BIC + BLRT，结合理论可解释性和类别大小。本研究选择了 4 剖面方案：aLMR 在 4 剖面之后变得不显著，拟合改善微弱，且每个剖面理论上可解释。</p>
-    <div class="method-analogy" data-lang="zh"><strong>BLRT：</strong>检验 k 个类别是否显著优于 k-1 个。如果 p &lt; .05，应该多加一个类别。继续添加直到检验说"没有显著改善"。</div>
-  </div>
-
-  <div class="method-desc" data-lang="en"><strong>Result:</strong> The 4-profile solution was selected. The aLMR p-value became non-significant (p = .12) beyond 4 profiles, indicating that adding a 5th profile did not significantly improve the model. All other indices agreed: BIC showed an elbow at k=4, and each of the four profiles was theoretically meaningful and interpretable.</div>
-  <div class="method-desc" data-lang="zh"><strong>结果：</strong>选择了 4 剖面方案。超过 4 个剖面后 aLMR p 值变得不显著（p = .12），表明添加第 5 个剖面未能显著改进模型。所有其他指标都一致：BIC 在 k=4 处出现拐点，四个剖面都理论上有意义且可解释。</div>
+  <p class="method-desc" data-lang="en"><strong>i.e.:</strong> After fitting models with 1, 2, 3, 4, 5, 6, 7, and 8 profiles, the researchers examined BIC (lower is better), BLRT (p < .05 means add another profile), and entropy (> .80 is good). At k=4, BIC stopped improving much, BLRT became non-significant, and each profile had a distinct meaning. This is the sweet spot.</p>
+  <p class="method-desc" data-lang="zh"><strong>即：</strong>拟合 1、2、3、4、5、6、7、8 个剖面的模型后，研究人员检查了 BIC（越低越好）、BLRT（p < .05 说明增加剖面数）和 entropy（> .80 为好）。在 k=4 时，BIC 改善幅度不大，BLRT 变得不显著，每个剖面都有独特含义。这是最优点。</p>
 </div>
 
 <hr class="section-divider pres-hide">
 
-<!-- ═════════════════════════════════════════════════════════
-     SLIDE 9: STEP 2 - PROFILE INTERPRETATION
-     ═════════════════════════════════════════════════════════ -->
-<div class="slide" id="slide-step2-profiles">
+<!-- SLIDE: Profile Interpretation -->
+<div class="slide" id="slide-profile-interpretation">
   <div class="slide-num" data-lang="en">Part 2 · Slide 3</div>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 3 页</div>
   <h2 data-lang="en">Step 2: Interpreting the Profile Plot</h2>
   <h2 data-lang="zh">步骤二：解读剖面图</h2>
-
-  <div class="figure pres-hide">
-    <img src="assets/lpa-profile-plot.png" alt="Profile plot showing four motivation profiles across four SDT indicators">
-    <div class="figure-cap" data-lang="en"><strong>Figure 1.</strong> Four motivation profiles across four SDT indicators (Extreg = External Regulation, Intro = Introjected Regulation, Ident = Identified Regulation, Intmot = Intrinsic Motivation).</div>
-    <div class="figure-cap" data-lang="zh"><strong>图 1.</strong> 四种动机剖面在四个 SDT 指标上的表现（Extreg = 外部调节, Intro = 内摄调节, Ident = 认同调节, Intmot = 内在动机）。</div>
-  </div>
 
   <div class="profile-grid">
     <div class="profile-card p1">
@@ -934,61 +896,103 @@ body.presenting .pres-progress{
       <div class="profile-desc" data-lang="zh">低认同调节和内在动机，中等外部调节和内摄调节（n = 382）</div>
     </div>
   </div>
-
-  <div class="challenge-overview pres-hide">
-    <p data-lang="en"><strong>Reading Profile Plots.</strong> Focus on the <strong>shape</strong> of the line (the pattern across indicators), not just absolute levels. Name each profile based on its most distinctive features.</p>
-    <p data-lang="zh"><strong>如何阅读剖面图：</strong>关注线条的<strong>形状</strong>（各指标上的模式），而非仅看绝对水平。根据每个剖面最独特的特征来命名。</p>
-  </div>
 </div>
 
 <hr class="section-divider pres-hide">
 
-<!-- ═════════════════════════════════════════════════════════
-     SLIDE 10: STEP 3 - OUTCOME VALIDATION
-     ═════════════════════════════════════════════════════════ -->
-<div class="slide" id="slide-step3-outcomes">
+<!-- SLIDE: Finding 1 -->
+<div class="slide" id="slide-finding-1">
   <div class="slide-num" data-lang="en">Part 2 · Slide 4</div>
-  <h2 data-lang="en">Step 3: Outcome Validation</h2>
-  <h2 data-lang="zh">步骤三：结果验证</h2>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 4 页</div>
+  <h2 data-lang="en">Step 3: Outcome Validation — Finding 1</h2>
+  <h2 data-lang="zh">步骤三：结果验证—发现 1</h2>
 
-  <div class="method-desc" data-lang="en">Do the profiles differ on meaningful academic outcomes?</div>
-  <div class="method-desc" data-lang="zh">这些剖面在有意义的学业结果上是否存在差异？</div>
+  <p class="method-desc" data-lang="en"><strong>Result:</strong> The Autonomous profile (P3) consistently outperformed all other groups across every outcome: effort (3 > 2 > 4 > 1), task value (3 > 2 = 4 > 1), perceived competence (3 > 4 > 2 = 1), and math study hours (3 > 4 = 2 = 1).</p>
+  <p class="method-desc" data-lang="zh"><strong>结果：</strong>自主型（P3）在所有结果变量上均优于其他组：努力（3 > 2 > 4 > 1）、任务价值（3 > 2 = 4 > 1）、感知胜任力（3 > 4 > 2 = 1）和数学学习时间（3 > 4 = 2 = 1）。</p>
 
-  <div class="figure pres-hide">
-    <img src="assets/lpa-outcome-plot.png" alt="Outcome validation plot showing four profiles across hours, effort, value, and competence">
-    <div class="figure-cap" data-lang="en"><strong>Figure 2.</strong> Outcome differences across four profiles (Hrs = Math Study Time, Effort = Self-Reported Effort, Value = Task Value, Comp = Perceived Competence).</div>
-    <div class="figure-cap" data-lang="zh"><strong>图 2.</strong> 四种剖面在结果变量上的差异（Hrs = 数学学习时间, Effort = 自评努力, Value = 任务价值, Comp = 感知胜任力）。</div>
-  </div>
+  <p class="method-desc" data-lang="en"><strong>i.e.:</strong> Students with <span class="red-em">high autonomous motivation</span> (Identified + Intrinsic) spent more time on math, reported more effort, felt more competent, and valued the subject more. This is not just correlation — these are distinct profile groups showing different behavioral and psychological patterns.</p>
+  <p class="method-desc" data-lang="zh"><strong>即：</strong>具有<span class="red-em">高自主动机</span>（认同+内在）的学生花在数学上的时间更多，报告了更多努力，感到更能胜任，也更重视该科目。这不只是相关性——这些是不同的剖面群体，显示不同的行为和心理模式。</p>
+</div>
 
-  <div class="finding">
-    <h4 data-lang="en">Autonomous Advantage</h4>
-    <h4 data-lang="zh">自主型优势</h4>
-    <div data-lang="en"><p>The Autonomous profile (P3) consistently outperformed all other groups across every outcome: effort (3 > 2 > 4 > 1), task value (3 > 2 = 4 > 1), perceived competence (3 > 4 > 2 = 1), and math study hours (3 > 4 = 2 = 1). High autonomous motivation led to the most adaptive outcomes.</p></div>
-    <div data-lang="zh"><p>自主型（P3）在所有结果变量上均优于其他组：努力（3 > 2 > 4 > 1）、任务价值（3 > 2 = 4 > 1）、感知胜任力（3 > 4 > 2 = 1）和数学学习时间（3 > 4 = 2 = 1）。高自主动机带来最适应性的结果。</p></div>
-  </div>
+<hr class="section-divider pres-hide">
 
-  <div class="finding">
-    <h4 data-lang="en">Effort Is Graded by Self-Determination</h4>
-    <h4 data-lang="zh">努力随自我决定程度递增</h4>
-    <div data-lang="en"><p>Effort showed a clear gradient across profiles: P3 > P2 > P4 > P1. Notably, the Externally Driven group (P2) reported higher effort than the Moderate group (P4), suggesting external pressure can sustain effort — but the Autonomous group's effort still surpassed all others.</p></div>
-    <div data-lang="zh"><p>努力在各剖面间呈现清晰的梯度：P3 > P2 > P4 > P1。值得注意的是，外部驱动组（P2）的努力高于中等组（P4），说明外部压力能维持努力——但自主组的努力仍然高于所有其他组。</p></div>
-  </div>
+<!-- SLIDE: Finding 2 -->
+<div class="slide" id="slide-finding-2">
+  <div class="slide-num" data-lang="en">Part 2 · Slide 5</div>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 5 页</div>
+  <h2 data-lang="en">Step 3: Outcome Validation — Finding 2</h2>
+  <h2 data-lang="zh">步骤三：结果验证—发现 2</h2>
 
-  <div class="finding">
-    <h4 data-lang="en">Competence Requires Intrinsic Interest</h4>
-    <h4 data-lang="zh">胜任感需要内在兴趣</h4>
-    <div data-lang="en"><p>The Externally Driven profile (P2) showed no advantage in perceived competence over the Low Motivation group (P1), despite P2's higher external and identified regulation (2 = 1). In contrast, even the Moderate group (P4) outperformed P2 in competence, suggesting that intrinsic interest — not external pressure — is essential for building academic confidence.</p></div>
-    <div data-lang="zh"><p>外部驱动型（P2）在感知胜任力上相比低动机组（P1）没有任何优势，尽管 P2 的外部调节和认同调节更高（2 = 1）。相反，中等组（P4）在胜任感上优于 P2，说明内在兴趣——而非外部压力——是建立学业自信的关键。</p></div>
+  <p class="method-desc" data-lang="en"><strong>Result:</strong> Effort showed a clear gradient across profiles: P3 > P2 > P4 > P1. Notably, the Externally Driven group (P2) reported higher effort than the Moderate group (P4), suggesting external pressure can sustain effort — but the Autonomous group's effort still surpassed all others.</p>
+  <p class="method-desc" data-lang="zh"><strong>结果：</strong>努力在各剖面间呈现清晰的梯度：P3 > P2 > P4 > P1。值得注意的是，外部驱动组（P2）的努力高于中等组（P4），说明外部压力能维持努力——但自主组的努力仍然高于所有其他组。</p>
+
+  <p class="method-desc" data-lang="en"><strong>i.e.:</strong> External pressure (high external regulation) can make students work harder — P2 demonstrates this. But <span class="red-em">intrinsic interest is more powerful</span>. The Autonomous profile's effort wasn't forced; it was driven by genuine interest in math. This distinction matters for educational policy.</p>
+  <p class="method-desc" data-lang="zh"><strong>即：</strong>外部压力（高外部调节）可以让学生更努力工作——P2 展示了这一点。但<span class="red-em">内在兴趣更强大</span>。自主剖面的努力不是被迫的，而是由对数学的真正兴趣驱动。这个区别对教育政策很重要。</p>
+</div>
+
+<hr class="section-divider pres-hide">
+
+<!-- SLIDE: Finding 3 -->
+<div class="slide" id="slide-finding-3">
+  <div class="slide-num" data-lang="en">Part 2 · Slide 6</div>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 6 页</div>
+  <h2 data-lang="en">Step 3: Outcome Validation — Finding 3</h2>
+  <h2 data-lang="zh">步骤三：结果验证—发现 3</h2>
+
+  <p class="method-desc" data-lang="en"><strong>Result:</strong> The Externally Driven profile (P2) showed no advantage in perceived competence over the Low Motivation group (P1), despite P2's higher external and identified regulation (2 = 1). In contrast, even the Moderate group (P4) outperformed P2 in competence, suggesting that intrinsic interest — not external pressure — is essential for building academic confidence.</p>
+  <p class="method-desc" data-lang="zh"><strong>结果：</strong>外部驱动型（P2）在感知胜任力上相比低动机组（P1）没有任何优势，尽管 P2 的外部调节和认同调节更高（2 = 1）。相反，中等组（P4）在胜任感上优于 P2，说明内在兴趣——而非外部压力——是建立学业自信的关键。</p>
+
+  <p class="method-desc" data-lang="en"><strong>i.e.:</strong> You can coerce effort through external demands, but you cannot coerce <span class="red-em">confidence</span>. Competence comes from genuine engagement, not compliance. This is a critical insight: policies that rely only on external pressure (grades, tests) may boost effort but won't build self-belief.</p>
+  <p class="method-desc" data-lang="zh"><strong>即：</strong>你可以通过外部要求强制努力，但不能强制<span class="red-em">自信</span>。胜任感来自真正的投入，而非顺从。这是一个关键洞见：仅依赖外部压力（成绩、考试）的政策可能会促进努力，但不会建立自我信念。</p>
+</div>
+
+<hr class="section-divider pres-hide">
+
+<!-- SLIDE: Contributions -->
+<div class="slide" id="slide-contributions">
+  <div class="slide-num" data-lang="en">Part 2 · Slide 7</div>
+  <div class="slide-num" data-lang="zh">第二部分 · 第 7 页</div>
+  <h2 data-lang="en">Contributions &amp; Limitations</h2>
+  <h2 data-lang="zh">贡献与局限</h2>
+
+  <div class="check-grid">
+    <div class="check-card">
+      <div class="check-icon" data-lang="en">✓</div>
+      <div class="check-icon" data-lang="zh">✓</div>
+      <div class="check-title" data-lang="en">Contributions</div>
+      <div class="check-title" data-lang="zh">贡献</div>
+      <div class="check-desc" data-lang="en">Revealed distinct motivation profiles that variable-centered methods would miss. Showed that external pressure and intrinsic interest have different downstream effects. Provided actionable insight for education: foster intrinsic motivation, not just compliance.</div>
+      <div class="check-desc" data-lang="zh">揭示了以变量为中心的方法会遗漏的不同动机剖面。展示了外部压力和内在兴趣有不同的下游效应。为教育提供了可操作的洞见：培养内在动机，而非仅仅顺从。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon" data-lang="en">⚠</div>
+      <div class="check-icon" data-lang="zh">⚠</div>
+      <div class="check-title" data-lang="en">Limitations</div>
+      <div class="check-title" data-lang="zh">局限</div>
+      <div class="check-desc" data-lang="en">Cross-sectional design — cannot infer causation or profile stability over time. Singapore sample — generalization to other cultures/education systems unclear. Self-reported measures — social desirability bias possible.</div>
+      <div class="check-desc" data-lang="zh">横截面设计——无法推断因果关系或随时间变化的剖面稳定性。新加坡样本——对其他文化/教育系统的泛化不清。自评测量——可能存在社会期望偏差。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon" data-lang="en">→</div>
+      <div class="check-icon" data-lang="zh">→</div>
+      <div class="check-title" data-lang="en">Next Steps</div>
+      <div class="check-title" data-lang="zh">后续步骤</div>
+      <div class="check-desc" data-lang="en">Longitudinal LPA to track profile transitions. Multi-group LPA across countries. Intervention studies to test whether fostering autonomy actually shifts students into higher-motivation profiles.</div>
+      <div class="check-desc" data-lang="zh">纵向 LPA 以追踪剖面转变。跨国多组 LPA。干预研究检验培养自主性是否真的将学生转移到更高动机剖面。</div>
+    </div>
   </div>
 </div>
 
 <hr class="section-divider pres-hide">
 
-<!-- ═════════════════════════════════════════════════════════
-     SLIDE 11: EXTENSIONS
-     ═════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  PART 3: EXTENSIONS & RESOURCES                     -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<!-- SLIDE: Extensions -->
 <div class="slide" id="slide-extensions">
   <div class="slide-num" data-lang="en">Part 3 · Slide 1</div>
+  <div class="slide-num" data-lang="zh">第三部分 · 第 1 页</div>
   <h2 data-lang="en">Extensions: From Cross-Sectional to Longitudinal</h2>
   <h2 data-lang="zh">拓展：从横截面到纵向</h2>
 
@@ -997,173 +1001,165 @@ body.presenting .pres-progress{
       <div class="compare-label" data-lang="en">Cross-Group Comparison</div>
       <div class="compare-label" data-lang="zh">跨组比较</div>
       <div data-lang="en">
-        <p><strong>Morin et al. (2016) Six-Step Framework:</strong></p>
-        <p>1. Configural similarity (same # of profiles?)<br>
-        2. Structural similarity (same means?)<br>
-        3. Dispersion similarity (same variances?)<br>
-        4. Distributional similarity (same proportions?)<br>
-        5. Predictive similarity (same predictors?)<br>
-        6. Explanatory similarity (same outcomes?)</p>
-        <div class="example">Example: N. America vs. France — 5 profiles found in both groups; structural similarity supported, but distributional differences detected.</div>
+        <p><strong>Morin et al. (2016) Six-Step Framework:</strong> Test similarity of profiles across groups (e.g., countries, genders).</p>
+        <p>1. Configural (same # of profiles?)<br>
+        2. Structural (same means?)<br>
+        3. Dispersion (same variances?)<br>
+        4. Distributional (same proportions?)<br>
+        5. Predictive (same predictors?)<br>
+        6. Explanatory (same outcomes?)</p>
       </div>
       <div data-lang="zh">
-        <p><strong>Morin et al. (2016) 六步框架：</strong></p>
-        <p>1. 形态相似性（剖面数量相同？）<br>
-        2. 结构相似性（均值相同？）<br>
-        3. 离散相似性（方差相同？）<br>
-        4. 分布相似性（比例相同？）<br>
-        5. 预测相似性（预测因素相同？）<br>
-        6. 解释相似性（结果变量相同？）</p>
-        <div class="example">示例：北美 vs. 法国——两组均发现 5 个剖面；结构相似性得到支持，但分布差异被检测到。</div>
+        <p><strong>Morin et al. (2016) 六步框架：</strong>测试跨组剖面的相似性（如国家、性别）。</p>
+        <p>1. 形态（剖面数相同？）<br>
+        2. 结构（均值相同？）<br>
+        3. 离散（方差相同？）<br>
+        4. 分布（比例相同？）<br>
+        5. 预测（预测因素相同？）<br>
+        6. 解释（结果相同？）</p>
       </div>
     </div>
     <div class="compare-col alt">
       <div class="compare-label" data-lang="en">Longitudinal Extensions</div>
       <div class="compare-label" data-lang="zh">纵向拓展</div>
       <div data-lang="en">
-        <p><strong>Latent Transition Analysis (LTA)</strong> — Tracks how individuals transition between profiles over time. Estimates transition probabilities.</p>
-        <p><strong>Growth Mixture Modeling (GMM)</strong> — Identifies distinct developmental trajectory classes (e.g., increasing, stable, declining).</p>
-        <p><strong>Other:</strong> Multilevel LCA/LPA, factor mixture models, Bayesian estimation for small samples.</p>
+        <p><strong>Latent Transition Analysis (LTA):</strong> Track profile transitions over time. How many students move from Low → Autonomous?</p>
+        <p><strong>Growth Mixture Modeling (GMM):</strong> Identify trajectory classes (stable, improving, declining).</p>
+        <p><strong>Other:</strong> Multilevel LPA, factor mixture models, Bayesian estimation.</p>
       </div>
       <div data-lang="zh">
-        <p><strong>潜在转变分析（LTA）</strong>——追踪个体如何随时间在剖面之间转变，估计转变概率。</p>
-        <p><strong>增长混合模型（GMM）</strong>——识别不同的发展轨迹类别（如上升、稳定、下降）。</p>
-        <p><strong>其他：</strong>多层次 LCA/LPA、因子混合模型、小样本的贝叶斯估计。</p>
+        <p><strong>潜在转变分析（LTA）：</strong>追踪随时间的剖面转变。有多少学生从低动机 → 自主型转变？</p>
+        <p><strong>增长混合模型（GMM）：</strong>识别轨迹类别（稳定、改善、下降）。</p>
+        <p><strong>其他：</strong>多层次 LPA、因子混合模型、贝叶斯估计。</p>
       </div>
     </div>
-    <div class="compare-footer" data-lang="en">LPA is the cross-sectional foundation — LTA and GMM extend it to time.</div>
-    <div class="compare-footer" data-lang="zh">LPA 是横截面的基础——LTA 和 GMM 将其拓展到时间维度。</div>
+    <div class="compare-footer" data-lang="en">LPA is the foundation — expand it with time, groups, and complexity.</div>
+    <div class="compare-footer" data-lang="zh">LPA 是基础——用时间、群体和复杂性扩展它。</div>
   </div>
 </div>
 
 <hr class="section-divider pres-hide">
 
-<!-- ═════════════════════════════════════════════════════════
-     SLIDE 12: REFERENCES & SOFTWARE
-     ═════════════════════════════════════════════════════════ -->
+<!-- SLIDE: References -->
 <div class="slide" id="slide-references">
   <div class="slide-num" data-lang="en">Part 3 · Slide 2</div>
-  <h2 data-lang="en">References &amp; Software</h2>
-  <h2 data-lang="zh">参考文献与软件</h2>
+  <div class="slide-num" data-lang="zh">第三部分 · 第 2 页</div>
+  <h2 data-lang="en">Key References &amp; Software</h2>
+  <h2 data-lang="zh">核心文献与软件</h2>
 
-  <h3 data-lang="en" class="pres-hide">Key References</h3>
-  <h3 data-lang="zh" class="pres-hide">核心文献</h3>
-  <ul class="ref-list pres-hide">
-    <li><span class="ref-tag beginner">Beginner</span>Nylund-Gibson, K., &amp; Choi, A. Y. (2018). Ten frequently asked questions about latent class analysis. <em>Translational Issues in Psychological Science, 4</em>(4), 440–461. <a href="https://doi.org/10.1037/tps0000176" target="_blank">https://doi.org/10.1037/tps0000176</a></li>
-    <li><span class="ref-tag fit">Fit Indices</span>Nylund, K. L., Asparouhov, T., &amp; Muthén, B. O. (2007). Deciding on the number of classes in latent class analysis and growth mixture modeling: A Monte Carlo simulation study. <em>Structural Equation Modeling, 14</em>(4), 535–569. <a href="https://doi.org/10.1080/10705510701575396" target="_blank">https://doi.org/10.1080/10705510701575396</a></li>
-    <li><span class="ref-tag">Multi-Group</span>Morin, A. J. S., Meyer, J. P., Creusier, J., &amp; Biétry, F. (2016). Multiple-group analysis of similarity in latent profile solutions. <em>Organizational Research Methods, 19</em>(2), 231–254. <a href="https://doi.org/10.1177/1094428115621148" target="_blank">https://doi.org/10.1177/1094428115621148</a></li>
-    <li><span class="ref-tag applied">Applied</span>Wang, C. K. J., Liu, W. C., Nie, Y., et al. (2017). Latent profile analysis of students' motivation and outcomes in mathematics. <em>Heliyon, 3</em>(6), e00308. <a href="https://doi.org/10.1016/j.heliyon.2017.e00308" target="_blank">https://doi.org/10.1016/j.heliyon.2017.e00308</a></li>
-  </ul>
-
-  <h3 data-lang="en" class="pres-hide">Software</h3>
-  <h3 data-lang="zh" class="pres-hide">软件工具</h3>
-  <div class="sw-row">
-    <div class="sw-pill gold">
-      <h4>Mplus</h4>
-      <div data-lang="en"><p>Gold standard. Most flexible, best support for LPA/LCA.</p></div>
-      <div data-lang="zh"><p>黄金标准。最灵活，对 LPA/LCA 支持最好。</p></div>
+  <div class="check-grid" style="grid-template-columns:1fr 1fr">
+    <div class="check-card">
+      <div class="check-icon">01</div>
+      <div class="check-title" data-lang="en">Beginner Guide</div>
+      <div class="check-title" data-lang="zh">入门指南</div>
+      <div class="check-desc" data-lang="en">Nylund-Gibson, K., &amp; Choi, A. Y. (2018). Ten frequently asked questions about latent class analysis. <em>Translational Issues in Psychological Science, 4</em>(4), 440–461.</div>
+      <div class="check-desc" data-lang="zh">Nylund-Gibson, K., &amp; Choi, A. Y. (2018). 潜在类别分析十大常见问题. <em>Translational Issues in Psychological Science, 4</em>(4), 440–461.</div>
     </div>
-    <div class="sw-pill">
-      <h4>R — tidyLPA</h4>
-      <div data-lang="en"><p>Free, user-friendly. Good for learning and basic analyses.</p></div>
-      <div data-lang="zh"><p>免费、易用。适合学习和基础分析。</p></div>
+    <div class="check-card">
+      <div class="check-icon">02</div>
+      <div class="check-title" data-lang="en">Fit Indices</div>
+      <div class="check-title" data-lang="zh">拟合指标</div>
+      <div class="check-desc" data-lang="en">Nylund, K. L., Asparouhov, T., &amp; Muthén, B. O. (2007). Deciding on the number of classes in LCA and GMM. <em>Structural Equation Modeling, 14</em>(4), 535–569.</div>
+      <div class="check-desc" data-lang="zh">Nylund, K. L., Asparouhov, T., &amp; Muthén, B. O. (2007). LCA 和 GMM 中类别数的确定. <em>Structural Equation Modeling, 14</em>(4), 535–569.</div>
     </div>
-    <div class="sw-pill">
-      <h4>Python — sklearn</h4>
-      <div data-lang="en"><p>Gaussian Mixture. Lacks BLRT/entropy but adequate for exploration.</p></div>
-      <div data-lang="zh"><p>高斯混合模型。缺少 BLRT/entropy，但足以做探索性分析。</p></div>
+    <div class="check-card">
+      <div class="check-icon">03</div>
+      <div class="check-title" data-lang="en">Today's Paper</div>
+      <div class="check-title" data-lang="zh">今日论文</div>
+      <div class="check-desc" data-lang="en">Wang, C. K. J., et al. (2017). Latent profile analysis of students' motivation and outcomes in mathematics. <em>Heliyon, 3</em>(6), e00308. <a href="https://doi.org/10.1016/j.heliyon.2017.e00308" target="_blank">Open Access</a></div>
+      <div class="check-desc" data-lang="zh">Wang, C. K. J., et al. (2017). 学生数学动机与结果的潜在剖面分析. <em>Heliyon, 3</em>(6), e00308. <a href="https://doi.org/10.1016/j.heliyon.2017.e00308" target="_blank">开放获取</a></div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">04</div>
+      <div class="check-title" data-lang="en">Software</div>
+      <div class="check-title" data-lang="zh">软件工具</div>
+      <div class="check-desc" data-lang="en"><strong>Mplus</strong> — gold standard for LPA/LCA. <strong>R tidyLPA</strong> — free, user-friendly, good for learning. <strong>Python sklearn</strong> — GaussianMixture, adequate for exploration.</div>
+      <div class="check-desc" data-lang="zh"><strong>Mplus</strong> — LPA/LCA 黄金标准。<strong>R tidyLPA</strong> — 免费易用，适合学习。<strong>Python sklearn</strong> — 高斯混合模型，适合探索。</div>
     </div>
   </div>
 </div>
 
 <!-- PAGE NAV -->
-<div class="page-nav">
+<div class="page-nav pres-hide">
   <a href="index.html">
-    <div class="nav-label">&larr; Previous</div>
-    <div class="nav-title">Home</div>
-  </a>
-  <a class="next" href="text-analysis.html">
-    <div class="nav-label">Next &rarr;</div>
-    <div class="nav-title">Text as Data</div>
+    <span class="pn-arrow">&larr;</span>
+    <span><span class="pn-title" data-lang="en">Home</span><span class="pn-title" data-lang="zh">主页</span></span>
   </a>
 </div>
 
 <script>
 /* ══════════════════════════════════════════════════════
-   PRESENTATION MODE ENGINE
+   PRESENTATION ENGINE (IIFE)
    ══════════════════════════════════════════════════════ */
-let currentSlide = 0;
-const slides = document.querySelectorAll('.slide');
-const totalSlides = slides.length;
+(function(){
+  let presenting = false;
+  let current = 0;
+  let slides = [];
+  let counter, hint, progress;
 
-function togglePresentation() {
-  document.body.classList.toggle('presenting');
-  if (document.body.classList.contains('presenting')) {
-    currentSlide = 0;
-    showSlide(currentSlide);
-    updateProgressBar();
+  window.togglePresentation = function(){
+    if(!presenting) enterPresentation();
+    else exitPresentation();
+  };
+
+  function enterPresentation(){
+    slides = Array.from(document.querySelectorAll('.slide'));
+    if(!slides.length) return;
+
+    presenting = true;
+    current = 0;
+    document.body.classList.add('presenting');
+
+    // Create counter
+    counter = document.createElement('div');
+    counter.className = 'slide-counter';
+    document.body.appendChild(counter);
+
+    // Create ESC hint (auto-fade after 3s)
+    hint = document.createElement('div');
+    hint.className = 'pres-esc';
+    hint.textContent = 'ESC to exit · ←→ navigate';
+    hint.style.transition = 'opacity .8s ease';
+    document.body.appendChild(hint);
+    setTimeout(function(){ if(hint) hint.style.opacity = '0'; }, 3000);
+    setTimeout(function(){ if(hint) hint.style.opacity = '.5'; }, 3800);
+
+    // Create progress bar
+    progress = document.createElement('div');
+    progress.className = 'pres-progress';
+    document.body.appendChild(progress);
+
+    showSlide(0);
+    document.addEventListener('keydown', onKey);
   }
-}
 
-function showSlide(n) {
-  if (n >= totalSlides) currentSlide = totalSlides - 1;
-  if (n < 0) currentSlide = 0;
-
-  slides.forEach(slide => slide.classList.remove('active'));
-  slides[currentSlide].classList.add('active');
-
-  document.querySelector('.slide-counter').textContent = (currentSlide + 1) + ' / ' + totalSlides;
-  updateProgressBar();
-}
-
-function nextSlide() {
-  currentSlide++;
-  if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
-  showSlide(currentSlide);
-}
-
-function prevSlide() {
-  currentSlide--;
-  if (currentSlide < 0) currentSlide = 0;
-  showSlide(currentSlide);
-}
-
-function updateProgressBar() {
-  const progress = ((currentSlide + 1) / totalSlides) * 100;
-  document.querySelector('.pres-progress').style.width = progress + '%';
-}
-
-document.addEventListener('keydown', function(e) {
-  if (!document.body.classList.contains('presenting')) return;
-
-  if (e.key === 'ArrowRight' || e.key === ' ') {
-    e.preventDefault();
-    nextSlide();
-  } else if (e.key === 'ArrowLeft') {
-    e.preventDefault();
-    prevSlide();
-  } else if (e.key === 'Escape') {
-    togglePresentation();
+  function exitPresentation(){
+    presenting = false;
+    document.body.classList.remove('presenting');
+    slides.forEach(s => s.classList.remove('active'));
+    if(counter) { counter.remove(); counter = null; }
+    if(hint) { hint.remove(); hint = null; }
+    if(progress) { progress.remove(); progress = null; }
+    document.removeEventListener('keydown', onKey);
   }
-});
 
-// Add presentation UI elements
-window.addEventListener('load', function() {
-  if (document.body.classList.contains('presenting')) return;
+  function showSlide(idx){
+    slides.forEach(s => s.classList.remove('active'));
+    current = Math.max(0, Math.min(idx, slides.length - 1));
+    slides[current].classList.add('active');
+    slides[current].scrollTop = 0;
+    if(counter) counter.textContent = (current+1) + ' / ' + slides.length;
+    if(progress) progress.style.width = ((current+1)/slides.length*100) + '%';
+  }
 
-  const main = document.querySelector('.main');
-  const counter = document.createElement('div');
-  counter.className = 'slide-counter';
-  counter.textContent = '1 / ' + totalSlides;
-  main.appendChild(counter);
-
-  const esc = document.createElement('div');
-  esc.className = 'pres-esc';
-  esc.textContent = 'ESC to exit';
-  main.appendChild(esc);
-
-  const progress = document.createElement('div');
-  progress.className = 'pres-progress';
-  main.appendChild(progress);
-});
+  function onKey(e){
+    if(e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' '){
+      e.preventDefault(); showSlide(current + 1);
+    } else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp'){
+      e.preventDefault(); showSlide(current - 1);
+    } else if(e.key === 'Escape'){
+      exitPresentation();
+    }
+  }
+})();
 </script>
