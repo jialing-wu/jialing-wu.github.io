@@ -9,552 +9,488 @@ bilingual: true
 mathjax: true
 ---
 
-<h2>
-  <span data-lang="en">SIR Model on Networks</span>
-  <span data-lang="zh">网络上的SIR模型</span>
+<style>
+.level-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:8px}
+.level-badge.beginner{background:rgba(91,140,133,.12);color:#4a7a72}
+.level-badge.intermediate{background:rgba(194,153,61,.12);color:#9a7a2e}
+.level-badge.advanced{background:rgba(181,55,42,.1);color:#a0382e}
+.depth-divider{display:flex;align-items:center;gap:16px;margin:40px 0 28px}
+.depth-divider::before,.depth-divider::after{content:'';flex:1;height:1px;background:var(--parchment)}
+.depth-divider span{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-ghost);white-space:nowrap}
+.concept-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.concept-card{background:var(--paper);border:1px solid var(--parchment);border-radius:6px;padding:18px 20px;transition:all .3s ease;box-shadow:0 1px 3px rgba(30,24,15,.03)}
+.concept-card:hover{border-color:var(--gold-soft);box-shadow:0 3px 12px rgba(194,153,61,.08);transform:translateY(-1px)}
+.concept-card .card-icon{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--paper);background:var(--gold);display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;margin-bottom:10px;box-shadow:0 2px 4px rgba(194,153,61,.2)}
+.concept-card h4{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink-soft);margin:0 0 6px}
+.concept-card p{font-size:13.5px;line-height:1.7;color:var(--ink-faded);margin:0}
+.guide-formula{background:rgba(30,24,15,.03);border:1px solid var(--parchment);border-radius:6px;padding:20px 24px;margin:20px 0;text-align:center;font-size:16px;line-height:1.8;color:var(--ink-soft);font-family:var(--mono);letter-spacing:.02em;overflow-x:auto}
+.unpack-list{display:grid;grid-template-columns:1fr;gap:10px;margin:16px 0;padding:0;list-style:none}
+.unpack-item{display:flex;gap:14px;align-items:flex-start;padding:12px 16px;background:var(--paper);border:1px solid var(--parchment);border-radius:6px;transition:border-color .25s}
+.unpack-item:hover{border-color:var(--gold-soft)}
+.unpack-item .symbol{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--gold);white-space:nowrap;min-width:80px;padding-top:1px}
+.unpack-item .explain{font-size:13.5px;line-height:1.7;color:var(--ink-faded)}
+.callout{border-left:3px solid var(--gold);background:rgba(194,153,61,.04);padding:16px 20px;margin:20px 0;border-radius:0 6px 6px 0}
+.callout.tip{border-left-color:#5b8c85;background:rgba(91,140,133,.04)}
+.callout.warn{border-left-color:var(--red);background:rgba(181,55,42,.04)}
+.callout .callout-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.callout.tip .callout-label{color:#5b8c85}
+.callout.warn .callout-label{color:var(--red)}
+.callout p{font-size:14px;line-height:1.75;color:var(--ink-faded);margin:0}
+.callout p + p{margin-top:8px}
+.step-flow{display:grid;grid-template-columns:1fr;gap:10px;margin:16px 0;padding:0;list-style:none;counter-reset:step}
+.step-flow li{counter-increment:step;display:flex;gap:14px;align-items:flex-start;padding:12px 16px;background:var(--paper);border:1px solid var(--parchment);border-radius:6px;font-size:13.5px;line-height:1.7;color:var(--ink-faded);transition:border-color .25s}
+.step-flow li:hover{border-color:var(--gold-soft)}
+.step-flow li::before{content:counter(step);font-family:var(--sans);font-size:11px;font-weight:700;color:var(--paper);background:var(--gold);min-width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;box-shadow:0 1px 3px rgba(194,153,61,.2)}
+.code-block{background:var(--ink);color:#e8e0d4;padding:24px 28px;border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.55;font-family:var(--mono);margin:20px 0;box-shadow:0 2px 8px rgba(30,24,15,.15)}
+.code-block .comment{color:#9a8e7e}
+.collapsible-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:12px 0;font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-ghost);border:none;background:none;transition:color .25s}
+.collapsible-toggle:hover{color:var(--gold)}
+.collapsible-toggle .arrow{transition:transform .3s;font-size:10px}
+.collapsible-toggle.open .arrow{transform:rotate(90deg)}
+.collapsible-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.collapsible-content.open{max-height:5000px}
+.summary-box{background:var(--warm);border:1px solid var(--parchment);border-radius:6px;padding:24px 28px;margin:28px 0}
+.summary-box .summary-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.summary-box p{font-size:14px;line-height:1.75;color:var(--ink-faded);margin:0}
+body.zh .step-flow li,body.zh .unpack-list .unpack-item{display:flex}
+@media(max-width:700px){.concept-row{grid-template-columns:1fr}.unpack-item{flex-direction:column;gap:4px}.unpack-item .symbol{min-width:auto}}
+</style>
+
+<!-- ═══════════════════════════════════════════════════
+     LEVEL 1 — HOW THINGS SPREAD
+     ═══════════════════════════════════════════════════ -->
+
+<div class="level-badge beginner" data-lang="en">Beginner</div>
+<div class="level-badge beginner" data-lang="zh">入门</div>
+
+<h2 id="what-spreads">
+  <span data-lang="en">How Do Things Spread Through Networks?</span>
+  <span data-lang="zh">事物如何通过网络传播？</span>
 </h2>
 
 <p data-lang="en">
-The classic epidemiological SIR (Susceptible-Infected-Recovered) model partitions the population into three compartments. In the mean-field approximation, the dynamics are governed by:
+Think about the difference between catching a flu and deciding to quit your job. You hear a rumor once and immediately repeat it to friends — you don't need to hear the same rumor from five people before you believe it. That's <strong>simple contagion</strong>. But to quit a lucrative job for a risky startup? You need to see three or four of your friends do it first. That's <strong>complex contagion</strong>.
 </p>
 
 <p data-lang="zh">
-经典流行病学SIR（易感-感染-恢复）模型将种群分为三个区间。在平均场近似下，动力学由以下方程控制：
+想想感冒和决定辞职的区别。你听一次谣言就能立马转述给朋友——你不用听五遍谣言才相信。这是<strong>简单传染</strong>。但要为了风险大的创业而辞掉高薪工作？你需要看到三四个朋友都这样做了。这是<strong>复杂传染</strong>。
 </p>
 
-<div class="math-note">
-<strong>Mean-field SIR equations:</strong>
-<br/>dS/dt = −βSI
-<br/>dI/dt = βSI − γI
-<br/>dR/dt = γI
+<div class="concept-row">
+  <div class="concept-card">
+    <div class="card-icon">S</div>
+    <h4 data-lang="en">Simple Contagion</h4>
+    <h4 data-lang="zh">简单传染</h4>
+    <p data-lang="en">One contact spreads it. Flu, gossip, information — one sick person or one source is enough.</p>
+    <p data-lang="zh">一个接触就传播。流感、八卦、信息——一个患者或消息源就够了。</p>
+  </div>
+  <div class="concept-card">
+    <div class="card-icon">C</div>
+    <h4 data-lang="en">Complex Contagion</h4>
+    <h4 data-lang="zh">复杂传染</h4>
+    <p data-lang="en">Multiple contacts needed. Behavior change, protests, decisions — need reinforcement from several sources.</p>
+    <p data-lang="zh">需要多个接触。行为改变、抗议、决策——需要来自多个源头的强化。</p>
+  </div>
+</div>
+
+<div class="callout">
+  <div class="callout-label" data-lang="en">Key insight</div>
+  <div class="callout-label" data-lang="zh">关键洞察</div>
+  <p data-lang="en">The same network can speed up one process and slow down another. Clustered networks (tight friend groups) help complex contagion but slow simple contagion. Hub networks do the opposite.</p>
+  <p data-lang="zh">同一个网络可以加速一个过程，减缓另一个。聚集网络（紧密朋友圈）有利复杂传染但阻碍简单传染。枢纽型网络效果相反。</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     LEVEL 2 — SIR MODEL
+     ═══════════════════════════════════════════════════ -->
+
+<div class="depth-divider"><span data-lang="en">Going Deeper</span><span data-lang="zh">深入一步</span></div>
+
+<div class="level-badge beginner" data-lang="en">Beginner</div>
+<div class="level-badge beginner" data-lang="zh">入门</div>
+
+<h2 id="sir-model">
+  <span data-lang="en">The SIR Model: A Story of the Flu</span>
+  <span data-lang="zh">SIR 模型：流感的故事</span>
+</h2>
+
+<p data-lang="en">
+Imagine a flu spreading through an office of 100 people. The <strong>SIR model</strong> divides them into three groups and tracks what happens over time:
+</p>
+
+<p data-lang="zh">
+想象流感在 100 人的办公室传播。<strong>SIR 模型</strong>把人分成三组，追踪随时间发生了什么：
+</p>
+
+<ol class="step-flow" data-lang="en">
+  <li><strong>Susceptible (S):</strong> Can catch the flu. Start with 99 people (everyone except patient zero).</li>
+  <li><strong>Infected (I):</strong> Currently sick and contagious. Start with 1 person (patient zero).</li>
+  <li><strong>Recovered (R):</strong> Got sick, then recovered, now immune. Start with 0 people.</li>
+</ol>
+
+<ol class="step-flow" data-lang="zh">
+  <li><strong>易感(S)：</strong>可能被感染。开始 99 人（除了零号患者）。</li>
+  <li><strong>感染(I)：</strong>当前生病中且传染。开始 1 人（零号患者）。</li>
+  <li><strong>康复(R)：</strong>得过病后康复，现在免疫。开始 0 人。</li>
+</ol>
+
+<p data-lang="en">
+<strong>Each day:</strong> Some susceptible people catch it from infected people (depends on transmission rate β), and some infected people recover (depends on recovery rate γ).
+</p>
+
+<p data-lang="zh">
+<strong>每天：</strong>一些易感者从感染者那里被传染（取决于传播率 β），一些感染者康复（取决于康复率 γ）。
+</p>
+
+<div class="callout tip">
+  <div class="callout-label" data-lang="en">The magic number: R₀</div>
+  <div class="callout-label" data-lang="zh">魔法数字：R₀</div>
+  <p data-lang="en">R₀ = β/γ (basic reproduction number) tells you: one sick person infects how many others on average? If R₀ = 2, each sick person infects 2 others. If R₀ = 0.5, the epidemic dies out. The threshold is R₀ = 1: above it, epidemic spreads; below it, dies out.</p>
+  <p data-lang="zh">R₀ = β/γ（基本再生数）告诉你：一个患者平均感染多少人？R₀ = 2 时，每个患者感染 2 人。R₀ = 0.5 时疫情消退。临界值是 R₀ = 1：高于它疫情传播；低于它疫情消退。</p>
 </div>
 
 <p data-lang="en">
-where β is the transmission rate, γ is the recovery rate, and S, I, R are fractions of susceptible, infected, and recovered individuals. The basic reproduction number is:
+<strong>Network structure matters.</strong> In a hub-like network where one person knows half the office, one infected hub triggers a massive outbreak. In a disconnected cluster network, the same virus infects only 10 people before running out of contacts.
 </p>
 
 <p data-lang="zh">
-其中β是传播率，γ是恢复率，S、I、R分别为易感、感染和恢复个体的比例。基本再生数为：
+<strong>网络结构很关键。</strong>在枢纽型网络中（一人认识整个办公室的一半），一个受感染的枢纽会引发大规模爆发。在断开的聚集网络中，同样病毒仅感染 10 人然后断了。
 </p>
 
-<div class="math-note">
-R₀ = β/γ
+<!-- ═══════════════════════════════════════════════════
+     LEVEL 3 — SIR EQUATIONS
+     ═══════════════════════════════════════════════════ -->
+
+<div class="depth-divider"><span data-lang="en">The Math</span><span data-lang="zh">开始数学</span></div>
+
+<div class="level-badge intermediate" data-lang="en">Intermediate</div>
+<div class="level-badge intermediate" data-lang="zh">进阶</div>
+
+<h2 id="sir-equations">
+  <span data-lang="en">The SIR Differential Equations</span>
+  <span data-lang="zh">SIR 微分方程</span>
+</h2>
+
+<p data-lang="en">
+Now let's write it mathematically. S, I, R are fractions of the population (between 0 and 1):
+</p>
+
+<p data-lang="zh">
+现在用数学写下来。S、I、R 是人口的比例（0 到 1 之间）：
+</p>
+
+<div class="guide-formula">
+dS/dt = −βSI<br>
+dI/dt = βSI − γI<br>
+dR/dt = γI
+</div>
+
+<div class="unpack-list">
+  <div class="unpack-item">
+    <div class="symbol">dS/dt</div>
+    <div class="explain" data-lang="en">Rate susceptible leave: βSI = transmission rate (β) × susceptible fraction (S) × infected fraction (I). Negative = people becoming infected.</div>
+    <div class="explain" data-lang="zh">易感者离开速率：βSI = 传播率 (β) × 易感比例 (S) × 感染比例 (I)。负号 = 人们变成感染者。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">dI/dt</div>
+    <div class="explain" data-lang="en">Rate infected change: +βSI people become infected, −γI people recover. Net flow into and out of infected.</div>
+    <div class="explain" data-lang="zh">感染者变化率：+βSI 人变感染，−γI 人康复。进出感染人群的净流量。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">dR/dt</div>
+    <div class="explain" data-lang="en">Rate recovered gain: γI people recover. Recovery rate γ = probability of recovery per time unit.</div>
+    <div class="explain" data-lang="zh">康复者增加率：γI 人康复。康复率 γ = 每单位时间康复概率。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">β</div>
+    <div class="explain" data-lang="en">Transmission rate. Probability per contact that infection spreads (0 ≤ β ≤ 1). Higher β = faster spread.</div>
+    <div class="explain" data-lang="zh">传播率。每次接触传染的概率（0 ≤ β ≤ 1）。β 越高传播越快。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">γ</div>
+    <div class="explain" data-lang="en">Recovery rate. Probability infected person recovers per time unit (0 ≤ γ ≤ 1). Higher γ = faster recovery. 1/γ = average days sick.</div>
+    <div class="explain" data-lang="zh">康复率。感染者每单位时间康复的概率（0 ≤ γ ≤ 1）。γ 越高康复越快。1/γ = 平均患病天数。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">R₀ = β/γ</div>
+    <div class="explain" data-lang="en">Basic reproduction number. One infected person in a fully susceptible population infects R₀ people on average before recovering. Most important number in epidemiology.</div>
+    <div class="explain" data-lang="zh">基本再生数。在完全易感人群中一个患者平均感染 R₀ 人后康复。流行病学最重要的数字。</div>
+  </div>
+</div>
+
+<div class="callout warn">
+  <div class="callout-label" data-lang="en">Networks change everything</div>
+  <div class="callout-label" data-lang="zh">网络改变一切</div>
+  <p data-lang="en">The simple equations above assume everyone contacts everyone equally. In real networks, β depends on structure. High-degree hubs infect more people. In scale-free networks (power-law degree distribution, like most real social networks), the effective R₀ is much higher, and epidemic thresholds vanish.</p>
+  <p data-lang="zh">上面的简单方程假设每个人接触所有人均等。在真实网络中，β 取决于结构。高度枢纽感染更多人。在无标度网络（如多数真实社交网络）中，有效 R₀ 高得多，疫情阈值消失。</p>
 </div>
 
 <p data-lang="en">
-This represents the expected number of secondary infections generated by a single infected individual in an entirely susceptible population. An epidemic occurs when R₀ > 1.
+On networks with heterogeneous degree, the epidemic threshold is:
 </p>
 
 <p data-lang="zh">
-这表示单个感染个体在完全易感种群中产生的预期二次感染数。当R₀ > 1时发生流行病。
+在度数异质网络上，流行病阈值是：
 </p>
 
-<h3>
-  <span data-lang="en">Network Version: Heterogeneous Mean-Field</span>
-  <span data-lang="zh">网络版本：异质平均场</span>
-</h3>
-
-<p data-lang="en">
-When transmission occurs on a network, the dynamics depend critically on the degree distribution. Let I<sub>k</sub> denote the density of infected individuals with degree k. The heterogeneous mean-field approximation yields:
-</p>
-
-<p data-lang="zh">
-当传播发生在网络上时，动力学取决于度分布。令I<sub>k</sub>表示度数为k的感染个体密度。异质平均场近似给出：
-</p>
-
-<div class="math-note">
-dI<sub>k</sub>/dt = −γI<sub>k</sub> + β k S<sub>k</sub> Θ
-</div>
-
-<p data-lang="en">
-where Θ is the probability that a randomly chosen edge connects to an infected node:
-</p>
-
-<p data-lang="zh">
-其中Θ是随机选择的边连接到感染节点的概率：
-</p>
-
-<div class="math-note">
-Θ = (Σ<sub>k'</sub> k' P(k') I<sub>k'</sub>) / ⟨k⟩
-</div>
-
-<p data-lang="en">
-Here P(k) is the degree distribution and ⟨k⟩ is the mean degree. The key insight is that high-degree nodes are more likely to be infected and to transmit the infection to many neighbors.
-</p>
-
-<p data-lang="zh">
-这里P(k)是度分布，⟨k⟩是平均度数。关键是高度数节点更容易被感染，也更容易将感染传播给许多邻居。
-</p>
-
-<h3>
-  <span data-lang="en">Epidemic Threshold on Networks</span>
-  <span data-lang="zh">网络上的流行病阈值</span>
-</h3>
-
-<p data-lang="en">
-A fundamental result by Pastor-Satorras and Vespignani (2001) establishes the epidemic threshold on networks. An epidemic persists (i.e., does not vanish) when:
-</p>
-
-<p data-lang="zh">
-Pastor-Satorras和Vespignani (2001)的一个基本结果建立了网络上的流行病阈值。当流行病持续存在（即不消退）的条件为：
-</p>
-
-<div class="math-note">
+<div class="guide-formula">
 β/γ > ⟨k⟩/⟨k²⟩
 </div>
 
 <p data-lang="en">
-where ⟨k²⟩ is the second moment of the degree distribution. This threshold is remarkably different from mean-field epidemiology. For random networks, ⟨k²⟩ is finite, so a non-trivial threshold exists. However, for scale-free networks where P(k) ∝ k<sup>−α</sup> with α ≤ 3, we have ⟨k²⟩ → ∞, which means the threshold vanishes: β/γ > 0. In other words, even arbitrarily weak transmission can sustain an epidemic on scale-free networks.
+where ⟨k⟩ is average degree and ⟨k²⟩ is average of degree squared. On real networks, ⟨k²⟩ is very large, so the threshold is extremely small. <strong>Even very weak diseases persist indefinitely on social networks.</strong>
 </p>
 
 <p data-lang="zh">
-其中⟨k²⟩是度分布的二阶矩。这个阈值与平均场流行病学显著不同。对于随机网络，⟨k²⟩是有限的，因此存在一个非平凡的阈值。然而，对于无标度网络（其中P(k) ∝ k<sup>−α</sup>，α ≤ 3），我们有⟨k²⟩ → ∞，这意味着阈值消失：β/γ > 0。换句话说，即使是任意弱的传播也可以在无标度网络上维持流行病。
+其中 ⟨k⟩ 是平均度数，⟨k²⟩ 是度数平方的平均。在真实网络上，⟨k²⟩ 很大，所以阈值极小。<strong>即使很弱的病毒也会在社交网络上无限期持续。</strong>
 </p>
 
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+<!-- ═══════════════════════════════════════════════════
+     LEVEL 4 — THRESHOLD MODELS
+     ═══════════════════════════════════════════════════ -->
 
-<h2>
+<div class="depth-divider"><span data-lang="en">Complex Behavior</span><span data-lang="zh">复杂行为</span></div>
+
+<div class="level-badge intermediate" data-lang="en">Intermediate</div>
+<div class="level-badge intermediate" data-lang="zh">进阶</div>
+
+<h2 id="threshold-model">
   <span data-lang="en">Threshold Models and Cascades</span>
   <span data-lang="zh">阈值模型与级联</span>
 </h2>
 
 <p data-lang="en">
-Granovetter's threshold model is a foundational framework for understanding social adoption and diffusion. Each agent i has an exogenous threshold θ<sub>i</sub> ∈ [0, 1], representing the fraction of neighbors that must adopt before the agent adopts.
+SIR works for diseases. But what about adopting new technology, joining a protest, or changing your diet? These need <strong>social reinforcement</strong>. Mark Granovetter's <strong>threshold model</strong> captures this: each person has a threshold — the fraction of friends who must adopt before they do.
 </p>
 
 <p data-lang="zh">
-Granovetter的阈值模型是理解社会采纳和扩散的基础框架。每个代理i有一个外生阈值θ<sub>i</sub> ∈ [0, 1]，表示在代理采纳之前必须采纳的邻居比例。
+SIR 用于疾病。但采用新技术、参与抗议或改变饮食呢？这些需要<strong>社会强化</strong>。Mark Granovetter 的<strong>阈值模型</strong>捕捉了这点：每个人有一个阈值——多少朋友必须采用才能他们也采用。
 </p>
 
-<h3>
-  <span data-lang="en">Formal Definition</span>
-  <span data-lang="zh">正式定义</span>
-</h3>
+<div class="guide-formula">
+Person i adopts if |A(t) ∩ N_i| / |N_i| ≥ θ_i
+</div>
 
-<p data-lang="en">
-Let A(t) denote the set of adopted nodes at time t, and let N<sub>i</sub> denote the neighbors of node i. The adoption rule is:
-</p>
-
-<p data-lang="zh">
-令A(t)表示时刻t时的已采纳节点集合，N<sub>i</sub>表示节点i的邻居。采纳规则为：
-</p>
-
-<div class="math-note">
-i ∈ A(t+1) if |A(t) ∩ N<sub>i</sub>| / |N<sub>i</sub>| ≥ θ<sub>i</sub>
+<div class="unpack-list">
+  <div class="unpack-item">
+    <div class="symbol">|A(t) ∩ N_i|</div>
+    <div class="explain" data-lang="en">Number of i's friends who have adopted by time t.</div>
+    <div class="explain" data-lang="zh">到时刻 t 已采用的 i 的朋友数。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">|N_i|</div>
+    <div class="explain" data-lang="en">Total number of i's friends.</div>
+    <div class="explain" data-lang="zh">i 的总朋友数。</div>
+  </div>
+  <div class="unpack-item">
+    <div class="symbol">θ_i</div>
+    <div class="explain" data-lang="en">Person i's adoption threshold. If θ_i = 0.3, i adopts once 30% of friends have. If θ_i = 1.0, i never adopts.</div>
+    <div class="explain" data-lang="zh">人 i 的采用阈值。θ_i = 0.3 时，当 30% 朋友采用时 i 就采用。θ_i = 1.0 时，i 永不采用。</div>
+  </div>
 </div>
 
 <p data-lang="en">
-The key question is: under what conditions does a small initial seed of adopted nodes trigger a global cascade (full adoption)?
+<strong>Concrete example:</strong> You have 10 friends and threshold 0.3. When 3 friends adopt, you adopt. Now imagine 3 adopt, so you do too. That nudges 2 more friends over their threshold, who adopt, which pushes your 4th friend over, and so on. <strong>A cascade.</strong>
 </p>
 
 <p data-lang="zh">
-关键问题是：在什么条件下，一小群初始采纳节点会触发全局级联（完全采纳）？
+<strong>具体例子：</strong>你有 10 个朋友，阈值 0.3。当 3 个朋友采用时，你采用。想象 3 个采用，所以你也采用。这推动另外 2 个朋友越过阈值，他们采用，进而推动你的第 4 个朋友。<strong>一个级联。</strong>
 </p>
 
-<h3>
-  <span data-lang="en">Cascade Condition</span>
-  <span data-lang="zh">级联条件</span>
-</h3>
-
-<p data-lang="en">
-Define the cascade region as follows. Suppose all agents have identical threshold θ. A cascade occurs if the initial seed set S activates a growing wave of adoptions. The critical insight is that the cascade depends on both the threshold θ and the degree distribution P(k).
-</p>
-
-<p data-lang="zh">
-定义级联区域如下。假设所有代理都有相同的阈值θ。如果初始种子集合S激活持续增长的采纳波，就会发生级联。关键洞察是级联取决于阈值θ和度分布P(k)。
-</p>
-
-<p data-lang="en">
-A key result due to Watts (2002) shows that cascades are most likely in networks with intermediate connectivity. Very sparse networks lack sufficient exposure, while very dense networks are too clustered. The cascade window is widest when the network has a balance between connectivity and clustering.
-</p>
-
-<p data-lang="zh">
-Watts (2002)的一个关键结果表明级联最可能出现在连接性中等的网络中。非常稀疏的网络缺乏足够的暴露，而非常密集的网络聚类过度。当网络在连接性和聚类之间达到平衡时，级联窗口最宽。
-</p>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
-
-<h2>
-  <span data-lang="en">Linear Threshold vs. Independent Cascade</span>
-  <span data-lang="zh">线性阈值模型与独立级联模型</span>
-</h2>
-
-<p data-lang="en">
-Two canonical models dominate diffusion research: the linear threshold model and the independent cascade model.
-</p>
-
-<p data-lang="zh">
-两个规范模型主导扩散研究：线性阈值模型和独立级联模型。
-</p>
-
-<h3>
-  <span data-lang="en">Linear Threshold Model</span>
-  <span data-lang="zh">线性阈值模型</span>
-</h3>
-
-<p data-lang="en">
-In the linear threshold model, each node i has a threshold θ<sub>i</sub> and a set of influence weights w<sub>ji</sub> from neighbors j. Node i adopts when:
-</p>
-
-<p data-lang="zh">
-在线性阈值模型中，每个节点i有一个阈值θ<sub>i</sub>和来自邻居j的影响权重w<sub>ji</sub>。当以下条件满足时，节点i采纳：
-</p>
-
-<div class="math-note">
-Σ<sub>j ∈ A(t)</sub> w<sub>ji</sub> ≥ θ<sub>i</sub>
+<div class="concept-row">
+  <div class="concept-card">
+    <div class="card-icon">W</div>
+    <h4 data-lang="en">Cascade Window</h4>
+    <h4 data-lang="zh">级联窗口</h4>
+    <p data-lang="en">The set of initial adopters that trigger a cascade. Not every initial set cascades — only those large enough to push others over thresholds.</p>
+    <p data-lang="zh">触发级联的初始采纳者集合。不是每个初始集都级联——只有足够大的才能推动他人越过阈值。</p>
+  </div>
+  <div class="concept-card">
+    <div class="card-icon">T</div>
+    <h4 data-lang="en">Tipping Point</h4>
+    <h4 data-lang="zh">临界点</h4>
+    <p data-lang="en">A small change triggers massive cascade. One more friend adopts, suddenly half the network does. Network structure determines where tipping points are.</p>
+    <p data-lang="zh">小变化引发大规模级联。再多一个朋友采用，突然一半网络都采用了。网络结构决定临界点位置。</p>
+  </div>
 </div>
 
 <p data-lang="en">
-This is a deterministic model: given a network, weights, and thresholds, the outcome is fully determined. Adoption is monotone—once adopted, a node stays adopted.
+Damon Centola's experiments (2010) showed: <strong>clustered networks speed up complex contagion.</strong> Why? Clusters provide multiple "hits" from the same social group, making thresholds easier to cross. But they slow down simple contagion — you hear the same news from many sources (redundant).
 </p>
 
 <p data-lang="zh">
-这是一个确定性模型：给定网络、权重和阈值，结果完全确定。采纳是单调的——一旦采纳，节点就保持采纳状态。
+Damon Centola 的实验（2010）表明：<strong>聚集网络加速复杂传染。</strong>为什么？聚集提供来自同一社群的多次"冲击"，让阈值更容易越过。但减缓简单传染——你从多个源头听到同样信息（冗余）。
 </p>
 
-<h3>
-  <span data-lang="en">Independent Cascade Model</span>
-  <span data-lang="zh">独立级联模型</span>
-</h3>
+<!-- ═══════════════════════════════════════════════════
+     LEVEL 5 — WEAK TIES PARADOX
+     ═══════════════════════════════════════════════════ -->
 
-<p data-lang="en">
-The independent cascade model is probabilistic. When a node j becomes adopted at time t, it has a single chance to activate each inactive neighbor i with probability p<sub>ji</sub>. If it succeeds, i becomes adopted; if it fails, j never attempts to activate i again.
-</p>
+<div class="depth-divider"><span data-lang="en">Integration</span><span data-lang="zh">整合观点</span></div>
 
-<p data-lang="zh">
-独立级联模型是随机性的。当节点j在时刻t被采纳时，它有一次机会以概率p<sub>ji</sub>激活每个非活跃邻居i。如果成功，i被采纳；如果失败，j永远不会再尝试激活i。
-</p>
+<div class="level-badge intermediate" data-lang="en">Intermediate</div>
+<div class="level-badge intermediate" data-lang="zh">进阶</div>
 
-<p data-lang="en">
-This model is frequently used in viral marketing and influence maximization because it naturally captures the notion that repeated exposure may not increase influence. The two models have different use cases: linear threshold better models social conformity, while independent cascade better models information diffusion through media.
-</p>
-
-<p data-lang="zh">
-此模型经常用于病毒营销和影响力最大化，因为它自然地捕捉了重复暴露可能不会增加影响力的观点。两个模型有不同的用例：线性阈值更好地模拟社会从众，而独立级联更好地模拟通过媒体的信息扩散。
-</p>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
-
-<h2>
-  <span data-lang="en">Information Cascades and Bayesian Learning</span>
-  <span data-lang="zh">信息级联与贝叶斯学习</span>
+<h2 id="weak-ties">
+  <span data-lang="en">Simple vs Complex: The Paradox of Weak Ties</span>
+  <span data-lang="zh">简单 vs 复杂：弱关系的悖论</span>
 </h2>
 
 <p data-lang="en">
-Information cascades arise when agents observe both a private signal and the actions of predecessors, then must decide which choice to make. The analysis reveals a surprising phenomenon: agents eventually ignore their private information and follow the crowd.
+Mark Granovetter's classic finding: <strong>weak ties are crucial for information.</strong> Why? They bridge clusters. A job opening comes from a distant acquaintance you see rarely, not your best friend. Your best friend knows the same people you do (clustered), so weak ties carry novel information.
 </p>
 
 <p data-lang="zh">
-当代理观察私有信号和前任的行动，然后必须决定采取哪种选择时，信息级联出现。分析揭示了一个令人惊讶的现象：代理最终会忽视他们的私有信息并跟随人群。
+Mark Granovetter 的经典发现：<strong>弱关系对信息至关重要。</strong>为什么？他们桥接聚集体。工作机会来自你很少见的远方熟人，不是最好的朋友。你最好的朋友认识的人和你一样（聚集），所以弱关系携带新颖信息。
 </p>
-
-<h3>
-  <span data-lang="en">Setup and Cascade Formation</span>
-  <span data-lang="zh">设置与级联形成</span>
-</h3>
 
 <p data-lang="en">
-Suppose there are two states of the world, A and B, with prior probability 1/2 each. Agent t observes:
+But for <strong>behavior change,</strong> weak ties don't work. You don't quit your job because one distant acquaintance did; you do it because three close friends you trust all did. That requires strong ties (clustering, trust, repeated contact).
 </p>
 
 <p data-lang="zh">
-假设有两种世界状态，A和B，先验概率各为1/2。代理t观察：
+但对于<strong>行为改变</strong>，弱关系不起作用。你不会因为一个远方熟人辞职就辞职；你是因为三个你信任的亲密朋友都辞了。这需要强关系（聚集、信任、重复接触）。
 </p>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en">A private signal s<sub>t</sub> ∈ {A, B}, correct with probability p > 1/2</li>
-  <li data-lang="zh">私有信号s<sub>t</sub> ∈ {A, B}，以概率p > 1/2正确</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en">The actions a₁, a₂, …, a<sub>t−1</sub> of all predecessors</li>
-  <li data-lang="zh">所有前任的行动a₁, a₂, …, a<sub>t−1</sub></li>
-</ul>
-
-<p data-lang="en">
-Agent t rationally chooses the action with highest posterior probability given all observations. The key insight: if the first k agents all choose A, the posterior probability of state A is:
-</p>
-
-<p data-lang="zh">
-代理t理性地选择给定所有观察中后验概率最高的行动。关键洞察：如果前k个代理都选择A，状态A的后验概率为：
-</p>
-
-<div class="math-note">
-P(state = A | first k chose A) = p<sup>k</sup> / [p<sup>k</sup> + (1−p)<sup>k</sup>]
+<div class="concept-row">
+  <div class="concept-card">
+    <div class="card-icon">I</div>
+    <h4 data-lang="en">Information (Simple)</h4>
+    <h4 data-lang="zh">信息（简单）</h4>
+    <p data-lang="en">One source enough. Weak ties excel — reach distant clusters fast. Hub networks (one person knows many groups) optimal.</p>
+    <p data-lang="zh">一个源头就够。弱关系出色——快速到达远方聚集体。枢纽网络（一人认识多组）最优。</p>
+  </div>
+  <div class="concept-card">
+    <div class="card-icon">B</div>
+    <h4 data-lang="en">Behavior (Complex)</h4>
+    <h4 data-lang="zh">行为（复杂）</h4>
+    <p data-lang="en">Multiple sources, trust needed. Strong ties excel — clustering, reinforcement. Clustered networks better despite slower spread.</p>
+    <p data-lang="zh">需要多源头、信任。强关系出色——聚集、强化。聚集网络更优尽管传播慢。</p>
+  </div>
 </div>
 
-<p data-lang="en">
-As k grows, this probability approaches 1 even if agent t's private signal favors B. Thus a cascade forms: once enough predecessors agree, subsequent agents ignore their signals and simply imitate.
-</p>
+<div class="callout">
+  <div class="callout-label" data-lang="en">Key insight</div>
+  <div class="callout-label" data-lang="zh">关键洞察</div>
+  <p data-lang="en">Network structure has no single "best" shape. It depends on what spreads: information (simple) → hubs and weak ties; behavior (complex) → clusters and strong ties. This explains why some innovations spread virally while others need dense social proof.</p>
+  <p data-lang="zh">网络结构没有单一"最优"形状。取决于传播的东西：信息（简单）→ 枢纽和弱关系；行为（复杂）→ 聚集和强关系。这解释了为什么有些创新传播得像病毒，其他则需要密集社会证明。</p>
+</div>
 
-<p data-lang="zh">
-当k增长时，即使代理t的私有信号偏向B，这个概率也接近1。因此形成级联：一旦足够多的前任同意，后续代理就忽视他们的信号并简单地模仿。
-</p>
+<!-- ═══════════════════════════════════════════════════
+     LEVEL 6 — R SIMULATION (COLLAPSIBLE)
+     ═══════════════════════════════════════════════════ -->
 
-<h3>
-  <span data-lang="en">Fragility of Cascades</span>
-  <span data-lang="zh">级联的脆弱性</span>
-</h3>
+<div class="depth-divider"><span data-lang="en">Hands-On</span><span data-lang="zh">上手实操</span></div>
 
-<p data-lang="en">
-A remarkable property of information cascades is their fragility. A small perturbation—such as a single highly credible agent publically disagreeing with the cascade—can shatter it. Once broken, the cascade may reverse completely. This fragility explains why information cascades are common in markets but vulnerable to disruptive events or new credible information.
-</p>
+<div class="level-badge advanced" data-lang="en">Advanced</div>
+<div class="level-badge advanced" data-lang="zh">高级</div>
 
-<p data-lang="zh">
-信息级联的一个显著特性是其脆弱性。一个小的扰动——例如单个高度可信的代理公开不同意级联——可以打破它。一旦破裂，级联可能完全逆转。这种脆弱性解释了为什么信息级联在市场中常见但易受颠覆性事件或新的可信信息影响。
-</p>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
-
-<h2>
-  <span data-lang="en">Network Topology and Diffusion Speed</span>
-  <span data-lang="zh">网络拓扑与扩散速度</span>
+<h2 id="r-simulation">
+  <span data-lang="en">R Code: Simulating SIR on a Network</span>
+  <span data-lang="zh">R 代码：网络上的 SIR 模拟</span>
 </h2>
 
-<p data-lang="en">
-The structure of the network fundamentally shapes how fast information and behaviors diffuse. Three key topological properties affect diffusion:
-</p>
+<button class="collapsible-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+  <span class="arrow">▶</span>
+  <span data-lang="en">Show code</span>
+  <span data-lang="zh">显示代码</span>
+</button>
+<div class="collapsible-content">
 
-<p data-lang="zh">
-网络的结构从根本上影响信息和行为扩散的速度。三个关键拓扑属性影响扩散：
-</p>
-
-<h3>
-  <span data-lang="en">Degree Distribution</span>
-  <span data-lang="zh">度分布</span>
-</h3>
-
-<p data-lang="en">
-Networks with high variance in degree (heterogeneous networks) transmit faster than homogeneous networks. Hubs—high-degree nodes—are both infected early and infect many others rapidly. This is why epidemics on scale-free networks (power-law degree distribution) are particularly fast and hard to control.
-</p>
-
-<p data-lang="zh">
-度方差大的网络（异质网络）比同质网络传播得快。枢纽——高度数节点——既被早期感染，也快速感染许多其他节点。这就是为什么无标度网络（幂律度分布）上的流行病特别快且难以控制。
-</p>
-
-<h3>
-  <span data-lang="en">Clustering Coefficient</span>
-  <span data-lang="zh">聚类系数</span>
-</h3>
-
-<p data-lang="en">
-The clustering coefficient C measures the fraction of triangles in the network: C = (number of triangles) / (number of connected triples). High clustering creates redundant paths; if many of your neighbors are also neighbors with each other, you hear information multiple times. This slows diffusion because each channel carries correlated information. Networks with low clustering (like random graphs) have longer effective distances between nodes, yet diffuse faster because information spreads through diverse, non-overlapping paths.
-</p>
-
-<p data-lang="zh">
-聚类系数C测量网络中三角形的比例：C = （三角形数量）/（连接三元组数量）。高聚类创建冗余路径；如果你的许多邻居也彼此是邻居，你会多次听到信息。这会减慢扩散，因为每条通道携带相关信息。具有低聚类的网络（如随机图）在节点之间有更长的有效距离，但通过多样化的、非重叠的路径扩散信息更快。
-</p>
-
-<h3>
-  <span data-lang="en">Small-World Properties</span>
-  <span data-lang="zh">小世界特性</span>
-</h3>
-
-<p data-lang="en">
-The Watts-Strogatz model captures small-world networks: graphs that combine high clustering (like lattices) with short path lengths (like random graphs). Small-world networks are highly efficient for diffusion because information can "jump" across the network via rare long-range edges while benefiting from local clustering for dense neighborhood effects.
-</p>
-
-<p data-lang="zh">
-Watts-Strogatz模型捕捉小世界网络：同时具有高聚类（如格子）和短路径长度（如随机图）的图。小世界网络对扩散高度有效，因为信息可以通过稀有的长程边在网络中"跳跃"，同时从局部聚类中受益以获得密集的邻域效应。
-</p>
-
-<h3>
-  <span data-lang="en">Comparative Summary</span>
-  <span data-lang="zh">比较总结</span>
-</h3>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Random Networks:</strong> Moderate clustering, short path length, balanced diffusion speed</li>
-  <li data-lang="zh"><strong>随机网络：</strong>适度聚类，短路径长度，平衡的扩散速度</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Scale-free Networks:</strong> Low clustering, power-law degree distribution, very fast diffusion due to hubs, low epidemic threshold</li>
-  <li data-lang="zh"><strong>无标度网络：</strong>低聚类，幂律度分布，由于枢纽扩散非常快，流行病阈值低</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Small-World Networks:</strong> High clustering + short path length, optimal balance for efficient diffusion</li>
-  <li data-lang="zh"><strong>小世界网络：</strong>高聚类+短路径长度，有效扩散的最优平衡</li>
-</ul>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
-
-<h2>
-  <span data-lang="en">R Simulations: SIR on Networks and Threshold Cascades</span>
-  <span data-lang="zh">R模拟：网络上的SIR和阈值级联</span>
-</h2>
-
-<p data-lang="en">
-The following R code simulates both the SIR model on a network and a threshold model cascade using the igraph package. These simulations help visualize how topology influences diffusion dynamics.
-</p>
-
-<p data-lang="zh">
-以下R代码使用igraph包模拟网络上的SIR模型和阈值模型级联。这些模拟有助于可视化拓扑如何影响扩散动力学。
-</p>
-
-<h3>
-  <span data-lang="en">SIR Model Simulation</span>
-  <span data-lang="zh">SIR模型模拟</span>
-</h3>
-
-<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
+<pre class="code-block"><span class="comment"># Load required libraries</span>
 library(igraph)
 
-# Generate a network (scale-free, random, or small-world)
-n <- 100
-g <- barabasi.game(n, m = 2)  # Scale-free network
+<span class="comment"># Create a network (Barabasi-Albert scale-free)</span>
+g &lt;- barabasi.game(n = 100, m = 2, directed = FALSE)
 
-# Parameters
-beta <- 0.3    # Transmission rate
-gamma <- 0.1   # Recovery rate
-time_steps <- 100
-n_sims <- 50
+<span class="comment"># Initialize: 0 = Susceptible, 1 = Infected, 2 = Recovered</span>
+V(g)$status &lt;- 0
+V(g)[1]$status &lt;- 1  <span class="comment"># Patient zero</span>
 
-# Initialize status: 0 = Susceptible, 1 = Infected, 2 = Recovered
-run_sir <- function(g, beta, gamma, time_steps) {
-  n <- vcount(g)
-  status <- rep(0, n)
-  status[1] <- 1  # Initial seed
+<span class="comment"># Parameters</span>
+beta &lt;- 0.3    <span class="comment"># Transmission probability per contact</span>
+gamma &lt;- 0.1   <span class="comment"># Recovery probability per time step</span>
+time_steps &lt;- 100
 
-  history <- matrix(0, nrow = time_steps, ncol = 3)
-  colnames(history) <- c("S", "I", "R")
+<span class="comment"># Track dynamics</span>
+S_hist &lt;- numeric(time_steps)
+I_hist &lt;- numeric(time_steps)
+R_hist &lt;- numeric(time_steps)
 
-  for (t in 1:time_steps) {
-    # Count current states
-    history[t, ] <- c(sum(status == 0), sum(status == 1), sum(status == 2))
+<span class="comment"># Main simulation loop</span>
+for (t in 1:time_steps) {
+  <span class="comment"># Count current state</span>
+  S_hist[t] &lt;- sum(V(g)$status == 0)
+  I_hist[t] &lt;- sum(V(g)$status == 1)
+  R_hist[t] &lt;- sum(V(g)$status == 2)
 
-    # Infection step: for each infected node, try to infect neighbors
-    infected <- which(status == 1)
-    for (i in infected) {
-      neighbors <- neighbors(g, i)
-      # Susceptible neighbors can be infected
-      suscept_neighbors <- neighbors[status[neighbors] == 0]
-      new_infections <- runif(length(suscept_neighbors)) < beta
-      status[suscept_neighbors[new_infections]] <- 1
-    }
-
-    # Recovery step: infected nodes recover with probability gamma
-    infected <- which(status == 1)
-    recovered <- runif(length(infected)) < gamma
-    status[infected[recovered]] <- 2
-  }
-
-  return(history)
-}
-
-# Run simulations and plot
-results <- replicate(n_sims, run_sir(g, beta, gamma, time_steps))
-mean_I <- rowMeans(results[, 2, ])
-
-plot(1:time_steps, mean_I, type = "l", xlab = "Time", ylab = "Mean Infected",
-     main = "SIR Dynamics on Scale-Free Network", lwd = 2, col = "red")
-</pre>
-
-<p data-lang="en">
-This code generates a scale-free network using the Barabási-Albert model, runs the SIR dynamics, and plots the mean number of infected individuals over time across multiple simulations.
-</p>
-
-<p data-lang="zh">
-此代码使用Barabási-Albert模型生成无标度网络，运行SIR动力学，并在多个模拟中绘制感染个体的平均数量随时间的变化。
-</p>
-
-<h3>
-  <span data-lang="en">Threshold Model Cascade Simulation</span>
-  <span data-lang="zh">阈值模型级联模拟</span>
-</h3>
-
-<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
-# Threshold model cascade simulation
-run_threshold_cascade <- function(g, threshold, seed_nodes) {
-  n <- vcount(g)
-  adopted <- rep(FALSE, n)
-  adopted[seed_nodes] <- TRUE
-
-  history <- list()
-  history[[1]] <- adopted
-  iteration <- 1
-
-  changed <- TRUE
-  while (changed & iteration < 100) {
-    changed <- FALSE
-    new_adopted <- adopted
-
-    for (i in 1:n) {
-      if (!adopted[i]) {
-        neighbors <- neighbors(g, i)
-        frac_adopted <- sum(adopted[neighbors]) / length(neighbors)
-        if (frac_adopted >= threshold) {
-          new_adopted[i] <- TRUE
-          changed <- TRUE
-        }
+  <span class="comment"># Step 1: Transmit (S → I)</span>
+  infected &lt;- which(V(g)$status == 1)
+  for (v in infected) {
+    neighbors &lt;- neighbors(g, v)
+    for (u in neighbors) {
+      if (V(g)[u]$status == 0 &amp;&amp; runif(1) &lt; beta) {
+        V(g)[u]$status &lt;- 1
       }
     }
-
-    adopted <- new_adopted
-    iteration <- iteration + 1
-    history[[iteration]] <- adopted
   }
 
-  return(list(adopted = adopted, iterations = iteration - 1))
+  <span class="comment"># Step 2: Recover (I → R)</span>
+  infected &lt;- which(V(g)$status == 1)
+  for (v in infected) {
+    if (runif(1) &lt; gamma) {
+      V(g)[v]$status &lt;- 2
+    }
+  }
 }
 
-# Compare cascade outcomes across different thresholds
-g <- watts.strogatz.game(1, 100, 5, 0.3)  # Small-world network
-thresholds <- c(0.1, 0.2, 0.3, 0.4, 0.5)
-seed_size <- 5
+<span class="comment"># Plot results</span>
+plot(1:time_steps, I_hist, type = "l", col = "red", lwd = 2,
+     xlab = "Time", ylab = "Count", main = "SIR on Network")
+lines(1:time_steps, S_hist, col = "blue", lwd = 2)
+lines(1:time_steps, R_hist, col = "green", lwd = 2)
+legend("topright", legend = c("S", "I", "R"),
+       col = c("blue", "red", "green"), lty = 1, lwd = 2)
 
-cascade_sizes <- sapply(thresholds, function(th) {
-  result <- run_threshold_cascade(g, th, sample(1:vcount(g), seed_size))
-  sum(result$adopted)
-})
-
-plot(thresholds, cascade_sizes, type = "b", xlab = "Threshold",
-     ylab = "Final Cascade Size", main = "Cascades on Small-World Network",
-     lwd = 2, pch = 19)
+<span class="comment"># Calculate R0 from parameters</span>
+R0_eff &lt;- (beta / gamma) * mean(degree(g))
+cat("Effective R0:", R0_eff, "\n")
 </pre>
 
-<p data-lang="en">
-This threshold model simulation tests how the adoption threshold affects cascade size on a small-world network. Lower thresholds lead to larger cascades because fewer neighbors need to adopt before triggering further adoption.
-</p>
+</div><!-- end collapsible -->
 
-<p data-lang="zh">
-此阈值模型模拟测试采纳阈值如何影响小世界网络上的级联大小。较低的阈值导致更大的级联，因为触发进一步采纳之前需要更少的邻居采纳。
-</p>
+<div class="callout tip">
+  <div class="callout-label" data-lang="en">What to try</div>
+  <div class="callout-label" data-lang="zh">试试看</div>
+  <p data-lang="en">
+  Replace <code>barabasi.game()</code> with <code>erdos.renyi.game(100, 0.05)</code> (random) or <code>sample_pa(100, 2)</code> (clustered). See how R0 and infection curves change. Higher clustering → slower SIR spread, even with same β/γ.
+  </p>
+  <p data-lang="zh">
+  用 <code>erdos.renyi.game(100, 0.05)</code>（随机）或 <code>sample_pa(100, 2)</code>（聚集）替换。看看 R0 和感染曲线如何变化。更高聚集 → SIR 传播更慢，即使 β/γ 相同。
+  </p>
+</div>
 
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+<!-- ═══════════════════════════════════════════════════
+     SUMMARY
+     ═══════════════════════════════════════════════════ -->
 
-<h2>
-  <span data-lang="en">Key Takeaways</span>
-  <span data-lang="zh">关键要点</span>
-</h2>
+<div class="summary-box">
+  <div class="summary-label" data-lang="en">Summary</div>
+  <div class="summary-label" data-lang="zh">总结</div>
+  <p data-lang="en">Network diffusion has two flavors: simple contagion (one contact spreads, like disease) and complex contagion (many contacts needed, like behavior). The SIR model captures disease dynamics; threshold models capture behavior. Network structure profoundly affects outcomes: hubs and weak ties speed simple diffusion; clusters and strong ties accelerate complex diffusion. No universally "best" network exists — it depends on what you're spreading.</p>
+  <p data-lang="zh">网络扩散有两种：简单传染（一个接触传播，如疾病）和复杂传染（需多个接触，如行为）。SIR 模型捕捉疾病动力学；阈值模型捕捉行为。网络结构深刻影响结果：枢纽和弱关系加速简单扩散；聚集和强关系加速复杂扩散。没有普遍"最优"网络——取决于你传播的东西。</p>
+</div>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en">Network diffusion combines epidemiology, social dynamics, and information theory</li>
-  <li data-lang="zh">网络扩散结合了流行病学、社会动力学和信息论</li>
-</ul>
+<!-- ═══════════════════════════════════════════════════
+     JAVASCRIPT FOR COLLAPSIBLES
+     ═══════════════════════════════════════════════════ -->
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en">The epidemic threshold on networks differs fundamentally from mean-field predictions, especially for scale-free topologies</li>
-  <li data-lang="zh">网络上的流行病阈值从根本上不同于平均场预测，特别是对于无标度拓扑</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en">Threshold and cascade models reveal how social structure determines whether a small seed triggers global adoption</li>
-  <li data-lang="zh">阈值和级联模型揭示社会结构如何决定一个小种子是否触发全局采纳</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en">Information cascades are powerful but fragile; small shocks can reverse them completely</li>
-  <li data-lang="zh">信息级联强大但脆弱；小的冲击可以完全逆转它们</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en">Network topology (degree distribution, clustering, path length) is the primary determinant of diffusion speed</li>
-  <li data-lang="zh">网络拓扑（度分布、聚类、路径长度）是扩散速度的主要决定因素</li>
-</ul>
-
-<ul style="margin-left: 2rem;">
-  <li data-lang="en">Simulations with igraph enable testing diffusion models on realistic network structures</li>
-  <li data-lang="zh">使用igraph的模拟可以在现实网络结构上测试扩散模型</li>
-</ul>
+<script>
+document.querySelectorAll('.collapsible-toggle').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    this.classList.toggle('open');
+    this.nextElementSibling.classList.toggle('open');
+  });
+});
+</script>

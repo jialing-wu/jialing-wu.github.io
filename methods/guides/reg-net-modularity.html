@@ -9,619 +9,383 @@ bilingual: true
 mathjax: true
 ---
 
-<h2>
-  <span data-lang="en">Graph Partitioning Problem</span>
-  <span data-lang="zh">图分割问题</span>
-</h2>
+<style>
+.level-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:8px}
+.level-badge.beginner{background:rgba(91,140,133,.12);color:#4a7a72}
+.level-badge.intermediate{background:rgba(194,153,61,.12);color:#9a7a2e}
+.level-badge.advanced{background:rgba(181,55,42,.1);color:#a0382e}
+.depth-divider{display:flex;align-items:center;gap:16px;margin:40px 0 28px}
+.depth-divider::before,.depth-divider::after{content:'';flex:1;height:1px;background:var(--parchment)}
+.depth-divider span{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-ghost);white-space:nowrap}
+.concept-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.concept-card{background:var(--paper);border:1px solid var(--parchment);border-radius:6px;padding:18px 20px;transition:all .3s ease;box-shadow:0 1px 3px rgba(30,24,15,.03)}
+.concept-card:hover{border-color:var(--gold-soft);box-shadow:0 3px 12px rgba(194,153,61,.08);transform:translateY(-1px)}
+.concept-card .card-icon{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--paper);background:var(--gold);display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;margin-bottom:10px;box-shadow:0 2px 4px rgba(194,153,61,.2)}
+.concept-card h4{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink-soft);margin:0 0 6px}
+.concept-card p{font-size:13.5px;line-height:1.7;color:var(--ink-faded);margin:0}
+.guide-formula{background:rgba(30,24,15,.03);border:1px solid var(--parchment);border-radius:6px;padding:20px 24px;margin:20px 0;text-align:center;font-size:16px;line-height:1.8;color:var(--ink-soft);font-family:var(--mono);letter-spacing:.02em;overflow-x:auto}
+.unpack-list{display:grid;grid-template-columns:1fr;gap:10px;margin:16px 0;padding:0;list-style:none}
+.unpack-item{display:flex;gap:14px;align-items:flex-start;padding:12px 16px;background:var(--paper);border:1px solid var(--parchment);border-radius:6px;transition:border-color .25s}
+.unpack-item:hover{border-color:var(--gold-soft)}
+.unpack-item .symbol{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--gold);white-space:nowrap;min-width:80px;padding-top:1px}
+.unpack-item .explain{font-size:13.5px;line-height:1.7;color:var(--ink-faded)}
+.callout{border-left:3px solid var(--gold);background:rgba(194,153,61,.04);padding:16px 20px;margin:20px 0;border-radius:0 6px 6px 0}
+.callout.tip{border-left-color:#5b8c85;background:rgba(91,140,133,.04)}
+.callout.warn{border-left-color:var(--red);background:rgba(181,55,42,.04)}
+.callout .callout-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.callout.tip .callout-label{color:#5b8c85}
+.callout.warn .callout-label{color:var(--red)}
+.callout p{font-size:14px;line-height:1.75;color:var(--ink-faded);margin:0}
+.callout p + p{margin-top:8px}
+.step-flow{display:grid;grid-template-columns:1fr;gap:10px;margin:16px 0;padding:0;list-style:none;counter-reset:step}
+.step-flow li{counter-increment:step;display:flex;gap:14px;align-items:flex-start;padding:12px 16px;background:var(--paper);border:1px solid var(--parchment);border-radius:6px;font-size:13.5px;line-height:1.7;color:var(--ink-faded);transition:border-color .25s}
+.step-flow li:hover{border-color:var(--gold-soft)}
+.step-flow li::before{content:counter(step);font-family:var(--sans);font-size:11px;font-weight:700;color:var(--paper);background:var(--gold);min-width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;box-shadow:0 1px 3px rgba(194,153,61,.2)}
+.code-block{background:var(--ink);color:#e8e0d4;padding:24px 28px;border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.55;font-family:var(--mono);margin:20px 0;box-shadow:0 2px 8px rgba(30,24,15,.15)}
+.code-block .comment{color:#9a8e7e}
+.collapsible-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:12px 0;font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-ghost);border:none;background:none;transition:color .25s}
+.collapsible-toggle:hover{color:var(--gold)}
+.collapsible-toggle .arrow{transition:transform .3s;font-size:10px}
+.collapsible-toggle.open .arrow{transform:rotate(90deg)}
+.collapsible-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.collapsible-content.open{max-height:5000px}
+.summary-box{background:var(--warm);border:1px solid var(--parchment);border-radius:6px;padding:24px 28px;margin:28px 0}
+.summary-box .summary-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.summary-box p{font-size:14px;line-height:1.75;color:var(--ink-faded);margin:0}
+body.zh .step-flow li,body.zh .unpack-list .unpack-item{display:flex}
+@media(max-width:700px){.concept-row{grid-template-columns:1fr}.unpack-item{flex-direction:column;gap:4px}.unpack-item .symbol{min-width:auto}}
+</style>
+
+<h2 data-lang="en">What Is Community Detection?</h2>
+<h2 data-lang="zh">什么是社区检测？</h2>
+
+<div class="level-badge beginner">Beginner</div>
 
 <p data-lang="en">
-Community detection in networks seeks to partition the vertex set into groups (communities) such that vertices within groups are densely connected, while vertices in different groups are sparsely connected. Formally, given a graph <strong>G = (V, E)</strong> with vertex set V and edge set E, we seek to find a partition <strong>C₁, C₂, ..., Cₖ</strong> of V that maximizes intra-community edge density and minimizes inter-community edges.
+Imagine a high school cafeteria where students sit in tables based on their friendships. A community detection algorithm is like a detective who looks at the seating chart and discovers these friend groups without anyone telling them what the groups are. The algorithm needs only one piece of information: who sits next to whom.
 </p>
 
 <p data-lang="zh">
-网络中的社区检测旨在将顶点集合分割成若干组（社区），使得同组内的顶点之间密集连接，而不同组的顶点之间连接稀疏。形式上，给定图 <strong>G = (V, E)</strong>，其中 V 是顶点集，E 是边集，我们寻求找到 V 的一个分割 <strong>C₁, C₂, ..., Cₖ</strong>，使其最大化社区内部的边密度，最小化社区之间的边数。
+想象一个高中食堂，学生根据他们的友谊坐在桌子旁。社区检测算法就像一个侦探，看着座位表，发现这些朋友圈，不需要任何人告诉他们这些圈子是什么。该算法只需要一种信息：谁与谁相邻。
 </p>
 
-<div class="math-note" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 1rem; margin: 1.5rem 0; font-family: monospace;">
-<p style="margin: 0;">
-<strong>Optimization Objective:</strong><br/>
-<strong>Maximize:</strong> (edges within communities) / (total edges)<br/>
-<strong>Minimize:</strong> (edges between communities) / (total edges)
-</p>
+<div class="concept-row">
+  <div class="concept-card">
+    <div class="card-icon">C</div>
+    <h4 data-lang="en">Community</h4>
+    <h4 data-lang="zh">社区</h4>
+    <p data-lang="en">A group where nodes are densely connected to each other, but sparsely connected to the rest of the network. Like a cluster of friends.</p>
+    <p data-lang="zh">一个节点彼此密集连接，但与网络其余部分稀疏连接的组。就像一群朋友。</p>
+  </div>
+
+  <div class="concept-card">
+    <div class="card-icon">Q</div>
+    <h4 data-lang="en">Modularity (Q)</h4>
+    <h4 data-lang="zh">模块性 (Q)</h4>
+    <p data-lang="en">A score that measures how good a partition is. Higher Q means clearer community structure. Range: −0.5 to 1.0 (typically 0 to 0.5).</p>
+    <p data-lang="zh">衡量分割有多好的分数。较高的 Q 意味着更清晰的社区结构。范围：−0.5 到 1.0（通常 0 到 0.5）。</p>
+  </div>
 </div>
 
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+<div class="callout tip">
+  <div class="callout-label" data-lang="en">Key Insight</div>
+  <div class="callout-label" data-lang="zh">关键见解</div>
+  <p data-lang="en">The algorithm doesn't need labels. It discovers structure purely from the connection pattern. This is what makes it powerful—it works even when you don't know what the communities represent.</p>
+  <p data-lang="zh">该算法不需要标签。它纯粹从连接模式中发现结构。这就是它的强大之处——即使你不知道社区代表什么，它也能工作。</p>
+</div>
 
-<h2>
-  <span data-lang="en">Modularity Q: Complete Mathematical Derivation</span>
-  <span data-lang="zh">模块性 Q：完整数学推导</span>
-</h2>
+<div class="depth-divider"><span data-lang="en">The Louvain Algorithm</span><span data-lang="zh">Louvain 算法</span></div>
 
-<h3>
-  <span data-lang="en">Definition and Formula</span>
-  <span data-lang="zh">定义与公式</span>
-</h3>
+<h2 data-lang="en">How Louvain Works</h2>
+<h2 data-lang="zh">Louvain 如何工作</h2>
+
+<div class="level-badge beginner">Beginner</div>
 
 <p data-lang="en">
-Modularity Q is the most widely used metric for quantifying partition quality. It measures the fraction of edges falling within communities, normalized by the expected fraction in a random graph with the same degree sequence.
+Louvain is the most popular community detection method. It's fast, scalable, and works on networks with millions of nodes. The algorithm uses a clever two-step process that repeats until the communities stop improving.
 </p>
 
 <p data-lang="zh">
-模块性 Q 是量化分割质量的最常用指标。它衡量落在社区内部的边所占的比例，并通过具有相同度序列的随机图中的期望比例进行归一化。
+Louvain 是最流行的社区检测方法。它速度快，可扩展，并且适用于拥有数百万个节点的网络。该算法使用一个聪明的两步流程，重复直到社区停止改进。
 </p>
 
-<div class="math-note" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 1rem; margin: 1.5rem 0;">
-<p style="margin: 0; font-size: 0.95em; line-height: 1.8;">
-<strong>Modularity Formula:</strong><br/>
-Q = <span style="font-size: 1.1em;"><sup>1</sup>/<sub>2m</sub></span> Σ<sub>i,j</sub> [A<sub>ij</sub> - <span style="font-size: 0.9em;"><sup>k<sub>i</sub>k<sub>j</sub></sup>/<sub>2m</sub></span>] δ(c<sub>i</sub>, c<sub>j</sub>)
-</p>
+<ol class="step-flow">
+  <li data-lang="en">Start with each node in its own community</li>
+  <li data-lang="zh">从每个节点都在自己的社区中开始</li>
+
+  <li data-lang="en">For each node, try moving it to each neighbor's community. Keep the move that increases modularity Q the most</li>
+  <li data-lang="zh">对于每个节点，尝试将其移动到每个邻居的社区。保持最增加模块性 Q 的移动</li>
+
+  <li data-lang="en">Once no move improves Q, merge each community into a single "super-node" and repeat steps 1-2 on this new network</li>
+  <li data-lang="zh">一旦没有移动改进 Q，将每个社区合并为一个"超级节点"，并在这个新网络上重复步骤 1-2</li>
+
+  <li data-lang="en">Stop when Q no longer increases between iterations</li>
+  <li data-lang="zh">当 Q 在迭代之间不再增加时停止</li>
+</ol>
+
+<div class="callout tip">
+  <div class="callout-label" data-lang="en">Why Louvain?</div>
+  <div class="callout-label" data-lang="zh">为什么选择 Louvain？</div>
+  <p data-lang="en">Louvain is greedy (it makes locally optimal choices) rather than globally optimal, but this makes it fast and practical. For most real networks, it finds excellent results in seconds.</p>
+  <p data-lang="zh">Louvain 是贪心的（它做出局部最优选择）而不是全局最优的，但这使它快速且实用。对于大多数真实网络，它在几秒钟内找到优异的结果。</p>
 </div>
 
-<h3>
-  <span data-lang="en">Component Explanation</span>
-  <span data-lang="zh">组成部分解释</span>
-</h3>
+<div class="depth-divider"><span data-lang="en">The Mathematics</span><span data-lang="zh">数学基础</span></div>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>A<sub>ij</sub>:</strong> Adjacency matrix element (1 if edge exists between i and j, 0 otherwise)</li>
-  <li data-lang="en"><strong>k<sub>i</sub>, k<sub>j</sub>:</strong> Degrees of vertices i and j (number of connections)</li>
-  <li data-lang="en"><strong>m:</strong> Total number of edges in the graph (sum of all degrees divided by 2)</li>
-  <li data-lang="en"><strong>δ(c<sub>i</sub>, c<sub>j</sub>):</strong> Kronecker delta function: δ = 1 if vertices i and j are in the same community, 0 otherwise</li>
-  <li data-lang="en"><strong>Σ<sub>i,j</sub>:</strong> Summation over all pairs of vertices</li>
+<h2 data-lang="en">Understanding Modularity Q</h2>
+<h2 data-lang="zh">理解模块性 Q</h2>
+
+<div class="level-badge intermediate">Intermediate</div>
+
+<p data-lang="en">
+Modularity measures: are there more edges inside communities than expected by random chance? It compares the actual network against a null model—a random graph with the same degree distribution but no structure.
+</p>
+
+<p data-lang="zh">
+模块性度量：社区内的边是否比随机机会预期的要多？它将实际网络与零模型进行比较——具有相同度分布但没有结构的随机图。
+</p>
+
+<div class="guide-formula">
+Q = (1/2m) Σ_{i,j} [A_{ij} − k_i k_j / 2m] δ(c_i, c_j)
+</div>
+
+<p data-lang="en"><strong>Breaking down each piece:</strong></p>
+<p data-lang="zh"><strong>分解每一部分：</strong></p>
+
+<ul class="unpack-list">
+  <li class="unpack-item">
+    <span class="symbol" data-lang="en">A_{ij}</span>
+    <span class="symbol" data-lang="zh">A_{ij}</span>
+    <span class="explain" data-lang="en">Adjacency matrix: 1 if nodes i and j are connected, 0 otherwise. The actual edges in your network.</span>
+    <span class="explain" data-lang="zh">邻接矩阵：如果节点 i 和 j 相连则为 1，否则为 0。网络中的实际边。</span>
+  </li>
+
+  <li class="unpack-item">
+    <span class="symbol" data-lang="en">k_i, k_j</span>
+    <span class="symbol" data-lang="zh">k_i, k_j</span>
+    <span class="explain" data-lang="en">Degree (number of connections) of nodes i and j. A hub has high degree.</span>
+    <span class="explain" data-lang="zh">节点 i 和 j 的度数（连接数）。枢纽节点的度数很高。</span>
+  </li>
+
+  <li class="unpack-item">
+    <span class="symbol" data-lang="en">k_i k_j / 2m</span>
+    <span class="symbol" data-lang="zh">k_i k_j / 2m</span>
+    <span class="explain" data-lang="en">Expected edges in a random null model. Given the degrees, how many edges would we expect purely by chance?</span>
+    <span class="explain" data-lang="zh">随机零模型中的期望边数。给定度数，我们会纯粹凭机会期望多少条边？</span>
+  </li>
+
+  <li class="unpack-item">
+    <span class="symbol" data-lang="en">m</span>
+    <span class="symbol" data-lang="zh">m</span>
+    <span class="explain" data-lang="en">Total number of edges in the network. (sum of all degrees) / 2</span>
+    <span class="explain" data-lang="zh">网络中的总边数。（所有度的总和）/ 2</span>
+  </li>
+
+  <li class="unpack-item">
+    <span class="symbol" data-lang="en">δ(c_i, c_j)</span>
+    <span class="symbol" data-lang="zh">δ(c_i, c_j)</span>
+    <span class="explain" data-lang="en">Kronecker delta: equals 1 if i and j are in the same community, 0 otherwise. Only counts pairs in the same group.</span>
+    <span class="explain" data-lang="zh">Kronecker delta：如果 i 和 j 在同一社区则等于 1，否则为 0。仅计算同一组中的对。</span>
+  </li>
 </ul>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="zh"><strong>A<sub>ij</sub>:</strong> 邻接矩阵元素（若 i 和 j 之间存在边则为 1，否则为 0）</li>
-  <li data-lang="zh"><strong>k<sub>i</sub>, k<sub>j</sub>:</strong> 顶点 i 和 j 的度数（连接数）</li>
-  <li data-lang="zh"><strong>m:</strong> 图中总边数（所有度数之和除以 2）</li>
-  <li data-lang="zh"><strong>δ(c<sub>i</sub>, c<sub>j</sub>):</strong> Kronecker delta 函数：若顶点 i 和 j 在同一社区则 δ = 1，否则为 0</li>
-  <li data-lang="zh"><strong>Σ<sub>i,j</sub>:</strong> 对所有顶点对进行求和</li>
-</ul>
+<h3 data-lang="en">Interpretation of Q Values</h3>
+<h3 data-lang="zh">Q 值的解释</h3>
 
-<h3>
-  <span data-lang="en">The Null Model: Expected Edges</span>
-  <span data-lang="zh">零模型：期望边数</span>
-</h3>
+<div class="callout">
+  <p data-lang="en"><strong>Q ≤ 0:</strong> No community structure (worse than random)</p>
+  <p data-lang="zh"><strong>Q ≤ 0：</strong> 无社区结构（比随机差）</p>
 
-<p data-lang="en">
-The term <span style="font-family: monospace;">k<sub>i</sub>k<sub>j</sub>/(2m)</span> represents the expected number of edges between vertices i and j in a configuration model (random graph preserving the observed degree sequence). This is the null hypothesis: communities are no denser than would be expected by chance given the degree distribution.
-</p>
+  <p data-lang="en"><strong>Q = 0.1–0.3:</strong> Weak but real structure</p>
+  <p data-lang="zh"><strong>Q = 0.1–0.3：</strong> 弱但真实的结构</p>
 
-<p data-lang="zh">
-项 <span style="font-family: monospace;">k<sub>i</sub>k<sub>j</sub>/(2m)</span> 表示在配置模型中顶点 i 和 j 之间的期望边数（保留观察到的度序列的随机图）。这是零假设：给定度分布，社区的密度不会超过随机预期。
-</p>
+  <p data-lang="en"><strong>Q ≥ 0.3:</strong> Significant, meaningful communities</p>
+  <p data-lang="zh"><strong>Q ≥ 0.3：</strong> 显著的、有意义的社区</p>
 
-<div class="math-note" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 1rem; margin: 1.5rem 0;">
-<p style="margin: 0; font-size: 0.95em;">
-<strong>Decomposition:</strong><br/>
-Q = (Observed edges within communities) / (2m) − (Expected edges within communities) / (2m)<br/>
-<br/>
-<strong>Interpretation:</strong> How much better is our partition than random?
-</p>
+  <p data-lang="en"><strong>Q > 0.7:</strong> Very strong structure (rare in real networks)</p>
+  <p data-lang="zh"><strong>Q > 0.7：</strong> 非常强的结构（在真实网络中很少见）</p>
 </div>
 
-<h3>
-  <span data-lang="en">Interpretation of Q Values</span>
-  <span data-lang="zh">Q 值的解释</span>
-</h3>
+<h3 data-lang="en">Worked Example: Two Triangles with a Bridge</h3>
+<h3 data-lang="zh">示例：两个三角形与桥</h3>
 
-<div style="background: var(--cream); border-left: 4px solid var(--gold); padding: 1rem; margin: 1.5rem 0;">
-<table style="width: 100%; border-collapse: collapse; font-size: 0.95em;">
-  <tr style="border-bottom: 1px solid var(--gold);">
-    <th style="text-align: left; padding: 0.5rem;"><span data-lang="en">Range</span><span data-lang="zh">范围</span></th>
-    <th style="text-align: left; padding: 0.5rem;"><span data-lang="en">Interpretation</span><span data-lang="zh">解释</span></th>
-  </tr>
-  <tr style="border-bottom: 1px solid var(--gold);">
-    <td style="padding: 0.5rem;">Q ≤ 0</td>
-    <td style="padding: 0.5rem;"><span data-lang="en">No community structure; partition worse than random</span><span data-lang="zh">无社区结构；分割劣于随机</span></td>
-  </tr>
-  <tr style="border-bottom: 1px solid var(--gold);">
-    <td style="padding: 0.5rem;">0 < Q < 0.3</td>
-    <td style="padding: 0.5rem;"><span data-lang="en">Weak community structure</span><span data-lang="zh">弱社区结构</span></td>
-  </tr>
-  <tr style="border-bottom: 1px solid var(--gold);">
-    <td style="padding: 0.5rem;">Q ≥ 0.3</td>
-    <td style="padding: 0.5rem;"><span data-lang="en">Significant community structure (meaningful partition)</span><span data-lang="zh">显著社区结构（有意义的分割）</span></td>
-  </tr>
-  <tr>
-    <td style="padding: 0.5rem;">Q > 0.7</td>
-    <td style="padding: 0.5rem;"><span data-lang="en">Very strong communities (rare)</span><span data-lang="zh">非常强的社区（罕见）</span></td>
-  </tr>
-</table>
+<p data-lang="en">
+<strong>Network:</strong> Community A = {1, 2, 3} (fully connected), Community B = {4, 5, 6} (fully connected), one edge 3-4 connecting them. Total: 7 edges.
+</p>
+
+<p data-lang="zh">
+<strong>网络：</strong> 社区 A = {1, 2, 3}（完全连接），社区 B = {4, 5, 6}（完全连接），一条边 3-4 连接它们。总共：7 条边。
+</p>
+
+<div class="guide-formula" style="font-size: 14px; text-align: left;">
+<strong data-lang="en">Calculation:</strong>
+<strong data-lang="zh">计算：</strong>
+
+<span data-lang="en">Edges within A: 3, Edges within B: 3, Bridge edges: 1, m = 7</span>
+<span data-lang="zh">A 内的边：3，B 内的边：3，桥边：1，m = 7</span>
+
+<span data-lang="en">Degrees: k = [2, 2, 3, 3, 2, 2]</span>
+<span data-lang="zh">度数：k = [2, 2, 3, 3, 2, 2]</span>
+
+<span data-lang="en">Q = (1/14) × Σ [observed − expected within-community pairs]</span>
+<span data-lang="zh">Q = (1/14) × Σ [社区内观察到的 − 期望对数]</span>
+
+<span data-lang="en"><strong>Q ≈ 0.29</strong> (weak-to-significant structure)</span>
+<span data-lang="zh"><strong>Q ≈ 0.29</strong>（弱到显著的结构）</span>
 </div>
 
-<p data-lang="en">
-Note: Q ranges from −0.5 to 1.0, though values above 0.5 are rare in real networks.
-</p>
+<div class="depth-divider"><span data-lang="en">Other Approaches</span><span data-lang="zh">其他方法</span></div>
 
-<p data-lang="zh">
-注：Q 的范围从 −0.5 到 1.0，尽管实际网络中超过 0.5 的值很少见。
-</p>
+<h2 data-lang="en">Beyond Louvain: Other Algorithms</h2>
+<h2 data-lang="zh">超越 Louvain：其他算法</h2>
 
-<h3>
-  <span data-lang="en">Worked Example: 6-Node Network with 2 Communities</span>
-  <span data-lang="zh">示例：具有 2 个社区的 6 节点网络</span>
-</h3>
+<div class="level-badge intermediate">Intermediate</div>
 
-<p data-lang="en">
-Consider a graph with 6 vertices divided into two communities:
-<br/>
-<strong>Community A:</strong> {1, 2, 3} (fully connected triangle)<br/>
-<strong>Community B:</strong> {4, 5, 6} (fully connected triangle)<br/>
-<strong>Between communities:</strong> One edge connecting vertex 3 and 4
-</p>
+<div class="concept-row">
+  <div class="concept-card">
+    <div class="card-icon">S</div>
+    <h4 data-lang="en">Spectral Methods</h4>
+    <h4 data-lang="zh">谱方法</h4>
+    <p data-lang="en">Uses eigenvectors of the modularity matrix. Finds the globally optimal 2-way partition. Good for theoretical understanding.</p>
+    <p data-lang="zh">使用模块性矩阵的特征向量。找到全局最优的 2 路分割。有利于理论理解。</p>
+  </div>
 
-<p data-lang="zh">
-考虑一个具有 6 个顶点的图，分为两个社区：
-<br/>
-<strong>社区 A:</strong> {1, 2, 3}（完全连接的三角形）<br/>
-<strong>社区 B:</strong> {4, 5, 6}（完全连接的三角形）<br/>
-<strong>社区之间：</strong> 一条连接顶点 3 和 4 的边
-</p>
-
-<div class="math-note" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 1rem; margin: 1.5rem 0;">
-<p style="margin: 0; font-size: 0.9em; line-height: 1.8;">
-<strong>Calculation:</strong><br/>
-• Edges within A: 3 (pairs 1-2, 1-3, 2-3)<br/>
-• Edges within B: 3 (pairs 4-5, 4-6, 5-6)<br/>
-• Edges between A and B: 1 (pair 3-4)<br/>
-• Total edges: m = 7<br/>
-<br/>
-• Degrees: k₁ = k₂ = k₃ = 2, k₄ = k₅ = k₆ = 2 (each connected to 2 in same community + 1 to other)<br/>
-  Actually: k₁ = 2, k₂ = 2, k₃ = 3, k₄ = 3, k₅ = 2, k₆ = 2<br/>
-<br/>
-• Sum of [A<sub>ij</sub> − k<sub>i</sub>k<sub>j</sub>/(2m)] for same-community pairs<br/>
-  Within A: 3 edges − [(2×2 + 2×3 + 3×2)/(14)] = 3 − (16/14) ≈ 1.857<br/>
-  Within B: 3 edges − [(2×2 + 2×2 + 2×2)/(14)] = 3 − (12/14) ≈ 2.143<br/>
-<br/>
-• Q = (1/14) × (4.0) ≈ <strong>0.286</strong>
-</p>
+  <div class="concept-card">
+    <div class="card-icon">L</div>
+    <h4 data-lang="en">Label Propagation</h4>
+    <h4 data-lang="zh">标签传播</h4>
+    <p data-lang="en">Nodes adopt the label of their majority neighbors iteratively. Very fast, semi-random, works well on large networks.</p>
+    <p data-lang="zh">节点迭代地采用其多数邻居的标签。非常快，半随机，适用于大型网络。</p>
+  </div>
 </div>
 
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+<div class="callout warn">
+  <div class="callout-label" data-lang="en">Resolution Limit</div>
+  <div class="callout-label" data-lang="zh">分辨率限制</div>
+  <p data-lang="en">All modularity-based methods have a fundamental blind spot: they struggle to detect small communities in large networks. Specifically, communities smaller than √(2m) nodes are unreliable, where m is the total edge count.</p>
+  <p data-lang="zh">所有基于模块性的方法都有一个根本的盲点：它们很难检测大型网络中的小型社区。具体来说，小于 √(2m) 个节点的社区不可靠，其中 m 是总边数。</p>
 
-<h2>
-  <span data-lang="en">Louvain Algorithm: Step-by-Step</span>
-  <span data-lang="zh">Louvain 算法：逐步说明</span>
-</h2>
-
-<p data-lang="en">
-The Louvain method is a greedy optimization algorithm that iteratively maximizes modularity. It operates in two phases that repeat until convergence.
-</p>
-
-<p data-lang="zh">
-Louvain 方法是一种迭代最大化模块性的贪心优化算法。它分两个阶段运行，直到收敛。
-</p>
-
-<h3>
-  <span data-lang="en">Phase 1: Local Modularity Optimization</span>
-  <span data-lang="zh">阶段 1：局部模块性优化</span>
-</h3>
-
-<p data-lang="en">
-<strong>Algorithm:</strong><br/>
-1. Initialize each node in its own community<br/>
-2. For each node i (in random order):<br/>
-   &nbsp;&nbsp;&nbsp;&nbsp;a. Calculate ΔQ for moving i to each neighbor's community<br/>
-   &nbsp;&nbsp;&nbsp;&nbsp;b. If max(ΔQ) > 0, move i to the community with highest ΔQ<br/>
-   &nbsp;&nbsp;&nbsp;&nbsp;c. Otherwise, keep i in its current community<br/>
-3. Repeat step 2 until no improvements possible
-</p>
-
-<p data-lang="zh">
-<strong>算法：</strong><br/>
-1. 初始化：每个节点在其自己的社区中<br/>
-2. 对每个节点 i（随机顺序）：<br/>
-   &nbsp;&nbsp;&nbsp;&nbsp;a. 计算将 i 移动到每个邻居社区的 ΔQ<br/>
-   &nbsp;&nbsp;&nbsp;&nbsp;b. 若 max(ΔQ) > 0，将 i 移动到 ΔQ 最高的社区<br/>
-   &nbsp;&nbsp;&nbsp;&nbsp;c. 否则，保持 i 在当前社区<br/>
-3. 重复步骤 2 直到没有改进
-</p>
-
-<h3>
-  <span data-lang="en">The ΔQ Formula</span>
-  <span data-lang="zh">ΔQ 公式</span>
-</h3>
-
-<p data-lang="en">
-When considering moving node i from community C to community C', we compute the change in modularity:
-</p>
-
-<p data-lang="zh">
-当考虑将节点 i 从社区 C 移动到社区 C' 时，我们计算模块性的变化：
-</p>
-
-<div class="math-note" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 1rem; margin: 1.5rem 0;">
-<p style="margin: 0; font-size: 0.95em; line-height: 1.8;">
-ΔQ = [<span style="font-size: 0.9em;"><sup>Σ<sub>in</sub> + 2k<sub>i,in</sub></sup>/<sub>2m</sub></span> − (<span style="font-size: 0.9em;"><sup>Σ<sub>tot</sub> + k<sub>i</sub></sup>/<sub>2m</sub></span>)<sup>2</sup>]<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;− [<span style="font-size: 0.9em;"><sup>Σ<sub>in</sub></sup>/<sub>2m</sub></span> − (<span style="font-size: 0.9em;"><sup>Σ<sub>tot</sub></sup>/<sub>2m</sub></span>)<sup>2</sup> − (<span style="font-size: 0.9em;"><sup>k<sub>i</sub></sup>/<sub>2m</sub></span>)<sup>2</sup>]
-</p>
+  <p data-lang="en"><strong>Example:</strong> A network with 1000 edges cannot reliably detect communities smaller than ~45 nodes.</p>
+  <p data-lang="zh"><strong>示例：</strong> 拥有 1000 条边的网络无法可靠地检测到小于 ~45 个节点的社区。</p>
 </div>
 
-<p data-lang="en">
-Where (for community C'):
-</p>
+<div class="depth-divider"><span data-lang="en">Implementation</span><span data-lang="zh">实现</span></div>
 
-<p data-lang="zh">
-其中（对于社区 C'）：
-</p>
+<h2 data-lang="en">Using R: igraph Package</h2>
+<h2 data-lang="zh">使用 R：igraph 包</h2>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Σ<sub>in</sub>:</strong> Sum of weights of edges within C'</li>
-  <li data-lang="en"><strong>Σ<sub>tot</sub>:</strong> Sum of weights of edges incident to C'</li>
-  <li data-lang="en"><strong>k<sub>i</sub>:</strong> Degree (or weight) of node i</li>
-  <li data-lang="en"><strong>k<sub>i,in</sub>:</strong> Sum of weights of edges from i to nodes in C'</li>
-</ul>
+<div class="level-badge advanced">Advanced</div>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="zh"><strong>Σ<sub>in</sub>:</strong> C' 内边的权重之和</li>
-  <li data-lang="zh"><strong>Σ<sub>tot</sub>:</strong> 关联到 C' 的边的权重之和</li>
-  <li data-lang="zh"><strong>k<sub>i</sub>:</strong> 节点 i 的度数（或权重）</li>
-  <li data-lang="zh"><strong>k<sub>i,in</sub>:</strong> 从 i 到 C' 中节点的边的权重之和</li>
-</ul>
+<button class="collapsible-toggle" onclick="toggleCollapsible(this)">
+  <span class="arrow">→</span>
+  <span data-lang="en">Show Code Examples</span>
+  <span data-lang="zh">显示代码示例</span>
+</button>
 
-<h3>
-  <span data-lang="en">Phase 2: Community Aggregation</span>
-  <span data-lang="zh">阶段 2：社区聚合</span>
-</h3>
+<div class="collapsible-content">
 
-<p data-lang="en">
-After Phase 1 converges:
-<br/>
-1. Aggregate each community into a super-node<br/>
-2. Create a new weighted network where super-nodes represent communities<br/>
-3. Edges between super-nodes have weight equal to total edges between communities<br/>
-4. Self-loops on super-nodes equal internal community edges<br/>
-5. Return to Phase 1 on the aggregated network<br/>
-6. Repeat until the modularity no longer increases
-</p>
+<h3 data-lang="en">Basic Louvain Detection</h3>
+<h3 data-lang="zh">基础 Louvain 检测</h3>
 
-<p data-lang="zh">
-在阶段 1 收敛后：
-<br/>
-1. 将每个社区聚合为一个超级节点<br/>
-2. 创建新的加权网络，其中超级节点代表社区<br/>
-3. 超级节点之间的边的权重等于社区之间的总边数<br/>
-4. 超级节点上的自环等于内部社区边数<br/>
-5. 在聚合网络上返回阶段 1<br/>
-6. 重复直到模块性不再增加
-</p>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
-
-<h2>
-  <span data-lang="en">Spectral Approach to Community Detection</span>
-  <span data-lang="zh">社区检测的谱方法</span>
-</h2>
-
-<h3>
-  <span data-lang="en">The Modularity Matrix</span>
-  <span data-lang="zh">模块性矩阵</span>
-</h3>
-
-<p data-lang="en">
-Modularity can be rewritten in matrix form using the modularity matrix B:
-</p>
-
-<p data-lang="zh">
-模块性可以用模块性矩阵 B 的矩阵形式重写：
-</p>
-
-<div class="math-note" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 1rem; margin: 1.5rem 0;">
-<p style="margin: 0; font-size: 0.95em; line-height: 1.8;">
-<strong>Modularity Matrix:</strong><br/>
-B = A − <span style="font-size: 0.9em;"><sup>kk<sup>T</sup></sup>/<sub>2m</sub></span><br/>
-<br/>
-where <strong>k</strong> is the degree vector and <sup>T</sup> denotes transpose
-</p>
-</div>
-
-<p data-lang="en">
-The modularity for a partition s (where s<sub>i</sub> ∈ {−1, +1}) is:
-</p>
-
-<p data-lang="zh">
-分割 s 的模块性（其中 s<sub>i</sub> ∈ {−1, +1}）是：
-</p>
-
-<div class="math-note" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 1rem; margin: 1.5rem 0;">
-<p style="margin: 0; font-size: 0.95em;">
-Q = <span style="font-size: 0.9em;"><sup>1</sup>/<sub>4m</sub></span> s<sup>T</sup> B s
-</p>
-</div>
-
-<h3>
-  <span data-lang="en">Spectral Bisection</span>
-  <span data-lang="zh">谱分割</span>
-</h3>
-
-<p data-lang="en">
-To find the optimal 2-way partition, compute the leading (largest) eigenvector v₁ of B. The partition is determined by the sign of v₁: nodes with positive v₁(i) go to community 1, negative to community 2. This is the spectral clustering approach and it finds the partition that maximizes modularity for a 2-community structure.
-</p>
-
-<p data-lang="zh">
-要找到最优的 2 路分割，计算 B 的领导特征向量 v₁。分割由 v₁ 的符号确定：v₁(i) 为正的节点进入社区 1，为负的进入社区 2。这是谱聚类方法，它找到最大化 2 社区结构的模块性的分割。
-</p>
-
-<p data-lang="en">
-<strong>Key advantage:</strong> Provides global optimum for 2-way partition (vs. greedy local methods).<br/>
-<strong>Generalization:</strong> For k communities, use the top k eigenvectors and apply k-means.
-</p>
-
-<p data-lang="zh">
-<strong>关键优势：</strong> 为 2 路分割提供全局最优（相对于贪心局部方法）。<br/>
-<strong>推广：</strong> 对于 k 个社区，使用前 k 个特征向量并应用 k 均值。
-</p>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
-
-<h2>
-  <span data-lang="en">Resolution Limit Problem</span>
-  <span data-lang="zh">分辨率限制问题</span>
-</h2>
-
-<h3>
-  <span data-lang="en">Why Modularity Misses Small Communities</span>
-  <span data-lang="zh">为什么模块性会错过小型社区</span>
-</h3>
-
-<p data-lang="en">
-Modularity optimization has a fundamental limitation: it cannot reliably detect communities smaller than approximately √(2m) nodes, where m is the total number of edges. This occurs because the null model (random configuration) predicts some edges between small, distant groups purely by chance.
-</p>
-
-<p data-lang="zh">
-模块性优化有一个根本限制：它无法可靠地检测小于大约 √(2m) 个节点的社区，其中 m 是总边数。这是因为零模型（随机配置）预测小的、远距离群组之间会有一些边纯粹是偶然的。
-</p>
-
-<div class="math-note" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 1rem; margin: 1.5rem 0;">
-<p style="margin: 0; font-size: 0.95em;">
-<strong>Resolution Limit:</strong><br/>
-Minimum detectable community size ≈ √(2m)<br/>
-<br/>
-<strong>Example:</strong> A network with 1000 edges cannot reliably detect communities smaller than ~45 nodes
-</p>
-</div>
-
-<h3>
-  <span data-lang="en">Solutions: Resolution Parameter</span>
-  <span data-lang="zh">解决方案：分辨率参数</span>
-</h3>
-
-<p data-lang="en">
-To address the resolution limit, researchers introduced a resolution parameter γ (gamma) that modifies the modularity definition:
-</p>
-
-<p data-lang="zh">
-为了解决分辨率限制，研究人员引入了分辨率参数 γ（gamma）来修改模块性定义：
-</p>
-
-<div class="math-note" style="background: var(--cream); border-left: 4px solid var(--gold); padding: 1rem; margin: 1.5rem 0;">
-<p style="margin: 0; font-size: 0.95em; line-height: 1.8;">
-Q<sub>γ</sub> = <span style="font-size: 0.9em;"><sup>1</sup>/<sub>2m</sub></span> Σ<sub>i,j</sub> [A<sub>ij</sub> − γ <span style="font-size: 0.9em;"><sup>k<sub>i</sub>k<sub>j</sub></sup>/<sub>2m</sub></span>] δ(c<sub>i</sub>, c<sub>j</sub>)<br/>
-<br/>
-• γ < 1: Encourages larger communities<br/>
-• γ = 1: Standard modularity (default)<br/>
-• γ > 1: Encourages smaller communities
-</p>
-</div>
-
-<p data-lang="en">
-By tuning γ, practitioners can control the granularity of detected communities. However, this introduces a hyperparameter that requires domain knowledge or validation to set appropriately.
-</p>
-
-<p data-lang="zh">
-通过调整 γ，从业者可以控制检测到的社区的粒度。但这引入了一个超参数，需要领域知识或验证来适当设置。
-</p>
-
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
-
-<h2>
-  <span data-lang="en">R Implementation: Community Detection with igraph</span>
-  <span data-lang="zh">R 实现：使用 igraph 的社区检测</span>
-</h2>
-
-<h3>
-  <span data-lang="en">Basic Louvain Algorithm</span>
-  <span data-lang="zh">基础 Louvain 算法</span>
-</h3>
-
-<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
-# Load required libraries
+<pre class="code-block"><span class="comment"># Load igraph and create example network</span>
 library(igraph)
 
-# Create example network
-g <- graph_from_data_frame(
+g &lt;- graph_from_data_frame(
   data.frame(
-    from = c(1, 1, 1, 2, 2, 3, 4, 4, 4, 5, 5, 6),
-    to   = c(2, 3, 4, 3, 5, 1, 5, 6, 7, 4, 6, 7)
+    from = c(1,1,1, 2,2,3, 4,4,4, 5,5, 6),
+    to   = c(2,3,4, 3,5, 1, 5,6,7, 4,6, 7)
   ),
   directed = FALSE
 )
 
-# Run Louvain algorithm
-communities_louvain <- cluster_louvain(g)
+<span class="comment"># Run Louvain algorithm</span>
+communities &lt;- cluster_louvain(g)
+print(communities)
+cat("Modularity Q:", modularity(g, membership(communities)), "\n")</pre>
 
-# View results
-print(communities_louvain)
-cat("Modularity:", modularity(g, membership(communities_louvain)), "\n")
+<h3 data-lang="en">Compare Different Algorithms</h3>
+<h3 data-lang="zh">比较不同算法</h3>
 
-# Membership vector (which community each node belongs to)
-membership(communities_louvain)
+<pre class="code-block"><span class="comment"># Run multiple methods</span>
+louvain_comm &lt;- cluster_louvain(g)
+walktrap_comm &lt;- cluster_walktrap(g, steps = 4)
+label_prop &lt;- cluster_label_prop(g)
 
-# Number of communities
-length(communities_louvain)
+<span class="comment"># Compare modularity scores</span>
+cat("Louvain Q:", modularity(g, membership(louvain_comm)), "\n")
+cat("Walktrap Q:", modularity(g, membership(walktrap_comm)), "\n")
+cat("Label Prop Q:", modularity(g, membership(label_prop)), "\n")
 
-# Size of each community
-sizes(communities_louvain)
-</pre>
+<span class="comment"># Compare partitions using Adjusted Rand Index</span>
+cat("Louvain vs Walktrap ARI:",
+    compare(membership(louvain_comm),
+            membership(walktrap_comm),
+            method = "rand"), "\n")</pre>
 
-<h3>
-  <span data-lang="en">Alternative: Walktrap Algorithm</span>
-  <span data-lang="zh">替代方案：Walktrap 算法</span>
-</h3>
+<h3 data-lang="en">Visualization</h3>
+<h3 data-lang="zh">可视化</h3>
 
-<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
-# Walktrap uses random walks to find communities
-# Typically good for small to medium networks
-communities_walktrap <- cluster_walktrap(g, steps = 4)
+<pre class="code-block"><span class="comment"># Color nodes by community</span>
+communities &lt;- cluster_louvain(g)
+colors &lt;- rainbow(max(membership(communities)))[membership(communities)]
 
-# Results
-print(communities_walktrap)
-cat("Modularity:", modularity(g, membership(communities_walktrap)), "\n")
+<span class="comment"># Create force-directed layout</span>
+layout &lt;- layout_with_fr(g)
 
-# Other methods available:
-# cluster_optimal(g)        # Optimal (expensive for large graphs)
-# cluster_fast_greedy(g)    # Fast greedy modularity optimization
-# cluster_label_prop(g)     # Label propagation
-# cluster_leading_eigen(g)  # Spectral (leading eigenvector)
-</pre>
-
-<h3>
-  <span data-lang="en">Comparing Partitions</span>
-  <span data-lang="zh">比较分割</span>
-</h3>
-
-<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
-# Compare two community structures
-c1 <- membership(communities_louvain)
-c2 <- membership(communities_walktrap)
-
-# Adjusted Rand Index (ARI: 1 = identical, 0 = random, -1 = inverse)
-ari <- compare(c1, c2, method = "rand")
-cat("Adjusted Rand Index:", ari, "\n")
-
-# Normalized Mutual Information (NMI)
-nmi <- compare(c1, c2, method = "nmi")
-cat("Normalized Mutual Information:", nmi, "\n")
-
-# Modularity comparison
-q1 <- modularity(g, c1)
-q2 <- modularity(g, c2)
-cat("Louvain Q =", q1, ", Walktrap Q =", q2, "\n")
-</pre>
-
-<h3>
-  <span data-lang="en">Visualizing Communities</span>
-  <span data-lang="zh">可视化社区</span>
-</h3>
-
-<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
-# Use colors to distinguish communities
-communities <- cluster_louvain(g)
-membership_vec <- membership(communities)
-
-# Set vertex colors based on community
-vertex_colors <- rainbow(max(membership_vec))[membership_vec]
-
-# Create layout
-layout <- layout_with_fr(g)  # Force-directed layout
-
-# Plot
+<span class="comment"># Plot with communities highlighted</span>
 plot(g,
      layout = layout,
-     vertex.color = vertex_colors,
-     vertex.size = 8,
-     vertex.label.cex = 0.8,
-     edge.width = 1.5,
-     edge.color = "gray50",
-     main = paste("Communities detected (Q =",
-                  round(modularity(g, membership_vec), 3), ")")
-)
+     vertex.color = colors,
+     vertex.size = 10,
+     edge.color = "gray70",
+     main = paste("Communities (Q =",
+                  round(modularity(g, membership(communities)), 3), ")"))</pre>
 
-# Legend
-legend("topleft",
-       legend = paste("Community", seq_along(table(membership_vec))),
-       col = rainbow(max(membership_vec)),
-       pch = 16)
-</pre>
+<h3 data-lang="en">Manual Modularity Calculation</h3>
+<h3 data-lang="zh">手动模块性计算</h3>
 
-<h3>
-  <span data-lang="en">Working with Resolution Parameter</span>
-  <span data-lang="zh">使用分辨率参数</span>
-</h3>
+<pre class="code-block"><span class="comment"># Verify Q calculation step-by-step</span>
+compute_Q &lt;- function(graph, membership) {
+  A &lt;- as_adjacency_matrix(graph, sparse = FALSE)
+  n &lt;- length(membership)
+  m &lt;- ecount(graph)
+  k &lt;- colSums(A)
 
-<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
-# Some algorithms support resolution parameter
-# cluster_louvain has 'resolution' parameter in recent igraph versions
-
-# If available:
-communities_gamma_low <- cluster_louvain(g, resolution = 0.5)
-communities_gamma_high <- cluster_louvain(g, resolution = 2.0)
-
-cat("γ = 0.5 (larger communities):\n")
-print(communities_gamma_low)
-cat("Modularity:", modularity(g, membership(communities_gamma_low)), "\n\n")
-
-cat("γ = 2.0 (smaller communities):\n")
-print(communities_gamma_high)
-cat("Modularity:", modularity(g, membership(communities_gamma_high)), "\n")
-
-# Compare sizes
-cat("\nCommunity sizes:\n")
-cat("γ = 0.5:", sizes(communities_gamma_low), "\n")
-cat("γ = 2.0:", sizes(communities_gamma_high), "\n")
-</pre>
-
-<h3>
-  <span data-lang="en">Computing Modularity from Scratch</span>
-  <span data-lang="zh">从头计算模块性</span>
-</h3>
-
-<pre style="background: var(--ink); color: var(--cream); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.85em; line-height: 1.4;">
-# Manual modularity calculation for verification
-compute_modularity <- function(graph, membership) {
-  A <- as_adjacency_matrix(graph, sparse = FALSE)
-  n <- length(membership)
-  m <- ecount(graph)  # total edges
-
-  # Degree vector
-  k <- colSums(A)
-
-  Q <- 0
+  Q &lt;- 0
   for (i in 1:n) {
     for (j in 1:n) {
-      # Only count if in same community
       if (membership[i] == membership[j]) {
-        Q <- Q + (A[i, j] - (k[i] * k[j]) / (2 * m))
+        Q &lt;- Q + (A[i,j] - (k[i] * k[j]) / (2 * m))
       }
     }
   }
-
   return(Q / (2 * m))
 }
 
-# Test
-member <- membership(cluster_louvain(g))
-custom_Q <- compute_modularity(g, member)
-igraph_Q <- modularity(g, member)
+<span class="comment"># Test: should match igraph::modularity()</span>
+mem &lt;- membership(cluster_louvain(g))
+cat("Custom Q:", compute_Q(g, mem), "\n")
+cat("igraph Q:", modularity(g, mem), "\n")</pre>
 
-cat("Custom calculation:", custom_Q, "\n")
-cat("igraph function:", igraph_Q, "\n")
-cat("Match:", isTRUE(all.equal(custom_Q, igraph_Q)), "\n")
-</pre>
+</div>
 
-<hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--gold);">
+<div class="summary-box">
+  <div class="summary-label" data-lang="en">Key Takeaways</div>
+  <div class="summary-label" data-lang="zh">关键要点</div>
 
-<h2>
-  <span data-lang="en">Summary and Best Practices</span>
-  <span data-lang="zh">总结与最佳实践</span>
-</h2>
+  <p data-lang="en">
+  <strong>Community detection</strong> finds groups of densely-connected nodes in networks without labels. <strong>Modularity Q</strong> is a principled metric comparing actual structure against random expectation—higher is better (typically 0.3+ for significant structure). <strong>Louvain algorithm</strong> is the practical default: fast, scalable, and effective for most networks. <strong>Spectral methods</strong> are theoretically elegant and find global optima for 2-way splits. <strong>All methods struggle with the resolution limit</strong>—they miss small communities in large networks. Always validate your results: compare multiple algorithms, check Q values, and confirm findings against domain knowledge.
+  </p>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="en"><strong>Modularity Q</strong> is a principled, widely-used metric that compares actual community structure against a random null model</li>
-  <li data-lang="en"><strong>Louvain algorithm</strong> is fast, scalable, and effective; use it as a default for large networks</li>
-  <li data-lang="en"><strong>Spectral methods</strong> provide global optimality for 2-way partitions and are computationally efficient</li>
-  <li data-lang="en"><strong>Resolution limits</strong> affect all modularity-based methods; be aware when analyzing hierarchical or multi-scale structure</li>
-  <li data-lang="en"><strong>Validation</strong> is essential: compare multiple algorithms, check Q > 0.3, and validate against domain knowledge</li>
-  <li data-lang="en"><strong>Resolution parameter γ</strong> can be tuned to detect finer or coarser communities, but requires justification</li>
-</ul>
+  <p data-lang="zh">
+  <strong>社区检测</strong>在没有标签的网络中找到密集连接的节点组。<strong>模块性 Q</strong> 是一个有原则的指标，将实际结构与随机期望进行比较——越高越好（通常 0.3+ 表示显著结构）。<strong>Louvain 算法</strong>是实用的默认选择：对大多数网络来说速度快、可扩展且有效。<strong>谱方法</strong>在理论上优雅，为 2 路分割找到全局最优值。<strong>所有方法都受到分辨率限制的困扰</strong>——它们在大型网络中错过小型社区。始终验证您的结果：比较多种算法，检查 Q 值，并根据领域知识确认发现。
+  </p>
+</div>
 
-<ul style="margin-left: 2rem;">
-  <li data-lang="zh"><strong>模块性 Q</strong> 是一个有原则的、广泛使用的指标，将实际社区结构与随机零模型进行比较</li>
-  <li data-lang="zh"><strong>Louvain 算法</strong> 快速、可扩展且有效；将其用作大型网络的默认选择</li>
-  <li data-lang="zh"><strong>谱方法</strong> 为 2 路分割提供全局最优性，计算效率高</li>
-  <li data-lang="zh"><strong>分辨率限制</strong> 影响所有基于模块性的方法；分析分层或多尺度结构时要意识到这一点</li>
-  <li data-lang="zh"><strong>验证</strong> 至关重要：比较多种算法，检查 Q > 0.3，并根据领域知识进行验证</li>
-  <li data-lang="zh"><strong>分辨率参数 γ</strong> 可以调整以检测更精细或更粗糙的社区，但需要正当理由</li>
-</ul>
-
+<script>
+function toggleCollapsible(button) {
+  button.classList.toggle('open');
+  const content = button.nextElementSibling;
+  content.classList.toggle('open');
+}
+</script>
