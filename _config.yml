@@ -12,5 +12,6 @@ exclude:
   - .DS_Store
   - "*.backup"
   - _for_repo_root
+  - draft
 
 # Keep existing files intact (Jekyll passes through files without front matter)
