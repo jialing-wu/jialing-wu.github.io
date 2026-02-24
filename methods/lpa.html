@@ -574,52 +574,18 @@ body.presenting .pres-progress{display:block;
       <div class="vis-label" data-lang="en">Overlapping Gaussians</div>
       <div class="vis-label" data-lang="zh">重叠的正态分布</div>
       <svg viewBox="0 0 420 260" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Sans',sans-serif">
-        <!-- Background -->
         <rect width="420" height="260" fill="#faf8f3" rx="4"/>
-
-        <!-- Title -->
         <text x="210" y="24" font-size="11.5" fill="#3a3632" font-weight="600" text-anchor="middle" letter-spacing=".03em">Observed Data = Mixture of K Profiles</text>
-
-        <!-- Axes -->
         <line x1="45" y1="220" x2="395" y2="220" stroke="#ddd4c0" stroke-width="1"/>
         <line x1="45" y1="220" x2="45" y2="38" stroke="#ddd4c0" stroke-width="1"/>
-
-        <!-- Axis labels -->
         <text x="220" y="248" font-size="10" fill="#9a8e7e" text-anchor="middle">Indicator Score</text>
         <text x="16" y="130" font-size="10" fill="#9a8e7e" text-anchor="middle" transform="rotate(-90,16,130)">Density</text>
-
-        <!-- Profile 1 (left, red) — smooth bell curve -->
         <path d="M 55 220 C 55 220, 70 218, 80 200 C 90 180, 95 120, 105 70 C 110 50, 115 50, 120 70 C 130 120, 135 180, 145 200 C 155 218, 170 220, 170 220" fill="rgba(181,55,42,0.12)" stroke="#b53728" stroke-width="2" fill-rule="nonzero"/>
-
-        <!-- Profile 2 (center, gold) — taller bell curve -->
         <path d="M 135 220 C 135 220, 155 216, 170 190 C 185 155, 195 90, 210 52 C 218 38, 225 38, 233 52 C 248 90, 258 155, 273 190 C 288 216, 308 220, 308 220" fill="rgba(194,153,61,0.12)" stroke="#c2993d" stroke-width="2" fill-rule="nonzero"/>
-
-        <!-- Profile 3 (right, tea) — smooth bell curve -->
         <path d="M 265 220 C 265 220, 280 218, 290 200 C 300 180, 308 120, 318 75 C 323 55, 328 55, 333 75 C 343 120, 351 180, 361 200 C 371 218, 386 220, 386 220" fill="rgba(139,115,85,0.12)" stroke="#8b7355" stroke-width="2" fill-rule="nonzero"/>
-
-        <!-- Data points scattered along curves -->
-        <!-- Profile 1 points -->
-        <circle cx="90" cy="170" r="3" fill="#b53728" opacity="0.5"/>
-        <circle cx="105" cy="100" r="3" fill="#b53728" opacity="0.5"/>
-        <circle cx="112" cy="68" r="3" fill="#b53728" opacity="0.5"/>
-        <circle cx="130" cy="130" r="3" fill="#b53728" opacity="0.5"/>
-        <circle cx="148" cy="195" r="3" fill="#b53728" opacity="0.5"/>
-
-        <!-- Profile 2 points -->
-        <circle cx="180" cy="160" r="3" fill="#c2993d" opacity="0.5"/>
-        <circle cx="200" cy="85" r="3" fill="#c2993d" opacity="0.5"/>
-        <circle cx="222" cy="48" r="3" fill="#c2993d" opacity="0.5"/>
-        <circle cx="250" cy="100" r="3" fill="#c2993d" opacity="0.5"/>
-        <circle cx="275" cy="170" r="3" fill="#c2993d" opacity="0.5"/>
-
-        <!-- Profile 3 points -->
-        <circle cx="298" cy="165" r="3" fill="#8b7355" opacity="0.5"/>
-        <circle cx="315" cy="95" r="3" fill="#8b7355" opacity="0.5"/>
-        <circle cx="326" cy="65" r="3" fill="#8b7355" opacity="0.5"/>
-        <circle cx="340" cy="110" r="3" fill="#8b7355" opacity="0.5"/>
-        <circle cx="365" cy="190" r="3" fill="#8b7355" opacity="0.5"/>
-
-        <!-- Profile labels -->
+        <circle cx="90" cy="170" r="3" fill="#b53728" opacity="0.5"/><circle cx="105" cy="100" r="3" fill="#b53728" opacity="0.5"/><circle cx="112" cy="68" r="3" fill="#b53728" opacity="0.5"/><circle cx="130" cy="130" r="3" fill="#b53728" opacity="0.5"/><circle cx="148" cy="195" r="3" fill="#b53728" opacity="0.5"/>
+        <circle cx="180" cy="160" r="3" fill="#c2993d" opacity="0.5"/><circle cx="200" cy="85" r="3" fill="#c2993d" opacity="0.5"/><circle cx="222" cy="48" r="3" fill="#c2993d" opacity="0.5"/><circle cx="250" cy="100" r="3" fill="#c2993d" opacity="0.5"/><circle cx="275" cy="170" r="3" fill="#c2993d" opacity="0.5"/>
+        <circle cx="298" cy="165" r="3" fill="#8b7355" opacity="0.5"/><circle cx="315" cy="95" r="3" fill="#8b7355" opacity="0.5"/><circle cx="326" cy="65" r="3" fill="#8b7355" opacity="0.5"/><circle cx="340" cy="110" r="3" fill="#8b7355" opacity="0.5"/><circle cx="365" cy="190" r="3" fill="#8b7355" opacity="0.5"/>
         <text x="112" y="56" font-size="9" fill="#b53728" text-anchor="middle" font-weight="600">Profile 1</text>
         <text x="222" y="32" font-size="9" fill="#c2993d" text-anchor="middle" font-weight="600">Profile 2</text>
         <text x="326" y="50" font-size="9" fill="#8b7355" text-anchor="middle" font-weight="600">Profile 3</text>
@@ -628,25 +594,38 @@ body.presenting .pres-progress{display:block;
       <div class="vis-caption" data-lang="zh">三个剖面（红、金、茶色）重叠。每个人的得分来自这些分布中的一个。</div>
     </div>
   </div>
+</div>
 
-  <div class="method-section">
-    <h3 data-lang="en">Probabilistic Classification</h3>
-    <h3 data-lang="zh">概率性分类</h3>
-    <div class="method-desc" data-lang="en">Each individual has a probability of belonging to each class — not hard assignment. Classification uses the highest posterior probability.</div>
-    <div class="method-desc" data-lang="zh">每个个体都有属于每个类别的概率——不是硬性分配。最终分类取后验概率最高的类别。</div>
-    <div class="method-example" data-lang="en">e.g., a student may have posterior probabilities of .82, .13, and .05 for Profiles 1, 2, and 3 — they would be assigned to Profile 1.</div>
-    <div class="method-example" data-lang="zh">例如：某学生属于 Profile 1、2、3 的后验概率分别为 .82、.13、.05 → 分配到 Profile 1。</div>
-    <div class="method-analogy" data-lang="en"><strong>Analogy:</strong> A student has 82% probability of belonging to Profile 1, 13% to Profile 2, 5% to Profile 3. We assign them to Profile 1, but acknowledge 18% uncertainty. This is softer than hard clustering (like k-means) which forces 100% membership.</div>
-    <div class="method-analogy" data-lang="zh"><strong>类比：</strong>某学生属于 Profile 1 的概率 82%、Profile 2 的概率 13%、Profile 3 的概率 5%。我们把他归入 Profile 1，但承认有 18% 的不确定性。这比硬聚类（如 k-means 强制 100% 归属）更柔和。</div>
-  </div>
+<hr class="section-divider pres-hide">
 
-  <div class="method-section">
-    <h3 data-lang="en">Statistical Fit Indices</h3>
-    <h3 data-lang="zh">统计拟合指标</h3>
-    <div class="method-desc" data-lang="en">BIC (Bayesian Information Criterion) and BLRT (Bootstrapped Likelihood Ratio Test) allow systematic model comparison. Entropy measures classification precision (0–1); values > .80 indicate good quality (Nylund et al., 2007).</div>
-    <div class="method-desc" data-lang="zh">BIC（贝叶斯信息准则）和 BLRT（自助似然比检验）可用于系统性的模型比较。Entropy 衡量分类精度（0–1），> .80 表示分类质量好（Nylund et al., 2007）。</div>
-    <div class="method-analogy" data-lang="en"><strong>BIC:</strong> Lower = better. It measures model fit quality minus a "complexity tax" — penalizes adding more classes to prevent overfitting. Think of it as: how well does the model explain the data, accounting for how complicated it is?</div>
-    <div class="method-analogy" data-lang="zh"><strong>BIC：</strong>越低越好。它衡量模型拟合质量减去一个"复杂度税"——惩罚添加更多类别以防过拟合。想象成：模型解释数据有多好，同时考虑它有多复杂？</div>
+<!-- ═════════════════════════════════════════════════════════
+     SLIDE 3b: PROBABILISTIC CLASSIFICATION & FIT
+     ═════════════════════════════════════════════════════════ -->
+<div class="slide" id="slide-classification-fit">
+  <div class="slide-num" data-lang="en">Part 1 · Slide 4</div>
+  <h2 data-lang="en">Probabilistic Classification &amp; Fit Indices</h2>
+  <h2 data-lang="zh">概率性分类与拟合指标</h2>
+
+  <div class="method-desc" data-lang="en">Each individual has a probability of belonging to each class — not hard assignment. Classification uses the highest posterior probability.</div>
+  <div class="method-desc" data-lang="zh">每个个体都有属于每个类别的概率——不是硬性分配。最终分类取后验概率最高的类别。</div>
+  <div class="method-desc" data-lang="en"><em>i.e.:</em> A student has 82% probability of belonging to Profile 1, 13% to Profile 2, 5% to Profile 3. We assign them to Profile 1, but acknowledge 18% uncertainty. This is softer than hard clustering (like k-means) which forces 100% membership.</div>
+  <div class="method-desc" data-lang="zh"><em>i.e.:</em> 某学生属于 Profile 1 的概率 82%、Profile 2 的概率 13%、Profile 3 的概率 5%。我们把他归入 Profile 1，但承认有 18% 的不确定性。这比硬聚类（如 k-means 强制 100% 归属）更柔和。</div>
+
+  <div class="check-grid" style="grid-template-columns:1fr 1fr">
+    <div class="check-card">
+      <div class="check-icon">BIC</div>
+      <div class="check-title" data-lang="en">Bayesian Information Criterion</div>
+      <div class="check-title" data-lang="zh">贝叶斯信息准则</div>
+      <div class="check-desc" data-lang="en">Lower = better. Measures model fit minus a "complexity tax" — penalizes adding more classes to prevent overfitting.</div>
+      <div class="check-desc" data-lang="zh">越低越好。衡量模型拟合质量减去"复杂度税"——惩罚添加更多类别以防过拟合。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">BLRT</div>
+      <div class="check-title" data-lang="en">Bootstrapped LRT &amp; Entropy</div>
+      <div class="check-title" data-lang="zh">自助似然比检验 &amp; 熵</div>
+      <div class="check-desc" data-lang="en">BLRT tests whether adding one more class significantly improves fit. Entropy (0–1) measures classification precision; values &gt;&nbsp;.80 indicate good quality.</div>
+      <div class="check-desc" data-lang="zh">BLRT 检验添加一个类别是否显著改善拟合。Entropy（0–1）衡量分类精度，&gt; .80 表示质量好。</div>
+    </div>
   </div>
 </div>
 
@@ -656,7 +635,7 @@ body.presenting .pres-progress{display:block;
      SLIDE 5: STATISTICAL FIT INDICES (DETAIL)
      ═════════════════════════════════════════════════════════ -->
 <div class="slide" id="slide-fit-indices">
-  <div class="slide-num" data-lang="en">Part 1 · Slide 4</div>
+  <div class="slide-num" data-lang="en">Part 1 · Slide 5</div>
   <h2 data-lang="en">Choosing the Right Number of Profiles</h2>
   <h2 data-lang="zh">选择合适的剖面数量</h2>
 
@@ -696,7 +675,7 @@ body.presenting .pres-progress{display:block;
      SLIDE 6: LPA WORKFLOW
      ═════════════════════════════════════════════════════════ -->
 <div class="slide" id="slide-workflow">
-  <div class="slide-num" data-lang="en">Part 1 · Slide 5</div>
+  <div class="slide-num" data-lang="en">Part 1 · Slide 6</div>
   <h2 data-lang="en">LPA Workflow: 5 Steps</h2>
   <h2 data-lang="zh">LPA 工作流程：5 个步骤</h2>
 
