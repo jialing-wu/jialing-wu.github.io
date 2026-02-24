@@ -281,7 +281,7 @@ body.presenting .pres-progress{
 /* ── Comparison grid (2-col) ──────────────────────── */
 .compare-grid{
   display:grid;grid-template-columns:1fr 1fr;gap:24px;
-  margin:24px 0;align-items:start;
+  margin:24px 0;align-items:stretch;
 }
 .compare-col{
   background:var(--paper);border:1px solid var(--parchment);
@@ -401,55 +401,9 @@ body.presenting .pres-progress{
   color:var(--gold);margin-top:8px;
 }
 
-/* ── Reference list ───────────────────────────────── */
-.ref-list{
-  list-style:none;padding:0;margin:24px 0;
-}
-.ref-list li{
-  font-size:14px;line-height:2;color:var(--ink-faded);
-  margin-bottom:16px;padding-left:0;
-}
-.ref-tag{
-  display:inline-block;
-  font-family:var(--sans);font-size:9.5px;font-weight:700;
-  letter-spacing:.08em;text-transform:uppercase;
-  color:var(--paper);background:var(--gold);
-  border-radius:3px;padding:4px 10px;margin-right:10px;
-}
-.ref-tag.beginner{background:var(--tea)}
-.ref-tag.fit{background:#b8956b}
-
-/* ── Software row ────────────────────────────────── */
-.sw-row{
-  display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;
-  margin:24px 0;
-}
-.sw-pill{
-  background:var(--paper);border:1px solid var(--parchment);
-  border-radius:6px;padding:20px;text-align:center;
-  transition:all .3s ease;box-shadow:0 1px 4px rgba(30,24,15,.03);
-}
-.sw-pill.gold{
-  background:rgba(194,153,61,.08);border-color:var(--gold-soft);
-}
-.sw-pill:hover{
-  border-color:var(--gold-soft);
-  box-shadow:0 3px 12px rgba(194,153,61,.08);
-  transform:translateY(-2px);
-}
-.sw-pill h4{
-  font-family:var(--body);font-size:15px;font-weight:600;
-  color:var(--ink-soft);margin-bottom:12px;
-}
-.sw-pill p{
-  font-size:13.5px;line-height:1.7;color:var(--ink-faded);margin:0;
-}
-
 /* ── Responsive ───────────────────────────────────── */
 @media(max-width:1000px){
   .check-grid{grid-template-columns:1fr 1fr}
-  .profile-grid{grid-template-columns:1fr}
-  .sw-row{grid-template-columns:1fr}
   .card-row{grid-template-columns:1fr 1fr}
 }
 @media(max-width:700px){
@@ -463,9 +417,7 @@ body.presenting .pres-progress{
   .check-card:hover{transform:none}
   .flow-step:hover{transform:none}
   .card-row{grid-template-columns:1fr}
-  .profile-grid{grid-template-columns:1fr}
   .compare-grid{grid-template-columns:1fr}
-  .sw-row{grid-template-columns:1fr}
 }
 @media(max-width:900px){
   body.presenting .slide h2{font-size:1.8rem}
@@ -1057,45 +1009,53 @@ body.presenting .pres-progress{
   <h2 data-lang="en">References &amp; Software</h2>
   <h2 data-lang="zh">参考文献与软件</h2>
 
-  <h3 data-lang="en" class="pres-hide">Key References</h3>
-  <h3 data-lang="zh" class="pres-hide">核心文献</h3>
-  <ul class="ref-list pres-hide">
-    <li><span class="ref-tag beginner">Beginner</span>Nylund-Gibson, K., &amp; Choi, A. Y. (2018). Ten frequently asked questions about latent class analysis. <em>Translational Issues in Psychological Science, 4</em>(4), 440–461. <a href="https://doi.org/10.1037/tps0000176" target="_blank">https://doi.org/10.1037/tps0000176</a></li>
-    <li><span class="ref-tag fit">Fit Indices</span>Nylund, K. L., Asparouhov, T., &amp; Muthén, B. O. (2007). Deciding on the number of classes in latent class analysis and growth mixture modeling: A Monte Carlo simulation study. <em>Structural Equation Modeling, 14</em>(4), 535–569. <a href="https://doi.org/10.1080/10705510701575396" target="_blank">https://doi.org/10.1080/10705510701575396</a></li>
-    <li><span class="ref-tag">Multi-Group</span>Morin, A. J. S., Meyer, J. P., Creusier, J., &amp; Biétry, F. (2016). Multiple-group analysis of similarity in latent profile solutions. <em>Organizational Research Methods, 19</em>(2), 231–254. <a href="https://doi.org/10.1177/1094428115621148" target="_blank">https://doi.org/10.1177/1094428115621148</a></li>
-    <li><span class="ref-tag applied">Applied</span>Wang, C. K. J., Liu, W. C., Nie, Y., et al. (2017). Latent profile analysis of students' motivation and outcomes in mathematics. <em>Heliyon, 3</em>(6), e00308. <a href="https://doi.org/10.1016/j.heliyon.2017.e00308" target="_blank">https://doi.org/10.1016/j.heliyon.2017.e00308</a></li>
-  </ul>
+  <div class="check-grid" style="grid-template-columns:1fr 1fr">
+    <div class="check-card">
+      <div class="check-icon">01</div>
+      <div class="check-title" data-lang="en">Beginner Guide</div>
+      <div class="check-desc" data-lang="en">Nylund-Gibson, K., &amp; Choi, A. Y. (2018). Ten frequently asked questions about latent class analysis. <em>Translational Issues in Psychological Science, 4</em>(4), 440–461. <a href="https://doi.org/10.1037/tps0000176" target="_blank">DOI</a></div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">02</div>
+      <div class="check-title" data-lang="en">Fit Indices</div>
+      <div class="check-desc" data-lang="en">Nylund, K. L., Asparouhov, T., &amp; Muthén, B. O. (2007). Deciding on the number of classes in LCA and GMM: A Monte Carlo simulation study. <em>Structural Equation Modeling, 14</em>(4), 535–569. <a href="https://doi.org/10.1080/10705510701575396" target="_blank">DOI</a></div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">03</div>
+      <div class="check-title" data-lang="en">Multi-Group</div>
+      <div class="check-desc" data-lang="en">Morin, A. J. S., Meyer, J. P., Creusier, J., &amp; Biétry, F. (2016). Multiple-group analysis of similarity in latent profile solutions. <em>Organizational Research Methods, 19</em>(2), 231–254. <a href="https://doi.org/10.1177/1094428115621148" target="_blank">DOI</a></div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">04</div>
+      <div class="check-title" data-lang="en">Applied Example</div>
+      <div class="check-desc" data-lang="en">Wang, C. K. J., Liu, W. C., Nie, Y., et al. (2017). Latent profile analysis of students' motivation and outcomes. <em>Heliyon, 3</em>(6), e00308. <a href="https://doi.org/10.1016/j.heliyon.2017.e00308" target="_blank">Open Access</a></div>
+    </div>
+  </div>
 
-  <h3 data-lang="en" class="pres-hide">Software</h3>
-  <h3 data-lang="zh" class="pres-hide">软件工具</h3>
-  <div class="sw-row">
-    <div class="sw-pill gold">
-      <h4>Mplus</h4>
-      <div data-lang="en"><p>Gold standard. Most flexible, best support for LPA/LCA.</p></div>
-      <div data-lang="zh"><p>黄金标准。最灵活，对 LPA/LCA 支持最好。</p></div>
+  <div class="check-grid" style="grid-template-columns:1fr 1fr 1fr">
+    <div class="check-card">
+      <div class="check-icon" style="background:var(--gold)">M+</div>
+      <div class="check-title" data-lang="en">Mplus</div>
+      <div class="check-desc" data-lang="en">Gold standard. Most flexible, best support for LPA/LCA.</div>
     </div>
-    <div class="sw-pill">
-      <h4>R — tidyLPA</h4>
-      <div data-lang="en"><p>Free, user-friendly. Good for learning and basic analyses.</p></div>
-      <div data-lang="zh"><p>免费、易用。适合学习和基础分析。</p></div>
+    <div class="check-card">
+      <div class="check-icon">R</div>
+      <div class="check-title" data-lang="en">R — tidyLPA</div>
+      <div class="check-desc" data-lang="en">Free, user-friendly. Good for learning and basic analyses.</div>
     </div>
-    <div class="sw-pill">
-      <h4>Python — sklearn</h4>
-      <div data-lang="en"><p>Gaussian Mixture. Lacks BLRT/entropy but adequate for exploration.</p></div>
-      <div data-lang="zh"><p>高斯混合模型。缺少 BLRT/entropy，但足以做探索性分析。</p></div>
+    <div class="check-card">
+      <div class="check-icon">Py</div>
+      <div class="check-title" data-lang="en">Python — sklearn</div>
+      <div class="check-desc" data-lang="en">Gaussian Mixture. Lacks BLRT/entropy but adequate for exploration.</div>
     </div>
   </div>
 </div>
 
 <!-- PAGE NAV -->
-<div class="page-nav">
-  <a href="index.html">
-    <div class="nav-label">&larr; Previous</div>
-    <div class="nav-title">Home</div>
-  </a>
-  <a class="next" href="text-analysis.html">
-    <div class="nav-label">Next &rarr;</div>
-    <div class="nav-title">Text as Data</div>
+<div class="page-nav pres-hide">
+  <a class="pn-link pn-prev" href="sample-network-intro.html">
+    <span class="pn-arrow">&larr;</span>
+    <span><span class="pn-title" data-lang="en">Intro to Network Analysis</span></span>
   </a>
 </div>
 
