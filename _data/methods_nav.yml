@@ -11,6 +11,10 @@
       title_zh: "网络分析"
       url: "sample-network-intro.html"
       num: "01"
+    - title: "ERGM Derivation"
+      title_zh: "ERGM 推导"
+      url: "ergm-derivation.html"
+      num: "02"
 
 - category: "Critical Quantitative"
   category_zh: "批判定量方法"
