@@ -1,55 +1,10 @@
 .DS_Store
 *.DS_Store
 Thumbs.db
+
+# ── Local-only folders ──
 methods/printer/
 methods/ICPSR SYLLBAS/
 methods/SEM/
 methods/experitical/
 methods/text analysis/
-
-# ── Unlisted courses (kept locally, not on GitHub) ──
-methods/local-overview.html
-methods/bayesian.html
-methods/categorical.html
-methods/causal-inference.html
-methods/data-visualization.html
-methods/demo-course.html
-methods/demo.html
-methods/empirical-modeling.html
-methods/empirical-modeling_jekyll2.html
-methods/gis.html
-methods/llm.html
-methods/longitudinal.html
-methods/machine-learning.html
-methods/measurement.html
-methods/mle.html
-methods/multilevel.html
-methods/nlp.html
-methods/notebook.html
-methods/overview.html
-methods/race-ethnicity.html
-methods/reg-bayes.html
-methods/reg-causal.html
-methods/reg-dataviz.html
-methods/reg-empirical.html
-methods/reg-foundations.html
-methods/reg-measurement.html
-methods/reg-ml.html
-methods/reg-mle.html
-methods/reg-multilevel.html
-methods/reg-network.html
-methods/reg-ols.html
-methods/reg-race.html
-methods/reg-rational.html
-methods/reg-robustness.html
-methods/reg-sem.html
-methods/reg-text.html
-methods/reg-timeseries.html
-methods/regression.html
-methods/regression_jekyll.html
-methods/sem.html
-methods/text-analysis.html
-methods/text-analysis_jekyll2.html
-methods/theoretical-modeling.html
-methods/theoretical-modeling_jekyll2.html
-methods/time-series.html
