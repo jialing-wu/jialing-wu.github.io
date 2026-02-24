@@ -4,14 +4,18 @@
 - category: "__home__"
   items: []
 
-- category: "Sample"
-  category_zh: "实例演练"
+- category: "Computational Social Science"
+  category_zh: "计算社会科学"
   items:
     - title: "Network Analysis"
       title_zh: "网络分析"
       url: "sample-network-intro.html"
       num: "01"
+
+- category: "Critical Quantitative"
+  category_zh: "批判定量方法"
+  items:
     - title: "Latent Profile Analysis"
       title_zh: "潜在剖面分析"
       url: "lpa.html"
-      num: "02"
+      num: "01"
