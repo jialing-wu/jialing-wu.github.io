@@ -249,6 +249,18 @@ body.presenting .pres-progress{
 /* ── Red emphasis (selective, replaces some <strong>) ── */
 .red-em{color:var(--red);font-weight:600}
 
+/* ── Hyperlink styling ─────────────────────────────── */
+.method-desc a, .check-desc a{
+  color:var(--red);text-decoration:none;
+  border-bottom:1px solid rgba(181,55,42,.2);
+  padding-bottom:1px;
+  transition:color .2s, border-color .2s;
+}
+.method-desc a:hover, .check-desc a:hover{
+  color:var(--gold);
+  border-bottom-color:var(--gold);
+}
+
 /* ── Section divider enhancement ───────────────────── */
 .section-divider{
   border:none;border-top:1px solid var(--parchment);
@@ -842,21 +854,51 @@ body.presenting .pres-progress{
   <h2 data-lang="en">Article Example</h2>
   <h2 data-lang="zh">文献示例</h2>
 
-  <div class="article-box">
-    <div class="article-cite">Wang, C. K. J., Liu, W. C., Nie, Y., Chye, S., Lim, B. S. C., Liem, G. A., Tay, E. G., Hong, Y.-Y., &amp; Chiu, C.-Y. (2017). Latent profile analysis of students' motivation and outcomes in mathematics: An organismic integration theory perspective. <em>Heliyon, 3</em>(6), e00308. <a href="https://doi.org/10.1016/j.heliyon.2017.e00308" target="_blank">https://doi.org/10.1016/j.heliyon.2017.e00308</a></div>
-    <div class="article-method">Organismic Integration Theory (SDT) × Latent Profile Analysis</div>
-  </div>
+  <div class="method-desc" data-lang="en">Wang, C. K. J., Liu, W. C., Nie, Y., et al. (2017). Latent profile analysis of students' motivation and outcomes in mathematics: An organismic integration theory perspective. <em>Heliyon, 3</em>(6), e00308. <a href="https://doi.org/10.1016/j.heliyon.2017.e00308" target="_blank">Open Access</a></div>
+  <div class="method-desc" data-lang="zh">Wang, C. K. J., Liu, W. C., Nie, Y., et al. (2017). 学生数学动机和成果的潜在剖面分析. <em>Heliyon, 3</em>(6), e00308. <a href="https://doi.org/10.1016/j.heliyon.2017.e00308" target="_blank">开放获取</a></div>
 
-  <div class="section pres-hide">
-    <div class="method-section">
-      <h3 data-lang="en">Research Design &amp; Indicator Selection</h3>
-      <h3 data-lang="zh">研究设计与指标选择</h3>
-      <div class="method-desc" data-lang="en">Organismic Integration Theory (OIT), a sub-theory of Self-Determination Theory, posits that academic motivation is not a simple "high vs. low" dimension but a continuum of self-determination — from external regulation to intrinsic motivation. Variable-centered methods would ask: "For every one-unit increase in intrinsic motivation, does achievement increase by 0.3 points?" But in reality, every student has a simultaneous score on all four motivational types — creating a unique combination pattern.</div>
-      <div class="method-desc" data-lang="zh">有机整合理论（OIT）是自我决定理论的子理论，认为学业动机不是简单的"高 vs. 低"维度，而是一个从外部调节到内在动机的自我决定连续体。以变量为中心的方法会问："内在动机每提高一个单位，成绩是否提高 0.3 分？"但现实中，每个学生在四种动机类型上同时拥有得分——形成独特的组合模式。</div>
-      <div class="method-desc" data-lang="en">The person-centered question: <em>Are there distinct subgroups of students characterized by unique combinations of these motivations?</em></div>
-      <div class="method-desc" data-lang="zh">以个体为中心的研究问题：<em>学生中是否存在具有独特动机组合的不同亚组？</em></div>
-      <div class="method-desc" data-lang="en">The study hypothesized that (H1) at least 4 distinct profiles would emerge based on OIT motivation types, and (H2) more autonomous profiles would show higher effort, value, competence, and extra time on math. Four motivation types from the Self-Regulation Questionnaire–Academic (SRQ-A; Ryan &amp; Connell, 1989) served as LPA indicators — external regulation (4 items), introjected regulation (4 items), identified regulation (3 items), and intrinsic motivation (3 items) — measured on a 7-point Likert scale. The sample comprised N = 1,151 secondary school students (679 males, 444 females, 28 unreported; age 13–17, <em>M</em> = 14.69, <em>SD</em> = .58) from 5 schools in Singapore. Models were estimated in Mplus 7.2 using the MLR estimator with 10,000 random starts (500 best solutions retained).</div>
-      <div class="method-desc" data-lang="zh">研究假设：(H1) 基于 OIT 动机类型至少会出现 4 个不同的剖面；(H2) 更自主的剖面在努力、价值感、胜任感和数学学习时间上表现更好。四种动机类型来自学业自我调节问卷（SRQ-A; Ryan &amp; Connell, 1989）作为 LPA 指标——外部调节（4 题）、内摄调节（4 题）、认同调节（3 题）和内在动机（3 题）——采用 7 点 Likert 量表。样本为新加坡 5 所学校的 N = 1,151 名中学生（679 男，444 女，28 未报告；年龄 13–17 岁，<em>M</em> = 14.69, <em>SD</em> = .58）。使用 Mplus 7.2 的 MLR 估计器，10,000 个随机起始值（保留 500 个最佳解）。</div>
+  <div class="method-desc" data-lang="en"><em>Core question:</em> Are there distinct subgroups of students characterized by <span class="red-em">unique combinations of motivations</span> — and do these profiles predict different academic outcomes?</div>
+  <div class="method-desc" data-lang="zh"><em>核心问题：</em>学生中是否存在具有<span class="red-em">独特动机组合</span>的不同亚组？这些剖面能否预测不同的学业结果？</div>
+
+  <div class="check-grid" style="grid-template-columns:1fr">
+    <div class="check-card">
+      <div class="check-icon">RQ</div>
+      <div class="check-title" data-lang="en">Theoretical Framework</div>
+      <div class="check-title" data-lang="zh">理论框架</div>
+      <div class="check-desc" data-lang="en">Organismic Integration Theory (OIT), a sub-theory of Self-Determination Theory, posits that motivation is not "high vs. low" but a continuum — from external regulation to intrinsic motivation. Each student has a simultaneous score on all four types, creating a unique combination pattern. Variable-centered methods miss this; LPA captures it.</div>
+      <div class="check-desc" data-lang="zh">有机整合理论（OIT）是自我决定理论的子理论，认为动机不是"高 vs. 低"而是一个连续体——从外部调节到内在动机。每个学生在四种类型上同时有得分，形成独特的组合模式。以变量为中心的方法会遗漏这点；LPA 能捕捉到。</div>
+    </div>
+  </div>
+  <div class="check-grid" style="grid-template-columns:1fr 1fr">
+    <div class="check-card">
+      <div class="check-icon">01</div>
+      <div class="check-title" data-lang="en">Sample</div>
+      <div class="check-title" data-lang="zh">样本</div>
+      <div class="check-desc" data-lang="en"><strong>N = 1,151</strong> secondary students (age 13–17, <em>M</em> = 14.69) from 5 schools in Singapore. 679 males, 444 females, 28 unreported.</div>
+      <div class="check-desc" data-lang="zh"><strong>N = 1,151</strong> 名中学生（13–17 岁，<em>M</em> = 14.69），来自新加坡 5 所学校。679 男，444 女，28 未报告。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">02</div>
+      <div class="check-title" data-lang="en">LPA Indicators</div>
+      <div class="check-title" data-lang="zh">LPA 指标</div>
+      <div class="check-desc" data-lang="en">Four motivation types from SRQ-A (Ryan &amp; Connell, 1989), 7-point Likert:<br>— External regulation (4 items)<br>— Introjected regulation (4 items)<br>— Identified regulation (3 items)<br>— Intrinsic motivation (3 items)</div>
+      <div class="check-desc" data-lang="zh">SRQ-A 量表四种动机类型（Ryan &amp; Connell, 1989），7 点 Likert：<br>— 外部调节（4 题）<br>— 内摄调节（4 题）<br>— 认同调节（3 题）<br>— 内在动机（3 题）</div>
+    </div>
+  </div>
+  <div class="check-grid" style="grid-template-columns:1fr 1fr">
+    <div class="check-card">
+      <div class="check-icon">H1</div>
+      <div class="check-title" data-lang="en">Hypothesis 1</div>
+      <div class="check-title" data-lang="zh">假设一</div>
+      <div class="check-desc" data-lang="en">At least 4 distinct profiles will emerge based on OIT motivation types.</div>
+      <div class="check-desc" data-lang="zh">基于 OIT 动机类型至少会出现 4 个不同的剖面。</div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">H2</div>
+      <div class="check-title" data-lang="en">Hypothesis 2</div>
+      <div class="check-title" data-lang="zh">假设二</div>
+      <div class="check-desc" data-lang="en">More autonomous profiles → higher effort, value, competence, and extra time on math.</div>
+      <div class="check-desc" data-lang="zh">更自主的剖面 → 更高的努力、价值感、胜任感和数学学习时间。</div>
     </div>
   </div>
 </div>
