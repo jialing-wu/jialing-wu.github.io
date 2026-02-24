@@ -82,6 +82,9 @@ li[data-lang="en"]{display:list-item}
 span[data-lang="en"]{display:inline}
 code[data-lang="en"]{display:inline}
 a[data-lang="en"]{display:inline}
+/* Keep problem-index links as block for line breaks */
+.problem-index a[data-lang="en"]{display:block}
+body.zh .problem-index a[data-lang="zh"]{display:block}
 body.zh li[data-lang="en"]{display:none}
 body.zh span[data-lang="en"]{display:none}
 body.zh code[data-lang="en"]{display:none}

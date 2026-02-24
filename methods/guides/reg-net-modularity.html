@@ -9,383 +9,430 @@ bilingual: true
 mathjax: true
 ---
 
-<style>
-.level-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:8px}
-.level-badge.beginner{background:rgba(91,140,133,.12);color:#4a7a72}
-.level-badge.intermediate{background:rgba(194,153,61,.12);color:#9a7a2e}
-.level-badge.advanced{background:rgba(181,55,42,.1);color:#a0382e}
-.depth-divider{display:flex;align-items:center;gap:16px;margin:40px 0 28px}
-.depth-divider::before,.depth-divider::after{content:'';flex:1;height:1px;background:var(--parchment)}
-.depth-divider span{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-ghost);white-space:nowrap}
-.concept-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
-.concept-card{background:var(--paper);border:1px solid var(--parchment);border-radius:6px;padding:18px 20px;transition:all .3s ease;box-shadow:0 1px 3px rgba(30,24,15,.03)}
-.concept-card:hover{border-color:var(--gold-soft);box-shadow:0 3px 12px rgba(194,153,61,.08);transform:translateY(-1px)}
-.concept-card .card-icon{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--paper);background:var(--gold);display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;margin-bottom:10px;box-shadow:0 2px 4px rgba(194,153,61,.2)}
-.concept-card h4{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink-soft);margin:0 0 6px}
-.concept-card p{font-size:13.5px;line-height:1.7;color:var(--ink-faded);margin:0}
-.guide-formula{background:rgba(30,24,15,.03);border:1px solid var(--parchment);border-radius:6px;padding:20px 24px;margin:20px 0;text-align:center;font-size:16px;line-height:1.8;color:var(--ink-soft);font-family:var(--mono);letter-spacing:.02em;overflow-x:auto}
-.unpack-list{display:grid;grid-template-columns:1fr;gap:10px;margin:16px 0;padding:0;list-style:none}
-.unpack-item{display:flex;gap:14px;align-items:flex-start;padding:12px 16px;background:var(--paper);border:1px solid var(--parchment);border-radius:6px;transition:border-color .25s}
-.unpack-item:hover{border-color:var(--gold-soft)}
-.unpack-item .symbol{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--gold);white-space:nowrap;min-width:80px;padding-top:1px}
-.unpack-item .explain{font-size:13.5px;line-height:1.7;color:var(--ink-faded)}
-.callout{border-left:3px solid var(--gold);background:rgba(194,153,61,.04);padding:16px 20px;margin:20px 0;border-radius:0 6px 6px 0}
-.callout.tip{border-left-color:#5b8c85;background:rgba(91,140,133,.04)}
-.callout.warn{border-left-color:var(--red);background:rgba(181,55,42,.04)}
-.callout .callout-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
-.callout.tip .callout-label{color:#5b8c85}
-.callout.warn .callout-label{color:var(--red)}
-.callout p{font-size:14px;line-height:1.75;color:var(--ink-faded);margin:0}
-.callout p + p{margin-top:8px}
-.step-flow{display:grid;grid-template-columns:1fr;gap:10px;margin:16px 0;padding:0;list-style:none;counter-reset:step}
-.step-flow li{counter-increment:step;display:flex;gap:14px;align-items:flex-start;padding:12px 16px;background:var(--paper);border:1px solid var(--parchment);border-radius:6px;font-size:13.5px;line-height:1.7;color:var(--ink-faded);transition:border-color .25s}
-.step-flow li:hover{border-color:var(--gold-soft)}
-.step-flow li::before{content:counter(step);font-family:var(--sans);font-size:11px;font-weight:700;color:var(--paper);background:var(--gold);min-width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;box-shadow:0 1px 3px rgba(194,153,61,.2)}
-.code-block{background:var(--ink);color:#e8e0d4;padding:24px 28px;border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.55;font-family:var(--mono);margin:20px 0;box-shadow:0 2px 8px rgba(30,24,15,.15)}
-.code-block .comment{color:#9a8e7e}
-.collapsible-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:12px 0;font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-ghost);border:none;background:none;transition:color .25s}
-.collapsible-toggle:hover{color:var(--gold)}
-.collapsible-toggle .arrow{transition:transform .3s;font-size:10px}
-.collapsible-toggle.open .arrow{transform:rotate(90deg)}
-.collapsible-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
-.collapsible-content.open{max-height:5000px}
-.summary-box{background:var(--warm);border:1px solid var(--parchment);border-radius:6px;padding:24px 28px;margin:28px 0}
-.summary-box .summary-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
-.summary-box p{font-size:14px;line-height:1.75;color:var(--ink-faded);margin:0}
-body.zh .step-flow li,body.zh .unpack-list .unpack-item{display:flex}
-@media(max-width:700px){.concept-row{grid-template-columns:1fr}.unpack-item{flex-direction:column;gap:4px}.unpack-item .symbol{min-width:auto}}
-</style>
+<h2 id="what-is-community-detection">
+  <span data-lang="en">What Is Community Detection?</span>
+  <span data-lang="zh">什么是社区检测？</span>
+</h2>
 
-<h2 data-lang="en">What Is Community Detection?</h2>
-<h2 data-lang="zh">什么是社区检测？</h2>
-
-<div class="level-badge beginner">Beginner</div>
-
-<p data-lang="en">
-Imagine a high school cafeteria where students sit in tables based on their friendships. A community detection algorithm is like a detective who looks at the seating chart and discovers these friend groups without anyone telling them what the groups are. The algorithm needs only one piece of information: who sits next to whom.
+<p class="method-desc" data-lang="en">
+You have a network — maybe it's senators who co-sponsor bills, or students who study together, or countries that trade with each other. You notice that some groups seem tightly connected among themselves but loosely connected to the rest. <strong>Community detection</strong> is the tool that finds these groups automatically.
 </p>
 
-<p data-lang="zh">
-想象一个高中食堂，学生根据他们的友谊坐在桌子旁。社区检测算法就像一个侦探，看着座位表，发现这些朋友圈，不需要任何人告诉他们这些圈子是什么。该算法只需要一种信息：谁与谁相邻。
+<p class="method-desc" data-lang="zh">
+你有一个网络——可能是联合提案的参议员、一起学习的学生、或互相贸易的国家。你注意到有些群体内部联系很紧密，但跟外部联系很少。<strong>社区检测</strong>就是自动找出这些群体的工具。
 </p>
 
-<div class="concept-row">
-  <div class="concept-card">
-    <div class="card-icon">C</div>
-    <h4 data-lang="en">Community</h4>
-    <h4 data-lang="zh">社区</h4>
-    <p data-lang="en">A group where nodes are densely connected to each other, but sparsely connected to the rest of the network. Like a cluster of friends.</p>
-    <p data-lang="zh">一个节点彼此密集连接，但与网络其余部分稀疏连接的组。就像一群朋友。</p>
-  </div>
-
-  <div class="concept-card">
-    <div class="card-icon">Q</div>
-    <h4 data-lang="en">Modularity (Q)</h4>
-    <h4 data-lang="zh">模块性 (Q)</h4>
-    <p data-lang="en">A score that measures how good a partition is. Higher Q means clearer community structure. Range: −0.5 to 1.0 (typically 0 to 0.5).</p>
-    <p data-lang="zh">衡量分割有多好的分数。较高的 Q 意味着更清晰的社区结构。范围：−0.5 到 1.0（通常 0 到 0.5）。</p>
-  </div>
+<div class="method-when" data-lang="en">
+<strong>One-sentence definition:</strong> Community detection = finding groups in a network without being told what the groups are. You only give the algorithm the connections. It figures out the groups on its own.
 </div>
 
-<div class="callout tip">
-  <div class="callout-label" data-lang="en">Key Insight</div>
-  <div class="callout-label" data-lang="zh">关键见解</div>
-  <p data-lang="en">The algorithm doesn't need labels. It discovers structure purely from the connection pattern. This is what makes it powerful—it works even when you don't know what the communities represent.</p>
-  <p data-lang="zh">该算法不需要标签。它纯粹从连接模式中发现结构。这就是它的强大之处——即使你不知道社区代表什么，它也能工作。</p>
+<div class="method-when" data-lang="zh">
+<strong>一句话定义：</strong>社区检测 = 在没有标签的情况下，从网络中找出群体。你只给算法连接关系。它自己找出分组。
 </div>
 
-<div class="depth-divider"><span data-lang="en">The Louvain Algorithm</span><span data-lang="zh">Louvain 算法</span></div>
+<div class="method-analogy" data-lang="en">
+<strong>Analogy:</strong> Imagine you walk into a party where you don't know anyone. After watching for 10 minutes, you can already see clusters: the coworkers in the corner, the college friends by the bar, the neighbors near the door. You figured this out just by watching who talks to whom — no one told you the groups. That's community detection.
+</div>
 
-<h2 data-lang="en">How Louvain Works</h2>
-<h2 data-lang="zh">Louvain 如何工作</h2>
+<div class="method-analogy" data-lang="zh">
+<strong>类比：</strong>想象你走进一个谁都不认识的派对。观察10分钟后，你已经能看出几个圈子：角落里的同事、吧台旁的大学同学、门口附近的邻居。你只是看了谁在跟谁说话就搞清楚了——没有人告诉你分组。这就是社区检测。
+</div>
 
-<div class="level-badge beginner">Beginner</div>
-
-<p data-lang="en">
-Louvain is the most popular community detection method. It's fast, scalable, and works on networks with millions of nodes. The algorithm uses a clever two-step process that repeats until the communities stop improving.
+<p class="method-desc" data-lang="en">
+<strong>Why does this matter for research?</strong> Because the groups a network reveals can tell you something important. Congressional co-sponsorship networks reveal partisan coalitions. Trade networks reveal economic blocs. Citation networks reveal intellectual communities. The groups aren't just descriptions — they're often the finding.
 </p>
 
-<p data-lang="zh">
-Louvain 是最流行的社区检测方法。它速度快，可扩展，并且适用于拥有数百万个节点的网络。该算法使用一个聪明的两步流程，重复直到社区停止改进。
+<p class="method-desc" data-lang="zh">
+<strong>这对研究为什么重要？</strong>因为网络揭示的分组往往就是重要发现。国会联署网络揭示党派联盟。贸易网络揭示经济集团。引用网络揭示学术社群。这些分组不只是描述——它们经常就是研究结论本身。
 </p>
 
-<ol class="step-flow">
-  <li data-lang="en">Start with each node in its own community</li>
-  <li data-lang="zh">从每个节点都在自己的社区中开始</li>
+<hr class="section-divider">
 
-  <li data-lang="en">For each node, try moving it to each neighbor's community. Keep the move that increases modularity Q the most</li>
-  <li data-lang="zh">对于每个节点，尝试将其移动到每个邻居的社区。保持最增加模块性 Q 的移动</li>
+<h2 id="modularity-q">
+  <span data-lang="en">How Do We Know If the Groups Are Real?</span>
+  <span data-lang="zh">怎么知道找到的分组是真实的？</span>
+</h2>
 
-  <li data-lang="en">Once no move improves Q, merge each community into a single "super-node" and repeat steps 1-2 on this new network</li>
-  <li data-lang="zh">一旦没有移动改进 Q，将每个社区合并为一个"超级节点"，并在这个新网络上重复步骤 1-2</li>
-
-  <li data-lang="en">Stop when Q no longer increases between iterations</li>
-  <li data-lang="zh">当 Q 在迭代之间不再增加时停止</li>
-</ol>
-
-<div class="callout tip">
-  <div class="callout-label" data-lang="en">Why Louvain?</div>
-  <div class="callout-label" data-lang="zh">为什么选择 Louvain？</div>
-  <p data-lang="en">Louvain is greedy (it makes locally optimal choices) rather than globally optimal, but this makes it fast and practical. For most real networks, it finds excellent results in seconds.</p>
-  <p data-lang="zh">Louvain 是贪心的（它做出局部最优选择）而不是全局最优的，但这使它快速且实用。对于大多数真实网络，它在几秒钟内找到优异的结果。</p>
-</div>
-
-<div class="depth-divider"><span data-lang="en">The Mathematics</span><span data-lang="zh">数学基础</span></div>
-
-<h2 data-lang="en">Understanding Modularity Q</h2>
-<h2 data-lang="zh">理解模块性 Q</h2>
-
-<div class="level-badge intermediate">Intermediate</div>
-
-<p data-lang="en">
-Modularity measures: are there more edges inside communities than expected by random chance? It compares the actual network against a null model—a random graph with the same degree distribution but no structure.
+<p class="method-desc" data-lang="en">
+Here's the problem: you can always divide a network into groups. Even a completely random network can be split in half. So how do you know whether the groups you found are meaningful, or just an artifact of how you drew the lines?
 </p>
 
-<p data-lang="zh">
-模块性度量：社区内的边是否比随机机会预期的要多？它将实际网络与零模型进行比较——具有相同度分布但没有结构的随机图。
+<p class="method-desc" data-lang="zh">
+问题是：你总是<em>可以</em>把网络分成几组。即使是完全随机的网络也能被一分为二。那你怎么知道你找到的分组是有意义的，还是只是人为划线的产物？
 </p>
 
-<div class="guide-formula">
-Q = (1/2m) Σ_{i,j} [A_{ij} − k_i k_j / 2m] δ(c_i, c_j)
+<div class="method-when" data-lang="en">
+<strong>The key idea:</strong> <strong>Modularity Q</strong> answers this by asking: "Are there more connections inside these groups than we'd expect if the connections were random?" If yes, the groups are real. If no, you're seeing patterns in noise.
 </div>
 
-<p data-lang="en"><strong>Breaking down each piece:</strong></p>
-<p data-lang="zh"><strong>分解每一部分：</strong></p>
-
-<ul class="unpack-list">
-  <li class="unpack-item">
-    <span class="symbol" data-lang="en">A_{ij}</span>
-    <span class="symbol" data-lang="zh">A_{ij}</span>
-    <span class="explain" data-lang="en">Adjacency matrix: 1 if nodes i and j are connected, 0 otherwise. The actual edges in your network.</span>
-    <span class="explain" data-lang="zh">邻接矩阵：如果节点 i 和 j 相连则为 1，否则为 0。网络中的实际边。</span>
-  </li>
-
-  <li class="unpack-item">
-    <span class="symbol" data-lang="en">k_i, k_j</span>
-    <span class="symbol" data-lang="zh">k_i, k_j</span>
-    <span class="explain" data-lang="en">Degree (number of connections) of nodes i and j. A hub has high degree.</span>
-    <span class="explain" data-lang="zh">节点 i 和 j 的度数（连接数）。枢纽节点的度数很高。</span>
-  </li>
-
-  <li class="unpack-item">
-    <span class="symbol" data-lang="en">k_i k_j / 2m</span>
-    <span class="symbol" data-lang="zh">k_i k_j / 2m</span>
-    <span class="explain" data-lang="en">Expected edges in a random null model. Given the degrees, how many edges would we expect purely by chance?</span>
-    <span class="explain" data-lang="zh">随机零模型中的期望边数。给定度数，我们会纯粹凭机会期望多少条边？</span>
-  </li>
-
-  <li class="unpack-item">
-    <span class="symbol" data-lang="en">m</span>
-    <span class="symbol" data-lang="zh">m</span>
-    <span class="explain" data-lang="en">Total number of edges in the network. (sum of all degrees) / 2</span>
-    <span class="explain" data-lang="zh">网络中的总边数。（所有度的总和）/ 2</span>
-  </li>
-
-  <li class="unpack-item">
-    <span class="symbol" data-lang="en">δ(c_i, c_j)</span>
-    <span class="symbol" data-lang="zh">δ(c_i, c_j)</span>
-    <span class="explain" data-lang="en">Kronecker delta: equals 1 if i and j are in the same community, 0 otherwise. Only counts pairs in the same group.</span>
-    <span class="explain" data-lang="zh">Kronecker delta：如果 i 和 j 在同一社区则等于 1，否则为 0。仅计算同一组中的对。</span>
-  </li>
-</ul>
-
-<h3 data-lang="en">Interpretation of Q Values</h3>
-<h3 data-lang="zh">Q 值的解释</h3>
-
-<div class="callout">
-  <p data-lang="en"><strong>Q ≤ 0:</strong> No community structure (worse than random)</p>
-  <p data-lang="zh"><strong>Q ≤ 0：</strong> 无社区结构（比随机差）</p>
-
-  <p data-lang="en"><strong>Q = 0.1–0.3:</strong> Weak but real structure</p>
-  <p data-lang="zh"><strong>Q = 0.1–0.3：</strong> 弱但真实的结构</p>
-
-  <p data-lang="en"><strong>Q ≥ 0.3:</strong> Significant, meaningful communities</p>
-  <p data-lang="zh"><strong>Q ≥ 0.3：</strong> 显著的、有意义的社区</p>
-
-  <p data-lang="en"><strong>Q > 0.7:</strong> Very strong structure (rare in real networks)</p>
-  <p data-lang="zh"><strong>Q > 0.7：</strong> 非常强的结构（在真实网络中很少见）</p>
+<div class="method-when" data-lang="zh">
+<strong>核心思路：</strong><strong>模块性 Q</strong> 回答这个问题的方式是问："这些群体内部的连接比随机情况下预期的更多吗？"如果是，分组是真实的。如果不是，你只是在噪声中看到了规律。
 </div>
 
-<h3 data-lang="en">Worked Example: Two Triangles with a Bridge</h3>
-<h3 data-lang="zh">示例：两个三角形与桥</h3>
-
-<p data-lang="en">
-<strong>Network:</strong> Community A = {1, 2, 3} (fully connected), Community B = {4, 5, 6} (fully connected), one edge 3-4 connecting them. Total: 7 edges.
+<p class="method-desc" data-lang="en">
+Think of it like this. You're at the party again, and you think you've spotted three friend groups. To check, you ask: "If everyone here were connecting randomly — no actual friendships, just bumping into people — would I still see these same clusters?" If your groups have <em>way more</em> internal connections than random chance would produce, you've found something real.
 </p>
 
-<p data-lang="zh">
-<strong>网络：</strong> 社区 A = {1, 2, 3}（完全连接），社区 B = {4, 5, 6}（完全连接），一条边 3-4 连接它们。总共：7 条边。
+<p class="method-desc" data-lang="zh">
+这样想：你又回到那个派对，你觉得你发现了三个朋友圈。为了验证，你问："如果所有人都在随机交流——没有真正的友谊，只是随便碰到谁就跟谁说话——我还会看到这些分组吗？"如果你的分组内部连接<em>远多于</em>随机情况，那你发现的就是真东西。
 </p>
 
-<div class="guide-formula" style="font-size: 14px; text-align: left;">
-<strong data-lang="en">Calculation:</strong>
-<strong data-lang="zh">计算：</strong>
+<p class="method-desc" data-lang="en"><strong>Q is a number between roughly −0.5 and 1.</strong> Here's what different values mean:</p>
+<p class="method-desc" data-lang="zh"><strong>Q 是一个大约在 −0.5 到 1 之间的数。</strong>不同的值意味着：</p>
 
-<span data-lang="en">Edges within A: 3, Edges within B: 3, Bridge edges: 1, m = 7</span>
-<span data-lang="zh">A 内的边：3，B 内的边：3，桥边：1，m = 7</span>
+<table style="width:100%;margin:20px 0;border-collapse:collapse;">
+<tr style="background:rgba(181,55,42,.1);">
+  <td style="padding:12px;border:1px solid var(--parchment);">
+    <span data-lang="en"><strong>Q ≤ 0:</strong> No structure</span>
+    <span data-lang="zh"><strong>Q ≤ 0：</strong>无结构</span>
+  </td>
+  <td style="padding:12px;border:1px solid var(--parchment);">
+    <span data-lang="en"><strong>0.1 – 0.3:</strong> Weak</span>
+    <span data-lang="zh"><strong>0.1 – 0.3：</strong>弱结构</span>
+  </td>
+  <td style="padding:12px;border:1px solid var(--parchment);">
+    <span data-lang="en"><strong>0.3 – 0.7:</strong> Significant</span>
+    <span data-lang="zh"><strong>0.3 – 0.7：</strong>显著结构</span>
+  </td>
+  <td style="padding:12px;border:1px solid var(--parchment);">
+    <span data-lang="en"><strong>0.7+:</strong> Very strong</span>
+    <span data-lang="zh"><strong>0.7+：</strong>非常强</span>
+  </td>
+</tr>
+</table>
 
-<span data-lang="en">Degrees: k = [2, 2, 3, 3, 2, 2]</span>
-<span data-lang="zh">度数：k = [2, 2, 3, 3, 2, 2]</span>
-
-<span data-lang="en">Q = (1/14) × Σ [observed − expected within-community pairs]</span>
-<span data-lang="zh">Q = (1/14) × Σ [社区内观察到的 − 期望对数]</span>
-
-<span data-lang="en"><strong>Q ≈ 0.29</strong> (weak-to-significant structure)</span>
-<span data-lang="zh"><strong>Q ≈ 0.29</strong>（弱到显著的结构）</span>
+<div class="method-when" data-lang="en">
+<strong>Rule of thumb:</strong> Most real-world networks with clear communities have Q between 0.3 and 0.7. If your Q is below 0.3, the communities are weak — they might still be real, but be cautious about over-interpreting them.
 </div>
 
-<div class="depth-divider"><span data-lang="en">Other Approaches</span><span data-lang="zh">其他方法</span></div>
-
-<h2 data-lang="en">Beyond Louvain: Other Algorithms</h2>
-<h2 data-lang="zh">超越 Louvain：其他算法</h2>
-
-<div class="level-badge intermediate">Intermediate</div>
-
-<div class="concept-row">
-  <div class="concept-card">
-    <div class="card-icon">S</div>
-    <h4 data-lang="en">Spectral Methods</h4>
-    <h4 data-lang="zh">谱方法</h4>
-    <p data-lang="en">Uses eigenvectors of the modularity matrix. Finds the globally optimal 2-way partition. Good for theoretical understanding.</p>
-    <p data-lang="zh">使用模块性矩阵的特征向量。找到全局最优的 2 路分割。有利于理论理解。</p>
-  </div>
-
-  <div class="concept-card">
-    <div class="card-icon">L</div>
-    <h4 data-lang="en">Label Propagation</h4>
-    <h4 data-lang="zh">标签传播</h4>
-    <p data-lang="en">Nodes adopt the label of their majority neighbors iteratively. Very fast, semi-random, works well on large networks.</p>
-    <p data-lang="zh">节点迭代地采用其多数邻居的标签。非常快，半随机，适用于大型网络。</p>
-  </div>
+<div class="method-when" data-lang="zh">
+<strong>经验法则：</strong>大多数有清晰社区的真实网络，Q 在 0.3 到 0.7 之间。如果你的 Q 低于 0.3，社区结构较弱——可能仍然是真实的，但要谨慎解读。
 </div>
 
-<div class="callout warn">
-  <div class="callout-label" data-lang="en">Resolution Limit</div>
-  <div class="callout-label" data-lang="zh">分辨率限制</div>
-  <p data-lang="en">All modularity-based methods have a fundamental blind spot: they struggle to detect small communities in large networks. Specifically, communities smaller than √(2m) nodes are unreliable, where m is the total edge count.</p>
-  <p data-lang="zh">所有基于模块性的方法都有一个根本的盲点：它们很难检测大型网络中的小型社区。具体来说，小于 √(2m) 个节点的社区不可靠，其中 m 是总边数。</p>
+<hr class="section-divider">
 
-  <p data-lang="en"><strong>Example:</strong> A network with 1000 edges cannot reliably detect communities smaller than ~45 nodes.</p>
-  <p data-lang="zh"><strong>示例：</strong> 拥有 1000 条边的网络无法可靠地检测到小于 ~45 个节点的社区。</p>
+<h2 id="example">
+  <span data-lang="en">A Concrete Example: Six People, Two Groups</span>
+  <span data-lang="zh">具体例子：六个人，两个群体</span>
+</h2>
+
+<p class="method-desc" data-lang="en">
+Let's make this concrete. Imagine six coworkers: Alice, Bob, and Carol are in Marketing; Dave, Eve, and Frank are in Engineering. Within each department, everyone talks to everyone. Between departments, only Carol and Dave talk (they work on a joint project).
+</p>
+
+<p class="method-desc" data-lang="zh">
+来个具体例子。想象六个同事：Alice、Bob、Carol 在市场部；Dave、Eve、Frank 在工程部。每个部门内部所有人都互相交流。两个部门之间，只有 Carol 和 Dave 在交流（他们合作一个项目）。
+</p>
+
+<div class="method-example" data-lang="en">
+<strong>The network:</strong><br>
+Marketing: Alice↔Bob, Alice↔Carol, Bob↔Carol (3 edges)<br>
+Engineering: Dave↔Eve, Dave↔Frank, Eve↔Frank (3 edges)<br>
+Bridge: Carol↔Dave (1 edge)<br>
+<strong>Total: 7 edges</strong>
 </div>
 
-<div class="depth-divider"><span data-lang="en">Implementation</span><span data-lang="zh">实现</span></div>
+<div class="method-example" data-lang="zh">
+<strong>网络结构：</strong><br>
+市场部：Alice↔Bob, Alice↔Carol, Bob↔Carol（3 条边）<br>
+工程部：Dave↔Eve, Dave↔Frank, Eve↔Frank（3 条边）<br>
+桥梁：Carol↔Dave（1 条边）<br>
+<strong>总共：7 条边</strong>
+</div>
 
-<h2 data-lang="en">Using R: igraph Package</h2>
-<h2 data-lang="zh">使用 R：igraph 包</h2>
+<p class="method-desc" data-lang="en">
+If you run community detection on this network, it finds exactly the two departments. And Q ≈ 0.29 — weak-to-moderate structure. Why not higher? Because the network is small and there's a bridge connecting them. In a larger, real-world version of this — say 50 people per department with only 2-3 cross-department links — Q would be much higher.
+</p>
 
-<div class="level-badge advanced">Advanced</div>
+<p class="method-desc" data-lang="zh">
+如果你对这个网络运行社区检测，它会准确找到两个部门。Q ≈ 0.29——弱到中等结构。为什么不更高？因为网络很小，而且有一条桥连接两个部门。在更大的现实版本中——比如每个部门50个人，只有2-3条跨部门联系——Q 会高得多。
+</p>
 
-<button class="collapsible-toggle" onclick="toggleCollapsible(this)">
-  <span class="arrow">→</span>
+<div class="method-when" data-lang="en">
+<strong>Key point:</strong> Q depends on network size. A small network with obvious groups can still have a low Q. Don't panic if your Q isn't 0.8 — in social science research, Q between 0.3 and 0.5 is perfectly normal.
+</div>
+
+<div class="method-when" data-lang="zh">
+<strong>要点：</strong>Q 取决于网络大小。一个有明显分组的小网络仍然可能有较低的 Q。如果你的 Q 不是 0.8 别慌——在社会科学研究中，Q 在 0.3 到 0.5 之间是完全正常的。
+</div>
+
+<hr class="section-divider">
+
+<h2 id="louvain">
+  <span data-lang="en">How Louvain Finds Communities</span>
+  <span data-lang="zh">Louvain 怎么找到社区</span>
+</h2>
+
+<p class="method-desc" data-lang="en">
+Louvain is the most widely used community detection algorithm. It's fast (works on networks with millions of nodes), and it's simple enough to explain in plain language.
+</p>
+
+<p class="method-desc" data-lang="zh">
+Louvain 是最广泛使用的社区检测算法。它很快（能处理百万节点的网络），而且简单到可以用大白话解释。
+</p>
+
+<div class="method-analogy" data-lang="en">
+<strong>Analogy:</strong> Imagine a school dance where everyone starts standing alone. The algorithm asks each person: "Which group nearby would benefit most from having you join?" People join groups one by one. After everyone has settled, the algorithm zooms out — each group becomes a single dot — and repeats the process. It keeps zooming out until the groups stop changing.
+</div>
+
+<div class="method-analogy" data-lang="zh">
+<strong>类比：</strong>想象一个校园舞会，一开始每个人都独自站着。算法问每个人："加入旁边哪个小圈子最合适？"人们逐个加入小圈子。等所有人都安顿好后，算法拉远视角——把每个小圈子缩成一个点——然后重复这个过程。一直重复到分组不再变化为止。
+</div>
+
+<p class="method-desc" data-lang="en">More precisely, Louvain works in three steps that repeat:</p>
+<p class="method-desc" data-lang="zh">更准确地说，Louvain 通过三个重复的步骤工作：</p>
+
+<p class="method-desc" data-lang="en">
+<strong>1. Everyone alone.</strong> Start with each person (node) in their own group of one.
+</p>
+
+<p class="method-desc" data-lang="zh">
+<strong>1. 每人一组。</strong>一开始，每个人（节点）自成一组。
+</p>
+
+<p class="method-desc" data-lang="en">
+<strong>2. Try joining neighbors.</strong> For each person, the algorithm tests: "If I join my neighbor's group, does Q go up?" It picks the move that improves Q the most. Repeat until nobody wants to switch.
+</p>
+
+<p class="method-desc" data-lang="zh">
+<strong>2. 尝试加入邻居。</strong>对每个人，算法测试："如果我加入邻居的组，Q 会提高吗？"选择 Q 提升最大的那个移动。重复直到没人想换组。
+</p>
+
+<p class="method-desc" data-lang="en">
+<strong>3. Zoom out and repeat.</strong> Collapse each group into a single "super-node." Now you have a smaller network of groups. Go back to step 1 on this new network. Stop when Q stops improving.
+</p>
+
+<p class="method-desc" data-lang="zh">
+<strong>3. 拉远重复。</strong>把每个组压缩成一个"超级节点"。现在你有了一个更小的、由组组成的网络。回到步骤1。直到 Q 不再提升为止。
+</p>
+
+<div class="method-when" data-lang="en">
+<strong>Why Louvain and not something else?</strong> Louvain is "greedy" — it makes the best move at each step rather than searching for the globally perfect answer. This makes it fast and practical. For most real-world networks, it finds excellent results. It's the default in igraph, NetworkX, and most network software.
+</div>
+
+<div class="method-when" data-lang="zh">
+<strong>为什么用 Louvain 而不是别的？</strong>Louvain 是"贪心"的——它在每一步做最优选择，而不是搜索全局完美答案。这让它既快又实用。对大多数真实网络，它都能找到很好的结果。它是 igraph、NetworkX 和大多数网络软件的默认选择。
+</div>
+
+<hr class="section-divider">
+
+<h2 id="modularity-formula">
+  <span data-lang="en">The Modularity Formula</span>
+  <span data-lang="zh">模块性公式</span>
+</h2>
+
+<p class="method-desc" data-lang="en">
+Now let's look at the actual formula. Remember the core idea: Q measures "are there more connections inside groups than random chance would produce?"
+</p>
+
+<p class="method-desc" data-lang="zh">
+现在来看实际公式。记住核心思路：Q 衡量的是"群组内部的连接是否比随机情况更多？"
+</p>
+
+<p style="text-align:center;font-size:16px;line-height:1.8;color:var(--ink-soft);font-family:var(--mono);letter-spacing:.02em;margin:24px 0;padding:20px;background:rgba(30,24,15,.03);border:1px solid var(--parchment);border-radius:6px;overflow-x:auto;">
+Q = (1/2m) Σ<sub>i,j</sub> [A<sub>ij</sub> − k<sub>i</sub>k<sub>j</sub> / 2m] δ(c<sub>i</sub>, c<sub>j</sub>)
+</p>
+
+<p class="method-desc" data-lang="en"><strong>What each piece means, in plain language:</strong></p>
+<p class="method-desc" data-lang="zh"><strong>每一部分的含义，用大白话说：</strong></p>
+
+<p class="method-desc" data-lang="en">
+<strong>A<sub>ij</sub></strong> = "Are i and j actually connected?" 1 if yes, 0 if no. This is what you observe in the real network.
+</p>
+
+<p class="method-desc" data-lang="zh">
+<strong>A<sub>ij</sub></strong> = "i 和 j 实际上连接了吗？"连了是1，没连是0。这是你在真实网络中观察到的。
+</p>
+
+<p class="method-desc" data-lang="en">
+<strong>k<sub>i</sub>k<sub>j</sub>/2m</strong> = "Would they be connected by random chance?" If i has many connections and j has many connections, random chance alone makes them more likely to be linked. This is the "expected" part.
+</p>
+
+<p class="method-desc" data-lang="zh">
+<strong>k<sub>i</sub>k<sub>j</sub>/2m</strong> = "随机情况下他们会连接吗？"如果 i 连接很多、j 也连接很多，纯粹靠概率他们就更可能有连线。这是"期望"的部分。
+</p>
+
+<p class="method-desc" data-lang="en">
+<strong>A − expected</strong> = "Is the real connection stronger than random?" Positive means "more connected than expected" (good for community structure). Negative means "less connected than expected."
+</p>
+
+<p class="method-desc" data-lang="zh">
+<strong>A − 期望</strong> = "真实连接比随机更强吗？"正值表示"比期望连接更多"（有利于社区结构）。负值表示"比期望连接更少"。
+</p>
+
+<p class="method-desc" data-lang="en">
+<strong>δ(c<sub>i</sub>, c<sub>j</sub>)</strong> = "Are i and j in the same group?" This filter ensures we only count pairs that our algorithm placed in the same community. 1 if same group, 0 otherwise.
+</p>
+
+<p class="method-desc" data-lang="zh">
+<strong>δ(c<sub>i</sub>, c<sub>j</sub>)</strong> = "i 和 j 在同一组吗？"这个过滤器确保我们只统计算法放在同一社区的节点对。同组为1，不同组为0。
+</p>
+
+<p class="method-desc" data-lang="en">
+<strong>1/2m</strong> = Normalization. Divides by total edges so Q stays between −0.5 and 1 regardless of network size. m = total edges.
+</p>
+
+<p class="method-desc" data-lang="zh">
+<strong>1/2m</strong> = 归一化。除以总边数，使 Q 始终在 −0.5 到 1 之间，不受网络大小影响。m = 总边数。
+</p>
+
+<div class="method-when" data-lang="en">
+<strong>Reading the formula:</strong> In words: "For every pair of nodes in the same community, add up how much their actual connection exceeds what randomness would predict. Then normalize." High Q = lots of within-group connections that aren't explainable by chance alone.
+</div>
+
+<div class="method-when" data-lang="zh">
+<strong>理解公式：</strong>用大白话说："对同一社区里的每一对节点，把它们实际连接超出随机预期的部分加起来。然后归一化。" 高 Q = 群组内部有大量不能仅用随机来解释的连接。
+</div>
+
+<hr class="section-divider">
+
+<h2 id="alternatives">
+  <span data-lang="en">Other Algorithms and When to Use Them</span>
+  <span data-lang="zh">其他算法以及什么时候用</span>
+</h2>
+
+<p class="method-desc" data-lang="en">Louvain is the default, but it's not the only option. Different algorithms suit different situations:</p>
+<p class="method-desc" data-lang="zh">Louvain 是默认选择，但不是唯一选项。不同算法适合不同情况：</p>
+
+<p class="method-desc" data-lang="en">
+<strong>Walktrap</strong> simulates random walks on the network. Nodes in the same community tend to "trap" random walkers. Good for small-to-medium networks. Slower than Louvain but sometimes more accurate.
+</p>
+
+<p class="method-desc" data-lang="zh">
+<strong>Walktrap</strong> 在网络上模拟随机游走。同一社区的节点往往会"困住"随机游走者。适合中小型网络。比 Louvain 慢但有时更准确。
+</p>
+
+<p class="method-desc" data-lang="en">
+<strong>Label Propagation</strong> — Each node adopts the label used by most of its neighbors, iteratively. Extremely fast. Good for very large networks where speed matters more than precision.
+</p>
+
+<p class="method-desc" data-lang="zh">
+<strong>标签传播</strong>——每个节点迭代地采用大多数邻居的标签。极其快速。适合对速度要求高于精度的超大网络。
+</p>
+
+<p class="method-desc" data-lang="en">
+<strong>Spectral Methods</strong> use eigenvectors of the network's modularity matrix. Finds the globally optimal 2-way split. Theoretically elegant but slow for large networks and only does binary splits.
+</p>
+
+<p class="method-desc" data-lang="zh">
+<strong>谱方法</strong>使用网络模块性矩阵的特征向量。找到全局最优的二分法。理论上优雅但对大型网络较慢，且只能做二分。
+</p>
+
+<p class="method-desc" data-lang="en">
+<strong>Infomap</strong> uses information theory — finds the partition that best compresses a description of random walks. Works well for directed and weighted networks. Often outperforms Louvain on benchmarks.
+</p>
+
+<p class="method-desc" data-lang="zh">
+<strong>Infomap</strong> 使用信息论——找到最好压缩随机游走描述的分组。对有向和加权网络效果好。在基准测试中经常优于 Louvain。
+</p>
+
+<div class="method-when" data-lang="en">
+<strong>Resolution Limit — a real pitfall:</strong> <strong>All</strong> modularity-based methods (Louvain, spectral, etc.) have a blind spot: they can miss small communities inside large networks. Specifically, if your network has m edges, communities smaller than about √(2m) nodes become invisible. <em>Example:</em> In a network with 5,000 edges, communities smaller than ~100 people might be merged into larger ones. If you suspect small groups matter, use Infomap or the Leiden algorithm (an improved Louvain) instead.
+</div>
+
+<div class="method-when" data-lang="zh">
+<strong>分辨率限制——一个真实的陷阱：</strong><strong>所有</strong>基于模块性的方法（Louvain、谱方法等）都有一个盲区：它们可能会漏掉大型网络中的小社区。具体来说，如果你的网络有 m 条边，小于约 √(2m) 个节点的社区就会"看不见"。<em>例子：</em>在有5000条边的网络中，小于约100人的社区可能会被合并到更大的社区中。如果你怀疑小群体很重要，改用 Infomap 或 Leiden 算法（改进版 Louvain）。
+</div>
+
+<div class="method-when" data-lang="en">
+<strong>Best practice:</strong> Run at least two different algorithms and compare the results. If Louvain and Walktrap agree, you can be more confident. If they disagree, investigate why — the truth is often more interesting than either partition alone.
+</div>
+
+<div class="method-when" data-lang="zh">
+<strong>最佳实践：</strong>至少运行两种不同的算法并比较结果。如果 Louvain 和 Walktrap 得出一致结论，你可以更有信心。如果它们不一致，调查原因——真相往往比任何单一分组更有趣。
+</div>
+
+<hr class="section-divider">
+
+<h2 id="r-code">
+  <span data-lang="en">R Code with igraph</span>
+  <span data-lang="zh">用 igraph 写 R 代码</span>
+</h2>
+
+<p class="method-desc" data-lang="en">Click the section below to see code examples for finding communities and comparing algorithms.</p>
+<p class="method-desc" data-lang="zh">点击下面的部分查看代码示例，学习如何找到社区和比较算法。</p>
+
+<details style="margin:20px 0;">
+<summary style="cursor:pointer;padding:12px 0;font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-ghost);">
   <span data-lang="en">Show Code Examples</span>
   <span data-lang="zh">显示代码示例</span>
-</button>
+</summary>
 
-<div class="collapsible-content">
+<div style="padding:12px 0;">
 
-<h3 data-lang="en">Basic Louvain Detection</h3>
-<h3 data-lang="zh">基础 Louvain 检测</h3>
+<h3 data-lang="en">Basic: Find Communities</h3>
+<h3 data-lang="zh">基础：找到社区</h3>
 
-<pre class="code-block"><span class="comment"># Load igraph and create example network</span>
+<pre style="background:var(--ink);color:#e8e0d4;padding:24px;border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.55;font-family:var(--mono);margin:20px 0;"><span style="color:#9a8e7e"># Load igraph</span>
 library(igraph)
 
-g &lt;- graph_from_data_frame(
-  data.frame(
-    from = c(1,1,1, 2,2,3, 4,4,4, 5,5, 6),
-    to   = c(2,3,4, 3,5, 1, 5,6,7, 4,6, 7)
-  ),
-  directed = FALSE
+<span style="color:#9a8e7e"># Create our Marketing + Engineering example</span>
+edges &lt;- data.frame(
+  from = c("Alice","Alice","Bob",   "Dave","Dave","Eve",  "Carol"),
+  to   = c("Bob",  "Carol","Carol", "Eve", "Frank","Frank","Dave")
 )
+g &lt;- graph_from_data_frame(edges, directed = FALSE)
 
-<span class="comment"># Run Louvain algorithm</span>
+<span style="color:#9a8e7e"># Run Louvain</span>
 communities &lt;- cluster_louvain(g)
 print(communities)
-cat("Modularity Q:", modularity(g, membership(communities)), "\n")</pre>
+<span style="color:#9a8e7e"># IGRAPH clustering multi-level, groups: 2</span>
 
-<h3 data-lang="en">Compare Different Algorithms</h3>
-<h3 data-lang="zh">比较不同算法</h3>
+<span style="color:#9a8e7e"># Check Q</span>
+cat("Modularity Q:", modularity(communities), "\n")
+<span style="color:#9a8e7e"># Modularity Q: 0.2908...</span></pre>
 
-<pre class="code-block"><span class="comment"># Run multiple methods</span>
-louvain_comm &lt;- cluster_louvain(g)
-walktrap_comm &lt;- cluster_walktrap(g, steps = 4)
-label_prop &lt;- cluster_label_prop(g)
+<h3 data-lang="en">Compare Algorithms</h3>
+<h3 data-lang="zh">比较算法</h3>
 
-<span class="comment"># Compare modularity scores</span>
-cat("Louvain Q:", modularity(g, membership(louvain_comm)), "\n")
-cat("Walktrap Q:", modularity(g, membership(walktrap_comm)), "\n")
-cat("Label Prop Q:", modularity(g, membership(label_prop)), "\n")
+<pre style="background:var(--ink);color:#e8e0d4;padding:24px;border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.55;font-family:var(--mono);margin:20px 0;"><span style="color:#9a8e7e"># Run multiple methods on the same network</span>
+louvain  &lt;- cluster_louvain(g)
+walktrap &lt;- cluster_walktrap(g, steps = 4)
+labelprop &lt;- cluster_label_prop(g)
 
-<span class="comment"># Compare partitions using Adjusted Rand Index</span>
+<span style="color:#9a8e7e"># Compare Q scores</span>
+cat("Louvain Q: ", modularity(louvain), "\n")
+cat("Walktrap Q:", modularity(walktrap), "\n")
+cat("Label Prop:", modularity(labelprop), "\n")
+
+<span style="color:#9a8e7e"># Do they agree? Use Adjusted Rand Index (1 = identical)</span>
 cat("Louvain vs Walktrap ARI:",
-    compare(membership(louvain_comm),
-            membership(walktrap_comm),
-            method = "rand"), "\n")</pre>
+    compare(membership(louvain),
+            membership(walktrap),
+            method = "adjusted.rand"), "\n")</pre>
 
-<h3 data-lang="en">Visualization</h3>
-<h3 data-lang="zh">可视化</h3>
+<h3 data-lang="en">Visualize Communities</h3>
+<h3 data-lang="zh">可视化社区</h3>
 
-<pre class="code-block"><span class="comment"># Color nodes by community</span>
-communities &lt;- cluster_louvain(g)
-colors &lt;- rainbow(max(membership(communities)))[membership(communities)]
+<pre style="background:var(--ink);color:#e8e0d4;padding:24px;border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.55;font-family:var(--mono);margin:20px 0;"><span style="color:#9a8e7e"># Color nodes by community</span>
+mem &lt;- membership(louvain)
+colors &lt;- c("#5b8c85", "#c2993d", "#b5372a", "#6a5acd")[mem]
 
-<span class="comment"># Create force-directed layout</span>
-layout &lt;- layout_with_fr(g)
-
-<span class="comment"># Plot with communities highlighted</span>
+<span style="color:#9a8e7e"># Plot</span>
 plot(g,
-     layout = layout,
      vertex.color = colors,
-     vertex.size = 10,
+     vertex.size = 20,
+     vertex.label.cex = 0.8,
      edge.color = "gray70",
+     layout = layout_with_fr(g),
      main = paste("Communities (Q =",
-                  round(modularity(g, membership(communities)), 3), ")"))</pre>
-
-<h3 data-lang="en">Manual Modularity Calculation</h3>
-<h3 data-lang="zh">手动模块性计算</h3>
-
-<pre class="code-block"><span class="comment"># Verify Q calculation step-by-step</span>
-compute_Q &lt;- function(graph, membership) {
-  A &lt;- as_adjacency_matrix(graph, sparse = FALSE)
-  n &lt;- length(membership)
-  m &lt;- ecount(graph)
-  k &lt;- colSums(A)
-
-  Q &lt;- 0
-  for (i in 1:n) {
-    for (j in 1:n) {
-      if (membership[i] == membership[j]) {
-        Q &lt;- Q + (A[i,j] - (k[i] * k[j]) / (2 * m))
-      }
-    }
-  }
-  return(Q / (2 * m))
-}
-
-<span class="comment"># Test: should match igraph::modularity()</span>
-mem &lt;- membership(cluster_louvain(g))
-cat("Custom Q:", compute_Q(g, mem), "\n")
-cat("igraph Q:", modularity(g, mem), "\n")</pre>
+                  round(modularity(louvain), 3), ")"))</pre>
 
 </div>
+</details>
 
-<div class="summary-box">
-  <div class="summary-label" data-lang="en">Key Takeaways</div>
-  <div class="summary-label" data-lang="zh">关键要点</div>
+<hr class="section-divider">
 
-  <p data-lang="en">
-  <strong>Community detection</strong> finds groups of densely-connected nodes in networks without labels. <strong>Modularity Q</strong> is a principled metric comparing actual structure against random expectation—higher is better (typically 0.3+ for significant structure). <strong>Louvain algorithm</strong> is the practical default: fast, scalable, and effective for most networks. <strong>Spectral methods</strong> are theoretically elegant and find global optima for 2-way splits. <strong>All methods struggle with the resolution limit</strong>—they miss small communities in large networks. Always validate your results: compare multiple algorithms, check Q values, and confirm findings against domain knowledge.
-  </p>
+<h2 id="summary">
+  <span data-lang="en">Summary</span>
+  <span data-lang="zh">总结</span>
+</h2>
 
-  <p data-lang="zh">
-  <strong>社区检测</strong>在没有标签的网络中找到密集连接的节点组。<strong>模块性 Q</strong> 是一个有原则的指标，将实际结构与随机期望进行比较——越高越好（通常 0.3+ 表示显著结构）。<strong>Louvain 算法</strong>是实用的默认选择：对大多数网络来说速度快、可扩展且有效。<strong>谱方法</strong>在理论上优雅，为 2 路分割找到全局最优值。<strong>所有方法都受到分辨率限制的困扰</strong>——它们在大型网络中错过小型社区。始终验证您的结果：比较多种算法，检查 Q 值，并根据领域知识确认发现。
-  </p>
-</div>
+<p class="method-desc" data-lang="en">
+<strong>Community detection</strong> finds groups in networks without labels — you give it connections, it discovers structure. <strong>Modularity Q</strong> tells you whether the groups are real (Q > 0.3 is meaningful). <strong>Louvain</strong> is the go-to algorithm: fast, effective, and available everywhere. But always <strong>run multiple algorithms</strong> and compare, and watch out for the <strong>resolution limit</strong> — modularity-based methods can miss small communities in large networks.
+</p>
 
-<script>
-function toggleCollapsible(button) {
-  button.classList.toggle('open');
-  const content = button.nextElementSibling;
-  content.classList.toggle('open');
-}
-</script>
+<p class="method-desc" data-lang="zh">
+<strong>社区检测</strong>在没有标签的网络中发现分组——你给它连接关系，它发现结构。<strong>模块性 Q</strong> 告诉你分组是否真实（Q > 0.3 有意义）。<strong>Louvain</strong> 是首选算法：快速、有效、到处都有。但一定要<strong>运行多种算法</strong>并比较结果，还要注意<strong>分辨率限制</strong>——基于模块性的方法可能会漏掉大型网络中的小社区。
+</p>
+

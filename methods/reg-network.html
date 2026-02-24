@@ -409,9 +409,19 @@ next:
 <hr class="section-divider">
 <!-- GUIDES -->
 <div class="section" id="na-guides">
-  <h2 data-lang="en">All Guides</h2>
-  <h2 data-lang="zh">全部指南</h2>
+  <h2 data-lang="en">Guides</h2>
+  <h2 data-lang="zh">配套指南</h2>
   <div class="m-list">
+    <a class="m-card" href="/methods/sample-network-intro.html">
+      <div class="m-num">▶</div>
+      <div class="m-info">
+        <div class="m-title" data-lang="en">Introduction to Network Analysis</div>
+        <div class="m-title" data-lang="zh">网络分析导论</div>
+        <div class="m-desc" data-lang="en">Slide-by-slide walkthrough: what networks are, why they matter, three research designs.</div>
+        <div class="m-desc" data-lang="zh">逐页讲解：什么是网络、为什么重要、三种研究设计。</div>
+      </div>
+      <div class="m-arrow">→</div>
+    </a>
     <a class="m-card" href="/methods/guides/reg-net-modularity.html">
       <div class="m-num">▶</div>
       <div class="m-info">
@@ -464,15 +474,57 @@ next:
   <div class="method-section">
     <h3 data-lang="en">Key References</h3>
     <h3 data-lang="zh">关键参考</h3>
-    <p class="method-desc" data-lang="en">McLevey, Scott &amp; Carrington (2023), <em>The SAGE Handbook of Social Network Analysis</em> — comprehensive and up-to-date. Jackson (2008), <em>Social and Economic Networks</em> — authoritative textbook bridging economics and sociology. Wasserman &amp; Faust (1994), <em>Social Network Analysis: Methods and Applications</em> — the classic. Burt (1992), <em>Structural Holes</em> — foundational on brokerage and competition. Hoff, Raftery &amp; Handcock (2002), "Latent Space Approaches to Social Network Analysis," <em>JASA</em>. Lusher, Koskinen &amp; Robins (2013), <em>Exponential Random Graph Models for Social Networks</em> — the ERGM handbook.</p>
-    <p class="method-desc" data-lang="zh">McLevey、Scott &amp; Carrington (2023)，<em>The SAGE Handbook of Social Network Analysis</em>——全面且最新。Jackson (2008)，<em>Social and Economic Networks</em>——经济学与社会学桥梁的权威教材。Wasserman &amp; Faust (1994)，<em>Social Network Analysis</em>——经典。Burt (1992)，<em>Structural Holes</em>——经纪与竞争的奠基作品。Hoff、Raftery &amp; Handcock (2002)，"Latent Space Approaches"，<em>JASA</em>。Lusher、Koskinen &amp; Robins (2013)，<em>Exponential Random Graph Models for Social Networks</em>——ERGM 手册。</p>
+    <div class="method-desc" data-lang="en">
+      McLevey, Scott &amp; Carrington (2023), <em>The SAGE Handbook of Social Network Analysis</em> — comprehensive and up-to-date.<br>
+      Jackson (2008), <em>Social and Economic Networks</em> — authoritative textbook bridging economics and sociology.<br>
+      Wasserman &amp; Faust (1994), <em>Social Network Analysis: Methods and Applications</em> — the classic.<br>
+      Burt (1992), <em>Structural Holes</em> — foundational on brokerage and competition.<br>
+      Hoff, Raftery &amp; Handcock (2002), "Latent Space Approaches to Social Network Analysis," <em>JASA</em>.<br>
+      Lusher, Koskinen &amp; Robins (2013), <em>Exponential Random Graph Models for Social Networks</em> — the ERGM handbook.
+    </div>
+    <div class="method-desc" data-lang="zh">
+      McLevey、Scott &amp; Carrington (2023)，<em>The SAGE Handbook of Social Network Analysis</em>——全面且最新。<br>
+      Jackson (2008)，<em>Social and Economic Networks</em>——经济学与社会学桥梁的权威教材。<br>
+      Wasserman &amp; Faust (1994)，<em>Social Network Analysis</em>——经典。<br>
+      Burt (1992)，<em>Structural Holes</em>——经纪与竞争的奠基作品。<br>
+      Hoff、Raftery &amp; Handcock (2002)，"Latent Space Approaches"，<em>JASA</em>。<br>
+      Lusher、Koskinen &amp; Robins (2013)，<em>Exponential Random Graph Models for Social Networks</em>——ERGM 手册。
+    </div>
   </div>
 
   <div class="method-section">
     <h3 data-lang="en">Software Tools</h3>
     <h3 data-lang="zh">软件工具</h3>
-    <p class="method-desc" data-lang="en"><strong>R:</strong> igraph (core network analysis, centrality, community detection), statnet/ergm (ERGM estimation and diagnostics), latentnet (latent space models), tidygraph + ggraph (tidy workflows and visualization), sna (QAP and network regression). <strong>Python:</strong> NetworkX (core library), python-igraph (igraph bindings), graph-tool (fast C++ backend). <strong>Visualization:</strong> Gephi (interactive GUI for large networks), VOSviewer (bibliometric networks).</p>
-    <p class="method-desc" data-lang="zh"><strong>R：</strong>igraph（核心网络分析、中心性、社区检测）、statnet/ergm（ERGM 估计和诊断）、latentnet（潜在空间模型）、tidygraph + ggraph（整洁工作流和可视化）、sna（QAP 和网络回归）。<strong>Python：</strong>NetworkX（核心库）、python-igraph（igraph 绑定）、graph-tool（快速 C++ 后端）。<strong>可视化：</strong>Gephi（大型网络交互 GUI）、VOSviewer（文献计量网络）。</p>
+    <div class="method-desc" data-lang="en">
+      <strong>R</strong><br>
+      igraph — core network analysis, centrality, community detection<br>
+      statnet / ergm — ERGM estimation and diagnostics<br>
+      latentnet — latent space models<br>
+      tidygraph + ggraph — tidy workflows and visualization<br>
+      sna — QAP and network regression<br><br>
+      <strong>Python</strong><br>
+      NetworkX — core library<br>
+      python-igraph — igraph bindings<br>
+      graph-tool — fast C++ backend<br><br>
+      <strong>Visualization</strong><br>
+      Gephi — interactive GUI for large networks<br>
+      VOSviewer — bibliometric networks
+    </div>
+    <div class="method-desc" data-lang="zh">
+      <strong>R</strong><br>
+      igraph——核心网络分析、中心性、社区检测<br>
+      statnet / ergm——ERGM 估计和诊断<br>
+      latentnet——潜在空间模型<br>
+      tidygraph + ggraph——整洁工作流和可视化<br>
+      sna——QAP 和网络回归<br><br>
+      <strong>Python</strong><br>
+      NetworkX——核心库<br>
+      python-igraph——igraph 绑定<br>
+      graph-tool——快速 C++ 后端<br><br>
+      <strong>可视化</strong><br>
+      Gephi——大型网络交互 GUI<br>
+      VOSviewer——文献计量网络
+    </div>
   </div>
 </div>
 

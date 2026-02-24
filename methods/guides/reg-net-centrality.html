@@ -9,493 +9,474 @@ bilingual: true
 mathjax: true
 ---
 
-<style>
-.level-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:8px}
-.level-badge.beginner{background:rgba(91,140,133,.12);color:#4a7a72}
-.level-badge.intermediate{background:rgba(194,153,61,.12);color:#9a7a2e}
-.level-badge.advanced{background:rgba(181,55,42,.1);color:#a0382e}
-.depth-divider{display:flex;align-items:center;gap:16px;margin:40px 0 28px}
-.depth-divider::before,.depth-divider::after{content:'';flex:1;height:1px;background:var(--parchment)}
-.depth-divider span{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-ghost);white-space:nowrap}
-.concept-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
-.concept-card{background:var(--paper);border:1px solid var(--parchment);border-radius:6px;padding:18px 20px;transition:all .3s ease;box-shadow:0 1px 3px rgba(30,24,15,.03)}
-.concept-card:hover{border-color:var(--gold-soft);box-shadow:0 3px 12px rgba(194,153,61,.08);transform:translateY(-1px)}
-.concept-card .card-icon{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--paper);background:var(--gold);display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;margin-bottom:10px;box-shadow:0 2px 4px rgba(194,153,61,.2)}
-.concept-card h4{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink-soft);margin:0 0 6px}
-.concept-card p{font-size:13.5px;line-height:1.7;color:var(--ink-faded);margin:0}
-.guide-formula{background:rgba(30,24,15,.03);border:1px solid var(--parchment);border-radius:6px;padding:20px 24px;margin:20px 0;text-align:center;font-size:16px;line-height:1.8;color:var(--ink-soft);font-family:var(--mono);letter-spacing:.02em;overflow-x:auto}
-.unpack-list{display:grid;grid-template-columns:1fr;gap:10px;margin:16px 0;padding:0;list-style:none}
-.unpack-item{display:flex;gap:14px;align-items:flex-start;padding:12px 16px;background:var(--paper);border:1px solid var(--parchment);border-radius:6px;transition:border-color .25s}
-.unpack-item:hover{border-color:var(--gold-soft)}
-.unpack-item .symbol{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--gold);white-space:nowrap;min-width:80px;padding-top:1px}
-.unpack-item .explain{font-size:13.5px;line-height:1.7;color:var(--ink-faded)}
-.callout{border-left:3px solid var(--gold);background:rgba(194,153,61,.04);padding:16px 20px;margin:20px 0;border-radius:0 6px 6px 0}
-.callout.tip{border-left-color:#5b8c85;background:rgba(91,140,133,.04)}
-.callout.warn{border-left-color:var(--red);background:rgba(181,55,42,.04)}
-.callout .callout-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
-.callout.tip .callout-label{color:#5b8c85}
-.callout.warn .callout-label{color:var(--red)}
-.callout p{font-size:14px;line-height:1.75;color:var(--ink-faded);margin:0}
-.callout p + p{margin-top:8px}
-.step-flow{display:grid;grid-template-columns:1fr;gap:10px;margin:16px 0;padding:0;list-style:none;counter-reset:step}
-.step-flow li{counter-increment:step;display:flex;gap:14px;align-items:flex-start;padding:12px 16px;background:var(--paper);border:1px solid var(--parchment);border-radius:6px;font-size:13.5px;line-height:1.7;color:var(--ink-faded);transition:border-color .25s}
-.step-flow li:hover{border-color:var(--gold-soft)}
-.step-flow li::before{content:counter(step);font-family:var(--sans);font-size:11px;font-weight:700;color:var(--paper);background:var(--gold);min-width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;box-shadow:0 1px 3px rgba(194,153,61,.2)}
-.code-block{background:var(--ink);color:#e8e0d4;padding:24px 28px;border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.55;font-family:var(--mono);margin:20px 0;box-shadow:0 2px 8px rgba(30,24,15,.15)}
-.code-block .comment{color:#9a8e7e}
-.collapsible-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:12px 0;font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-ghost);border:none;background:none;transition:color .25s}
-.collapsible-toggle:hover{color:var(--gold)}
-.collapsible-toggle .arrow{transition:transform .3s;font-size:10px}
-.collapsible-toggle.open .arrow{transform:rotate(90deg)}
-.collapsible-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
-.collapsible-content.open{max-height:5000px}
-.summary-box{background:var(--warm);border:1px solid var(--parchment);border-radius:6px;padding:24px 28px;margin:28px 0}
-.summary-box .summary-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
-.summary-box p{font-size:14px;line-height:1.75;color:var(--ink-faded);margin:0}
-body.zh .step-flow li,body.zh .unpack-list .unpack-item{display:flex}
-@media(max-width:700px){.concept-row{grid-template-columns:1fr}.unpack-item{flex-direction:column;gap:4px}.unpack-item .symbol{min-width:auto}}
-</style>
+<h2 data-lang="en">What Is Network Centrality?</h2>
+<h2 data-lang="zh">什么是网络中心性？</h2>
 
-<!-- ═══════════════════════════════════════════════════
-     LEVEL 1 — WHAT IS CENTRALITY?
-     ═══════════════════════════════════════════════════ -->
-
-<div class="level-badge beginner" data-lang="en">Beginner</div>
-<div class="level-badge beginner" data-lang="zh">入门</div>
-
-<h2 id="what-is-centrality">
-  <span data-lang="en">What Is Network Centrality?</span>
-  <span data-lang="zh">什么是网络中心性？</span>
-</h2>
-
-<p data-lang="en">
-Imagine an office where people ask each other for advice. Who's the "most important" person? It depends on what you mean by important. Is it the person everyone talks to? The person who connects different teams? The person connected to other influential people?
+<p class="method-desc" data-lang="en">
+In any network, some people matter more than others. But "matter" can mean different things. Network centrality measures answer the question: <strong>who is important, and why?</strong>
 </p>
 
-<p data-lang="zh">
-想象一个办公室里的人互相请教。谁是"最重要的"人？这取决于你对"重要"的定义。是每个人都讨论的人？连接不同团队的人？与其他有影响力的人相连的人？
+<p class="method-desc" data-lang="zh">
+在任何网络中，有些人比其他人更重要。但"重要"可以有不同的含义。网络中心性措施回答这个问题：<strong>谁很重要，为什么？</strong>
 </p>
 
-<div class="callout tip">
-  <div class="callout-label" data-lang="en">The Key Insight</div>
-  <div class="callout-label" data-lang="zh">关键洞察</div>
-  <p data-lang="en"><strong>There is no single "most important" node.</strong> Different centrality measures answer different questions about structural importance. Each reveals a different role in the network.</p>
-  <p data-lang="zh"><strong>没有单一的"最重要"节点。</strong>不同的中心性度量回答关于结构重要性的不同问题。每个都揭示了网络中的不同角色。</p>
+<div class="method-analogy" data-lang="en">
+Think of a company office. The boss might be central because everyone reports to them (degree). A coordinator might be central because they connect different teams (betweenness). The best-connected person might be central because they can reach anyone quickly (closeness). A celebrity advisor might be central because they're trusted by important people (eigenvector). Same office, four different "centers."
 </div>
 
-<!-- Concept cards: Four measures -->
-<div class="concept-row">
-  <div class="concept-card">
-    <div class="card-icon">D</div>
-    <h4 data-lang="en">Degree</h4>
-    <h4 data-lang="zh">度中心性</h4>
-    <p data-lang="en">How many direct connections does this node have?</p>
-    <p data-lang="zh">这个节点有多少直接连接？</p>
-  </div>
-  <div class="concept-card">
-    <div class="card-icon">B</div>
-    <h4 data-lang="en">Betweenness</h4>
-    <h4 data-lang="zh">中介中心性</h4>
-    <p data-lang="en">How often does this node lie on the shortest path between others?</p>
-    <p data-lang="zh">这个节点多频繁地位于其他节点的最短路径上？</p>
-  </div>
-  <div class="concept-card">
-    <div class="card-icon">C</div>
-    <h4 data-lang="en">Closeness</h4>
-    <h4 data-lang="zh">接近中心性</h4>
-    <p data-lang="en">How quickly can this node reach all others?</p>
-    <p data-lang="zh">这个节点能多快地到达所有其他节点？</p>
-  </div>
-  <div class="concept-card">
-    <div class="card-icon">E</div>
-    <h4 data-lang="en">Eigenvector</h4>
-    <h4 data-lang="zh">特征向量中心性</h4>
-    <p data-lang="en">Is this node connected to other well-connected nodes?</p>
-    <p data-lang="zh">这个节点是否与其他连接良好的节点相连？</p>
-  </div>
+<div class="method-analogy" data-lang="zh">
+想象一个公司办公室。老板可能很中心，因为每个人都向他们报告（度数）。协调员可能很中心，因为他们连接不同的团队（中介性）。最有联系的人可能很中心，因为他们可以快速到达任何人（亲密性）。一位有名的顾问可能很中心，因为他们被重要的人信任（特征向量）。同样的办公室，四个不同的"中心"。
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     LEVEL 2 — THE EXAMPLE
-     ═══════════════════════════════════════════════════ -->
-
-<div class="depth-divider"><span data-lang="en">A Small Example</span><span data-lang="zh">一个小例子</span></div>
-
-<div class="level-badge beginner" data-lang="en">Beginner</div>
-<div class="level-badge beginner" data-lang="zh">入门</div>
-
-<h2 id="five-people">
-  <span data-lang="en">Five People: Ranking by Each Measure</span>
-  <span data-lang="zh">五个人：每个度量的排名</span>
-</h2>
-
-<p data-lang="en">
-Let's look at a real example. Five colleagues: Alice, Bob, Carol, Dave, and Eve. Here's who asks whom for advice (directed ties):
+<p class="method-desc" data-lang="en">
+The key insight: <strong>importance depends on the question you're asking.</strong> There's no single "most central" person—only the most central *for your goal*.
 </p>
 
-<p data-lang="zh">
-看一个真实的例子。五个同事：Alice、Bob、Carol、Dave 和 Eve。以下是谁找谁请教（有向关系）：
+<p class="method-desc" data-lang="zh">
+关键见解：<strong>重要性取决于你提的问题。</strong>没有单一的"最中心"的人——只有*对你的目标*最中心的人。
 </p>
 
-<div class="unpack-list">
-  <div class="unpack-item">
-    <div class="symbol">Alice</div>
-    <div class="explain" data-lang="en">asks Bob and Carol</div>
-    <div class="explain" data-lang="zh">请教 Bob 和 Carol</div>
+<hr class="section-divider" />
+
+<h2 data-lang="en">Four Types of Centrality</h2>
+<h2 data-lang="zh">四种中心性类型</h2>
+
+<div class="method-section">
+  <h3 data-lang="en">1. Degree Centrality: Popularity</h3>
+  <h3 data-lang="zh">1. 度数中心性：受欢迎程度</h3>
+  
+  <p class="method-desc" data-lang="en">
+  <strong>Definition:</strong> How many direct connections does a person have?
+  </p>
+  <p class="method-desc" data-lang="zh">
+  <strong>定义：</strong>一个人有多少直接连接？
+  </p>
+  
+  <div class="method-analogy" data-lang="en">
+  Someone with many friends on social media has high degree centrality. They're popular, but that doesn't mean they're the best at bridging groups or reaching distant people.
   </div>
-  <div class="unpack-item">
-    <div class="symbol">Bob</div>
-    <div class="explain" data-lang="en">asks Carol and Dave</div>
-    <div class="explain" data-lang="zh">请教 Carol 和 Dave</div>
+  
+  <div class="method-analogy" data-lang="zh">
+  在社交媒体上有许多朋友的人拥有高度数中心性。他们很受欢迎，但这并不意味着他们善于连接不同的群体或到达远处的人。
   </div>
-  <div class="unpack-item">
-    <div class="symbol">Carol</div>
-    <div class="explain" data-lang="en">asks no one (expert!)</div>
-    <div class="explain" data-lang="zh">不请教任何人（专家！）</div>
+  
+  <div class="method-when" data-lang="en">
+  <strong>Use degree when:</strong> You want to find popular or highly-connected people. Examples: influencers on social media, hub airports in transportation networks, prolific authors in citation networks.
   </div>
-  <div class="unpack-item">
-    <div class="symbol">Dave</div>
-    <div class="explain" data-lang="en">asks Carol and Eve</div>
-    <div class="explain" data-lang="zh">请教 Carol 和 Eve</div>
-  </div>
-  <div class="unpack-item">
-    <div class="symbol">Eve</div>
-    <div class="explain" data-lang="en">asks Carol</div>
-    <div class="explain" data-lang="zh">请教 Carol</div>
+  
+  <div class="method-when" data-lang="zh">
+  <strong>什么时候使用度数：</strong>你想找到受欢迎或高度连接的人。例子：社交媒体上的影响者、交通网络中的枢纽机场、引文网络中的多产作者。
   </div>
 </div>
 
-<p data-lang="en">
-Now compute each centrality measure. Who ranks first in each?
+<div class="method-section">
+  <h3 data-lang="en">2. Betweenness Centrality: Brokerage</h3>
+  <h3 data-lang="zh">2. 中介中心性：经纪作用</h3>
+  
+  <p class="method-desc" data-lang="en">
+  <strong>Definition:</strong> How often does a person lie on the shortest path between two others?
+  </p>
+  <p class="method-desc" data-lang="zh">
+  <strong>定义：</strong>一个人在其他两个人之间的最短路径上出现多少次？
+  </p>
+  
+  <div class="method-analogy" data-lang="en">
+  Imagine two teams that don't talk to each other. The one person with connections to both is a broker—high betweenness. They control information flow. Remove them, and communication breaks down.
+  </div>
+  
+  <div class="method-analogy" data-lang="zh">
+  想象两个互不沟通的团队。与两个团队都有联系的那个人是经纪人——高中介性。他们控制信息流。移除他们，沟通就会中断。
+  </div>
+  
+  <div class="method-when" data-lang="en">
+  <strong>Use betweenness when:</strong> You want to find connectors, brokers, or gatekeepers. Examples: organizational bridges, critical junctions in networks, people who control information flow.
+  </div>
+  
+  <div class="method-when" data-lang="zh">
+  <strong>什么时候使用中介性：</strong>你想找到连接者、经纪人或守门人。例子：组织中的桥梁、网络中的关键交汇点、控制信息流的人。
+  </div>
+</div>
+
+<div class="method-section">
+  <h3 data-lang="en">3. Closeness Centrality: Efficiency</h3>
+  <h3 data-lang="zh">3. 亲密中心性：效率</h3>
+  
+  <p class="method-desc" data-lang="en">
+  <strong>Definition:</strong> How quickly can a person reach everyone else in the network?
+  </p>
+  <p class="method-desc" data-lang="zh">
+  <strong>定义：</strong>一个人能有多快地到达网络中的所有其他人？
+  </p>
+  
+  <div class="method-analogy" data-lang="en">
+  In a city, a person living downtown has high closeness—they can get anywhere fast. Someone in a remote suburb has low closeness—they need more time to reach most places.
+  </div>
+  
+  <div class="method-analogy" data-lang="zh">
+  在城市中，住在市中心的人拥有高亲密性——他们可以快速到达任何地方。住在偏远郊区的人拥有低亲密性——他们需要更多时间才能到达大多数地方。
+  </div>
+  
+  <div class="method-when" data-lang="en">
+  <strong>Use closeness when:</strong> You care about speed, efficiency, or influence through rapid spread. Examples: optimal facility placement, pandemic modeling, information diffusion studies.
+  </div>
+  
+  <div class="method-when" data-lang="zh">
+  <strong>什么时候使用亲密性：</strong>你关心速度、效率或通过快速传播的影响力。例子：最优设施放置、疫情建模、信息传播研究。
+  </div>
+</div>
+
+<div class="method-section">
+  <h3 data-lang="en">4. Eigenvector Centrality: Prestige</h3>
+  <h3 data-lang="zh">4. 特征向量中心性：声望</h3>
+  
+  <p class="method-desc" data-lang="en">
+  <strong>Definition:</strong> Are you connected to people who are themselves well-connected? High eigenvector centrality means you're connected to "important" people.
+  </p>
+  <p class="method-desc" data-lang="zh">
+  <strong>定义：</strong>你是否与那些本身就是高度连接的人相连？高特征向量中心性意味着你与"重要"的人相连。
+  </p>
+  
+  <div class="method-analogy" data-lang="en">
+  Having 10 friends isn't impressive if they're all nobodies. Having 2 friends who are celebrities is more impressive. Eigenvector centrality rewards connecting to *quality* connections, not just *quantity*.
+  </div>
+  
+  <div class="method-analogy" data-lang="zh">
+  如果10个朋友都是默默无闻的人，拥有10个朋友就不令人印象深刻。拥有2个名人朋友更令人印象深刻。特征向量中心性奖励与*高质量*的连接相连，而不仅仅是*数量*。
+  </div>
+  
+  <div class="method-when" data-lang="en">
+  <strong>Use eigenvector when:</strong> Quality of connections matters, not just quantity. Examples: Google's PageRank algorithm, scientific prestige (cited by top researchers), social influence (followed by influential people).
+  </div>
+  
+  <div class="method-when" data-lang="zh">
+  <strong>什么时候使用特征向量：</strong>连接的质量很重要，而不仅仅是数量。例子：谷歌的PageRank算法、科学声望（被顶尖研究人员引用）、社会影响力（被有影响力的人关注）。
+  </div>
+</div>
+
+<hr class="section-divider" />
+
+<h2 data-lang="en">A Concrete Example</h2>
+<h2 data-lang="zh">一个具体例子</h2>
+
+<p class="method-desc" data-lang="en">
+Let's look at a small 5-person network: Alice, Bob, Carol, Dave, and Eve. Here are their connections:
 </p>
 
-<p data-lang="zh">
-现在计算每个中心性度量。每个中谁排在第一？
+<p class="method-desc" data-lang="zh">
+让我们看一个小的5人网络：Alice、Bob、Carol、Dave和Eve。以下是他们的连接：
 </p>
 
-<div class="concept-row">
-  <div class="concept-card">
-    <div class="card-icon">D</div>
-    <h4 data-lang="en">Degree</h4>
-    <h4 data-lang="zh">度中心性</h4>
-    <p data-lang="en"><strong>Carol (4 in-degree)</strong> — everyone asks her. Most connected.</p>
-    <p data-lang="zh"><strong>Carol（4 个入度）</strong>——每个人都问她。最连接。</p>
-  </div>
-  <div class="concept-card">
-    <div class="card-icon">B</div>
-    <h4 data-lang="en">Betweenness</h4>
-    <h4 data-lang="zh">中介中心性</h4>
-    <p data-lang="en"><strong>Carol (also wins)</strong> — she's on the path between many pairs. Gatekeeper.</p>
-    <p data-lang="zh"><strong>Carol（也赢了）</strong>——她在许多对之间的路径上。守门人。</p>
-  </div>
-  <div class="concept-card">
-    <div class="card-icon">C</div>
-    <h4 data-lang="en">Closeness</h4>
-    <h4 data-lang="zh">接近中心性</h4>
-    <p data-lang="en"><strong>Carol again</strong> — can reach everyone fastest. Central location.</p>
-    <p data-lang="zh"><strong>再是 Carol</strong>——能最快到达所有人。中心位置。</p>
-  </div>
-  <div class="concept-card">
-    <div class="card-icon">E</div>
-    <h4 data-lang="en">Eigenvector</h4>
-    <h4 data-lang="zh">特征向量中心性</h4>
-    <p data-lang="en"><strong>Carol still!</strong> — connected to people who are themselves important. Prestige.</p>
-    <p data-lang="zh"><strong>还是 Carol！</strong>——与本身重要的人相连。声望。</p>
-  </div>
+<div class="method-example" data-lang="en">
+<strong>Connections:</strong>
+<ul style="margin: 8px 0; padding-left: 20px;">
+  <li>Alice connects to: Bob, Carol</li>
+  <li>Bob connects to: Alice, Carol, Dave</li>
+  <li>Carol connects to: Alice, Bob, Eve</li>
+  <li>Dave connects to: Bob, Eve</li>
+  <li>Eve connects to: Carol, Dave</li>
+</ul>
 </div>
 
-<div class="callout">
-  <div class="callout-label" data-lang="en">Key observation</div>
-  <div class="callout-label" data-lang="zh">关键观察</div>
-  <p data-lang="en">In this network, Carol dominates all four measures because she's structurally central in every way: most connections, on most paths, closest to everyone, and connected to other important people. But in real networks, different people rank differently on different measures, revealing their distinct roles.</p>
-  <p data-lang="zh">在这个网络中，Carol 在所有四个度量上都占主导地位，因为她在各种方式上都是结构中心：最多的连接、最多的路径、离每个人最近、与其他重要的人相连。但在真实网络中，不同的人在不同的度量上排名不同，揭示了他们的不同角色。</p>
+<div class="method-example" data-lang="zh">
+<strong>连接：</strong>
+<ul style="margin: 8px 0; padding-left: 20px;">
+  <li>Alice 连接到：Bob、Carol</li>
+  <li>Bob 连接到：Alice、Carol、Dave</li>
+  <li>Carol 连接到：Alice、Bob、Eve</li>
+  <li>Dave 连接到：Bob、Eve</li>
+  <li>Eve 连接到：Carol、Dave</li>
+</ul>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     LEVEL 3 — THE FORMULAS
-     ═══════════════════════════════════════════════════ -->
+<div class="method-section">
+  <h3 data-lang="en">Degree: Who has the most friends?</h3>
+  <h3 data-lang="zh">度数：谁有最多朋友？</h3>
+  
+  <p class="method-desc" data-lang="en">
+  <strong>Rankings:</strong> Bob and Carol (3 connections each) > Alice, Dave, Eve (2 connections each)
+  </p>
+  
+  <p class="method-desc" data-lang="zh">
+  <strong>排名：</strong>Bob 和 Carol（各 3 个连接）> Alice、Dave、Eve（各 2 个连接）
+  </p>
+  
+  <p class="method-desc" data-lang="en">
+  Bob and Carol are the most popular. They're hubs in this network.
+  </p>
+  
+  <p class="method-desc" data-lang="zh">
+  Bob 和 Carol 最受欢迎。他们是这个网络中的枢纽。
+  </p>
+</div>
 
-<div class="depth-divider"><span data-lang="en">The Mathematics</span><span data-lang="zh">数学</span></div>
+<div class="method-section">
+  <h3 data-lang="en">Betweenness: Who's the best broker?</h3>
+  <h3 data-lang="zh">中介性：谁是最好的经纪人？</h3>
+  
+  <p class="method-desc" data-lang="en">
+  <strong>Rankings:</strong> Bob (highest) > Carol > Alice, Dave, Eve
+  </p>
+  
+  <p class="method-desc" data-lang="zh">
+  <strong>排名：</strong>Bob（最高）> Carol > Alice、Dave、Eve
+  </p>
+  
+  <p class="method-desc" data-lang="en">
+  Bob sits between Alice and Dave—they must go through him to reach each other. He controls a critical connection. Carol bridges Alice/Bob to Eve, but less critically.
+  </p>
+  
+  <p class="method-desc" data-lang="zh">
+  Bob 位于 Alice 和 Dave 之间——他们必须通过他才能到达彼此。他控制着一个关键连接。Carol 连接 Alice/Bob 到 Eve，但不太关键。
+  </p>
+</div>
 
-<div class="level-badge intermediate" data-lang="en">Intermediate</div>
-<div class="level-badge intermediate" data-lang="zh">进阶</div>
+<div class="method-section">
+  <h3 data-lang="en">Closeness: Who's most central?</h3>
+  <h3 data-lang="zh">亲密性：谁最中心？</h3>
+  
+  <p class="method-desc" data-lang="en">
+  <strong>Rankings:</strong> Bob and Carol (highest) > Alice, Dave, Eve
+  </p>
+  
+  <p class="method-desc" data-lang="zh">
+  <strong>排名：</strong>Bob 和 Carol（最高）> Alice、Dave、Eve
+  </p>
+  
+  <p class="method-desc" data-lang="en">
+  Bob and Carol can reach everyone in just 1–2 steps. Alice, Dave, and Eve need more hops. If information spreads from Bob or Carol, it reaches everyone fastest.
+  </p>
+  
+  <p class="method-desc" data-lang="zh">
+  Bob 和 Carol 可以在 1-2 步内到达所有人。Alice、Dave 和 Eve 需要更多跳跃。如果信息从 Bob 或 Carol 传播，它会最快地到达所有人。
+  </p>
+</div>
 
-<h2 id="degree-formula">
-  <span data-lang="en">Degree Centrality</span>
-  <span data-lang="zh">度中心性</span>
-</h2>
+<div class="method-section">
+  <h3 data-lang="en">Eigenvector: Who's connected to important people?</h3>
+  <h3 data-lang="zh">特征向量：谁与重要的人相连？</h3>
+  
+  <p class="method-desc" data-lang="en">
+  <strong>Rankings:</strong> Carol and Bob (highest) > Alice, Dave, Eve
+  </p>
+  
+  <p class="method-desc" data-lang="zh">
+  <strong>排名：</strong>Carol 和 Bob（最高）> Alice、Dave、Eve
+  </p>
+  
+  <p class="method-desc" data-lang="en">
+  Carol is connected to both Bob and Alice (both highly connected). Alice is only connected to Carol and Bob (both important). Dave and Eve are on the periphery. Quality of connections matters here.
+  </p>
+  
+  <p class="method-desc" data-lang="zh">
+  Carol 与 Bob 和 Alice 相连（都是高度连接的）。Alice 只与 Carol 和 Bob 相连（都很重要）。Dave 和 Eve 在外围。这里连接的质量很重要。
+  </p>
+</div>
 
-<p data-lang="en">
-Degree centrality simply counts how many edges connect to a node. In social networks, it's the number of friends. In trade networks, it's the number of trading partners. Higher degree = more direct influence and access.
+<p class="method-desc" data-lang="en">
+<strong>Key takeaway:</strong> The "most central" person depends on what you care about. If you want to reach everyone fast, pick Bob or Carol. If you want information to spread through a broker, pick Bob. If you want prestige, pick Carol.
 </p>
 
-<p data-lang="zh">
-度中心性只是简单地数一个节点有多少条边相连。在社交网络中，它是朋友的数量。在贸易网络中，它是贸易伙伴的数量。更高的度 = 更多的直接影响力和获取。
+<p class="method-desc" data-lang="zh">
+<strong>关键要点：</strong>"最中心"的人取决于你关心什么。如果你想快速到达所有人，选择 Bob 或 Carol。如果你想让信息通过经纪人传播，选择 Bob。如果你想要声望，选择 Carol。
 </p>
 
-<div class="guide-formula">
-C_D(v) = deg(v) / (n−1)
+<hr class="section-divider" />
+
+<h2 data-lang="en">The Formulas</h2>
+<h2 data-lang="zh">公式</h2>
+
+<div class="method-section">
+  <h3 data-lang="en">Degree Centrality</h3>
+  <h3 data-lang="zh">度数中心性</h3>
+  
+  <p style="text-align:center;margin:16px 0;">
+    $$C_D(v) = \deg(v)$$
+  </p>
+  
+  <p class="method-desc" data-lang="en">
+  <strong>Plain English:</strong> Count how many people this person is connected to. That's it. If Alice is connected to Bob and Carol, her degree centrality is 2.
+  </p>
+  
+  <p class="method-desc" data-lang="zh">
+  <strong>简明英文：</strong>计算这个人有多少人相连。就是这样。如果 Alice 与 Bob 和 Carol 相连，她的度数中心性是 2。
+  </p>
 </div>
 
-<div class="unpack-list">
-  <div class="unpack-item">
-    <div class="symbol">deg(v)</div>
-    <div class="explain" data-lang="en">The count of edges touching node v. In directed networks, count both in-degree (ties pointing in) and out-degree (ties pointing out), or use one depending on context.</div>
-    <div class="explain" data-lang="zh">接触节点 v 的边数。在有向网络中，计算入度（指向的关系）和出度（指出的关系），或根据情况使用一个。</div>
-  </div>
-  <div class="unpack-item">
-    <div class="symbol">n</div>
-    <div class="explain" data-lang="en">Total number of nodes. Divided by (n−1) to normalize: the maximum possible degree for any node is (n−1), so the result ranges from 0 to 1.</div>
-    <div class="explain" data-lang="zh">节点总数。除以 (n−1) 来归一化：任何节点的最大可能度是 (n−1)，所以结果范围是 0 到 1。</div>
-  </div>
-  <div class="unpack-item">
-    <div class="symbol">Example</div>
-    <div class="explain" data-lang="en">Carol has 4 in-edges. With n=5 people, her degree centrality = 4/4 = 1.0 (maximum). Alice has 0 in-edges, so 0/4 = 0 (no one asks her).</div>
-    <div class="explain" data-lang="zh">Carol 有 4 条入边。n=5 个人，她的度中心性 = 4/4 = 1.0（最大）。Alice 有 0 条入边，所以 0/4 = 0（没人问她）。</div>
-  </div>
+<div class="method-section">
+  <h3 data-lang="en">Betweenness Centrality</h3>
+  <h3 data-lang="zh">中介中心性</h3>
+  
+  <p style="text-align:center;margin:16px 0;">
+    $$C_B(v) = \sum_{s \neq v \neq t} \frac{\sigma_{st}(v)}{\sigma_{st}}$$
+  </p>
+  
+  <p class="method-desc" data-lang="en">
+  <strong>Plain English:</strong> For every pair of people (s and t), count how many of the shortest paths between them go through v. Add up all these counts. High betweenness means many shortest paths pass through you.
+  </p>
+  
+  <p class="method-desc" data-lang="zh">
+  <strong>简明英文：</strong>对于每一对人（s 和 t），计算他们之间有多少条最短路径经过 v。将所有这些计数加起来。高中介性意味着许多最短路径通过你。
+  </p>
 </div>
 
-<div class="callout">
-  <div class="callout-label" data-lang="en">Social meaning</div>
-  <div class="callout-label" data-lang="zh">社会意义</div>
-  <p data-lang="en">High-degree nodes are <strong>hubs</strong> — they have many direct contacts. In epidemiology, they're "super-spreaders." In organizations, they're connectors. In collaboration networks, they're prolific producers.</p>
-  <p data-lang="zh">高度节点是<strong>中心</strong>——他们有许多直接接触。在流行病学中，他们是"超级传播者"。在组织中，他们是连接者。在合作网络中，他们是多产的生产者。</p>
+<div class="method-section">
+  <h3 data-lang="en">Closeness Centrality</h3>
+  <h3 data-lang="zh">亲密中心性</h3>
+  
+  <p style="text-align:center;margin:16px 0;">
+    $$C_C(v) = \frac{1}{\sum_{u \neq v} d(v, u)}$$
+  </p>
+  
+  <p class="method-desc" data-lang="en">
+  <strong>Plain English:</strong> Calculate the shortest distance to every other person, then add all those distances. Take the inverse (divide 1 by that sum). Higher closeness means shorter distances on average.
+  </p>
+  
+  <p class="method-desc" data-lang="zh">
+  <strong>简明英文：</strong>计算到所有其他人的最短距离，然后将所有这些距离相加。取倒数（用 1 除以该和）。更高的亲密性意味着平均距离更短。
+  </p>
 </div>
 
-<h2 id="betweenness-formula">
-  <span data-lang="en">Betweenness Centrality</span>
-  <span data-lang="zh">中介中心性</span>
-</h2>
+<div class="method-section">
+  <h3 data-lang="en">Eigenvector Centrality</h3>
+  <h3 data-lang="zh">特征向量中心性</h3>
+  
+  <p style="text-align:center;margin:16px 0;">
+    $$C_E(v) = \frac{1}{\lambda} \sum_{u \in N(v)} C_E(u)$$
+  </p>
+  
+  <p class="method-desc" data-lang="en">
+  <strong>Plain English:</strong> Your centrality is proportional to the centrality of people you're connected to. If you're connected to central people, you're more central. This creates a feedback loop that the algorithm solves iteratively. (Don't worry if this is abstract—R will calculate it for you!)
+  </p>
+  
+  <p class="method-desc" data-lang="zh">
+  <strong>简明英文：</strong>你的中心性与你所连接的人的中心性成正比。如果你与中心人物相连，你就更中心。这创建了一个反馈循环，算法会迭代求解。（如果这有点抽象，不用担心——R 会为你计算！）
+  </p>
+</div>
 
-<p data-lang="en">
-Betweenness asks: how often does this node lie on the shortest path between other pairs? If you remove this node, how many pairs would be disconnected or have to take a longer route? High betweenness = strategic importance as a broker.
+<hr class="section-divider" />
+
+<h2 data-lang="en">Computing Centrality in R</h2>
+<h2 data-lang="zh">在 R 中计算中心性</h2>
+
+<p class="method-desc" data-lang="en">
+We'll use the <code>igraph</code> package to compute all four measures. Here's a complete example:
 </p>
 
-<p data-lang="zh">
-中介中心性问：这个节点多频繁地位于其他对的最短路径上？如果你删除这个节点，有多少对会断开或必须走更长的路线？高中介中心性 = 作为经纪人的战略重要性。
+<p class="method-desc" data-lang="zh">
+我们将使用 <code>igraph</code> 包来计算所有四种度量。这是一个完整的例子：
 </p>
 
-<div class="guide-formula">
-C_B(v) = Σ σ_st(v) / σ_st
-</div>
+<details>
+  <summary style="cursor:pointer;font-weight:bold;color:var(--orange);margin:16px 0;" data-lang="en">Show R Code</summary>
+  <summary style="cursor:pointer;font-weight:bold;color:var(--orange);margin:16px 0;" data-lang="zh">显示 R 代码</summary>
+  
+  <pre style="background:var(--ink);color:#e8e0d4;padding:24px 28px;border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.55;font-family:var(--mono);margin:20px 0;box-shadow:0 2px 8px rgba(30,24,15,.15)">
+# Install igraph if you haven't already
+# install.packages("igraph")
 
-<div class="unpack-list">
-  <div class="unpack-item">
-    <div class="symbol">σ_st</div>
-    <div class="explain" data-lang="en">The total number of shortest paths from node s to node t (across all pairs).</div>
-    <div class="explain" data-lang="zh">从节点 s 到节点 t 的最短路径总数（跨所有对）。</div>
-  </div>
-  <div class="unpack-item">
-    <div class="symbol">σ_st(v)</div>
-    <div class="explain" data-lang="en">The number of those shortest paths that pass through node v. If v is not on any shortest path between s and t, this is 0.</div>
-    <div class="explain" data-lang="zh">这些最短路径中通过节点 v 的数量。如果 v 不在 s 和 t 之间的任何最短路径上，这是 0。</div>
-  </div>
-  <div class="unpack-item">
-    <div class="symbol">Sum over all s≠v≠t</div>
-    <div class="explain" data-lang="en">Count this ratio for every possible pair of other nodes, then add them all up. Optionally normalize by dividing by the maximum possible value.</div>
-    <div class="explain" data-lang="zh">对所有其他节点对计算这个比率，然后加起来。可选地通过除以最大可能值来归一化。</div>
-  </div>
-</div>
-
-<div class="callout">
-  <div class="callout-label" data-lang="en">Social meaning</div>
-  <div class="callout-label" data-lang="zh">社会意义</div>
-  <p data-lang="en">High-betweenness nodes are <strong>brokers</strong> or <strong>bridges</strong>. In organizational networks, they control information flow between departments. In social movements, they connect different ideological clusters. In supply chains, they're critical intermediaries — removing them breaks the network.</p>
-  <p data-lang="zh">高中介节点是<strong>经纪人</strong>或<strong>桥梁</strong>。在组织网络中，它们控制部门间的信息流。在社会运动中，它们连接不同的意识形态集群。在供应链中，它们是关键中介——删除它们会破坏网络。</p>
-</div>
-
-<h2 id="closeness-formula">
-  <span data-lang="en">Closeness Centrality</span>
-  <span data-lang="zh">接近中心性</span>
-</h2>
-
-<p data-lang="en">
-Closeness measures how quickly a node can reach all others. It's the inverse of the average distance. Nodes with short average distances to everyone else are "centrally located" and have fast access to information, resources, or can transmit widely.
-</p>
-
-<p data-lang="zh">
-接近中心性测量节点能多快地到达所有其他节点。它是平均距离的倒数。与其他所有节点的平均距离短的节点"位于中心"，能够快速获取信息、资源或广泛传输。
-</p>
-
-<div class="guide-formula">
-C_C(v) = (n−1) / Σ_u d(v,u)
-</div>
-
-<div class="unpack-list">
-  <div class="unpack-item">
-    <div class="symbol">d(v,u)</div>
-    <div class="explain" data-lang="en">The length of the shortest path from v to u, measured in edge hops. If u is a direct neighbor, d=1. If you must go through two intermediaries, d=3.</div>
-    <div class="explain" data-lang="zh">从 v 到 u 的最短路径长度，以边数衡量。如果 u 是直接邻居，d=1。如果必须通过两个中介，d=3。</div>
-  </div>
-  <div class="unpack-item">
-    <div class="symbol">Σ_u d(v,u)</div>
-    <div class="explain" data-lang="en">Sum the distances to all other nodes. Shorter sums mean v is closer to everyone.</div>
-    <div class="explain" data-lang="zh">对所有其他节点的距离求和。较短的和意味着 v 离每个人更近。</div>
-  </div>
-  <div class="unpack-item">
-    <div class="symbol">(n−1) / Σ</div>
-    <div class="explain" data-lang="en">Divide by the sum to get the harmonic mean (roughly "average distance, inverted"). Ranges from 0 (isolated) to 1 (connected to all neighbors directly).</div>
-    <div class="explain" data-lang="zh">除以总和得到调和平均数（大致"平均距离的倒数"）。范围从 0（孤立）到 1（直接连接到所有邻居）。</div>
-  </div>
-</div>
-
-<div class="callout">
-  <div class="callout-label" data-lang="en">Social meaning</div>
-  <div class="callout-label" data-lang="zh">社会意义</div>
-  <p data-lang="en">High-closeness nodes are <strong>centrally positioned</strong> — they spread information or disease rapidly. In knowledge networks, they have quick access to expertise. In logistics networks, they're efficient distribution hubs. In social networks, they're "in the thick of things."</p>
-  <p data-lang="zh">高接近节点位置<strong>集中</strong>——它们快速传播信息或疾病。在知识网络中，它们能快速获得专业知识。在物流网络中，它们是高效的配送中心。在社交网络中，它们"处于事物的核心"。</p>
-</div>
-
-<h2 id="eigenvector-formula">
-  <span data-lang="en">Eigenvector Centrality</span>
-  <span data-lang="zh">特征向量中心性</span>
-</h2>
-
-<p data-lang="en">
-Eigenvector centrality embodies a key insight: <strong>not all connections are equal</strong>. Being connected to important people makes you more important. It's a recursive definition: your importance depends on your neighbors' importance. This is computed as the eigenvector of the adjacency matrix.
-</p>
-
-<p data-lang="zh">
-特征向量中心性体现了一个关键洞察：<strong>不是所有的连接都是平等的</strong>。与重要的人相连让你更重要。这是一个递归的定义：你的重要性取决于你邻居的重要性。这是通过邻接矩阵的特征向量计算的。
-</p>
-
-<div class="guide-formula">
-x_i = (1/λ) Σ_j A_ij x_j
-</div>
-
-<div class="unpack-list">
-  <div class="unpack-item">
-    <div class="symbol">A_ij</div>
-    <div class="explain" data-lang="en">Entry in the adjacency matrix: 1 if i and j are connected, 0 otherwise.</div>
-    <div class="explain" data-lang="zh">邻接矩阵中的条目：如果 i 和 j 连接，则为 1，否则为 0。</div>
-  </div>
-  <div class="unpack-item">
-    <div class="symbol">x_j</div>
-    <div class="explain" data-lang="en">The centrality score of node j. The formula says: node i's score equals the sum of all its neighbors' scores (weighted by the matrix).</div>
-    <div class="explain" data-lang="zh">节点 j 的中心性得分。公式说：节点 i 的得分等于其所有邻居的得分之和（由矩阵加权）。</div>
-  </div>
-  <div class="unpack-item">
-    <div class="symbol">λ</div>
-    <div class="explain" data-lang="en">The largest eigenvalue of A. This is the normalization constant (roughly the "scaling factor"). Solved via linear algebra.</div>
-    <div class="explain" data-lang="zh">A 的最大特征值。这是归一化常数（大致是"缩放因子"）。通过线性代数求解。</div>
-  </div>
-</div>
-
-<div class="callout">
-  <div class="callout-label" data-lang="en">Social meaning</div>
-  <div class="callout-label" data-lang="zh">社会意义</div>
-  <p data-lang="en">High-eigenvector nodes have <strong>prestige</strong> or <strong>status</strong>. In citation networks, highly-cited papers and their citers both rank high. In political networks, alignment with powerful actors amplifies your own power. Google's PageRank is a variant of this idea: web pages linked from important pages are themselves important.</p>
-  <p data-lang="zh">高特征向量节点有<strong>声望</strong>或<strong>地位</strong>。在引文网络中，被高度引用的论文及其引用者都排名靠前。在政治网络中，与强大参与者的一致性放大了你自己的权力。谷歌的 PageRank 是这个想法的一个变体：来自重要页面的链接的网页本身很重要。</p>
-</div>
-
-<!-- ═══════════════════════════════════════════════════
-     LEVEL 4 — R IMPLEMENTATION (collapsible)
-     ═══════════════════════════════════════════════════ -->
-
-<div class="depth-divider"><span data-lang="en">Implementation</span><span data-lang="zh">实现</span></div>
-
-<div class="level-badge intermediate" data-lang="en">Intermediate</div>
-<div class="level-badge intermediate" data-lang="zh">进阶</div>
-
-<h2 id="r-implementation">
-  <span data-lang="en">Computing Centrality in R with igraph</span>
-  <span data-lang="zh">在 R 中用 igraph 计算中心性</span>
-</h2>
-
-<p data-lang="en">
-The <code>igraph</code> package in R provides fast implementations of all four centrality measures. Here's a complete example using our five-person advice network.
-</p>
-
-<p data-lang="zh">
-R 中的 <code>igraph</code> 包提供了所有四个中心性度量的快速实现。这是一个使用我们五人请教网络的完整示例。
-</p>
-
-<button class="collapsible-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-  <span class="arrow">▶</span>
-  <span data-lang="en">Show R code example</span>
-  <span data-lang="zh">显示 R 代码示例</span>
-</button>
-<div class="collapsible-content">
-
-<pre class="code-block"><span class="comment"># Install if needed: install.packages("igraph")</span>
 library(igraph)
 
-<span class="comment"># Create the network from our example</span>
-edges &lt;- data.frame(
-  from = c("Alice", "Alice", "Bob", "Bob", "Dave", "Dave", "Eve"),
-  to = c("Bob", "Carol", "Carol", "Dave", "Carol", "Eve", "Carol")
+# Create the example network
+edges <- data.frame(
+  from = c("Alice", "Alice", "Bob", "Bob", "Bob", "Carol", "Carol", "Carol", "Dave", "Eve"),
+  to   = c("Bob", "Carol", "Alice", "Carol", "Dave", "Alice", "Bob", "Eve", "Bob", "Carol")
 )
 
-g &lt;- graph_from_data_frame(edges, directed = TRUE)
+# Create an undirected graph
+g <- graph_from_data_frame(edges, directed = FALSE)
 
-<span class="comment"># Compute all four centrality measures</span>
-deg &lt;- degree(g, normalized = TRUE)
-bet &lt;- betweenness(g, normalized = TRUE)
-clo &lt;- closeness(g, normalized = TRUE)
-eig &lt;- eigen_centrality(g)$vector
+# Compute all four centrality measures
+degree_cent <- degree(g, mode = "all")
+between_cent <- betweenness(g)
+close_cent <- closeness(g)
+eigen_cent <- eigen_centrality(g)$vector
 
-<span class="comment"># Put them in a data frame for easy viewing</span>
-centrality_df &lt;- data.frame(
-  node = names(deg),
-  degree = round(deg, 3),
-  betweenness = round(bet, 3),
-  closeness = round(clo, 3),
-  eigenvector = round(eig, 3)
+# Combine into a table
+results <- data.frame(
+  Person = names(degree_cent),
+  Degree = round(degree_cent, 3),
+  Betweenness = round(between_cent, 3),
+  Closeness = round(close_cent, 3),
+  Eigenvector = round(eigen_cent, 3)
 )
 
-<span class="comment"># View the results — Carol dominates all measures</span>
-print(centrality_df)
+print(results)
 
-<span class="comment"># Visualize: node size by degree, color by betweenness</span>
-plot(g,
-     vertex.size = deg * 30 + 5,
-     vertex.color = rgb(bet, 0.3, 1 - bet),
-     vertex.label = V(g)$name,
-     edge.arrow.size = 0.6,
-     edge.width = 2)
-</pre>
+# Visualize the network with node sizes based on degree
+plot(g, 
+     vertex.size = degree_cent * 15,
+     vertex.label.cex = 1.2,
+     vertex.label.dist = 0.5,
+     edge.width = 2,
+     main = "Network Centrality Example")
+  </pre>
+</details>
 
-</div><!-- end collapsible -->
+<p class="method-desc" data-lang="en">
+<strong>What this code does:</strong>
+</p>
 
-<div class="callout tip">
-  <div class="callout-label" data-lang="en">Key functions</div>
-  <div class="callout-label" data-lang="zh">关键函数</div>
-  <p data-lang="en"><strong>degree(g)</strong> counts edges. <strong>betweenness(g)</strong> counts shortest paths. <strong>closeness(g)</strong> computes harmonic mean of distances. <strong>eigen_centrality(g)</strong> returns the eigenvector (access it with $vector). Use <strong>normalized = TRUE</strong> to scale all to [0,1] for comparison.</strong></p>
-  <p data-lang="zh"><strong>degree(g)</strong> 计算边。<strong>betweenness(g)</strong> 计算最短路径。<strong>closeness(g)</strong> 计算距离的调和平均数。<strong>eigen_centrality(g)</strong> 返回特征向量（用 $vector 访问）。使用 <strong>normalized = TRUE</strong> 将所有缩放到 [0,1] 以进行比较。</strong></p>
-</div>
+<p class="method-desc" data-lang="zh">
+<strong>这段代码的作用：</strong>
+</p>
 
-<!-- ═══════════════════════════════════════════════════
-     SUMMARY
-     ═══════════════════════════════════════════════════ -->
+<ul style="margin:12px 0;padding-left:20px;">
+  <li class="method-desc" data-lang="en">Creates the example network with 5 people and 10 connections</li>
+  <li class="method-desc" data-lang="zh">创建包含 5 个人和 10 个连接的示例网络</li>
+  <li class="method-desc" data-lang="en">Computes degree, betweenness, closeness, and eigenvector centrality for each person</li>
+  <li class="method-desc" data-lang="zh">计算每个人的度数、中介性、亲密性和特征向量中心性</li>
+  <li class="method-desc" data-lang="en">Displays results in a clean table</li>
+  <li class="method-desc" data-lang="zh">在干净的表格中显示结果</li>
+  <li class="method-desc" data-lang="en">Visualizes the network with node sizes proportional to degree</li>
+  <li class="method-desc" data-lang="zh">将网络可视化，节点大小与度数成正比</li>
+</ul>
 
-<div class="summary-box">
-  <div class="summary-label" data-lang="en">Summary: Four Perspectives on Importance</div>
-  <div class="summary-label" data-lang="zh">总结：重要性的四种视角</div>
-  <p data-lang="en">
-  <strong>Degree:</strong> How many direct connections? (popularity, hub status)<br>
-  <strong>Betweenness:</strong> How often on shortest paths? (brokerage, control)<br>
-  <strong>Closeness:</strong> How fast to reach all others? (central position, efficiency)<br>
-  <strong>Eigenvector:</strong> Connected to other important nodes? (prestige, status)
-  </p>
-  <p data-lang="zh">
-  <strong>度：</strong>有多少直接连接？（人气、中心地位）<br>
-  <strong>中介：</strong>多频繁在最短路径上？（经纪、控制）<br>
-  <strong>接近：</strong>多快到达所有其他节点？（中心位置、效率）<br>
-  <strong>特征向量：</strong>与其他重要节点相连？（声望、地位）
-  </p>
-  <p data-lang="en" style="margin-top:14px;color:var(--ink-ghost);font-size:13px;">
-  Different questions → different rankings. Use the measure that matches your research question. In the same network, different nodes can be central on different measures, revealing their distinct structural roles.
-  </p>
-  <p data-lang="zh" style="margin-top:14px;color:var(--ink-ghost);font-size:13px;">
-  不同的问题 → 不同的排名。使用与你的研究问题相匹配的度量。在同一个网络中，不同的节点可以在不同的度量上是中心的，揭示了它们不同的结构角色。
-  </p>
-</div>
+<hr class="section-divider" />
 
-<script>
-document.querySelectorAll('.collapsible-toggle').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    this.classList.toggle('open');
-    this.nextElementSibling.classList.toggle('open');
-  });
-});
-</script>
+<h2 data-lang="en">Summary: Which Centrality for Which Question?</h2>
+<h2 data-lang="zh">总结：哪个问题用哪个中心性？</h2>
+
+<table style="width:100%;border-collapse:collapse;margin:20px 0;">
+  <thead>
+    <tr style="border-bottom:2px solid var(--orange);">
+      <th style="padding:12px;text-align:left;font-weight:bold;" data-lang="en">Question</th>
+      <th style="padding:12px;text-align:left;font-weight:bold;" data-lang="zh">问题</th>
+      <th style="padding:12px;text-align:left;font-weight:bold;" data-lang="en">Use This Measure</th>
+      <th style="padding:12px;text-align:left;font-weight:bold;" data-lang="zh">使用此度量</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="border-bottom:1px solid rgba(232, 224, 212, 0.2);">
+      <td style="padding:12px;" data-lang="en">Who is most popular?</td>
+      <td style="padding:12px;" data-lang="zh">谁最受欢迎？</td>
+      <td style="padding:12px;" data-lang="en">Degree</td>
+      <td style="padding:12px;" data-lang="zh">度数</td>
+    </tr>
+    <tr style="border-bottom:1px solid rgba(232, 224, 212, 0.2);">
+      <td style="padding:12px;" data-lang="en">Who controls information flow?</td>
+      <td style="padding:12px;" data-lang="zh">谁控制信息流？</td>
+      <td style="padding:12px;" data-lang="en">Betweenness</td>
+      <td style="padding:12px;" data-lang="zh">中介性</td>
+    </tr>
+    <tr style="border-bottom:1px solid rgba(232, 224, 212, 0.2);">
+      <td style="padding:12px;" data-lang="en">Who can reach everyone fastest?</td>
+      <td style="padding:12px;" data-lang="zh">谁能最快地到达所有人？</td>
+      <td style="padding:12px;" data-lang="en">Closeness</td>
+      <td style="padding:12px;" data-lang="zh">亲密性</td>
+    </tr>
+    <tr>
+      <td style="padding:12px;" data-lang="en">Who is connected to important people?</td>
+      <td style="padding:12px;" data-lang="zh">谁与重要的人相连？</td>
+      <td style="padding:12px;" data-lang="en">Eigenvector</td>
+      <td style="padding:12px;" data-lang="zh">特征向量</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="method-desc" data-lang="en">
+<strong>Remember:</strong> Network centrality is a tool, not a truth. Different measures answer different questions. Always ask yourself: "What am I trying to find?" before choosing a centrality measure. The answer will guide you.
+</p>
+
+<p class="method-desc" data-lang="zh">
+<strong>记住：</strong>网络中心性是一个工具，而不是真理。不同的度量回答不同的问题。在选择中心性度量之前，始终问自己："我想找什么？"答案会指导你。
+</p>
