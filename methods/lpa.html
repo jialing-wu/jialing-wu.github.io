@@ -271,41 +271,8 @@ body.presenting .pres-progress{
    LPA-SPECIFIC COMPONENTS
    ══════════════════════════════════════════════════════ */
 
-/* ── Profile grid (2x2) ───────────────────────────── */
-.profile-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:24px 0;
-}
-.profile-card{
-  background:var(--paper);
-  border:1px solid var(--parchment);
-  border-left:4px solid var(--gold);
-  border-radius:4px;padding:20px 18px;
-  transition:all .3s ease;
-  box-shadow:0 1px 4px rgba(30,24,15,.03);
-  position:relative;
-}
-.profile-card.p1{border-left-color:#d4a574}
-.profile-card.p2{border-left-color:#b8956b}
-.profile-card.p3{border-left-color:#8b7355}
-.profile-card.p4{border-left-color:#d4a574}
-.profile-card:hover{
-  border-color:var(--gold-soft);
-  box-shadow:0 4px 14px rgba(194,153,61,.1);
-  transform:translateY(-2px);
-}
-.profile-pct{
-  font-family:var(--sans);font-size:24px;font-weight:700;
-  color:var(--gold);line-height:1;margin-bottom:8px;
-}
-.profile-name{
-  font-family:var(--body);font-size:15px;font-weight:600;
-  color:var(--ink-soft);margin-bottom:8px;
-}
-.profile-desc{
-  font-size:13.5px;line-height:1.7;color:var(--ink-faded);
-  margin-bottom:10px;
-}
-.profile-warn{
+/* ── Profile note (warning below card desc) ─────── */
+.profile-note{
   font-family:var(--sans);font-size:11px;
   color:var(--red);opacity:.8;font-weight:500;
   margin-top:8px;padding-top:8px;border-top:1px solid rgba(181,55,42,.15);
@@ -946,36 +913,36 @@ body.presenting .pres-progress{
     <div class="figure-cap" data-lang="zh"><strong>图 1.</strong> 四种动机剖面在四个 SDT 指标上的表现（Extreg = 外部调节, Intro = 内摄调节, Ident = 认同调节, Intmot = 内在动机）。</div>
   </div>
 
-  <div class="profile-grid">
-    <div class="profile-card p1">
-      <div class="profile-pct">5.8%</div>
-      <div class="profile-name" data-lang="en">Low Motivation</div>
-      <div class="profile-name" data-lang="zh">低动机型</div>
-      <div class="profile-desc" data-lang="en">Near-average external regulation but very low introjected, identified, and intrinsic motivation (n = 67)</div>
-      <div class="profile-desc" data-lang="zh">外部调节接近平均水平，但内摄调节、认同调节和内在动机都很低（n = 67）</div>
-      <div class="profile-warn" data-lang="en">Near 5% threshold — may be unstable with smaller samples</div>
-      <div class="profile-warn" data-lang="zh">接近 5% 阈值——在较小样本中可能不稳定</div>
+  <div class="check-grid" style="grid-template-columns:1fr 1fr">
+    <div class="check-card">
+      <div class="check-icon" style="width:auto;padding:0 10px;font-size:13px;letter-spacing:.02em">5.8%</div>
+      <div class="check-title" data-lang="en">Low Motivation</div>
+      <div class="check-title" data-lang="zh">低动机型</div>
+      <div class="check-desc" data-lang="en">Near-average external regulation but very low introjected, identified, and intrinsic motivation (n&nbsp;=&nbsp;67)</div>
+      <div class="check-desc" data-lang="zh">外部调节接近平均水平，但内摄调节、认同调节和内在动机都很低（n = 67）</div>
+      <div class="profile-note" data-lang="en">Near 5% threshold — may be unstable with smaller samples</div>
+      <div class="profile-note" data-lang="zh">接近 5% 阈值——在较小样本中可能不稳定</div>
     </div>
-    <div class="profile-card p2">
-      <div class="profile-pct">10.2%</div>
-      <div class="profile-name" data-lang="en">Externally Driven</div>
-      <div class="profile-name" data-lang="zh">外部驱动型</div>
-      <div class="profile-desc" data-lang="en">High external &amp; identified regulation, but very low intrinsic motivation — regulated by external demands (n = 118)</div>
-      <div class="profile-desc" data-lang="zh">高外部调节和认同调节，但内在动机很低——受外部要求驱动（n = 118）</div>
+    <div class="check-card">
+      <div class="check-icon" style="width:auto;padding:0 10px;font-size:13px;letter-spacing:.02em">10.2%</div>
+      <div class="check-title" data-lang="en">Externally Driven</div>
+      <div class="check-title" data-lang="zh">外部驱动型</div>
+      <div class="check-desc" data-lang="en">High external &amp; identified regulation, but very low intrinsic motivation — regulated by external demands (n&nbsp;=&nbsp;118)</div>
+      <div class="check-desc" data-lang="zh">高外部调节和认同调节，但内在动机很低——受外部要求驱动（n = 118）</div>
     </div>
-    <div class="profile-card p3">
-      <div class="profile-pct">50.7%</div>
-      <div class="profile-name" data-lang="en">Autonomous</div>
-      <div class="profile-name" data-lang="zh">自主型</div>
-      <div class="profile-desc" data-lang="en">High identified regulation &amp; intrinsic motivation — the most self-determined and largest group (n = 584)</div>
-      <div class="profile-desc" data-lang="zh">高认同调节和内在动机——最具自我决定性、也是最大的群体（n = 584）</div>
+    <div class="check-card">
+      <div class="check-icon" style="width:auto;padding:0 10px;font-size:13px;letter-spacing:.02em">50.7%</div>
+      <div class="check-title" data-lang="en">Autonomous</div>
+      <div class="check-title" data-lang="zh">自主型</div>
+      <div class="check-desc" data-lang="en">High identified regulation &amp; intrinsic motivation — the most self-determined and largest group (n&nbsp;=&nbsp;584)</div>
+      <div class="check-desc" data-lang="zh">高认同调节和内在动机——最具自我决定性、也是最大的群体（n = 584）</div>
     </div>
-    <div class="profile-card p4">
-      <div class="profile-pct">33.2%</div>
-      <div class="profile-name" data-lang="en">Moderate</div>
-      <div class="profile-name" data-lang="zh">中等型</div>
-      <div class="profile-desc" data-lang="en">Low identified regulation &amp; intrinsic motivation with moderate external and introjected regulation (n = 382)</div>
-      <div class="profile-desc" data-lang="zh">低认同调节和内在动机，中等外部调节和内摄调节（n = 382）</div>
+    <div class="check-card">
+      <div class="check-icon" style="width:auto;padding:0 10px;font-size:13px;letter-spacing:.02em">33.2%</div>
+      <div class="check-title" data-lang="en">Moderate</div>
+      <div class="check-title" data-lang="zh">中等型</div>
+      <div class="check-desc" data-lang="en">Low identified regulation &amp; intrinsic motivation with moderate external and introjected regulation (n&nbsp;=&nbsp;382)</div>
+      <div class="check-desc" data-lang="zh">低认同调节和内在动机，中等外部调节和内摄调节（n = 382）</div>
     </div>
   </div>
 
