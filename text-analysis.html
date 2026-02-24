@@ -729,6 +729,6 @@ next:
   }
   const _orig = window.setLang;
   window.setLang = function(lang) { _orig(lang); tocSetLang(lang); };
-  tocSetLang(localStorage.getItem('preferred-lang') || 'zh');
+  tocSetLang(localStorage.getItem('preferred-lang') || 'en');
 })();
 </script>

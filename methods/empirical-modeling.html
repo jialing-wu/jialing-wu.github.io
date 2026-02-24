@@ -17,7 +17,7 @@
 .card-divider{margin:2px 0;height:1px;background:linear-gradient(to right,transparent,rgba(222,212,192,.3),transparent);border:none}
 </style>
 </head>
-<body class="zh">
+<body class="en">
 <div class="layout">
   <aside class="sidebar" id="sidebar">
     <a class="sb-brand" href="index.html"><h2>Methods <span>Notebook</span></h2><div class="sb-sub">Jialing Wu</div></a>
@@ -682,7 +682,7 @@ function setLang(lang) {
 
 // Initialize language buttons on load
 window.addEventListener('load', function() {
-  const saved = localStorage.getItem('preferred-lang') || document.body.className || 'zh';
+  const saved = localStorage.getItem('preferred-lang') || document.body.className || 'en';
   setLang(saved);
 });
 
@@ -753,7 +753,7 @@ window.addEventListener('load', function() {
   window.setLang = function(lang) { _orig(lang); tocSetLang(lang); };
 
   // Init
-  const initLang = localStorage.getItem('preferred-lang') || 'zh';
+  const initLang = localStorage.getItem('preferred-lang') || 'en';
   tocSetLang(initLang);
 })();
 </script>

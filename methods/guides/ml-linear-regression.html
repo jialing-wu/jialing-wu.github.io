@@ -46,7 +46,7 @@
     </style>
 </head>
 
-<body class="zh">
+<body class="en">
     <div class="guide-layout">
         <!-- Topbar -->
         <div class="guide-topbar">
@@ -655,7 +655,7 @@ $$\theta \leftarrow \theta - \alpha \cdot \nabla_\theta J(\theta) = \theta - \fr
         const langBtns = document.querySelectorAll('.guide-lang-btn');
         const enElements = document.querySelectorAll('[data-lang="en"]');
         const zhElements = document.querySelectorAll('[data-lang="zh"]');
-        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        const savedLang = localStorage.getItem('preferred-lang') || 'en';
         setLanguage(savedLang);
         langBtns.forEach(btn => {
             btn.addEventListener('click', function() {

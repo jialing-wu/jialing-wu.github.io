@@ -18,7 +18,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 
-<body class="zh">
+<body class="en">
     <div class="guide-layout">
         <!-- Topbar -->
         <div class="guide-topbar">
@@ -345,7 +345,7 @@ $$f(\lambda x + (1-\lambda) y) \leq \lambda f(x) + (1-\lambda) f(y) \quad \text{
         const langBtns = document.querySelectorAll('.guide-lang-btn');
         const enElements = document.querySelectorAll('[data-lang="en"]');
         const zhElements = document.querySelectorAll('[data-lang="zh"]');
-        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        const savedLang = localStorage.getItem('preferred-lang') || 'en';
         setLanguage(savedLang);
         langBtns.forEach(btn => {
             btn.addEventListener('click', function() {

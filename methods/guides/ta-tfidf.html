@@ -67,7 +67,7 @@
 .sort-note{font-family:var(--sans);font-size:11px;color:var(--ink-ghost);margin-bottom:8px;font-style:italic}
 </style>
 </head>
-<body class="zh">
+<body class="en">
 <div class="guide-layout">
 
   <!-- TOP BAR -->
@@ -252,7 +252,7 @@ function setLang(lang) {
   localStorage.setItem('preferred-lang', lang);
 }
 window.addEventListener('load', () => {
-  const saved = localStorage.getItem('preferred-lang') || 'zh';
+  const saved = localStorage.getItem('preferred-lang') || 'en';
   setLang(saved);
 });
 
@@ -370,7 +370,7 @@ function compute() {
     `<span data-lang="en">${insightEn}</span><span data-lang="zh">${insightZh}</span>`;
 
   // Re-apply lang so new elements render correctly
-  setLang(document.body.className || 'zh');
+  setLang(document.body.className || 'en');
   document.getElementById('results-area').style.display = 'block';
 
   // Build heatmap with current mode
@@ -411,7 +411,7 @@ function buildHeatmap(mode) {
   const docNames_zh = ['文档1','文档2','文档3'];
   const cellColors = ['181,55,42', '138,106,16', '139,90,43'];
 
-  const lang = document.body.className || 'zh';
+  const lang = document.body.className || 'en';
   const docNames = lang === 'zh' ? docNames_zh : docNames_en;
   const wordLabel = lang === 'zh' ? '词项' : 'Term';
 

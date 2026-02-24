@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 
-<body class="zh">
+<body class="en">
     <div class="guide-layout">
         <div class="guide-topbar">
             <div class="guide-breadcrumb">
@@ -724,7 +724,7 @@
         // Exclude buttons from content elements
         const enElements = document.querySelectorAll('.guide-content [data-lang="en"], .guide-breadcrumb [data-lang="en"], a.guide-back[data-lang="en"], .guide-header [data-lang="en"], .guide-tag [data-lang="en"]');
         const zhElements = document.querySelectorAll('.guide-content [data-lang="zh"], .guide-breadcrumb [data-lang="zh"], a.guide-back[data-lang="zh"], .guide-header [data-lang="zh"], .guide-tag [data-lang="zh"]');
-        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        const savedLang = localStorage.getItem('preferred-lang') || 'en';
         setLanguage(savedLang);
         langBtns.forEach(btn => {
             btn.addEventListener('click', function() {

@@ -15,7 +15,7 @@ function setLang(lang) {
 }
 
 window.addEventListener('DOMContentLoaded', function() {
-  var saved = localStorage.getItem('preferred-lang') || 'zh';
+  var saved = 'en';
   setLang(saved);
   buildPageTOC();
   updateTOCLang(saved);

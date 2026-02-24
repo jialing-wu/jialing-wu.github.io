@@ -109,7 +109,7 @@ p{font-size:14.5px;line-height:1.75}
 .page-toc a.toc-sub.active{opacity:1;}
 </style>
 </head>
-<body class="zh">
+<body class="en">
 <div class="layout">
   <aside class="sidebar" id="sidebar">
     <a class="sb-brand" href="index.html"><h2>Methods <span>Notebook</span></h2><div class="sb-sub">Jialing Wu</div></a>
@@ -1012,7 +1012,7 @@ function setLang(lang) {
   localStorage.setItem('preferred-lang', lang);
 }
 window.addEventListener('load', function() {
-  const saved = localStorage.getItem('preferred-lang') || 'zh';
+  const saved = localStorage.getItem('preferred-lang') || 'en';
   setLang(saved);
 });
 
@@ -1081,7 +1081,7 @@ window.addEventListener('load', function() {
   }
   const _orig = window.setLang;
   window.setLang = function(lang) { _orig(lang); tocSetLang(lang); };
-  tocSetLang(localStorage.getItem('preferred-lang') || 'zh');
+  tocSetLang(localStorage.getItem('preferred-lang') || 'en');
 })();
 </script>
 </body>

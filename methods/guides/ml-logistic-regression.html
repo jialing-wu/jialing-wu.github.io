@@ -46,7 +46,7 @@
     </style>
 </head>
 
-<body class="zh">
+<body class="en">
     <div class="guide-layout">
         <!-- Topbar -->
         <div class="guide-topbar">
@@ -624,7 +624,7 @@ $$J(\Theta) = -\frac{1}{n}\sum_{i=1}^{n}\sum_{k=1}^{K} \mathbf{1}[y_i = k]\log P
         const langBtns = document.querySelectorAll('.guide-lang-btn');
         const enElements = document.querySelectorAll('[data-lang="en"]');
         const zhElements = document.querySelectorAll('[data-lang="zh"]');
-        const savedLang = localStorage.getItem('preferred-lang') || 'zh';
+        const savedLang = localStorage.getItem('preferred-lang') || 'en';
         setLanguage(savedLang);
         langBtns.forEach(btn => {
             btn.addEventListener('click', function() {
