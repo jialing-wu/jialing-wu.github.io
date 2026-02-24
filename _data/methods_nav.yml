@@ -1,12 +1,6 @@
 # Methods Notebook navigation
 # category_zh / name_zh = Chinese label shown in sidebar alongside English
 
-- category: "__home__"
-  items:
-    - title: "Browse Courses"
-      title_zh: "浏览课程"
-      url: "overview.html"
-
 - category: "Sample"
   category_zh: "实例演练"
   items:
