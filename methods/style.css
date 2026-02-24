@@ -43,9 +43,7 @@ body{background:var(--paper);color:var(--ink-soft);font-family:var(--body);font-
 /* Child links indented under HOME */
 .sb-child{padding-left:36px !important}
 
-.sb-footer{padding:20px 24px;margin-top:24px;border-top:1px solid rgba(196,181,153,.1)}
-.sb-footer a{font-family:var(--sans);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(248,244,236,.7);text-decoration:none;transition:color .3s;display:block;padding:5px 0}
-.sb-footer a:hover{color:var(--gold)}
+.sb-web-link:hover{color:var(--gold)!important}
 
 /* MAIN CONTENT */
 .main{margin-left:var(--sidebar-w);flex:1;min-width:0}

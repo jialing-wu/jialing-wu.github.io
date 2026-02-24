@@ -284,6 +284,48 @@ body.presenting .pres-progress{
 /* ── Override intro-cards to 2-col for this page (has 2 cards, not 3) */
 .intro-cards{grid-template-columns:1fr 1fr!important}
 
+/* ── Red emphasis (selective, replaces some <strong>) ── */
+.red-em{color:var(--red);font-weight:600}
+
+/* ── Hyperlink styling ─────────────────────────────── */
+.method-desc a, .check-desc a{
+  color:var(--red);text-decoration:none;
+  border-bottom:1px solid rgba(181,55,42,.2);
+  padding-bottom:1px;
+  transition:color .2s, border-color .2s;
+}
+.method-desc a:hover, .check-desc a:hover{
+  color:var(--gold);
+  border-bottom-color:var(--gold);
+}
+
+/* ── Three-study comparison table ──────────────────── */
+.study-table{
+  width:100%;border-collapse:collapse;margin:24px 0;
+  font-family:var(--body);font-size:14px;line-height:1.7;
+  border:1px solid var(--parchment);border-radius:6px;
+  overflow:hidden;
+}
+.study-table th{
+  font-family:var(--sans);font-size:10.5px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);background:var(--warm);
+  padding:12px 16px;text-align:left;
+  border-bottom:1px solid var(--parchment);
+}
+.study-table td{
+  padding:14px 16px;color:var(--ink-faded);
+  border-bottom:1px solid rgba(222,212,192,.4);
+  vertical-align:top;
+}
+.study-table tr:last-child td{border-bottom:none}
+.study-table td:first-child{
+  font-family:var(--sans);font-size:11px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-soft);white-space:nowrap;width:90px;
+}
+.study-table em{color:var(--ink-soft);font-style:normal;font-weight:500}
+
 /* ── Section divider enhancement ───────────────────── */
 .section-divider{
   border:none;border-top:1px solid var(--parchment);
@@ -359,8 +401,8 @@ body.presenting .pres-progress{
   <h2 data-lang="en">Why Study Relationships, Not Just Individuals?</h2>
   <h2 data-lang="zh">为什么要研究关系，而不只是个体？</h2>
 
-  <p class="method-desc" data-lang="en">Most methods treat observations as independent rows. But many social phenomena are relational — who asks whom for study help reveals hidden learning communities that GPA alone cannot explain. Network analysis shifts the question from "what are this person's attributes?" to "what is their position in a web of relationships?"</p>
-  <p class="method-desc" data-lang="zh">大多数方法把观测当作独立的行。但许多社会现象是关系性的——谁找谁请教功课揭示了 GPA 无法解释的隐性学习社群。网络分析把问题从"这个人有什么属性？"转变为"这个人在关系网中处于什么位置？"</p>
+  <p class="method-desc" data-lang="en">Most methods treat observations as <span class="red-em">independent rows</span>. But many social phenomena are relational — who asks whom for study help reveals hidden learning communities that GPA alone cannot explain. Network analysis shifts the question from "what are this person's attributes?" to <span class="red-em">"what is their position in a web of relationships?"</span></p>
+  <p class="method-desc" data-lang="zh">大多数方法把观测当作<span class="red-em">独立的行</span>。但许多社会现象是关系性的——谁找谁请教功课揭示了 GPA 无法解释的隐性学习社群。网络分析把问题从"这个人有什么属性？"转变为<span class="red-em">"这个人在关系网中处于什么位置？"</span></p>
 
   <!-- VIS: Spreadsheet vs Network -->
   <div class="vis-row">
@@ -428,8 +470,8 @@ body.presenting .pres-progress{
   <h2 data-lang="en">The Language of Networks</h2>
   <h2 data-lang="zh">网络的语言</h2>
 
-  <p class="method-desc" data-lang="en">A network has two building blocks: <strong>nodes</strong> (actors) and <strong>edges</strong> (relationships). Mathematically, a network is a graph <em>G = (V, E)</em> where <em>V</em> is the vertex set and <em>E</em> the edge set. Everything else builds on these two. Three key distinctions:</p>
-  <p class="method-desc" data-lang="zh">网络有两个基本构件：<strong>节点</strong>（行动者）和<strong>边</strong>（关系）。数学上，网络是一个图 <em>G = (V, E)</em>，其中 <em>V</em> 是顶点集，<em>E</em> 是边集。其他一切都建立在这两者之上。三个关键区分：</p>
+  <p class="method-desc" data-lang="en">A network has two building blocks: <span class="red-em">nodes</span> (actors) and <span class="red-em">edges</span> (relationships). Mathematically, a network is a graph <em>G = (V, E)</em> where <em>V</em> is the vertex set and <em>E</em> the edge set. Everything else builds on these two. Three key distinctions:</p>
+  <p class="method-desc" data-lang="zh">网络有两个基本构件：<span class="red-em">节点</span>（行动者）和<span class="red-em">边</span>（关系）。数学上，网络是一个图 <em>G = (V, E)</em>，其中 <em>V</em> 是顶点集，<em>E</em> 是边集。其他一切都建立在这两者之上。三个关键区分：</p>
 
   <!-- VIS: Three network types -->
   <div class="vis-row">
@@ -498,8 +540,8 @@ body.presenting .pres-progress{
   <h2 data-lang="en">Who Is "Important"? Three Answers</h2>
   <h2 data-lang="zh">谁"重要"？三种回答</h2>
 
-  <p class="method-desc" data-lang="en">"Importance" depends on what you mean. Click each measure below — watch the node sizes change and read why.</p>
-  <p class="method-desc" data-lang="zh">"重要"取决于你的定义。点击下方每个指标——观察节点大小变化，阅读原因。</p>
+  <p class="method-desc" data-lang="en"><span class="red-em">"Importance" depends on what you mean.</span> Click each measure below — watch the node sizes change and read why.</p>
+  <p class="method-desc" data-lang="zh"><span class="red-em">"重要"取决于你的定义。</span>点击下方每个指标——观察节点大小变化，阅读原因。</p>
 
   <!-- VIS: Interactive centrality network -->
   <div class="cent-btns">
@@ -600,8 +642,8 @@ body.presenting .pres-progress{
   <h2 data-lang="en">From Description to Inference</h2>
   <h2 data-lang="zh">从描述到推断</h2>
 
-  <p class="method-desc" data-lang="en">Network methods fall into two layers. <strong>Descriptive methods</strong> tell you <em>what</em> the network looks like; <strong>inferential models</strong> test <em>why</em> it looks that way.</p>
-  <p class="method-desc" data-lang="zh">网络方法分两层。<strong>描述性方法</strong>告诉你网络<em>长什么样</em>；<strong>推断模型</strong>检验它<em>为什么</em>长这样。</p>
+  <p class="method-desc" data-lang="en">Network methods fall into two layers. <span class="red-em">Descriptive methods</span> tell you <em>what</em> the network looks like; <span class="red-em">inferential models</span> test <em>why</em> it looks that way.</p>
+  <p class="method-desc" data-lang="zh">网络方法分两层。<span class="red-em">描述性方法</span>告诉你网络<em>长什么样</em>；<span class="red-em">推断模型</span>检验它<em>为什么</em>长这样。</p>
 
   <h3 data-lang="en">Descriptive: What Does the Network Look Like?</h3>
   <h3 data-lang="zh">描述层：网络长什么样？</h3>
@@ -766,8 +808,8 @@ body.presenting .pres-progress{
   <h2 data-lang="en">Research Question &amp; Core Concepts</h2>
   <h2 data-lang="zh">研究问题与核心概念</h2>
 
-  <p class="method-desc" data-lang="en">This paper asks: <strong>What drives the formation of advice-seeking ties in an organizational network?</strong> Two competing explanations:</p>
-  <p class="method-desc" data-lang="zh">这篇论文问的是：<strong>什么驱动了组织中求助关系的形成？</strong>两种竞争性解释：</p>
+  <p class="method-desc" data-lang="en">This paper asks: <span class="red-em">What drives the formation of advice-seeking ties in an organizational network?</span> Two competing explanations:</p>
+  <p class="method-desc" data-lang="zh">这篇论文问的是：<span class="red-em">什么驱动了组织中求助关系的形成？</span>两种竞争性解释：</p>
 
   <div class="check-grid" style="grid-template-columns:1fr 1fr">
     <div class="check-card">
@@ -837,29 +879,56 @@ body.presenting .pres-progress{
   <p class="method-desc" data-lang="en">The paper uses three studies that build on each other: first <em>discover</em> a pattern, then <em>explain</em> what drives it, then <em>validate</em> whether theoretical categories hold up.</p>
   <p class="method-desc" data-lang="zh">论文用三个递进的研究：先<em>发现</em>规律，再<em>解释</em>驱动因素，最后<em>验证</em>理论分类是否成立。</p>
 
-  <div class="check-grid">
-    <div class="check-card">
-      <div class="check-icon">01</div>
-      <div class="check-title" data-lang="en">Spearman Correlations</div>
-      <div class="check-title" data-lang="zh">Spearman 相关</div>
-      <div class="check-desc" data-lang="en"><em>Question:</em> Is being asked for advice tied to your real skill, or just to being popular?<br><em>How:</em> Compute how many people ask each person for help (in-degree) in 3 skill areas; correlate with self-rated skills (Spearman); compare correlations (Fisher z-test).<br><em>i.e.:</em> Count who asks you in each area, then see if that number matches your actual ability — or just your popularity elsewhere.</div>
-      <div class="check-desc" data-lang="zh"><em>问题：</em>被请教是因为真的擅长，还是只因为你"有名"？<br><em>做法：</em>计算每人在 3 类技能的被请教次数（入度），与自评技能做 Spearman 相关，再用 Fisher z 检验比较相关系数。<br><em>也就是说：</em>数多少人在各领域找你，看这个数字和你的实际能力更相关，还是和你在其他领域的人气更相关。</div>
-    </div>
-    <div class="check-card">
-      <div class="check-icon">02</div>
-      <div class="check-title" data-lang="en">ERGM</div>
-      <div class="check-title" data-lang="zh">ERGM 指数随机图模型</div>
-      <div class="check-desc" data-lang="en"><em>Question:</em> What actually drives advice ties — after removing the network's own patterns?<br><em>How:</em> Build the model in 3 steps: (1) baseline (edges + reciprocity); (2) add network effects (in-degree, brokerage); (3) add personal traits (expertise, skills, tenure, gender, leadership). Compare via AIC. R <code>ergm</code>.<br><em>i.e.:</em> A logistic regression for networks — test which factors make two people more likely to form a "who asks whom" tie.</div>
-      <div class="check-desc" data-lang="zh"><em>问题：</em>排除网络自身规律后，到底什么驱动求助关系？<br><em>做法：</em>分 3 步建模：(1) 基线（边 + 互惠）；(2) 加网络效应（入度、中介）；(3) 加个人属性（expertise、技能、工龄、性别、管理职责）。用 AIC 比较模型。R <code>ergm</code>。<br><em>也就是说：</em>给网络做逻辑回归——检验哪些因素让两人之间更可能形成"请教"关系。</div>
-    </div>
-    <div class="check-card">
-      <div class="check-icon">03</div>
-      <div class="check-title" data-lang="en">Optimal Matching</div>
-      <div class="check-title" data-lang="zh">最优匹配</div>
-      <div class="check-desc" data-lang="en"><em>Question:</em> Do real skill profiles match theoretical expert/specialist templates?<br><em>How:</em> Sort each person's 29 skills high→low; compute "distance" to ideal profiles (R <code>TraMineR</code>); correlate distances with self-ratings and centrality (Spearman).<br><em>i.e.:</em> Draw a template for "perfect expert" and "perfect specialist," then measure how far each person is from those templates.</div>
-      <div class="check-desc" data-lang="zh"><em>问题：</em>真实技能画像和理论上的专家/专才模板匹配吗？<br><em>做法：</em>将每人 29 项技能从高到低排序，用 R <code>TraMineR</code> 计算与理想画像的"距离"，再与自评和中心度做 Spearman 相关。<br><em>也就是说：</em>先画"理想专家"和"理想专才"的模板，再量每个人离模板有多远。</div>
-    </div>
-  </div>
+  <table class="study-table" data-lang="en">
+    <thead>
+      <tr><th style="width:90px"></th><th>Study 1: Spearman Correlations</th><th>Study 2: ERGM</th><th>Study 3: Optimal Matching</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Question</td>
+        <td>Is being asked for advice tied to your <span class="red-em">real skill</span>, or just to being popular?</td>
+        <td>What actually drives advice ties — after removing the network's own patterns?</td>
+        <td>Do real skill profiles match theoretical expert/specialist templates?</td>
+      </tr>
+      <tr>
+        <td>Method</td>
+        <td>Compute in-degree in 3 skill areas; correlate with self-rated skills (Spearman); compare correlations (Fisher z-test).</td>
+        <td>Build models in 3 steps: (1) baseline (edges + reciprocity); (2) network effects (in-degree, brokerage); (3) personal traits (expertise, skills, tenure). Compare via AIC. R <code>ergm</code>.</td>
+        <td>Sort each person's 29 skills high→low; compute "distance" to ideal profiles (R <code>TraMineR</code>); correlate with self-ratings and centrality.</td>
+      </tr>
+      <tr>
+        <td>Plain English</td>
+        <td>Count who asks you in each area, then see if that number matches your actual ability — or just your popularity elsewhere.</td>
+        <td>A logistic regression for networks — test which factors make two people more likely to form a "who asks whom" tie.</td>
+        <td>Draw a template for "perfect expert" and "perfect specialist," then measure how far each person is from those templates.</td>
+      </tr>
+    </tbody>
+  </table>
+  <table class="study-table" data-lang="zh">
+    <thead>
+      <tr><th style="width:90px"></th><th>研究一：Spearman 相关</th><th>研究二：ERGM</th><th>研究三：最优匹配</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>问题</td>
+        <td>被请教是因为<span class="red-em">真的擅长</span>，还是只因为你"有名"？</td>
+        <td>排除网络自身规律后，到底什么驱动求助关系？</td>
+        <td>真实技能画像和理论上的专家/专才模板匹配吗？</td>
+      </tr>
+      <tr>
+        <td>做法</td>
+        <td>计算每人在 3 类技能的被请教次数（入度），与自评技能做 Spearman 相关，再用 Fisher z 检验比较相关系数。</td>
+        <td>分 3 步建模：(1) 基线（边 + 互惠）；(2) 网络效应（入度、中介）；(3) 个人属性（expertise、技能、工龄）。用 AIC 比较。R <code>ergm</code>。</td>
+        <td>将每人 29 项技能从高到低排序，用 R <code>TraMineR</code> 计算与理想画像的"距离"，再与自评和中心度做 Spearman 相关。</td>
+      </tr>
+      <tr>
+        <td>通俗讲</td>
+        <td>数多少人在各领域找你，看这个数字和你的实际能力更相关，还是和你在其他领域的人气更相关。</td>
+        <td>给网络做逻辑回归——检验哪些因素让两人之间更可能形成"请教"关系。</td>
+        <td>先画"理想专家"和"理想专才"的模板，再量每个人离模板有多远。</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
 <!-- SLIDE: Finding 1 — Halo Effect -->
@@ -872,8 +941,8 @@ body.presenting .pres-progress{
   <p class="method-desc" data-lang="en"><strong>Result:</strong> Cross-domain in-degree correlations are significantly stronger than within-domain skill–in-degree correlations (Fisher z, p &lt; .05). Exception: core insurance skills, where actual competence also matters.</p>
   <p class="method-desc" data-lang="zh"><strong>结果：</strong>跨领域入度相关显著强于领域内技能–入度相关（Fisher z，p &lt; .05）。例外：核心保险技能，实际能力也有作用。</p>
 
-  <p class="method-desc" data-lang="en"><strong>i.e.:</strong> Once colleagues see you as a go-to person for insurance, they also come to you for software and social problems — even if you're not actually good at those. Being asked reflects <em>reputation</em>, not skill-by-skill competence.</p>
-  <p class="method-desc" data-lang="zh"><strong>也就是说：</strong>一旦同事觉得你是保险方面的"靠谱人"，他们连软件和社交问题也来找你——哪怕你并不擅长。被请教反映的是<em>声誉</em>，而不是逐项技能的实力。</p>
+  <p class="method-desc" data-lang="en"><strong>i.e.:</strong> Once colleagues see you as a go-to person for insurance, they also come to you for software and social problems — even if you're not actually good at those. Being asked reflects <span class="red-em">reputation</span>, not skill-by-skill competence.</p>
+  <p class="method-desc" data-lang="zh"><strong>也就是说：</strong>一旦同事觉得你是保险方面的"靠谱人"，他们连软件和社交问题也来找你——哪怕你并不擅长。被请教反映的是<span class="red-em">声誉</span>，而不是逐项技能的实力。</p>
 </div>
 
 <!-- SLIDE: Finding 2 — ERGM Results -->

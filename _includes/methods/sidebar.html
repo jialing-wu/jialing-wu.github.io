@@ -1,5 +1,6 @@
 {% assign current_file = page.url | split: '/' | last %}<aside class="sidebar" id="sidebar">
   <a class="sb-brand" href="/methods/index.html"><h2>Methods <span>Notebook</span></h2><div class="sb-sub">Jialing Wu</div></a>
+  <a class="sb-web-link" href="https://jialing-wu.github.io" style="display:block;font-family:var(--sans);font-size:11px;color:var(--ink-ghost);text-decoration:none;padding:0 20px 12px;letter-spacing:.03em;transition:color .2s">&larr; My Website</a>
 
   {% for group in site.data.methods_nav %}
     {% if group.category == "__home__" %}
@@ -29,6 +30,5 @@
     {% endif %}
   {% endfor %}
 
-  <div class="sb-footer"><a href="https://jialing-wu.github.io">&larr; My Website</a></div>
 </aside>
 <div class="sidebar-overlay" id="overlay" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"></div>
