@@ -82,6 +82,12 @@ body.presenting .vis-panel svg{max-width:440px;margin:0 auto;display:block}
 body.presenting .vis-caption{font-size:13px;margin-top:14px}
 body.presenting .vis-label{font-size:12px}
 
+/* Figures: constrain size so page doesn't overflow */
+.figure img{max-width:55%;padding:10px}
+.figure{margin:16px 0}
+.vis-row{margin:18px 0}
+.vis-panel svg{max-height:180px}
+
 /* Presentation: check cards */
 body.presenting .check-grid{gap:20px;margin:28px 0}
 body.presenting .check-card{padding:24px 22px}
@@ -963,44 +969,44 @@ body.presenting .pres-progress{display:block;
   <h2 data-lang="en">References &amp; Software</h2>
   <h2 data-lang="zh">参考文献与软件</h2>
 
-  <div class="check-grid" style="grid-template-columns:1fr 1fr">
-    <div class="check-card">
+  <div class="check-grid" style="grid-template-columns:1fr 1fr;gap:10px;margin:14px 0">
+    <div class="check-card" style="padding:14px 16px">
       <div class="check-icon">01</div>
       <div class="check-title" data-lang="en">Beginner Guide</div>
-      <div class="check-desc" data-lang="en">Nylund-Gibson, K., &amp; Choi, A. Y. (2018). Ten frequently asked questions about latent class analysis. <em>Translational Issues in Psychological Science, 4</em>(4), 440–461. <a href="https://doi.org/10.1037/tps0000176" target="_blank">DOI</a></div>
+      <div class="check-desc" data-lang="en">Nylund-Gibson &amp; Choi (2018). Ten frequently asked questions about LCA. <em>Translational Issues in Psych Science, 4</em>(4). <a href="https://doi.org/10.1037/tps0000176" target="_blank">DOI</a></div>
     </div>
-    <div class="check-card">
+    <div class="check-card" style="padding:14px 16px">
       <div class="check-icon">02</div>
       <div class="check-title" data-lang="en">Fit Indices</div>
-      <div class="check-desc" data-lang="en">Nylund, K. L., Asparouhov, T., &amp; Muthén, B. O. (2007). Deciding on the number of classes in LCA and GMM: A Monte Carlo simulation study. <em>Structural Equation Modeling, 14</em>(4), 535–569. <a href="https://doi.org/10.1080/10705510701575396" target="_blank">DOI</a></div>
+      <div class="check-desc" data-lang="en">Nylund, Asparouhov &amp; Muthén (2007). Deciding on the number of classes in LCA/GMM. <em>Structural Equation Modeling, 14</em>(4). <a href="https://doi.org/10.1080/10705510701575396" target="_blank">DOI</a></div>
     </div>
-    <div class="check-card">
+    <div class="check-card" style="padding:14px 16px">
       <div class="check-icon">03</div>
       <div class="check-title" data-lang="en">Multi-Group</div>
-      <div class="check-desc" data-lang="en">Morin, A. J. S., Meyer, J. P., Creusier, J., &amp; Biétry, F. (2016). Multiple-group analysis of similarity in latent profile solutions. <em>Organizational Research Methods, 19</em>(2), 231–254. <a href="https://doi.org/10.1177/1094428115621148" target="_blank">DOI</a></div>
+      <div class="check-desc" data-lang="en">Morin, Meyer, Creusier &amp; Biétry (2016). Multiple-group analysis of similarity in latent profile solutions. <em>ORM, 19</em>(2). <a href="https://doi.org/10.1177/1094428115621148" target="_blank">DOI</a></div>
     </div>
-    <div class="check-card">
+    <div class="check-card" style="padding:14px 16px">
       <div class="check-icon">04</div>
       <div class="check-title" data-lang="en">Applied Example</div>
-      <div class="check-desc" data-lang="en">Wang, C. K. J., Liu, W. C., Nie, Y., et al. (2017). Latent profile analysis of students' motivation and outcomes. <em>Heliyon, 3</em>(6), e00308. <a href="https://doi.org/10.1016/j.heliyon.2017.e00308" target="_blank">Open Access</a></div>
+      <div class="check-desc" data-lang="en">Wang, Liu, Nie et al. (2017). LPA of students' motivation and outcomes. <em>Heliyon, 3</em>(6). <a href="https://doi.org/10.1016/j.heliyon.2017.e00308" target="_blank">Open Access</a></div>
     </div>
   </div>
 
-  <div class="check-grid" style="grid-template-columns:1fr 1fr 1fr">
-    <div class="check-card">
+  <div class="check-grid" style="grid-template-columns:1fr 1fr 1fr;gap:10px;margin:10px 0">
+    <div class="check-card" style="padding:14px 16px">
       <div class="check-icon" style="background:var(--gold)">M+</div>
       <div class="check-title" data-lang="en">Mplus</div>
-      <div class="check-desc" data-lang="en">Gold standard. Most flexible, best support for LPA/LCA.</div>
+      <div class="check-desc" data-lang="en">Gold standard. Most flexible for LPA/LCA.</div>
     </div>
-    <div class="check-card">
+    <div class="check-card" style="padding:14px 16px">
       <div class="check-icon">R</div>
       <div class="check-title" data-lang="en">R — tidyLPA</div>
-      <div class="check-desc" data-lang="en">Free, user-friendly. Good for learning and basic analyses.</div>
+      <div class="check-desc" data-lang="en">Free, user-friendly. Good for learning.</div>
     </div>
-    <div class="check-card">
+    <div class="check-card" style="padding:14px 16px">
       <div class="check-icon">Py</div>
       <div class="check-title" data-lang="en">Python — sklearn</div>
-      <div class="check-desc" data-lang="en">Gaussian Mixture. Lacks BLRT/entropy but adequate for exploration.</div>
+      <div class="check-desc" data-lang="en">Gaussian Mixture. Adequate for exploration.</div>
     </div>
   </div>
 </div>
