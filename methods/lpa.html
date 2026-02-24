@@ -601,32 +601,15 @@ body.presenting .pres-progress{display:block;
 <!-- ═════════════════════════════════════════════════════════
      SLIDE 3b: PROBABILISTIC CLASSIFICATION & FIT
      ═════════════════════════════════════════════════════════ -->
-<div class="slide" id="slide-classification-fit">
+<div class="slide" id="slide-classification">
   <div class="slide-num" data-lang="en">Part 1 · Slide 4</div>
-  <h2 data-lang="en">Probabilistic Classification &amp; Fit Indices</h2>
-  <h2 data-lang="zh">概率性分类与拟合指标</h2>
+  <h2 data-lang="en">Probabilistic Classification</h2>
+  <h2 data-lang="zh">概率性分类</h2>
 
-  <div class="method-desc" data-lang="en">Each individual has a probability of belonging to each class — not hard assignment. Classification uses the highest posterior probability.</div>
-  <div class="method-desc" data-lang="zh">每个个体都有属于每个类别的概率——不是硬性分配。最终分类取后验概率最高的类别。</div>
-  <div class="method-desc" data-lang="en"><em>i.e.:</em> A student has 82% probability of belonging to Profile 1, 13% to Profile 2, 5% to Profile 3. We assign them to Profile 1, but acknowledge 18% uncertainty. This is softer than hard clustering (like k-means) which forces 100% membership.</div>
-  <div class="method-desc" data-lang="zh"><em>i.e.:</em> 某学生属于 Profile 1 的概率 82%、Profile 2 的概率 13%、Profile 3 的概率 5%。我们把他归入 Profile 1，但承认有 18% 的不确定性。这比硬聚类（如 k-means 强制 100% 归属）更柔和。</div>
-
-  <div class="check-grid" style="grid-template-columns:1fr 1fr">
-    <div class="check-card">
-      <div class="check-icon">BIC</div>
-      <div class="check-title" data-lang="en">Bayesian Information Criterion</div>
-      <div class="check-title" data-lang="zh">贝叶斯信息准则</div>
-      <div class="check-desc" data-lang="en">Lower = better. Measures model fit minus a "complexity tax" — penalizes adding more classes to prevent overfitting.</div>
-      <div class="check-desc" data-lang="zh">越低越好。衡量模型拟合质量减去"复杂度税"——惩罚添加更多类别以防过拟合。</div>
-    </div>
-    <div class="check-card">
-      <div class="check-icon">BLRT</div>
-      <div class="check-title" data-lang="en">Bootstrapped LRT &amp; Entropy</div>
-      <div class="check-title" data-lang="zh">自助似然比检验 &amp; 熵</div>
-      <div class="check-desc" data-lang="en">BLRT tests whether adding one more class significantly improves fit. Entropy (0–1) measures classification precision; values &gt;&nbsp;.80 indicate good quality.</div>
-      <div class="check-desc" data-lang="zh">BLRT 检验添加一个类别是否显著改善拟合。Entropy（0–1）衡量分类精度，&gt; .80 表示质量好。</div>
-    </div>
-  </div>
+  <div class="method-desc" data-lang="en">Unlike hard clustering (e.g., k-means), LPA gives each individual a <strong>probability</strong> of belonging to each class. Classification uses the highest posterior probability, but uncertainty is preserved.</div>
+  <div class="method-desc" data-lang="zh">与硬聚类（如 k-means）不同，LPA 为每个个体给出属于每个类别的<strong>概率</strong>。分类取后验概率最高的类别，但保留不确定性。</div>
+  <div class="method-desc" data-lang="en"><em>i.e.:</em> A student has 82% probability of belonging to Profile 1, 13% to Profile 2, 5% to Profile 3. We assign them to Profile 1, but acknowledge 18% uncertainty. This is softer than hard clustering which forces 100% membership.</div>
+  <div class="method-desc" data-lang="zh"><em>i.e.:</em> 某学生属于 Profile 1 的概率 82%、Profile 2 的概率 13%、Profile 3 的概率 5%。我们把他归入 Profile 1，但承认有 18% 的不确定性。这比硬聚类（强制 100% 归属）更柔和。</div>
 </div>
 
 <hr class="section-divider pres-hide">
