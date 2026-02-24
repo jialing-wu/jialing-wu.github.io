@@ -67,33 +67,8 @@ body{background:var(--paper);color:var(--ink-soft);font-family:var(--body);font-
 /* CONTENT AREA */
 .content{max-width:860px;padding:40px 48px 64px}
 
-/* BILINGUAL TOGGLE */
-[data-lang="zh"]{display:none}
-body.zh [data-lang="zh"]{display:block}
-body.zh [data-lang="en"]{display:none}
-/* Correct display types for non-block elements */
-body.zh li[data-lang="zh"]{display:list-item}
-body.zh span[data-lang="zh"]{display:inline}
-body.zh code[data-lang="zh"]{display:inline}
-body.zh a[data-lang="zh"]{display:inline}
-body.zh strong[data-lang="zh"]{display:inline}
-body.zh em[data-lang="zh"]{display:inline}
-li[data-lang="en"]{display:list-item}
-span[data-lang="en"]{display:inline}
-code[data-lang="en"]{display:inline}
-a[data-lang="en"]{display:inline}
 /* Keep problem-index links as block for line breaks */
-.problem-index a[data-lang="en"]{display:block}
-body.zh .problem-index a[data-lang="zh"]{display:block}
-body.zh li[data-lang="en"]{display:none}
-body.zh span[data-lang="en"]{display:none}
-body.zh code[data-lang="en"]{display:none}
-body.zh a[data-lang="en"]{display:none}
-/* Keep spans inline inside summary, sidebar, toc-label */
-summary [data-lang],.sidebar [data-lang],.toc-label [data-lang],.breadcrumb [data-lang],.page-nav [data-lang]{display:inline!important}
-summary [data-lang="zh"],.sidebar [data-lang="zh"],.toc-label [data-lang="zh"],.breadcrumb [data-lang="zh"],.page-nav [data-lang="zh"]{display:none!important}
-body.zh summary [data-lang="zh"],body.zh .sidebar [data-lang="zh"],body.zh .toc-label [data-lang="zh"],body.zh .breadcrumb [data-lang="zh"],body.zh .page-nav [data-lang="zh"]{display:inline!important}
-body.zh summary [data-lang="en"],body.zh .sidebar [data-lang="en"],body.zh .toc-label [data-lang="en"],body.zh .breadcrumb [data-lang="en"],body.zh .page-nav [data-lang="en"]{display:none!important}
+.problem-index a{display:block}
 
 /* INDEX PAGE */
 .idx-header{margin-bottom:40px}

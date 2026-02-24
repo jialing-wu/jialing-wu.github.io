@@ -1,27 +1,11 @@
 <script>
-/* ── Language toggle ──────────────────────────────────── */
-function setLang(lang) {
-  document.body.className = lang;
-  var btnEn = document.getElementById('btn-en');
-  var btnZh = document.getElementById('btn-zh');
-  if (btnEn && btnZh) {
-    btnEn.style.fontWeight = (lang === 'en') ? '600' : '400';
-    btnZh.style.fontWeight = (lang === 'zh') ? '600' : '400';
-    btnEn.style.color = (lang === 'en') ? 'var(--red)' : 'var(--ink-faded)';
-    btnZh.style.color = (lang === 'zh') ? 'var(--red)' : 'var(--ink-faded)';
-  }
-  localStorage.setItem('preferred-lang', lang);
-  updateTOCLang(lang);
-}
-
+/* ── Language init (English only) ──────────────────── */
 window.addEventListener('DOMContentLoaded', function() {
-  var saved = 'en';
-  setLang(saved);
+  document.body.className = 'en';
   buildPageTOC();
-  updateTOCLang(saved);
 });
 
-/* ── Right-side TOC (bilingual) ─────────────────────── */
+/* ── Right-side TOC ────────────────────────────────── */
 function buildPageTOC() {
   var content = document.querySelector('.content');
   var main    = document.querySelector('.main');
@@ -31,35 +15,10 @@ function buildPageTOC() {
   var items = [];
   var autoId = 0;
 
-  // Collect EN headings; find paired ZH sibling
-  content.querySelectorAll('h2[data-lang="en"], h3[data-lang="en"], h2:not([data-lang]), h3:not([data-lang])').forEach(function(h) {
-    if (h.dataset.lang === 'zh') return;
-    var textEn, textZh;
+  content.querySelectorAll('h2, h3').forEach(function(h) {
     var level  = h.tagName === 'H2' ? 2 : 3;
     var anchorId = 'toc-' + (autoId++);
-
-    // Check for inner <span data-lang> elements (format: <h2><span data-lang="en">...</span><span data-lang="zh">...</span></h2>)
-    var innerEn = h.querySelector('[data-lang="en"]');
-    var innerZh = h.querySelector('[data-lang="zh"]');
-    if (innerEn) {
-      textEn = innerEn.textContent.trim();
-      textZh = innerZh ? innerZh.textContent.trim() : textEn;
-    } else {
-      textEn = h.textContent.trim();
-      textZh = textEn; // fallback
-
-      // Look for ZH sibling (next or previous element with same tag and data-lang="zh")
-      var tag = h.tagName;
-      var sib = h.nextElementSibling;
-      if (sib && sib.tagName === tag && sib.dataset.lang === 'zh') {
-        textZh = sib.textContent.trim();
-      } else {
-        sib = h.previousElementSibling;
-        if (sib && sib.tagName === tag && sib.dataset.lang === 'zh') {
-          textZh = sib.textContent.trim();
-        }
-      }
-    }
+    var text = h.textContent.trim();
 
     var anchor = document.createElement('span');
     anchor.id = anchorId;
@@ -67,14 +26,14 @@ function buildPageTOC() {
     anchor.style.cssText = 'display:block;position:relative;top:-' + (topbarH + 8) + 'px;visibility:hidden;pointer-events:none;height:0';
     h.parentNode.insertBefore(anchor, h);
 
-    items.push({ id: anchorId, textEn: textEn, textZh: textZh, level: level });
+    items.push({ id: anchorId, text: text, level: level });
   });
 
   if (items.length === 0) return;
 
   var toc = document.createElement('nav');
   toc.className = 'page-toc';
-  toc.innerHTML = '<div class="toc-label"><span data-lang="en">Contents</span><span data-lang="zh">目录</span></div>';
+  toc.innerHTML = '<div class="toc-label">Contents</div>';
 
   var ul = document.createElement('ul');
   ul.className = 'toc-list';
@@ -84,9 +43,7 @@ function buildPageTOC() {
     li.dataset.id = item.id;
     var a = document.createElement('a');
     a.href = '#' + item.id;
-    a.dataset.textEn = item.textEn;
-    a.dataset.textZh = item.textZh;
-    a.textContent = item.textEn;
+    a.textContent = item.text;
     li.appendChild(a);
     ul.appendChild(li);
   });
@@ -109,14 +66,6 @@ function buildPageTOC() {
   items.forEach(function(item) {
     var el = document.getElementById(item.id);
     if (el) observer.observe(el);
-  });
-}
-
-/* ── Update TOC text when language changes ──────────── */
-function updateTOCLang(lang) {
-  var links = document.querySelectorAll('.toc-item a[data-text-en]');
-  links.forEach(function(a) {
-    a.textContent = (lang === 'zh') ? a.dataset.textZh : a.dataset.textEn;
   });
 }
 </script>
