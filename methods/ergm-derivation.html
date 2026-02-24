@@ -2,7 +2,6 @@
 layout: methods-course
 title: "ERGM Derivation"
 breadcrumb: "Computational Social Science"
-bilingual: true
 mathjax: true
 ---
 
@@ -244,8 +243,7 @@ body.presenting .pres-progress{
 <!-- PRESENTATION TOGGLE -->
 <button class="pres-toggle" onclick="togglePresentation()">
   <span class="pres-icon">▶</span>
-  <span data-lang="en">Presentation Mode</span>
-  <span data-lang="zh">演示模式</span>
+  <span>Presentation Mode</span>
 </button>
 
 <!-- ═══════════════════════════════════════════════════ -->
@@ -253,22 +251,17 @@ body.presenting .pres-progress{
 <!-- ═══════════════════════════════════════════════════ -->
 <div class="slide" id="slide-title">
   <div class="method-header">
-    <h1 data-lang="en">ERGM Mathematical Derivation</h1>
-    <h1 data-lang="zh">ERGM 数学推导</h1>
+    <h1>ERGM Mathematical Derivation</h1>
     <div class="method-meta">Computational Social Science · Network Analysis</div>
   </div>
   <div class="intro-cards">
     <div class="intro-card">
-      <div class="card-label" data-lang="en">What Is This?</div>
-      <div class="card-label" data-lang="zh">这是什么？</div>
-      <div data-lang="en"><p>A step-by-step mathematical derivation of the Exponential Random Graph Model (ERGM). We start from a simple question — "what is the probability of observing this network?" — and arrive at a logistic regression form.</p></div>
-      <div data-lang="zh"><p>指数随机图模型（ERGM）的逐步数学推导。我们从一个简单问题出发——"观察到这个网络的概率是多少？"——最终推导出逻辑回归的形式。</p></div>
+      <div class="card-label">What Is This?</div>
+      <div><p>A step-by-step mathematical derivation of the Exponential Random Graph Model (ERGM). We start from a simple question — "what is the probability of observing this network?" — and arrive at a logistic regression form.</p></div>
     </div>
     <div class="intro-card">
-      <div class="card-label" data-lang="en">Prerequisites</div>
-      <div class="card-label" data-lang="zh">前置知识</div>
-      <div data-lang="en"><p>Familiarity with basic network concepts (nodes, edges, adjacency matrix). Basic understanding of probability and logarithms. No prior ERGM knowledge needed.</p></div>
-      <div data-lang="zh"><p>熟悉基本网络概念（节点、边、邻接矩阵）。了解概率和对数基础知识。无需 ERGM 先验知识。</p></div>
+      <div class="card-label">Prerequisites</div>
+      <div><p>Familiarity with basic network concepts (nodes, edges, adjacency matrix). Basic understanding of probability and logarithms. No prior ERGM knowledge needed.</p></div>
     </div>
   </div>
 </div>
@@ -279,157 +272,120 @@ body.presenting .pres-progress{
 <!--  STEP 0: STARTING POINT                            -->
 <!-- ═══════════════════════════════════════════════════ -->
 <div class="slide" id="slide-start">
-  <div class="slide-num" data-lang="en">Starting Point</div>
-  <div class="slide-num" data-lang="zh">出发点</div>
-  <h2 data-lang="en">What Do We Want?</h2>
-  <h2 data-lang="zh">我们想要什么？</h2>
+  <div class="slide-num">Starting Point</div>
+  <h2>What Do We Want?</h2>
 
-  <p class="method-desc" data-lang="en">We want to answer a fundamental question: <span class="red-em">what is the probability of observing a particular network \(y\)?</span> That is, among all the networks that could exist with these nodes, why did we see this specific pattern of ties?</p>
-  <p class="method-desc" data-lang="zh">我们想回答一个根本问题：<span class="red-em">观察到特定网络 \(y\) 的概率是多少？</span>也就是说，在这些节点可能构成的所有网络中，为什么我们看到了这种特定的连接模式？</p>
+  <p class="method-desc">We want to answer a fundamental question: <span class="red-em">what is the probability of observing a particular network \(y\)?</span> That is, among all the networks that could exist with these nodes, why did we see this specific pattern of ties?</p>
 
   <div class="math-block">
-    <span class="math-label" data-lang="en">The Question</span>
-    <span class="math-label" data-lang="zh">核心问题</span>
+    <span class="math-label">The Question</span>
     $$P(Y = y) = \;?$$
   </div>
 
-  <div class="method-when" data-lang="en"><strong>Goal:</strong> Build a model that assigns higher probability to networks whose structural patterns (reciprocity, triangles, etc.) match what we observe in real social systems.</div>
-  <div class="method-when" data-lang="zh"><strong>目标：</strong>构建一个模型，让结构模式（互惠、三角形等）与真实社会系统相匹配的网络获得更高的概率。</div>
+  <div class="method-when"><strong>Goal:</strong> Build a model that assigns higher probability to networks whose structural patterns (reciprocity, triangles, etc.) match what we observe in real social systems.</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════ -->
 <!--  STEP 1: THE SIMPLEST IDEA                         -->
 <!-- ═══════════════════════════════════════════════════ -->
 <div class="slide" id="slide-step1">
-  <div class="slide-num" data-lang="en">Step 1</div>
-  <div class="slide-num" data-lang="zh">第一步</div>
-  <h2 data-lang="en">The Simplest Idea</h2>
-  <h2 data-lang="zh">最简单的想法</h2>
+  <div class="slide-num">Step 1</div>
+  <h2>The Simplest Idea</h2>
 
-  <p class="method-desc" data-lang="en">If every tie in the network were <span class="red-em">independent and random</span>, every possible network would be equally likely:</p>
-  <p class="method-desc" data-lang="zh">如果网络中的每条边都是<span class="red-em">独立且随机的</span>，那么每种可能的网络都是等概率的：</p>
+  <p class="method-desc">If every tie in the network were <span class="red-em">independent and random</span>, every possible network would be equally likely:</p>
 
   <div class="math-block">
-    <span class="math-label" data-lang="en">Uniform Distribution</span>
-    <span class="math-label" data-lang="zh">均匀分布</span>
+    <span class="math-label">Uniform Distribution</span>
     $$P(Y = y) = C \quad \text{(some constant)}$$
   </div>
 
-  <div class="insight-box" data-lang="en"><strong>Problem:</strong> This is too simple — it tells us nothing about network structure. Real networks are not random: friendships cluster, advice flows to experts, and ties tend to be reciprocated. We need a model that captures these patterns.</div>
-  <div class="insight-box" data-lang="zh"><strong>问题：</strong>这太简单了——它无法告诉我们任何关于网络结构的信息。真实网络不是随机的：友谊会聚集，建议流向专家，关系倾向于互惠。我们需要一个能捕捉这些模式的模型。</div>
+  <div class="insight-box"><strong>Problem:</strong> This is too simple — it tells us nothing about network structure. Real networks are not random: friendships cluster, advice flows to experts, and ties tend to be reciprocated. We need a model that captures these patterns.</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════ -->
 <!--  STEP 2: NETWORK STRUCTURE MATTERS                 -->
 <!-- ═══════════════════════════════════════════════════ -->
 <div class="slide" id="slide-step2">
-  <div class="slide-num" data-lang="en">Step 2</div>
-  <div class="slide-num" data-lang="zh">第二步</div>
-  <h2 data-lang="en">Network Structure Matters</h2>
-  <h2 data-lang="zh">网络结构很重要</h2>
+  <div class="slide-num">Step 2</div>
+  <h2>Network Structure Matters</h2>
 
-  <p class="method-desc" data-lang="en">We want to say: certain <span class="red-em">patterns</span> (reciprocity, triangles) make a network more likely to appear. So we define a "score" for any network:</p>
-  <p class="method-desc" data-lang="zh">我们想表达：某些<span class="red-em">模式</span>（互惠、三角形）让一个网络更有可能出现。因此我们为任何网络定义一个"得分"：</p>
+  <p class="method-desc">We want to say: certain <span class="red-em">patterns</span> (reciprocity, triangles) make a network more likely to appear. So we define a "score" for any network:</p>
 
   <div class="math-block">
-    <span class="math-label" data-lang="en">Network Score</span>
-    <span class="math-label" data-lang="zh">网络得分</span>
+    <span class="math-label">Network Score</span>
     $$\text{score}(y) = \theta_1 \times g_1(y) + \theta_2 \times g_2(y)$$
   </div>
 
   <ul class="var-list">
-    <li data-lang="en">\(g_1(y)\) = number of <strong>reciprocal pairs</strong> in the network</li>
-    <li data-lang="zh">\(g_1(y)\) = 网络中<strong>互惠对</strong>的数量</li>
-    <li data-lang="en">\(g_2(y)\) = number of <strong>triangles</strong> in the network</li>
-    <li data-lang="zh">\(g_2(y)\) = 网络中<strong>三角形</strong>的数量</li>
-    <li data-lang="en">\(\theta_1, \theta_2\) = <strong>weights</strong> (parameters) for each pattern</li>
-    <li data-lang="zh">\(\theta_1, \theta_2\) = 每个模式的<strong>权重</strong>（参数）</li>
+    <li>\(g_1(y)\) = number of <strong>reciprocal pairs</strong> in the network</li>
+    <li>\(g_2(y)\) = number of <strong>triangles</strong> in the network</li>
+    <li>\(\theta_1, \theta_2\) = <strong>weights</strong> (parameters) for each pattern</li>
   </ul>
 
-  <div class="method-when" data-lang="en"><strong>Intuition:</strong> Higher score → this network is more likely to be observed. A positive \(\theta_1\) means reciprocity makes a network more probable; a negative one means reciprocity is suppressed.</div>
-  <div class="method-when" data-lang="zh"><strong>直觉：</strong>得分越高 → 该网络越可能被观察到。正的 \(\theta_1\) 意味着互惠使网络更有可能出现；负的则意味着互惠被抑制。</div>
+  <div class="method-when"><strong>Intuition:</strong> Higher score → this network is more likely to be observed. A positive \(\theta_1\) means reciprocity makes a network more probable; a negative one means reciprocity is suppressed.</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════ -->
 <!--  STEP 3: SCORE → PROBABILITY                       -->
 <!-- ═══════════════════════════════════════════════════ -->
 <div class="slide" id="slide-step3">
-  <div class="slide-num" data-lang="en">Step 3</div>
-  <div class="slide-num" data-lang="zh">第三步</div>
-  <h2 data-lang="en">Turn "Score" into "Probability"</h2>
-  <h2 data-lang="zh">将"得分"转化为"概率"</h2>
+  <div class="slide-num">Step 3</div>
+  <h2>Turn "Score" into "Probability"</h2>
 
-  <p class="method-desc" data-lang="en">Probabilities must be <span class="red-em">positive</span>, but our score can be any real number. The exponential function solves this — it maps any number to a positive value:</p>
-  <p class="method-desc" data-lang="zh">概率必须是<span class="red-em">正数</span>，但我们的得分可以是任意实数。指数函数解决了这个问题——它把任意数字映射为正值：</p>
+  <p class="method-desc">Probabilities must be <span class="red-em">positive</span>, but our score can be any real number. The exponential function solves this — it maps any number to a positive value:</p>
 
   <div class="math-block">
-    <span class="math-label" data-lang="en">Exponentiate</span>
-    <span class="math-label" data-lang="zh">取指数</span>
+    <span class="math-label">Exponentiate</span>
     $$P(Y = y) \;\propto\; \exp\!\Big(\theta_1 \cdot g_1(y) + \theta_2 \cdot g_2(y)\Big)$$
   </div>
 
-  <div class="method-when" data-lang="en"><strong>Note:</strong> The symbol \(\propto\) means "proportional to" — this is not a true probability yet because all probabilities must sum to 1. We fix that in the next step.</div>
-  <div class="method-when" data-lang="zh"><strong>注意：</strong>符号 \(\propto\) 表示"正比于"——这还不是真正的概率，因为所有概率之和必须等于 1。我们在下一步解决这个问题。</div>
+  <div class="method-when"><strong>Note:</strong> The symbol \(\propto\) means "proportional to" — this is not a true probability yet because all probabilities must sum to 1. We fix that in the next step.</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════ -->
 <!--  STEP 4: NORMALIZE                                 -->
 <!-- ═══════════════════════════════════════════════════ -->
 <div class="slide" id="slide-step4">
-  <div class="slide-num" data-lang="en">Step 4</div>
-  <div class="slide-num" data-lang="zh">第四步</div>
-  <h2 data-lang="en">Make Probabilities Sum to 1</h2>
-  <h2 data-lang="zh">让概率之和等于 1</h2>
+  <div class="slide-num">Step 4</div>
+  <h2>Make Probabilities Sum to 1</h2>
 
-  <p class="method-desc" data-lang="en">We divide by a <span class="red-em">normalizing constant</span> \(\kappa\) — the sum of the exponentiated scores over <em>every possible network</em>:</p>
-  <p class="method-desc" data-lang="zh">我们除以一个<span class="red-em">归一化常数</span> \(\kappa\)——即<em>所有可能网络</em>的指数得分之和：</p>
+  <p class="method-desc">We divide by a <span class="red-em">normalizing constant</span> \(\kappa\) — the sum of the exponentiated scores over <em>every possible network</em>:</p>
 
   <div class="math-block">
-    <span class="math-label" data-lang="en">Normalizing Constant</span>
-    <span class="math-label" data-lang="zh">归一化常数</span>
+    <span class="math-label">Normalizing Constant</span>
     $$\kappa = \sum_{y' \in \mathcal{Y}} \exp\!\Big(\theta_1 \cdot g_1(y') + \theta_2 \cdot g_2(y')\Big)$$
   </div>
 
   <div class="deriv-arrow">▼</div>
 
   <div class="math-block" style="border-left-color:var(--red)">
-    <span class="math-label" style="color:var(--red)" data-lang="en">The Full ERGM Formula</span>
-    <span class="math-label" style="color:var(--red)" data-lang="zh">完整的 ERGM 公式</span>
+    <span class="math-label" style="color:var(--red)">The Full ERGM Formula</span>
     $$\boxed{\;P(Y = y) = \frac{1}{\kappa}\,\exp\!\Big(\theta_1 \cdot g_1(y) + \theta_2 \cdot g_2(y)\Big)\;}$$
   </div>
 
-  <div class="insight-box" data-lang="en"><strong>The catch:</strong> For a network with \(n\) nodes, there are \(2^{n(n-1)}\) possible directed networks. Even with just 20 nodes, that's over \(10^{114}\) networks. Computing \(\kappa\) by brute force is impossible. But — as we'll see — it cancels out!</div>
-  <div class="insight-box" data-lang="zh"><strong>难点：</strong>对于 \(n\) 个节点的网络，共有 \(2^{n(n-1)}\) 种可能的有向网络。即使只有 20 个节点，这就超过 \(10^{114}\) 种网络。暴力计算 \(\kappa\) 是不可能的。但是——我们即将看到——它会被消掉！</div>
+  <div class="insight-box"><strong>The catch:</strong> For a network with \(n\) nodes, there are \(2^{n(n-1)}\) possible directed networks. Even with just 20 nodes, that's over \(10^{114}\) networks. Computing \(\kappa\) by brute force is impossible. But — as we'll see — it cancels out!</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════ -->
 <!--  STEP 5: ZOOM IN ON A SINGLE TIE                   -->
 <!-- ═══════════════════════════════════════════════════ -->
 <div class="slide" id="slide-step5">
-  <div class="slide-num" data-lang="en">Step 5</div>
-  <div class="slide-num" data-lang="zh">第五步</div>
-  <h2 data-lang="en">Zoom In on a Single Tie</h2>
-  <h2 data-lang="zh">聚焦单条边</h2>
+  <div class="slide-num">Step 5</div>
+  <h2>Zoom In on a Single Tie</h2>
 
-  <p class="method-desc" data-lang="en">Instead of asking about the entire network, ask a more practical question: <span class="red-em">what is the probability that the tie Alice → Bob exists?</span></p>
-  <p class="method-desc" data-lang="zh">与其询问整个网络，不如问一个更实际的问题：<span class="red-em">Alice → Bob 这条边存在的概率是多少？</span></p>
+  <p class="method-desc">Instead of asking about the entire network, ask a more practical question: <span class="red-em">what is the probability that the tie Alice → Bob exists?</span></p>
 
-  <p class="method-desc" data-lang="en">Define two network states:</p>
-  <p class="method-desc" data-lang="zh">定义两种网络状态：</p>
+  <p class="method-desc">Define two network states:</p>
 
   <ul class="var-list">
-    <li data-lang="en">\(y^+_{ij}\) = the network <strong>with</strong> the tie Alice → Bob</li>
-    <li data-lang="zh">\(y^+_{ij}\) = <strong>包含</strong> Alice → Bob 这条边的网络</li>
-    <li data-lang="en">\(y^-_{ij}\) = the network <strong>without</strong> the tie Alice → Bob</li>
-    <li data-lang="zh">\(y^-_{ij}\) = <strong>不包含</strong> Alice → Bob 这条边的网络</li>
+    <li>\(y^+_{ij}\) = the network <strong>with</strong> the tie Alice → Bob</li>
+    <li>\(y^-_{ij}\) = the network <strong>without</strong> the tie Alice → Bob</li>
   </ul>
 
-  <p class="method-desc" data-lang="en">The <strong>odds</strong> of this tie existing (holding all other ties fixed):</p>
-  <p class="method-desc" data-lang="zh">这条边存在的<strong>几率</strong>（保持所有其他边不变）：</p>
+  <p class="method-desc">The <strong>odds</strong> of this tie existing (holding all other ties fixed):</p>
 
   <div class="math-block">
-    <span class="math-label" data-lang="en">Odds of a Single Tie</span>
-    <span class="math-label" data-lang="zh">单条边的几率</span>
+    <span class="math-label">Odds of a Single Tie</span>
     $$\frac{P(Y = y^+_{ij})}{P(Y = y^-_{ij})} = \frac{\;\dfrac{1}{\kappa}\exp\!\Big(\theta_1 g_1(y^+) + \theta_2 g_2(y^+)\Big)\;}{\;\dfrac{1}{\kappa}\exp\!\Big(\theta_1 g_1(y^-) + \theta_2 g_2(y^-)\Big)\;}$$
   </div>
 </div>
@@ -438,28 +394,22 @@ body.presenting .pres-progress{
 <!--  STEP 6: κ CANCELS OUT                             -->
 <!-- ═══════════════════════════════════════════════════ -->
 <div class="slide" id="slide-step6">
-  <div class="slide-num" data-lang="en">Step 6</div>
-  <div class="slide-num" data-lang="zh">第六步</div>
-  <h2 data-lang="en">\(\kappa\) Cancels Out</h2>
-  <h2 data-lang="zh">\(\kappa\) 被消掉了</h2>
+  <div class="slide-num">Step 6</div>
+  <h2>\(\kappa\) Cancels Out</h2>
 
-  <p class="method-desc" data-lang="en">\(\kappa\) appears in both the numerator and denominator, so it <span class="red-em">disappears</span>:</p>
-  <p class="method-desc" data-lang="zh">\(\kappa\) 出现在分子和分母中，所以它<span class="red-em">消失了</span>：</p>
+  <p class="method-desc">\(\kappa\) appears in both the numerator and denominator, so it <span class="red-em">disappears</span>:</p>
 
   <div class="math-block">
-    <span class="math-label" data-lang="en">κ Cancels</span>
-    <span class="math-label" data-lang="zh">κ 约去</span>
+    <span class="math-label">κ Cancels</span>
     $$\text{odds} = \frac{\exp\!\Big(\theta_1 g_1(y^+) + \theta_2 g_2(y^+)\Big)}{\exp\!\Big(\theta_1 g_1(y^-) + \theta_2 g_2(y^-)\Big)}$$
   </div>
 
-  <p class="method-desc" data-lang="en">Using the rule \(\exp(A)/\exp(B) = \exp(A - B)\):</p>
-  <p class="method-desc" data-lang="zh">利用规则 \(\exp(A)/\exp(B) = \exp(A - B)\)：</p>
+  <p class="method-desc">Using the rule \(\exp(A)/\exp(B) = \exp(A - B)\):</p>
 
   <div class="deriv-arrow">▼</div>
 
   <div class="math-block" style="border-left-color:var(--red)">
-    <span class="math-label" style="color:var(--red)" data-lang="en">Simplified</span>
-    <span class="math-label" style="color:var(--red)" data-lang="zh">简化后</span>
+    <span class="math-label" style="color:var(--red)">Simplified</span>
     $$\text{odds} = \exp\!\Big(\theta_1\big[g_1(y^+) - g_1(y^-)\big] + \theta_2\big[g_2(y^+) - g_2(y^-)\big]\Big)$$
   </div>
 </div>
@@ -468,29 +418,22 @@ body.presenting .pres-progress{
 <!--  STEP 7: DEFINE Δg                                 -->
 <!-- ═══════════════════════════════════════════════════ -->
 <div class="slide" id="slide-step7">
-  <div class="slide-num" data-lang="en">Step 7</div>
-  <div class="slide-num" data-lang="zh">第七步</div>
-  <h2 data-lang="en">Define the Change Statistics \(\Delta g\)</h2>
-  <h2 data-lang="zh">定义变化统计量 \(\Delta g\)</h2>
+  <div class="slide-num">Step 7</div>
+  <h2>Define the Change Statistics \(\Delta g\)</h2>
 
-  <p class="method-desc" data-lang="en">The differences in the brackets have a special name — <span class="red-em">change statistics</span>:</p>
-  <p class="method-desc" data-lang="zh">括号中的差值有一个专门的名称——<span class="red-em">变化统计量</span>：</p>
+  <p class="method-desc">The differences in the brackets have a special name — <span class="red-em">change statistics</span>:</p>
 
   <div class="math-block">
-    <span class="math-label" data-lang="en">Change Statistic</span>
-    <span class="math-label" data-lang="zh">变化统计量</span>
+    <span class="math-label">Change Statistic</span>
     $$\Delta g_k = g_k(y^+_{ij}) - g_k(y^-_{ij})$$
   </div>
 
-  <div class="method-when" data-lang="en"><strong>In words:</strong> \(\Delta g_1\) answers "how much does the reciprocity count change when we add this one tie?" For example, if Bob already has a tie to Alice, then adding Alice → Bob creates one new reciprocal pair, so \(\Delta g_1 = 1\).</div>
-  <div class="method-when" data-lang="zh"><strong>通俗地说：</strong>\(\Delta g_1\) 回答的是"当我们加入这条边时，互惠数量变化了多少？"例如，如果 Bob 已经有一条指向 Alice 的边，那么加入 Alice → Bob 就创造了一对新的互惠关系，所以 \(\Delta g_1 = 1\)。</div>
+  <div class="method-when"><strong>In words:</strong> \(\Delta g_1\) answers "how much does the reciprocity count change when we add this one tie?" For example, if Bob already has a tie to Alice, then adding Alice → Bob creates one new reciprocal pair, so \(\Delta g_1 = 1\).</div>
 
-  <p class="method-desc" data-lang="en">Substituting \(\Delta g\) into our formula:</p>
-  <p class="method-desc" data-lang="zh">将 \(\Delta g\) 代入公式：</p>
+  <p class="method-desc">Substituting \(\Delta g\) into our formula:</p>
 
   <div class="math-block" style="border-left-color:var(--red)">
-    <span class="math-label" style="color:var(--red)" data-lang="en">Odds with Change Statistics</span>
-    <span class="math-label" style="color:var(--red)" data-lang="zh">用变化统计量表达的几率</span>
+    <span class="math-label" style="color:var(--red)">Odds with Change Statistics</span>
     $$\text{odds} = \exp\!\Big(\theta_1 \,\Delta g_1 + \theta_2 \,\Delta g_2\Big)$$
   </div>
 </div>
@@ -499,25 +442,19 @@ body.presenting .pres-progress{
 <!--  STEP 8: LOG → LOGISTIC REGRESSION                 -->
 <!-- ═══════════════════════════════════════════════════ -->
 <div class="slide" id="slide-step8">
-  <div class="slide-num" data-lang="en">Step 8</div>
-  <div class="slide-num" data-lang="zh">第八步</div>
-  <h2 data-lang="en">Take the Log of Both Sides</h2>
-  <h2 data-lang="zh">对两边取对数</h2>
+  <div class="slide-num">Step 8</div>
+  <h2>Take the Log of Both Sides</h2>
 
-  <p class="method-desc" data-lang="en">Taking the natural logarithm:</p>
-  <p class="method-desc" data-lang="zh">取自然对数：</p>
+  <p class="method-desc">Taking the natural logarithm:</p>
 
   <div class="math-block" style="border-left-color:var(--red)">
-    <span class="math-label" style="color:var(--red)" data-lang="en">Logistic Regression Form</span>
-    <span class="math-label" style="color:var(--red)" data-lang="zh">逻辑回归形式</span>
+    <span class="math-label" style="color:var(--red)">Logistic Regression Form</span>
     $$\boxed{\;\log(\text{odds}) = \theta_1 \times \Delta g_1 + \theta_2 \times \Delta g_2\;}$$
   </div>
 
-  <p class="method-desc" data-lang="en">This is <span class="red-em">exactly the form of logistic regression</span>. The log-odds of a tie existing is a linear combination of the change statistics, weighted by the model parameters.</p>
-  <p class="method-desc" data-lang="zh">这<span class="red-em">恰好就是逻辑回归的形式</span>。一条边存在的对数几率是变化统计量的线性组合，由模型参数加权。</p>
+  <p class="method-desc">This is <span class="red-em">exactly the form of logistic regression</span>. The log-odds of a tie existing is a linear combination of the change statistics, weighted by the model parameters.</p>
 
-  <div class="method-when" data-lang="en"><strong>Interpretation:</strong> Each \(\theta_k\) is a log-odds ratio, just like in logistic regression. For instance, if \(\theta_1 = 0.8\), then a tie that creates one new reciprocal pair has \(e^{0.8} \approx 2.2\times\) higher odds of existing.</div>
-  <div class="method-when" data-lang="zh"><strong>解读：</strong>每个 \(\theta_k\) 都是对数几率比，就像逻辑回归中一样。例如，如果 \(\theta_1 = 0.8\)，那么创造一对新互惠关系的边存在的几率高出 \(e^{0.8} \approx 2.2\) 倍。</div>
+  <div class="method-when"><strong>Interpretation:</strong> Each \(\theta_k\) is a log-odds ratio, just like in logistic regression. For instance, if \(\theta_1 = 0.8\), then a tie that creates one new reciprocal pair has \(e^{0.8} \approx 2.2\times\) higher odds of existing.</div>
 </div>
 
 <hr class="section-divider pres-hide">
@@ -526,50 +463,42 @@ body.presenting .pres-progress{
 <!--  SUMMARY: FULL DERIVATION AT A GLANCE              -->
 <!-- ═══════════════════════════════════════════════════ -->
 <div class="slide" id="slide-summary">
-  <div class="slide-num" data-lang="en">Summary</div>
-  <div class="slide-num" data-lang="zh">总结</div>
-  <h2 data-lang="en">Full Derivation at a Glance</h2>
-  <h2 data-lang="zh">推导过程一览</h2>
+  <div class="slide-num">Summary</div>
+  <h2>Full Derivation at a Glance</h2>
 
   <div class="summary-flow">
     <div class="summary-step">
-      <div class="ss-label" data-lang="en">Probability of Entire Network</div>
-      <div class="ss-label" data-lang="zh">整个网络的概率</div>
+      <div class="ss-label">Probability of Entire Network</div>
       <div class="ss-formula">$$P(Y=y) = \frac{1}{\kappa}\exp\!\Big(\textstyle\sum_k \theta_k\, g_k(y)\Big)$$</div>
     </div>
     <div class="summary-arrow">▼</div>
     <div class="summary-step" style="font-family:var(--sans);font-size:12px;color:var(--ink-ghost);letter-spacing:.04em;padding:10px 24px">
-      <span data-lang="en">divide two states → \(\kappa\) cancels</span>
-      <span data-lang="zh">两种状态相除 → \(\kappa\) 约去</span>
+      <span>divide two states → \(\kappa\) cancels</span>
     </div>
     <div class="summary-arrow">▼</div>
     <div class="summary-step">
-      <div class="ss-label" data-lang="en">Odds of a Single Tie</div>
-      <div class="ss-label" data-lang="zh">单条边的几率</div>
+      <div class="ss-label">Odds of a Single Tie</div>
       <div class="ss-formula">$$\text{odds} = \exp\!\Big(\textstyle\sum_k \theta_k\, \Delta g_k\Big)$$</div>
     </div>
     <div class="summary-arrow">▼</div>
     <div class="summary-step" style="font-family:var(--sans);font-size:12px;color:var(--ink-ghost);letter-spacing:.04em;padding:10px 24px">
-      <span data-lang="en">take log of both sides</span>
-      <span data-lang="zh">两边取对数</span>
+      <span>take log of both sides</span>
     </div>
     <div class="summary-arrow">▼</div>
     <div class="summary-step" style="border-color:var(--red);border-left:3px solid var(--red)">
-      <div class="ss-label" style="color:var(--red)" data-lang="en">Logistic Regression Form</div>
-      <div class="ss-label" style="color:var(--red)" data-lang="zh">逻辑回归形式</div>
+      <div class="ss-label" style="color:var(--red)">Logistic Regression Form</div>
       <div class="ss-formula">$$\log(\text{odds}) = \textstyle\sum_k \theta_k\, \Delta g_k$$</div>
     </div>
   </div>
 
-  <div class="insight-box" data-lang="en"><strong>The key insight:</strong> \(\kappa\) is computationally intractable — but it cancels naturally in the derivation. This is why we can estimate \(\theta\) using MCMC (Markov Chain Monte Carlo) without ever computing \(\kappa\) directly.</div>
-  <div class="insight-box" data-lang="zh"><strong>核心洞察：</strong>\(\kappa\) 在计算上是不可解的——但它在推导中自然消去了。这就是为什么我们可以用 MCMC（马尔可夫链蒙特卡罗）估计 \(\theta\)，而无需直接计算 \(\kappa\)。</div>
+  <div class="insight-box"><strong>The key insight:</strong> \(\kappa\) is computationally intractable — but it cancels naturally in the derivation. This is why we can estimate \(\theta\) using MCMC (Markov Chain Monte Carlo) without ever computing \(\kappa\) directly.</div>
 </div>
 
 <!-- PAGE NAV -->
 <div class="page-nav pres-hide">
   <a class="pn-link pn-prev" href="sample-network-intro.html">
     <span class="pn-arrow">&larr;</span>
-    <span><span class="pn-title" data-lang="en">Network Analysis</span><span class="pn-title" data-lang="zh">网络分析</span></span>
+    <span><span class="pn-title">Network Analysis</span></span>
   </a>
 </div>
 

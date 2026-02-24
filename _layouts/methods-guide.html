@@ -47,16 +47,10 @@
     <div class="topbar">
       <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show')"><span></span></button>
       <div class="breadcrumb">
-        <a href="/methods/{{ page.parent_url }}"><span data-lang="en">{{ page.parent_title }}</span>{% if page.parent_title_zh %}<span data-lang="zh">{{ page.parent_title_zh }}</span>{% endif %}</a>
+        <a href="/methods/{{ page.parent_url }}">{{ page.parent_title }}</a>
         <span class="sep">/</span>
-        <span data-lang="en">{{ page.title }}</span>{% if page.title_zh %}<span data-lang="zh">{{ page.title_zh }}</span>{% endif %}
+        {{ page.title }}
       </div>
-      {% if page.bilingual %}
-      <div class="topbar-lang">
-        <button class="lang-btn" id="btn-zh" onclick="setLang('zh')">中文</button>
-        <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
-      </div>
-      {% endif %}
     </div>
     <div class="content method-page">
       {{ content }}
