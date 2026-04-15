@@ -220,11 +220,17 @@ footer.cv-screen-only {
 }
 
 @media print {
+  /* Override the site's --body/--display font variables so *every*
+     element that reads var(--body) picks up the locally-hosted font.
+     Chrome then embeds it as Type0 (proper font) instead of rasterizing
+     CDN-loaded fonts to Type3 (blurry in desktop viewers). */
+  :root {
+    --body: 'EB Garamond Local', 'EB Garamond', Georgia, serif;
+    --display: 'EB Garamond Local', 'EB Garamond', Georgia, serif;
+  }
   html, body {
     background: #fff !important;
     color: #000 !important;
-    /* Force local font so Chrome embeds it properly (Type0) instead of
-       rasterizing CDN-loaded fonts to Type3 */
     font-family: 'EB Garamond Local', 'EB Garamond', Georgia, serif !important;
   }
   body::after { display: none !important; }
