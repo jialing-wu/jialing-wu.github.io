@@ -9,6 +9,17 @@ permalink: /cv/
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ site.data.cv.name }} — Curriculum Vitae</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Locally-hosted fonts for reliable PDF embedding (Puppeteer/Chrome
+     rasterizes CDN web fonts to Type3, which looks wrong in desktop
+     PDF viewers. Local @font-face → proper Type0 CIDFont embedding.) */
+  @font-face { font-family: 'EB Garamond Local'; src: url('{{ "/assets/fonts/eb-garamond/EBGaramond-Regular.ttf" | relative_url }}') format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'EB Garamond Local'; src: url('{{ "/assets/fonts/eb-garamond/EBGaramond-Italic.ttf" | relative_url }}') format('truetype'); font-weight: 400; font-style: italic; font-display: swap; }
+  @font-face { font-family: 'EB Garamond Local'; src: url('{{ "/assets/fonts/eb-garamond/EBGaramond-Medium.ttf" | relative_url }}') format('truetype'); font-weight: 500; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'EB Garamond Local'; src: url('{{ "/assets/fonts/eb-garamond/EBGaramond-MediumItalic.ttf" | relative_url }}') format('truetype'); font-weight: 500; font-style: italic; font-display: swap; }
+  @font-face { font-family: 'EB Garamond Local'; src: url('{{ "/assets/fonts/eb-garamond/EBGaramond-SemiBold.ttf" | relative_url }}') format('truetype'); font-weight: 600; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'EB Garamond Local'; src: url('{{ "/assets/fonts/eb-garamond/EBGaramond-SemiBoldItalic.ttf" | relative_url }}') format('truetype'); font-weight: 600; font-style: italic; font-display: swap; }
+</style>
 <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
 <link rel="stylesheet" href="{{ '/assets/css/cv.css' | relative_url }}">
 <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" type="image/x-icon">

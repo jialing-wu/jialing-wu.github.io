@@ -223,6 +223,9 @@ footer.cv-screen-only {
   html, body {
     background: #fff !important;
     color: #000 !important;
+    /* Force local font so Chrome embeds it properly (Type0) instead of
+       rasterizing CDN-loaded fonts to Type3 */
+    font-family: 'EB Garamond Local', 'EB Garamond', Georgia, serif !important;
   }
   body::after { display: none !important; }
 
@@ -245,7 +248,7 @@ footer.cv-screen-only {
 
   /* Header */
   .cv-name {
-    font-family: 'EB Garamond', Georgia, serif;
+    font-family: 'EB Garamond Local', 'EB Garamond', Georgia, serif;
     font-size: 20pt;
     font-weight: 700;
     color: #000;
@@ -259,7 +262,7 @@ footer.cv-screen-only {
   /* Sections */
   .cv-section { margin-top: 10pt; page-break-inside: auto; }
   .cv-section-title {
-    font-family: 'EB Garamond', Georgia, serif;
+    font-family: 'EB Garamond Local', 'EB Garamond', Georgia, serif;
     font-size: 12pt;
     font-weight: 700;
     font-variant: small-caps;
