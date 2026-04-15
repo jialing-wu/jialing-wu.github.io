@@ -1,0 +1,207 @@
+---
+layout: null
+permalink: /cv/
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ site.data.cv.name }} — Curriculum Vitae</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/assets/css/cv.css' | relative_url }}">
+<link rel="icon" href="{{ '/favicon.ico' | relative_url }}" type="image/x-icon">
+<meta name="description" content="Curriculum Vitae of {{ site.data.cv.name }}">
+</head>
+<body>
+
+<nav id="nav" class="cv-screen-only"><div class="nav-inner">
+  <a class="nav-brand" href="{{ '/' | relative_url }}">Jialing Wu</a>
+  <ul class="nav-links">
+    <li><a href="{{ '/index.html' | relative_url }}">Bio</a></li>
+    <li><a href="{{ '/background.html' | relative_url }}">Background</a></li>
+    <li><a href="{{ '/publications.html' | relative_url }}">Publications</a></li>
+    <li><a href="{{ '/teaching.html' | relative_url }}">Teaching</a></li>
+    <li><a href="{{ '/projects.html' | relative_url }}">Projects</a></li>
+    <li><a href="{{ '/resources.html' | relative_url }}">Resources</a></li>
+    <li><a href="{{ '/methods/index.html' | relative_url }}">Methods Notebook</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('open');this.previousElementSibling.classList.toggle('open')"><span></span></button>
+</div></nav>
+
+<div class="cv-toolbar cv-screen-only">
+  <div class="cv-toolbar-inner">
+    <span class="cv-toolbar-label">Curriculum Vitae</span>
+    <div class="cv-toolbar-actions">
+      <a href="{{ '/assets/docs/Jialing_Wu_CV.pdf' | relative_url }}" class="btn-main" target="_blank">Download PDF</a>
+      <button type="button" class="btn-link" onclick="window.print()">Print</button>
+    </div>
+  </div>
+</div>
+
+<main class="cv-sheet">
+
+  {%- assign cv = site.data.cv -%}
+
+  <header class="cv-header">
+    <h1 class="cv-name">{{ cv.name }}</h1>
+    <div class="cv-contact">
+      {{ cv.contact.address }}<br>
+      {{ cv.contact.phone }}
+      <span class="cv-sep">|</span>
+      <a href="mailto:{{ cv.contact.email }}">{{ cv.contact.email }}</a>
+      <span class="cv-sep">|</span>
+      <a href="{{ cv.contact.website_url }}">{{ cv.contact.website_label }}</a>
+    </div>
+  </header>
+
+  <!-- Research Areas -->
+  <section class="cv-section">
+    <h2 class="cv-section-title">Research Areas</h2>
+    <div class="cv-prose">
+      {{ cv.research_areas | join: "; " }}
+    </div>
+  </section>
+
+  <!-- Education -->
+  <section class="cv-section">
+    <h2 class="cv-section-title">Education</h2>
+    {% for e in cv.education %}
+    <div class="cv-entry">
+      <div class="cv-date">{{ e.date }}</div>
+      <div class="cv-body">
+        <div class="cv-entry-title">{{ e.institution }}{% if e.location %}, <em>{{ e.location }}</em>{% endif %}</div>
+        <div class="cv-entry-sub">{{ e.degree }}</div>
+        {% if e.notes %}
+          {% for n in e.notes %}<div class="cv-entry-note">{{ n }}</div>{% endfor %}
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- Publications -->
+  <section class="cv-section">
+    <h2 class="cv-section-title">Publications</h2>
+    {% for grp in cv.publications %}
+      <div class="cv-pub-group">
+        <div class="cv-entry">
+          <div class="cv-date"></div>
+          <div class="cv-body"><div class="cv-pub-header">{{ grp.group }}</div></div>
+        </div>
+        {% for p in grp.items %}
+        <div class="cv-entry">
+          <div class="cv-date">{{ p.date }}</div>
+          <div class="cv-body cv-pub-item">{{ p.citation }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </section>
+
+  <!-- Research Experience -->
+  <section class="cv-section">
+    <h2 class="cv-section-title">Research Experience</h2>
+    {% for r in cv.research_experience %}
+    <div class="cv-entry">
+      <div class="cv-date">{{ r.date }}</div>
+      <div class="cv-body">
+        <div class="cv-entry-title">{{ r.title }}{% if r.location %}, <em>{{ r.location }}</em>{% endif %}</div>
+        {% if r.role %}<div class="cv-entry-sub"><em>{{ r.role }}</em></div>{% endif %}
+        {% if r.description and r.description != "" %}<div class="cv-entry-desc">{{ r.description }}</div>{% endif %}
+        {% if r.bullets %}
+        <ul class="cv-bullets">
+          {% for b in r.bullets %}<li>{{ b }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- Industry Experience -->
+  <section class="cv-section">
+    <h2 class="cv-section-title">Industry Experience</h2>
+    {% for r in cv.industry_experience %}
+    <div class="cv-entry">
+      <div class="cv-date">{{ r.date }}</div>
+      <div class="cv-body">
+        <div class="cv-entry-title">{{ r.title }}{% if r.location %}, <em>{{ r.location }}</em>{% endif %}</div>
+        {% if r.role %}<div class="cv-entry-sub"><em>{{ r.role }}</em></div>{% endif %}
+        {% if r.description and r.description != "" %}<div class="cv-entry-desc">{{ r.description }}</div>{% endif %}
+        {% if r.bullets %}
+        <ul class="cv-bullets">
+          {% for b in r.bullets %}<li>{{ b }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- Training and Certificates -->
+  <section class="cv-section">
+    <h2 class="cv-section-title">Training and Certificates</h2>
+    {% for t in cv.training %}
+    <div class="cv-entry">
+      <div class="cv-date">{{ t.date }}</div>
+      <div class="cv-body">
+        <div class="cv-entry-title-inline"><strong>{{ t.title }}</strong>, {{ t.institution }}</div>
+        {% if t.topics %}<div class="cv-entry-note">Topics: {{ t.topics }}</div>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- Scholarships and Awards -->
+  <section class="cv-section">
+    <h2 class="cv-section-title">Scholarships and Awards</h2>
+    {% for a in cv.awards %}
+    <div class="cv-entry">
+      <div class="cv-date">{{ a.date }}</div>
+      <div class="cv-body">
+        <div class="cv-entry-title-inline"><strong>{{ a.title }}</strong>{% if a.org %}, {{ a.org }}{% endif %}</div>
+        {% if a.notes %}<div class="cv-entry-note">{{ a.notes }}</div>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- Leadership and Service -->
+  <section class="cv-section">
+    <h2 class="cv-section-title">Leadership and Service</h2>
+    {% for s in cv.service %}
+    <div class="cv-entry">
+      <div class="cv-date">{{ s.date }}</div>
+      <div class="cv-body">{{ s.text }}</div>
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- Skills -->
+  <section class="cv-section">
+    <h2 class="cv-section-title">Skills</h2>
+    {% for s in cv.skills %}
+    <div class="cv-entry">
+      <div class="cv-date">{{ s.label }}</div>
+      <div class="cv-body">{{ s.text }}</div>
+    </div>
+    {% endfor %}
+  </section>
+
+</main>
+
+<footer class="cv-screen-only">
+  <div class="foot-l">© {{ 'now' | date: "%Y" }} {{ cv.name }}</div>
+  <div class="foot-r">
+    <a href="{{ '/' | relative_url }}">Home</a>
+    <a href="{{ '/assets/docs/Jialing_Wu_CV.pdf' | relative_url }}" target="_blank">PDF</a>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40));
+</script>
+</body>
+</html>
