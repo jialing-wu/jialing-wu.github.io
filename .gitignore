@@ -2,6 +2,17 @@
 *.DS_Store
 Thumbs.db
 
+# ── Jekyll build output (local preview) ──
+_site/
+.jekyll-cache/
+.jekyll-metadata
+Gemfile.lock
+.bundle/
+vendor/
+
+# ── Node (used only by CV PDF action, local node_modules unneeded) ──
+node_modules/
+
 # ── Local-only folders ──
 methods/printer/
 methods/ICPSR SYLLBAS/
