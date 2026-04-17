@@ -2,6 +2,11 @@
 *.DS_Store
 Thumbs.db
 
+# Jekyll build output
+_site/
+.jekyll-cache/
+.jekyll-metadata
+
 # ── Local-only folders ──
 methods/printer/
 methods/ICPSR SYLLBAS/
