@@ -46,8 +46,9 @@ nav.scrolled{background:rgba(247,244,238,.93);backdrop-filter:blur(12px);box-sha
 @keyframes up{to{opacity:1;transform:translateY(0)}}
 
 /* HERO */
-.hero{position:relative;max-width:var(--shell);margin:0 auto;padding:calc(var(--navh) + 34px) var(--pad) 0;display:grid;grid-template-columns:1.5fr 0.76fr;gap:44px;align-items:start}
-.hero-text{opacity:0;transform:translateY(18px);animation:up .7s .15s cubic-bezier(.16,1,.3,1) forwards}
+.hero{position:relative;max-width:var(--shell);margin:0 auto;padding:calc(var(--navh) + 34px) var(--pad) 0;display:grid;grid-template-columns:1.5fr 0.47fr;gap:0 44px;align-items:start}
+.hero-text{display:contents}
+.hero-greeting,.hero h1,.hero-lede,.hero-actions{grid-column:1;opacity:0;transform:translateY(18px);animation:up .7s .15s cubic-bezier(.16,1,.3,1) forwards}
 .hero-greeting{font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin-bottom:14px}
 .hero h1{font-family:var(--display);font-size:clamp(2.5rem,5.2vw,4.1rem);font-weight:400;line-height:1.02;color:var(--ink);letter-spacing:-.02em;margin-bottom:24px}
 .hero h1 em{font-weight:300;font-style:italic}
@@ -57,7 +58,7 @@ nav.scrolled{background:rgba(247,244,238,.93);backdrop-filter:blur(12px);box-sha
 .hero-lede .hero-bio:first-child::first-letter{font-family:var(--display);font-weight:600;color:var(--ink);float:left;font-size:3.4em;line-height:.82;padding:.06em .12em 0 0}
 .hero-bio em{color:var(--ink-soft);font-style:italic}
 .hero-actions{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:32px}
-.hero-photo{opacity:0;transform:translateY(18px);animation:up .7s .3s cubic-bezier(.16,1,.3,1) forwards}
+.hero-photo{grid-column:2;grid-row:3/span 2;align-self:start;opacity:0;transform:translateY(18px);animation:up .7s .3s cubic-bezier(.16,1,.3,1) forwards}
 .photo-frame{background:none;border:none;padding:0;box-shadow:none}
 .photo-frame:hover{transform:none;box-shadow:none}
 .photo-img{width:100%;aspect-ratio:4/5;background:var(--warm);display:block;overflow:hidden;position:relative}
@@ -221,6 +222,7 @@ footer{border-top:none;padding:34px var(--pad);max-width:var(--shell);margin:0 a
   .nav-links.open{display:flex}
   .nav-links a{font-size:12px;padding:6px 0;display:block}
   .hero{grid-template-columns:1fr;gap:34px}
+  .hero-photo{grid-column:1;grid-row:auto}
   .hero-photo{max-width:230px;order:-1}
   .hero-lede{columns:1;max-width:62ch}
   .hero-actions{margin-top:26px}
