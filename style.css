@@ -204,3 +204,47 @@ footer{border-top:1px solid var(--parchment);padding:24px 40px;max-width:960px;m
   .news{padding-left:24px;padding-right:24px}
   .hero h1,.pg-head h1{font-size:36px}
 }
+
+/* ============ HERO KEYWORD FIELD ============ */
+/* Semantic base: a plain tag cloud. keyword-field.js upgrades it to physics
+   bodies on wide pointer devices; everywhere else this is what renders. */
+.kw-list{list-style:none;grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;padding-top:28px}
+.kw-list a{
+  display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
+  font-family:var(--body);font-size:17px;color:var(--ink-soft);text-decoration:none;
+  background:var(--paper);border:1px solid var(--parchment);border-radius:999px;
+  padding:9px 22px;box-shadow:3px 3px 0 rgba(222,212,192,.55);
+  transition:color .25s,border-color .25s;
+}
+.kw-list a:hover{color:var(--red);border-color:var(--gold-soft)}
+.kw-list li[data-accent="red"] a{color:var(--red);border-color:rgba(181,55,42,.35)}
+.kw-list li[data-accent="gold"] a{color:var(--leather);border-color:var(--gold-soft);background:#FBF7EF}
+.kw-list li[data-accent="ink"] a{color:var(--paper);background:var(--ink);border-color:var(--ink)}
+.kw-list li[data-accent="ink"] a:hover{color:var(--gold-soft)}
+
+/* live: the hero becomes the tray, the pills fall behind the copy */
+.hero.kw-stage{position:relative;overflow:hidden}
+.hero.kw-stage.is-live{padding-bottom:206px}          /* the shelf they land on */
+.hero.kw-stage .hero-text,.hero.kw-stage .hero-photo{position:relative;z-index:2}
+.hero.kw-stage.is-live .kw-list{position:absolute;inset:0;z-index:0;display:block;padding:0}
+.hero.kw-stage.is-live .kw-list li{position:absolute;top:0;left:0;will-change:transform}
+.hero.kw-stage.is-live .kw-list a{cursor:grab;user-select:none;-webkit-user-select:none}
+.hero.kw-stage.is-live.dragging .kw-list a{cursor:grabbing}
+
+/* the hint only makes sense once the pills are actually draggable */
+.hero-hint{display:none}
+.kw-live .hero-hint{
+  display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+  max-width:960px;margin:10px auto 0;padding:0 40px;
+}
+.hero-hint .kw-hint{font-family:var(--hand);font-size:16px;color:var(--ink-ghost)}
+.kw-reset{
+  font-family:var(--sans);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-ghost);background:none;border:none;border-bottom:1px solid transparent;
+  cursor:pointer;padding:0 0 2px;transition:color .3s,border-color .3s;
+}
+.kw-reset:hover{color:var(--red);border-bottom-color:var(--red)}
+
+@media(max-width:520px){
+  .kw-list a{font-size:15px;padding:7px 16px}
+}
