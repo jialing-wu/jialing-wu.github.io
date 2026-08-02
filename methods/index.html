@@ -13,6 +13,36 @@ title: "Research Methods Notebook"
   <p class="author-line">Jialing Wu &nbsp;·&nbsp; <span class="author-title">Ph.D. Student, The Ohio State University &nbsp;·&nbsp; Feb 2026</span></p>
 </div>
 
+<p class="plate-note">The chart below is that map. A line means <em>learn the method it comes from first</em>; the order follows the way the ICPSR Summer Program sequences its curriculum. Filled stars are written up, open ones are being drafted.</p>
+
+<div class="plate" id="plate" hidden>
+  <svg id="sky" viewBox="0 0 1000 720" role="img" aria-label="A chart of research methods and the order in which to learn them"></svg>
+  <div class="readout" id="readout"><span class="idle">Hover a star</span></div>
+  <div class="plate-legend">
+    <span><svg viewBox="-8 -8 16 16"><path d="M0,-7 L1.4,-2.2 L3.6,-3.6 L2.2,-1.4 L7,0 L2.2,1.4 L3.6,3.6 L1.4,2.2 L0,7 L-1.4,2.2 L-3.6,3.6 L-2.2,1.4 L-7,0 L-2.2,-1.4 L-3.6,-3.6 L-1.4,-2.2 Z" fill="#14120E"/></svg> Written</span>
+    <span><svg viewBox="-8 -8 16 16"><circle r="4" fill="#F7F4EE" stroke="rgba(20,18,14,.62)" stroke-width="1.1"/></svg> Drafting</span>
+    <span><svg viewBox="-8 -8 16 16"><circle r="2.4" fill="rgba(20,18,14,.3)"/></svg> Planned</span>
+    <span><svg viewBox="-8 -8 16 16"><line x1="-7" y1="0" x2="7" y2="0" stroke="rgba(20,18,14,.4)"/></svg> Learn first</span>
+  </div>
+</div>
+
+<div class="mindex">
+  <h2>Index</h2>
+  <div class="mgroups" id="mgroups"></div>
+</div>
+
+<div class="news-block">
+  <div class="news-label">News</div>
+  <div class="news-item">
+    <span class="news-date">Feb 24, 2026</span>
+    <span>Updated Network Analysis and Latent Profile Analysis courses.</span>
+  </div>
+  <div class="news-item">
+    <span class="news-date">Feb 23, 2026</span>
+    <span>Site launched.</span>
+  </div>
+</div>
+
 <div class="page-nav">
   <a class="pn-link pn-prev" href="https://jialing-wu.github.io" target="_blank">
     <span class="pn-arrow">←</span>
@@ -28,14 +58,191 @@ title: "Research Methods Notebook"
   </a>
 </div>
 
-<div class="news-block">
-  <div class="news-label">News</div>
-  <div class="news-item">
-    <span class="news-date">Feb 24, 2026</span>
-    <span>Updated Network Analysis and Latent Profile Analysis courses.</span>
-  </div>
-  <div class="news-item">
-    <span class="news-date">Feb 23, 2026</span>
-    <span>Site launched.</span>
-  </div>
-</div>
+<script>
+/* The chart and the index above are drawn from the same table. Coordinates are
+   fixed by hand: a map worth learning has to be in the same place twice.
+   Every line answers one question — what does ICPSR say you need first?
+     Regression prepares you for structural equations, MLE, Bayesian and machine
+     learning; multilevel assumes OLS; SEM wants a strong regression background
+     plus matrix algebra; scaling wants you comfortable with multiple regression;
+     Bayesian assumes a working knowledge of OLS and MLE. */
+
+/* The chart and the index are drawn from the same table. Coordinates are
+   fixed by hand: a map worth learning has to be in the same place twice. */
+var CONSTELLATIONS = [
+  {id:'found', name:'Foundations'},
+  {id:'reg',   name:'Regression & Inference'},
+  {id:'crit',  name:'Critical Quantitative'},
+  {id:'lat',   name:'Latent Variables'},
+  {id:'spa',   name:'Spatial'},
+  {id:'css',   name:'Computational Social Science'}
+];
+
+var NODES = [
+  // Foundations — ICPSR's math camp and intro statistics
+  {id:'math',        c:'found',t:'Mathematics for Social Scientists', s:'planned', x:200,y:660, a:'end',   dx:-12,dy:4},
+  {id:'introstats',  c:'found',t:'Introduction to Statistics',        s:'planned', x:400,y:648, a:'start', dx:12, dy:4},
+  // Regression & inference
+  {id:'regression',  c:'reg',  t:'Regression',                        s:'draft',   x:300,y:470, a:'end',   dx:-13,dy:16},
+  {id:'mle',         c:'reg',  t:'MLE · Categorical Data',            s:'draft',   x:150,y:430, a:'end',   dx:-12,dy:4},
+  {id:'bayesian',    c:'reg',  t:'Bayesian Modeling',                 s:'draft',   x:85, y:330, a:'start', dx:11, dy:-11},
+  {id:'multilevel',  c:'reg',  t:'Multilevel Models',                 s:'draft',   x:250,y:350, a:'end',   dx:-12,dy:4},
+  {id:'longitudinal',c:'reg',  t:'Longitudinal · Time Series',        s:'draft',   x:400,y:330, a:'start', dx:12, dy:4},
+  {id:'causal',      c:'reg',  t:'Causal Inference',                  s:'draft',   x:430,y:470, a:'start', dx:12, dy:4},
+  {id:'robustness',  c:'reg',  t:'Robustness',                        s:'planned', x:270,y:585, a:'end',   dx:-12,dy:4},
+  // Critical quantitative
+  {id:'critquant',   c:'crit', t:'Critical Approaches',               s:'planned', x:120,y:135, a:'start', dx:12, dy:4},
+  {id:'race',        c:'crit', t:'Race & Ethnicity in Quant',         s:'draft',   x:270,y:75,  a:'start', dx:12, dy:4},
+  {id:'empirical',   c:'crit', t:'Modeling Social Theory',            s:'planned', x:390,y:180, a:'start', dx:12, dy:4},
+  // Spatial
+  {id:'gis',         c:'spa',  t:'GIS & Spatial Analysis',            s:'draft',   x:555,y:462, a:'middle',dx:0,  dy:24},
+  // Latent variables
+  {id:'measurement', c:'lat',  t:'Measurement & Scaling',             s:'draft',   x:470,y:622, a:'end',   dx:-12,dy:4},
+  {id:'sem',         c:'lat',  t:'Structural Equation Models',        s:'draft',   x:630,y:580, a:'start', dx:12, dy:4},
+  {id:'lpa',         c:'lat',  t:'Latent Profile Analysis',           s:'published',x:780,y:640,a:'start', dx:19, dy:5, url:'/methods/lpa.html'},
+  // Computational social science
+  {id:'ml',          c:'css',  t:'Machine Learning',                  s:'draft',   x:700,y:330, a:'end',   dx:-12,dy:4},
+  {id:'networks',    c:'css',  t:'Network Analysis',                  s:'published',x:820,y:235,a:'start', dx:19, dy:5, url:'/methods/sample-network-intro.html'},
+  {id:'ergm',        c:'css',  t:'ERGM',                              s:'published',x:892,y:150,a:'start', dx:19, dy:5, url:'/methods/ergm-derivation.html'},
+  {id:'nlp',         c:'css',  t:'NLP',                               s:'draft',   x:810,y:420, a:'end',   dx:-12,dy:4},
+  {id:'llm',         c:'css',  t:'LLM',                               s:'draft',   x:940,y:345, a:'start', dx:12, dy:4},
+  {id:'text',        c:'css',  t:'Text Analysis',                     s:'draft',   x:880,y:495, a:'start', dx:12, dy:4}
+];
+
+/* Every line answers one question: what does ICPSR say you need first?
+   - Regression "prepares you for structural equations, MLE, Bayesian, machine learning"
+   - Multilevel "assumes familiarity with OLS regression"
+   - SEM wants "a strong background in regression" plus matrix algebra
+   - Scaling wants you "comfortable with multiple regression"
+   - Bayesian "assumes a working knowledge of OLS and MLE" */
+var EDGES = [
+  ['introstats','regression'],['math','mle'],
+  ['regression','mle'],['regression','multilevel'],['regression','longitudinal'],
+  ['regression','causal'],['regression','robustness'],['regression','ml'],
+  ['regression','measurement'],['regression','sem'],['regression','gis'],
+  ['regression','critquant'],
+  ['mle','bayesian'],
+  ['measurement','sem'],['sem','lpa'],
+  ['ml','networks'],['networks','ergm'],['ml','nlp'],['nlp','llm'],['nlp','text'],['ml','gis'],
+  ['critquant','race'],['critquant','empirical']
+];
+
+var byId={}; NODES.forEach(function(n){byId[n.id]=n});
+var STATUS={published:'Written',draft:'Drafting',planned:'Planned'};
+
+/* ---------- index: always rendered; the chart is the enhancement ---------- */
+var groups=document.getElementById('mgroups');
+CONSTELLATIONS.forEach(function(c){
+  var items=NODES.filter(function(n){return n.c===c.id});
+  if(!items.length) return;
+  var g=document.createElement('div');
+  g.className='mgroup';
+  g.innerHTML='<h3>'+c.name+'</h3><ul>'+items.map(function(n){
+    var label=n.url?'<a href="'+n.url+'">'+n.t+'</a>':n.t;
+    return '<li class="is-'+n.s+'">'+label+' <span class="st">'+STATUS[n.s]+'</span></li>';
+  }).join('')+'</ul>';
+  groups.appendChild(g);
+});
+
+/* ---------- the plate ---------- */
+if(!matchMedia('(max-width: 900px)').matches){
+  var plate=document.getElementById('plate'), sky=document.getElementById('sky');
+  plate.hidden=false;
+  var NS='http://www.w3.org/2000/svg';
+  function el(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e}
+  function add(p,t,a){var e=el(t,a);p.appendChild(e);return e}
+  function hull(pts){
+    var p=pts.slice().sort(function(a,b){return a[0]-b[0]||a[1]-b[1]});
+    function half(src){var h=[];src.forEach(function(q){
+      while(h.length>1&&(h[h.length-1][0]-h[h.length-2][0])*(q[1]-h[h.length-2][1])-(h[h.length-1][1]-h[h.length-2][1])*(q[0]-h[h.length-2][0])<=0)h.pop();
+      h.push(q)});return h}
+    return half(p).slice(0,-1).concat(half(p.slice().reverse()).slice(0,-1));
+  }
+
+  /* plate furniture: a double rule, a faint graticule, an engraved caption */
+  add(sky,'rect',{x:10,y:10,width:980,height:700,class:'frame-outer'});
+  add(sky,'rect',{x:17,y:17,width:966,height:686,class:'frame-inner'});
+  var defs=add(sky,'defs',{});
+  var clip=add(defs,'clipPath',{id:'plateclip'});
+  add(clip,'rect',{x:17,y:17,width:966,height:686});
+  var gg=add(sky,'g',{'clip-path':'url(#plateclip)'});
+  [[470,330],[350,245],[230,160],[110,75]].forEach(function(r){
+    add(gg,'ellipse',{cx:500,cy:360,rx:r[0],ry:r[1],class:'grat'});
+  });
+  for(var a=0;a<180;a+=22.5){
+    var rad=a*Math.PI/180, dx=Math.cos(rad)*520, dy=Math.sin(rad)*360;
+    add(gg,'line',{x1:500-dx,y1:360-dy,x2:500+dx,y2:360+dy,class:'grat'});
+  }
+  add(sky,'text',{x:500,y:700,class:'plate-cap','text-anchor':'middle'})
+    .textContent='Plate I · A Map of Methods · sequenced after the ICPSR Summer Program';
+
+  CONSTELLATIONS.forEach(function(c){
+    var pts=NODES.filter(function(n){return n.c===c.id}).map(function(n){return [n.x,n.y]});
+    if(!pts.length) return;
+    var cx=pts.reduce(function(s,p){return s+p[0]},0)/pts.length,
+        cy=pts.reduce(function(s,p){return s+p[1]},0)/pts.length, pad=30, top;
+    if(pts.length<3){
+      var x0=Math.min.apply(null,pts.map(function(p){return p[0]})),
+          x1=Math.max.apply(null,pts.map(function(p){return p[0]})),
+          y0=Math.min.apply(null,pts.map(function(p){return p[1]})),
+          y1=Math.max.apply(null,pts.map(function(p){return p[1]}));
+      add(sky,'rect',{x:x0-pad,y:y0-pad,width:(x1-x0)+pad*2,height:(y1-y0)+pad*2,rx:pad,class:'hull'});
+      top=[(x0+x1)/2,y0-pad];
+    }else{
+      var h=hull(pts).map(function(p){var dx=p[0]-cx,dy=p[1]-cy,d=Math.hypot(dx,dy)||1;
+        return [p[0]+dx/d*pad,p[1]+dy/d*pad]});
+      add(sky,'polygon',{points:h.map(function(p){return p.join(',')}).join(' '),class:'hull'});
+      top=h.reduce(function(a,b){return b[1]<a[1]?b:a});
+    }
+    var lx=Math.min(880,Math.max(120,top[0]));
+    add(sky,'text',{x:lx,y:Math.max(34,top[1]-10),class:'cons','text-anchor':'middle'}).textContent=c.name;
+  });
+
+  EDGES.forEach(function(e){
+    var a=byId[e[0]],b=byId[e[1]];
+    var l=add(sky,'line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,class:'edge'});
+    l.dataset.a=e[0];l.dataset.b=e[1];
+  });
+
+  var STAR='M0,-11 L2.1,-3.4 L5.6,-5.6 L3.4,-2.1 L11,0 L3.4,2.1 L5.6,5.6 L2.1,3.4 L0,11 L-2.1,3.4 L-5.6,5.6 L-3.4,2.1 L-11,0 L-3.4,-2.1 L-5.6,-5.6 L-2.1,-3.4 Z';
+  NODES.forEach(function(n){
+    var g=add(sky,'g',{class:'node '+n.s});
+    g.dataset.id=n.id;
+    if(n.s==='published'){
+      add(g,'circle',{cx:n.x,cy:n.y,r:18,class:'halo'});
+      add(g,'path',{d:STAR,transform:'translate('+n.x+','+n.y+')',class:'core'});
+    }else{
+      add(g,'circle',{cx:n.x,cy:n.y,r:n.s==='draft'?4.2:2.4,class:'core'});
+    }
+    add(g,'text',{x:n.x+n.dx,y:n.y+n.dy,class:'lbl','text-anchor':n.a}).textContent=n.t;
+    add(g,'circle',{cx:n.x,cy:n.y,r:24,fill:'transparent'});
+  });
+
+  var readout=document.getElementById('readout');
+  function highlight(id){
+    var on={},needs=[],leads=[];on[id]=1;
+    EDGES.forEach(function(e){
+      if(e[1]===id){on[e[0]]=1;needs.push(byId[e[0]].t)}
+      if(e[0]===id){on[e[1]]=1;leads.push(byId[e[1]].t)}
+    });
+    plate.classList.add('hot');
+    [].forEach.call(sky.querySelectorAll('.node'),function(g){g.classList.toggle('on',!!on[g.dataset.id])});
+    [].forEach.call(sky.querySelectorAll('.edge'),function(l){l.classList.toggle('on',l.dataset.a===id||l.dataset.b===id)});
+    var n=byId[id];
+    readout.innerHTML='<span class="t">'+n.t+'</span><span class="s">'+STATUS[n.s]+'</span><span class="r">'+
+      (needs.length?'Learn first: '+needs.join(', '):'Start here')+
+      (leads.length?' &nbsp;·&nbsp; Opens up: '+leads.join(', '):'')+'</span>';
+  }
+  function clear(){
+    plate.classList.remove('hot');
+    [].forEach.call(sky.querySelectorAll('.on'),function(e){e.classList.remove('on')});
+    readout.innerHTML='<span class="idle">Hover a star</span>';
+  }
+  [].forEach.call(sky.querySelectorAll('.node'),function(g){
+    g.addEventListener('mouseenter',function(){highlight(g.dataset.id)});
+    g.addEventListener('mouseleave',clear);
+    var n=byId[g.dataset.id];
+    if(n.url) g.addEventListener('click',function(){location.href=n.url});
+  });
+}
+</script>
