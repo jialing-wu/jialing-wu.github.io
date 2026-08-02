@@ -30,7 +30,7 @@
 <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('open');this.previousElementSibling.classList.toggle('open')"><span></span></button></div></nav>
 
 <!-- HERO -->
-<section class="hero">
+<section class="hero kw-stage">
   <div class="hero-text">
     <div class="hero-greeting">Hello, I'm —</div>
     <h1>Jialing <em>Wu</em></h1>
@@ -56,7 +56,26 @@
       <div><div style="font-family:var(--display);font-size:15px;font-weight:500;color:var(--ink);line-height:1.3">Shanghai University</div><div style="font-family:var(--sans);font-size:10px;color:var(--ink-ghost)">B.E. Mechanical Engineering · 2013–2017</div></div>
     </div>
   </div>
+
+  <!-- keyword field — turned into physics bodies by assets/js/keyword-field.js -->
+  <ul class="kw-list">
+    <li data-accent="red"><a href="methods/index.html">GIS</a></li>
+    <li><a href="methods/index.html">Network Analysis</a></li>
+    <li data-accent="gold"><a href="methods/lpa.html">LPA / LCA</a></li>
+    <li><a href="methods/index.html">NLP &middot; LLM</a></li>
+    <li data-accent="ink"><a href="methods/index.html">Machine Learning</a></li>
+    <li data-accent="red"><a href="publications.html">Critical Quant</a></li>
+    <li><a href="projects.html">Pre-college Engineering</a></li>
+    <li data-accent="gold"><a href="publications.html">AI Policy</a></li>
+    <li><a href="publications.html">Equity &amp; Access</a></li>
+    <li><a href="resources.html">Python</a></li>
+  </ul>
 </section>
+
+<div class="hero-hint">
+  <span class="kw-hint">drag them around &mdash; they follow gravity</span>
+  <button class="kw-reset" type="button">&#8635; drop again</button>
+</div>
 
 <!-- RESEARCH -->
 <section class="wrap sect fade">
@@ -95,5 +114,7 @@ document.querySelectorAll('.fade').forEach(el=>obs.observe(el));
 const b=document.querySelector('.btt');window.addEventListener('scroll',()=>{if(b)b.classList.toggle('show',window.scrollY>300)});
 </script>
 <button class="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+<script src="assets/js/matter.min.js"></script>
+<script src="assets/js/keyword-field.js"></script>
 </body>
 </html>
