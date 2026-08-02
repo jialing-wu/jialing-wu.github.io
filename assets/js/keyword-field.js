@@ -57,7 +57,7 @@
         -40 - i * 30 - Math.random() * 25,
         w, h,
         { chamfer: { radius: h / 2 }, restitution: 0.12, friction: 0.5,
-          frictionAir: 0.02, angle: (Math.random() - 0.5) * 0.16 }
+          frictionAir: 0.02, angle: (Math.random() - 0.5) * 0.1 }
       );
       Body.setInertia(b, b.inertia * 5);   // resists tipping onto its end
       bodies.push(b);
@@ -80,8 +80,8 @@
   function relax() {
     for (var i = 0; i < bodies.length; i++) {
       var b = bodies[i];
-      if (b.speed < 0.4 && Math.abs(b.angle) > 0.42) {
-        Body.setAngle(b, b.angle * 0.95);
+      if (b.speed < 0.5 && Math.abs(b.angle) > 0.28) {
+        Body.setAngle(b, b.angle * 0.9);
         Body.setAngularVelocity(b, 0);
       }
     }
