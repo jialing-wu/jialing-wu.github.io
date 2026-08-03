@@ -1,0 +1,96 @@
+<!-- ──────────────────────────────────────────────────────────────
+     Soft gate for the Methods Notebook (work in progress).
+
+     This is a courtesy lock, not security: the page source is public,
+     so anyone determined can read past it. It exists only to keep the
+     notebook out of casual view while it is still being written.
+
+     TO CHANGE THE PASSWORD: replace PASS_HASH below with the djb2 hash
+     of your new password. Get it by pasting this in a browser console:
+       (s=>{let x=5381;for(const c of s)x=((x*33)^c.charCodeAt(0))>>>0;
+            return x.toString(16)})('your-new-password')
+
+     TO GO PUBLIC: delete the single {% raw %}{% include methods/gate.html %}{% endraw %}
+     line at the top of _includes/methods/scripts.html (and this file).
+     ────────────────────────────────────────────────────────────── -->
+<script>
+(function () {
+  var PASS_HASH = '12c5cd2f';        // default password: methods2026
+  var STORE_KEY = 'mn-unlocked';
+
+  function hash(s) {
+    var x = 5381;
+    for (var i = 0; i < s.length; i++) x = ((x * 33) ^ s.charCodeAt(i)) >>> 0;
+    return x.toString(16);
+  }
+
+  try {
+    if (localStorage.getItem(STORE_KEY) === PASS_HASH) return;
+  } catch (e) { /* private mode — fall through to the prompt */ }
+
+  // hide the page before it paints, so the content never flashes
+  document.documentElement.classList.add('mn-locked');
+  var hide = document.createElement('style');
+  hide.textContent = '.mn-locked body > .layout{display:none}' +
+    '.mn-gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;' +
+      'justify-content:center;background:#F7F4EE;padding:24px}' +
+    '.mn-gate-card{max-width:380px;width:100%;text-align:center}' +
+    '.mn-gate-label{font-family:"IBM Plex Sans",sans-serif;font-size:10.5px;font-weight:600;' +
+      'letter-spacing:.18em;text-transform:uppercase;color:#A8321F;margin-bottom:14px}' +
+    '.mn-gate h1{font-family:Fraunces,Georgia,serif;font-size:30px;font-weight:400;' +
+      'color:#14120E;letter-spacing:-.02em;line-height:1.15;margin:0 0 12px}' +
+    '.mn-gate p{font-family:"EB Garamond",Georgia,serif;font-size:16px;line-height:1.6;' +
+      'color:#6E6656;margin:0 0 24px}' +
+    '.mn-gate form{display:flex;gap:8px;justify-content:center}' +
+    '.mn-gate input{flex:1;min-width:0;font-family:"IBM Plex Sans",sans-serif;font-size:14px;' +
+      'color:#14120E;background:#FFFDF8;border:1px solid #CFC7B4;border-radius:2px;padding:11px 14px}' +
+    '.mn-gate input:focus{outline:2px solid #A8321F;outline-offset:2px}' +
+    '.mn-gate button{font-family:"IBM Plex Sans",sans-serif;font-size:11px;font-weight:600;' +
+      'letter-spacing:.1em;text-transform:uppercase;color:#F7F4EE;background:#14120E;' +
+      'border:none;border-radius:2px;padding:11px 20px;cursor:pointer;transition:background .3s}' +
+    '.mn-gate button:hover{background:#A8321F}' +
+    '.mn-gate-err{font-family:"IBM Plex Sans",sans-serif;font-size:12px;color:#A8321F;' +
+      'margin-top:14px;min-height:18px}' +
+    '.mn-gate-back{display:inline-block;margin-top:28px;font-family:"IBM Plex Sans",sans-serif;' +
+      'font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;' +
+      'color:#756D5C;text-decoration:none}' +
+    '.mn-gate-back:hover{color:#A8321F}';
+  document.head.appendChild(hide);
+
+  window.addEventListener('DOMContentLoaded', function () {
+    var gate = document.createElement('div');
+    gate.className = 'mn-gate';
+    gate.innerHTML =
+      '<div class="mn-gate-card">' +
+        '<div class="mn-gate-label">Under construction</div>' +
+        '<h1>Research Methods Notebook</h1>' +
+        '<p>This notebook is still being built, so access is limited to the site owner ' +
+          'for now. It will open to everyone once the first chapters are finished — ' +
+          'please check back later.</p>' +
+        '<form><input type="password" placeholder="Password" autocomplete="current-password" ' +
+          'aria-label="Password" autofocus><button type="submit">Enter</button></form>' +
+        '<div class="mn-gate-err" role="alert"></div>' +
+        '<a class="mn-gate-back" href="/index.html">&larr; Back to jialing-wu.github.io</a>' +
+      '</div>';
+    document.body.appendChild(gate);
+
+    var input = gate.querySelector('input');
+    var err   = gate.querySelector('.mn-gate-err');
+
+    gate.querySelector('form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (hash(input.value) !== PASS_HASH) {
+        err.textContent = 'Not quite — try again.';
+        input.value = '';
+        input.focus();
+        return;
+      }
+      try { localStorage.setItem(STORE_KEY, PASS_HASH); } catch (e2) {}
+      document.documentElement.classList.remove('mn-locked');
+      gate.remove();
+    });
+
+    input.focus();
+  });
+})();
+</script>

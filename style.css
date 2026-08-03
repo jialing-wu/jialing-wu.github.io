@@ -11,7 +11,7 @@
   --body:'EB Garamond',Georgia,serif;
   --hand:'Caveat',cursive;
   --sans:'IBM Plex Sans',sans-serif;
-  --shell:1080px;--pad:44px;--navh:88px;
+  --shell:1080px;--pad:44px;--navh:68px;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -23,9 +23,10 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
 /* MASTHEAD + NAV */
 nav{position:fixed;top:0;width:100%;z-index:1000;background:var(--paper);border-bottom:1px solid var(--rule);transition:box-shadow .35s,background .35s}
 nav.scrolled{background:rgba(247,244,238,.93);backdrop-filter:blur(12px);box-shadow:0 2px 10px rgba(20,18,14,.05)}
-.nav-inner{max-width:var(--shell);margin:0 auto;padding:16px var(--pad) 0;display:flex;flex-direction:column;align-items:stretch;gap:4px;position:relative}
-.nav-brand{font-family:var(--display);font-size:23px;font-weight:600;letter-spacing:-.01em;color:var(--ink);text-decoration:none;line-height:1.2}
-.nav-links{list-style:none;display:flex;gap:26px;padding-bottom:14px}
+.nav-inner{max-width:var(--shell);margin:0 auto;padding:0 var(--pad);height:68px;display:flex;flex-direction:row;align-items:center;flex-wrap:nowrap;gap:clamp(20px,3vw,38px);position:relative}
+.nav-brand{font-family:var(--display);font-size:23px;font-weight:600;letter-spacing:-.01em;color:var(--ink);text-decoration:none;line-height:1.2;white-space:nowrap;flex:none}
+.nav-links{list-style:none;display:flex;flex-wrap:nowrap;gap:clamp(15px,2.3vw,26px)}
+.nav-links li{white-space:nowrap}
 .nav-links a{font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-faded);text-decoration:none;transition:color .3s}
 .nav-links a:hover{color:var(--ink)}
 .nav-links a.active{color:var(--red)}
@@ -84,6 +85,20 @@ nav.scrolled{background:rgba(247,244,238,.93);backdrop-filter:blur(12px);box-sha
 .news-dt{font-family:var(--sans);font-size:10.5px;font-weight:500;letter-spacing:.06em;color:var(--gold-soft)}
 .news-dd{font-size:16.5px;line-height:1.55;color:rgba(247,244,238,.72)}
 .news-dd strong{color:#fff;font-weight:500}
+.news-more{display:inline-block;margin-top:22px;font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);text-decoration:none;border-bottom:1px solid rgba(185,154,78,.38);padding-bottom:3px;transition:color .3s,border-color .3s}
+.news-more:hover{color:#fff;border-bottom-color:#fff}
+
+/* NEWS ARCHIVE (light page) */
+.arch-year{font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin:44px 0 18px}
+.arch-year:first-child{margin-top:0}
+.arch-row{display:grid;grid-template-columns:96px 1fr;gap:26px;padding:14px 0;align-items:baseline;border-bottom:1px solid rgba(20,18,14,.08)}
+.arch-row:last-of-type{border-bottom:none}
+.arch-dt{font-family:var(--sans);font-size:10.5px;font-weight:500;letter-spacing:.06em;color:var(--gold)}
+.arch-dd{font-size:16.5px;line-height:1.62;color:var(--ink-faded)}
+.arch-dd strong{color:var(--ink);font-weight:500}
+.arch-foot{margin-top:44px}
+.arch-foot a{font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faded);text-decoration:none;transition:color .3s}
+.arch-foot a:hover{color:var(--red)}
 
 /* CTA */
 .cta{max-width:var(--shell);margin:0 auto;padding:56px var(--pad);text-align:center}
@@ -178,26 +193,24 @@ footer{border-top:none;padding:34px var(--pad);max-width:var(--shell);margin:0 a
 /* Semantic base: a plain tag cloud. keyword-field.js upgrades it to physics
    bodies on wide pointer devices; everywhere else this is what renders. */
 .kw-list{list-style:none;grid-column:1/-1;display:flex;flex-wrap:wrap;gap:9px;padding-top:28px}
-.kw-list a{
+.kw-list span{
   display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
   font-family:var(--body);font-size:17px;color:var(--ink-soft);text-decoration:none;
   background:#FFFDF8;border:1px solid var(--rule);border-radius:2px;
   padding:9px 20px;box-shadow:2px 3px 0 rgba(207,199,180,.55);
   transition:color .25s,border-color .25s;
 }
-.kw-list a:hover{color:var(--red);border-color:var(--gold-soft)}
-.kw-list li[data-accent="red"] a{color:var(--red);border-color:rgba(168,50,31,.38)}
-.kw-list li[data-accent="gold"] a{color:var(--gold);border-color:rgba(138,106,34,.38)}
-.kw-list li[data-accent="ink"] a{color:var(--paper);background:var(--ink);border-color:var(--ink)}
-.kw-list li[data-accent="ink"] a:hover{color:var(--gold-soft)}
+.kw-list li[data-accent="red"] span{color:var(--red);border-color:rgba(168,50,31,.38)}
+.kw-list li[data-accent="gold"] span{color:var(--gold);border-color:rgba(138,106,34,.38)}
+.kw-list li[data-accent="ink"] span{color:var(--paper);background:var(--ink);border-color:var(--ink)}
 
 .hero.kw-stage{position:relative;overflow:hidden}
 .hero.kw-stage.is-live{padding-bottom:198px}          /* the shelf they land on */
 .hero.kw-stage .hero-text,.hero.kw-stage .hero-photo{position:relative;z-index:2}
 .hero.kw-stage.is-live .kw-list{position:absolute;inset:0;z-index:0;display:block;padding:0}
 .hero.kw-stage.is-live .kw-list li{position:absolute;top:0;left:0;will-change:transform}
-.hero.kw-stage.is-live .kw-list a{cursor:grab;user-select:none;-webkit-user-select:none}
-.hero.kw-stage.is-live.dragging .kw-list a{cursor:grabbing}
+.hero.kw-stage.is-live .kw-list span{cursor:grab;user-select:none;-webkit-user-select:none}
+.hero.kw-stage.is-live.dragging .kw-list span{cursor:grabbing}
 
 .hero-hint{display:none}
 .kw-live .hero-hint{
@@ -231,11 +244,11 @@ footer{border-top:none;padding:34px var(--pad);max-width:var(--shell);margin:0 a
 @media(max-width:640px){
   :root{--pad:22px}
   .hero h1{font-size:2.3rem}
-  .news-row{grid-template-columns:1fr;gap:4px;padding:12px 0}
+  .news-row,.arch-row{grid-template-columns:1fr;gap:4px;padding:12px 0}
   footer{flex-direction:column;align-items:flex-start;gap:12px}
   .pub-link,.teach-links a{padding:10px 14px}
   .foot-r a,.cta-row a{padding:10px 0}
-  .kw-list a{font-size:16px;padding:8px 16px}
+  .kw-list span{font-size:16px;padding:8px 16px}
 }
 @media(prefers-reduced-motion:reduce){
   .fade,.hero-text,.hero-photo{opacity:1;transform:none;animation:none;transition:none}

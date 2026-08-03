@@ -1,5 +1,5 @@
 /* Keyword field — progressive enhancement for the hero.
-   The markup is a plain <ul> of keyword links. On a wide pointer device we
+   The markup is a plain <ul> of keyword labels. On a wide pointer device we
    hand each <li> to Matter.js and let them fall past the bio and settle on
    the shelf at the bottom of the hero. Everywhere else the <ul> stays a
    static tag cloud, which is what search engines and screen readers see. */
@@ -123,19 +123,6 @@
     Matter.Events.on(mc, 'startdrag', function () { stage.classList.add('dragging'); });
     Matter.Events.on(mc, 'enddrag', function () { stage.classList.remove('dragging'); });
   }
-
-  // a click counts as a click only if it did not turn into a drag
-  var down = null;
-  stage.addEventListener('pointerdown', function (e) {
-    down = { x: e.clientX, y: e.clientY, t: Date.now() };
-  });
-  stage.addEventListener('click', function (e) {
-    var a = e.target.closest('.kw-list a');
-    if (!a || !down) return;
-    if (Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6 || Date.now() - down.t > 400) {
-      e.preventDefault();
-    }
-  });
 
   // simulate only while the hero is on screen
   new IntersectionObserver(function (es) {

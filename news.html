@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News — Jialing Wu</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Jialing Wu — news archive: conference talks, publications, and awards in engineering education research.">
+<meta property="og:title" content="News — Jialing Wu">
+<meta property="og:description" content="Jialing Wu — news archive: conference talks, publications, and awards in engineering education research.">
+<meta property="og:image" content="https://jialing-wu.github.io/assets/images/photo.jpg">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<nav id="nav"><div class="nav-inner">
+  <a class="nav-brand" href="index.html">Jialing Wu</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Bio</a></li>
+    <li><a href="background.html">Background</a></li>
+    <li><a href="publications.html">Publications</a></li>
+    <li><a href="teaching.html">Teaching</a></li>
+    <li><a href="projects.html">Projects</a></li>
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="methods/index.html">Methods Notebook</a></li>
+  </ul>
+<button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('open');this.previousElementSibling.classList.toggle('open')"><span></span></button></div></nav>
+
+<div class="pg-head">
+  <h1>News</h1>
+  <p>Conference talks, publications, and awards — most recent first. For the full record, see <a href="publications.html">Publications</a>.</p>
+</div>
+
+<section class="wrap" style="padding-bottom:64px">
+
+  <div class="arch-year">2026</div>
+  <div class="arch-row"><div class="arch-dt">Aug 2026</div><div class="arch-dd">Forthcoming at <strong>APPAM 2026</strong> (Boston, MA) — presenting a poster on teachers as AI policy actors and serving as a discussant.</div></div>
+  <div class="arch-row"><div class="arch-dt">Jul 2026</div><div class="arch-dd">New article in <strong>J-PEER</strong> — a latent profile analysis of transgender and gender-nonconforming students' experiences in pre-college engineering.</div></div>
+  <div class="arch-row"><div class="arch-dt">Jul 2026</div><div class="arch-dd">Poster at <strong>IC2S2 2026</strong> (Burlington, VT) — cross-cultural LLM evaluation of Chinese-to-English movie title translation.</div></div>
+  <div class="arch-row"><div class="arch-dt">Jun 2026</div><div class="arch-dd"><strong>Four papers at ASEE</strong> — bipartite network analysis, person-centered methods, SCCT survey validation, and social media-based topic &amp; emotion analysis.</div></div>
+  <div class="arch-row"><div class="arch-dt">Apr 2026</div><div class="arch-dd">Presentations at <strong>AERA</strong> (AI attitudes in higher education) &amp; <strong>CIES</strong> (GIS-based high school accessibility).</div></div>
+
+  <div class="arch-year">2025</div>
+  <div class="arch-row"><div class="arch-dt">Nov 2025</div><div class="arch-dd">Paper at <strong>IEEE FIE</strong> — early-career engineering faculty experiences using social cognitive theory.</div></div>
+  <div class="arch-row"><div class="arch-dt">2025</div><div class="arch-dd">🏆 <strong>Best Paper, 2nd Place</strong>, ASEE PCEE Division — TGNC students in pre-college engineering.</div></div>
+
+  <p class="arch-foot"><a href="index.html">← Back to Bio</a></p>
+
+</section>
+
+<footer>
+  <div class="foot-l">© 2026 Jialing Wu</div>
+  <div class="foot-r">
+    <a href="https://scholar.google.com/citations?user=1qK9_vUAAAAJ&hl=en&oi=ao" target="_blank">Scholar</a>
+    <a href="https://www.linkedin.com/in/jialingwueducation/" target="_blank">LinkedIn</a>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40));
+const b=document.querySelector('.btt');window.addEventListener('scroll',()=>{if(b)b.classList.toggle('show',window.scrollY>300)});
+</script>
+<button class="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+</body>
+</html>
