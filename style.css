@@ -206,7 +206,11 @@ footer{border-top:none;padding:34px var(--pad);max-width:var(--shell);margin:0 a
 
 .hero.kw-stage{position:relative;overflow:hidden}
 .hero.kw-stage.is-live{padding-bottom:198px}          /* the shelf they land on */
-.hero.kw-stage .hero-text,.hero.kw-stage .hero-photo{position:relative;z-index:2}
+.hero.kw-stage .hero-greeting,
+.hero.kw-stage h1,
+.hero.kw-stage .hero-lede,
+.hero.kw-stage .hero-actions,
+.hero.kw-stage .hero-photo{position:relative;z-index:2}
 .hero.kw-stage.is-live .kw-list{position:absolute;inset:0;z-index:0;display:block;padding:0}
 .hero.kw-stage.is-live .kw-list li{position:absolute;top:0;left:0;will-change:transform}
 .hero.kw-stage.is-live .kw-list span{cursor:grab;user-select:none;-webkit-user-select:none}

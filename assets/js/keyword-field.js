@@ -112,7 +112,9 @@
 
   // drag — pointer devices only, so touch scrolling is never captured
   if (matchMedia('(pointer: fine)').matches) {
-    var mouse = Mouse.create(stage);
+    // Listen only on the keyword layer. Listening on the entire hero causes
+    // Matter.js to intercept clicks intended for the CV and profile links.
+    var mouse = Mouse.create(stage.querySelector('.kw-list'));
     ['wheel', 'DOMMouseScroll'].forEach(function (ev) {
       mouse.element.removeEventListener(ev, mouse.mousewheel);
     });
